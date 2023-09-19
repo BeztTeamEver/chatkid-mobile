@@ -1,28 +1,26 @@
-import 'package:chatkid_mobile/constants/menu.dart';
+import 'package:chatkid_mobile/modals/menu_modal.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 
 class BottomMenu extends StatefulWidget {
-  const BottomMenu({super.key});
+  final int currentIndex;
+  final Function(int index) onTap;
+
+  const BottomMenu({Key? key, required this.currentIndex, required this.onTap})
+      : super(key: key);
 
   @override
   State<BottomMenu> createState() => _BottomMenuState();
 }
 
 class _BottomMenuState extends State<BottomMenu> {
-  int currentIndex = 0;
-
-  onTap(int index) {
-    setState(() {
-      currentIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final menu = MenuList(role: 'child').getMenu();
+
     return Container(
-      margin: EdgeInsets.all(20),
+      margin: const EdgeInsets.all(20),
       height: 62,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
@@ -48,8 +46,10 @@ class _BottomMenuState extends State<BottomMenu> {
           backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
           elevation: 0,
-          currentIndex: 1,
-          onTap: onTap,
+          currentIndex: widget.currentIndex,
+          onTap: (index) {
+            widget.onTap(index);
+          },
           selectedItemColor: Colors.white,
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -60,7 +60,7 @@ class _BottomMenuState extends State<BottomMenu> {
                 icon: SvgIcon(
                   size: 24,
                   icon: item.icon,
-                  color: item.route == menu[currentIndex].route
+                  color: item.route == menu[widget.currentIndex].route
                       ? Theme.of(context).colorScheme.primary
                       : neutral.shade300,
                 ),

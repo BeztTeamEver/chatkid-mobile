@@ -1,25 +1,40 @@
-import 'package:chatkid_mobile/modals/post_modal.dart';
-import 'package:chatkid_mobile/pages/home_page.dart';
+import 'package:chatkid_mobile/constants/menu.dart';
+import 'package:chatkid_mobile/modals/menu_modal.dart';
 import 'package:chatkid_mobile/providers/post_provider.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_color_utilities/material_color_utilities.dart';
 
-class MainPage extends ConsumerWidget {
-  const MainPage({Key? key}) : super(key: key);
+class MainPage extends ConsumerStatefulWidget {
+  const MainPage({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
-    final _data = ref.watch(postDataProvider);
+  ConsumerState<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends ConsumerState<MainPage> {
+  int currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    // final data = ref.watch(postDataProvider);/
+    List<Widget> menu = MenuList(role: 'child').getWidgets();
+
+    void onTap(index) {
+      setState(() {
+        currentIndex = index;
+      });
+    }
 
     return Scaffold(
-      body: Container(
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.background),
-        child: HomePage(),
+      body: IndexedStack(
+        index: currentIndex,
+        children: menu,
       ),
-      bottomNavigationBar: BottomMenu(),
+      bottomNavigationBar: BottomMenu(
+        currentIndex: currentIndex,
+        onTap: onTap,
+      ),
     );
   }
 }

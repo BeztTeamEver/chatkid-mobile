@@ -1,5 +1,4 @@
 import 'package:chatkid_mobile/constants/routes.dart';
-import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
@@ -26,8 +25,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: primary,
           backgroundColor: primary.shade50,
+          errorColor: Colors.green.shade100,
           brightness: Brightness.light,
         ),
+        textTheme: textTheme,
         primarySwatch: primary,
         shadowColor: HexColor('4E291414'),
         scaffoldBackgroundColor: primary.shade50,
