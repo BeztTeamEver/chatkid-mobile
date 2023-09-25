@@ -1,3 +1,5 @@
+import 'package:chatkid_mobile/pages/chat_page.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -62,7 +64,13 @@ class _HomePageState extends ConsumerState<HomePage> {
           Center(
             child: ElevatedButton(
               child: const Text("Go to chat route"),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  createRoute(
+                    () => const ChatPage(),
+                  ),
+                );
+              },
             ),
           ),
         ],

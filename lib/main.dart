@@ -1,11 +1,20 @@
 import 'package:chatkid_mobile/constants/routes.dart';
-import 'package:chatkid_mobile/pages/main_page.dart';
+import 'package:chatkid_mobile/pages/login_page.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseService().getToken();
+
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -32,8 +41,24 @@ class MyApp extends StatelessWidget {
         primarySwatch: primary,
         shadowColor: HexColor('4E291414'),
         scaffoldBackgroundColor: primary.shade50,
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: const BorderSide(color: Color(0xFFE8EAF1), width: 3),
+          ),
+          filled: true,
+          contentPadding: const EdgeInsets.only(
+            left: 26,
+            top: 28,
+            bottom: 28,
+          ),
+          fillColor: neutral.shade50,
+          hintStyle: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
       ),
-      home: const MainPage(),
+      home: const LoginPage(),
       debugShowCheckedModeBanner: false,
       routes: routes,
     );
