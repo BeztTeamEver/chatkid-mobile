@@ -1,15 +1,38 @@
 import 'package:flutter/material.dart';
 
-class InputField extends StatefulWidget {
-  const InputField({super.key});
+class InputField extends StatelessWidget {
+  final String label;
+  final String? Function(String?)? validator;
+  final String hint;
+  final TextInputType type;
 
-  @override
-  State<InputField> createState() => _InputFieldState();
-}
+  const InputField({
+    super.key,
+    this.label = "",
+    this.type = TextInputType.text,
+    this.hint = "",
+    this.validator,
+  });
 
-class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 10),
+        TextFormField(
+          obscureText: type == TextInputType.visiblePassword,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ],
+    );
   }
 }

@@ -1,4 +1,4 @@
 {
 	"cmake.sourceDirectory": "D:/Project/chatkid_mobile/linux",
-	"java.configuration.updateBuildConfiguration": "interactive"
+	"java.configuration.updateBuildConfiguration": "automatic"
 }
