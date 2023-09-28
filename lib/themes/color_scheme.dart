@@ -67,9 +67,9 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
     bodyMedium: TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w400,
-      color: textDefault,
-      height: 0.5,
-      letterSpacing: 1.45,
+      color: textDefault, 
+      height: 1.5,
+      letterSpacing: 1.45,  
     ),
     bodyLarge: TextStyle(
       fontSize: 18,
@@ -95,6 +95,24 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontWeight: FontWeight.bold,
       color: textDefault,
       height: 1.01,
+    ),
+    headlineLarge: TextStyle(
+      fontSize: 36,
+      fontWeight: FontWeight.w800,
+      color: textDefault,
+      height: 1.02,
+    ),
+    headlineMedium: TextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.w700,
+      color: textDefault,
+      height: 1.01,
+    ),
+    headlineSmall: TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.w700,
+      color: textDefault,
+      height: 1,
     ),
   ),
 );

@@ -1,8 +1,19 @@
 import 'package:chatkid_mobile/pages/activation_page.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
+import 'package:chatkid_mobile/pages/init_page.dart';
+import 'package:chatkid_mobile/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
-enum AppRoutes { activities, home, profile, voice, history, notification }
+enum AppRoutes {
+  activities,
+  home,
+  profile,
+  voice,
+  history,
+  notification,
+  initPage,
+  login
+}
 
 final Map<String, String> routesName = <String, String>{
   '${AppRoutes.home}': '/${AppRoutes.home}}',
@@ -11,6 +22,8 @@ final Map<String, String> routesName = <String, String>{
   '${AppRoutes.notification}': '/${AppRoutes.notification}',
   '${AppRoutes.profile}': '/${AppRoutes.profile}',
   '${AppRoutes.voice}': '/${AppRoutes.voice}',
+  '${AppRoutes.initPage}': '/${AppRoutes.initPage}',
+  '${AppRoutes.login}': '/${AppRoutes.login}',
 };
 
 final Map<String, Widget Function(BuildContext)> routes =
@@ -21,4 +34,6 @@ final Map<String, Widget Function(BuildContext)> routes =
   '/${AppRoutes.home}': (BuildContext context) => const HomePage(),
   '/${AppRoutes.profile}': (BuildContext context) => const HomePage(),
   '/${AppRoutes.voice}': (BuildContext context) => const HomePage(),
+  '/${AppRoutes.initPage}': (BuildContext context) => const InitPage(),
+  '/${AppRoutes.login}': (BuildContext context) => const LoginPage(),
 };
