@@ -1,7 +1,5 @@
 import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
-import 'package:chatkid_mobile/pages/home_page.dart';
-import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
@@ -11,7 +9,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -25,7 +22,6 @@ void main() async {
   await LocalStorage.getInstance();
   // load env file
   await dotenv.load(fileName: ".env");
-  print(Env.apiUrl);
 
   runApp(
     const ProviderScope(

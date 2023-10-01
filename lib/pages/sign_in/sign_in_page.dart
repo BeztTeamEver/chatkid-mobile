@@ -1,6 +1,7 @@
 import 'package:chatkid_mobile/pages/sign_up/sign_up_page.dart';
-import 'package:chatkid_mobile/widgets/google_button_widget.dart';
+import 'package:chatkid_mobile/widgets/login_logout/google_button_widget.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
+import 'package:chatkid_mobile/widgets/login_logout/switch_page.dart';
 import 'package:chatkid_mobile/widgets/logo.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/gestures.dart';
@@ -59,31 +60,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   isLogin: true,
                 ),
                 const SizedBox(height: 20),
-                Text.rich(
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(),
-                  TextSpan(
-                    children: <TextSpan>[
-                      const TextSpan(text: "Bạn chưa có tài khoản? "),
-                      TextSpan(
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        text: "Đăng kí ",
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpPage(),
-                              ),
-                            );
-                          },
-                      ),
-                    ],
-                  ),
-                ),
+                const SwichSignIn(),
                 const SizedBox(height: 20),
                 SvgPicture.asset(
                   'assets/loginPage/illusion.svg',

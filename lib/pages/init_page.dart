@@ -43,6 +43,13 @@ class _InitPageState extends State<InitPage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    _timer!.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
