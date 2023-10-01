@@ -2,8 +2,10 @@ import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 
 class LogoWidget extends StatelessWidget {
+  final bool isShowText;
   const LogoWidget({
     super.key,
+    this.isShowText = true,
   });
 
   @override
@@ -15,7 +17,7 @@ class LogoWidget extends StatelessWidget {
         SvgIcon(icon: 'logo', color: Theme.of(context).primaryColor, size: 64),
         const SizedBox(height: 20),
         Text(
-          'KidTalkie',
+          isShowText ? 'KidTalkie' : '',
           style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                 color: Theme.of(context).primaryColor,
               ),

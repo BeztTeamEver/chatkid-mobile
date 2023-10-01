@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>API_KEY</key>
-	<string>AIzaSyAKOY66kKyjNkLKcRgvo4Sr3STdC5w_h9U</string>
-	<key>GCM_SENDER_ID</key>
-	<string>539027257152</string>
-	<key>PLIST_VERSION</key>
-	<string>1</string>
-	<key>BUNDLE_ID</key>
-	<string>com.example.chatkidMobile</string>
-	<key>PROJECT_ID</key>
-	<string>kidtalkie-4788f</string>
-	<key>STORAGE_BUCKET</key>
-	<string>kidtalkie-4788f.appspot.com</string>
-	<key>IS_ADS_ENABLED</key>
-	<false></false>
-	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
-	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
-	<key>IS_GCM_ENABLED</key>
-	<true></true>
-	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
-	<key>GOOGLE_APP_ID</key>
-	<string>1:539027257152:ios:2fec92f402248f8e70eca5</string>
-</dict>
+	<dict>
+		<key>API_KEY</key>
+		<string>AIzaSyAKOY66kKyjNkLKcRgvo4Sr3STdC5w_h9U</string>
+		<key>GCM_SENDER_ID</key>
+		<string>539027257152</string>
+		<key>PLIST_VERSION</key>
+		<string>1</string>
+		<key>BUNDLE_ID</key>
+		<string>com.example.chatkidMobile</string>
+		<key>PROJECT_ID</key>
+		<string>kidtalkie-4788f</string>
+		<key>STORAGE_BUCKET</key>
+		<string>kidtalkie-4788f.appspot.com</string>
+		<key>IS_ADS_ENABLED</key>
+		<false></false>
+		<key>IS_ANALYTICS_ENABLED</key>
+		<false></false>
+		<key>IS_APPINVITE_ENABLED</key>
+		<true></true>
+		<key>IS_GCM_ENABLED</key>
+		<true></true>
+		<key>IS_SIGNIN_ENABLED</key>
+		<true></true>
+		<key>GOOGLE_APP_ID</key>
+		<string>1:539027257152:ios:2fec92f402248f8e70eca5</string>
+		<key>SERVER_CLIENT_ID</key>
+		<string>343387729372-2q7mlkltgdbus2cqtfuk5i2l41o0mu09.apps.googleusercontent.com</string>
+	</dict>
 </plist>

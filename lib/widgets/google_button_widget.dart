@@ -1,48 +1,40 @@
 import 'package:chatkid_mobile/constants/routes.dart';
+import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
+import 'package:chatkid_mobile/pages/home_page.dart';
+import 'package:chatkid_mobile/pages/main_page.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_btn/loading_btn.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// class GoogleButton extends StatelessWidget {
-//   const GoogleButton({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ElevatedButton(
-//       onPressed: () {},
-//       style: ButtonStyle(
-//         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-//           RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(40),
-//           ),
-//         ),
-//         overlayColor: MaterialStateColor.resolveWith(
-//           (states) => Colors.white.withOpacity(0.4),
-//         ),
-//         padding: MaterialStateProperty.all<EdgeInsets>(
-//           const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class GoogleButton extends StatelessWidget {
-  const GoogleButton({super.key});
-  _signInWithGoogle(Function callback) async {
-    final Uri url = Uri.parse(
-        'https://accounts.google.com/accountchooser/identifier?checkedDomains=youtube&continue=https%3A%2F%2Fwww.google.com%2Fwebhp%3Fauthuser%3D&dsh=S-1744306821%3A1695826976292798&flowEntry=AccountChooser&flowName=GlifWebSignIn&pstMsg=1&theme=glif');
-    await launchUrl(url, mode: LaunchMode.inAppWebView).then(
-      (value) {
-        print("value: $value");
-        callback();
+  final bool isLogin;
+
+  const GoogleButton({super.key, required this.isLogin});
+  _signInWithGoogle(
+      Function callback, Function errorCallback, Function stopLoading) async {
+    await FirebaseService().signInWithGoogle().then((value) {
+      callback();
+    }).catchError(
+      (err) async {
+        print(err);
+        errorCallback();
       },
+    ).whenComplete(
+      () => stopLoading(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final label = isLogin
+        ? 'Đăng nhập bằng tài khoản google'
+        : 'Đăng ký bằng tài khoản Google';
+    final route = isLogin
+        ? const MainPage()
+        : const ConfirmationPage(); // Todo: for testing only
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -64,8 +56,21 @@ class GoogleButton extends StatelessWidget {
             if (btnState == ButtonState.idle) {
               startLoading();
               // call your network api
-              await _signInWithGoogle(stopLoading);
+              // await _signInWithGoogle(stopLoading);
               // await Future.delayed(const Duration(seconds: 5));
+              _signInWithGoogle(
+                () {
+                  Navigator.push(context, createRoute(() => route));
+                },
+                () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Đăng nhập thất bại'),
+                    ),
+                  );
+                },
+                stopLoading,
+              );
             }
           },
           child: Row(
@@ -74,7 +79,7 @@ class GoogleButton extends StatelessWidget {
               const SvgIcon(icon: 'google', size: 34),
               const SizedBox(width: 10),
               Text(
-                'Đăng nhập bằng Google',
+                label,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: Colors.white,
                     ),
