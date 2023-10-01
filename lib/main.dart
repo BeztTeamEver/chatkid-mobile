@@ -1,26 +1,31 @@
+import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
+import 'package:chatkid_mobile/pages/home_page.dart';
+import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
-int initScreen = 0;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //Firesbase setup
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await FirebaseService().getInAppId();
   await FirebaseService().getToken();
-
   // share preferrence setup for one time page
-  await SharedPreferences.getInstance();
+  await LocalStorage.getInstance();
+  // load env file
+  await dotenv.load(fileName: ".env");
+  print(Env.apiUrl);
 
   runApp(
     const ProviderScope(
@@ -31,6 +36,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -56,6 +62,9 @@ class MyApp extends StatelessWidget {
             ),
             overlayColor: MaterialStateColor.resolveWith(
               (states) => Colors.white.withOpacity(0.4),
+            ),
+            foregroundColor: MaterialStateColor.resolveWith(
+              (states) => Colors.white,
             ),
             padding: MaterialStateProperty.all<EdgeInsets>(
               const EdgeInsets.symmetric(vertical: 10, horizontal: 16),

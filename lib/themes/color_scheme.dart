@@ -19,8 +19,8 @@ final MaterialColor primary = MaterialColor(
     500: HexColor('FF9B06'),
     600: HexColor('FB8F04'),
     700: HexColor('E87903'),
-    800: HexColor('031677'),
-    900: HexColor('020E4B'),
+    800: HexColor('C55C02'),
+    900: HexColor('752B01'),
   },
 );
 
@@ -62,21 +62,21 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontWeight: FontWeight.w400,
       color: textDefault,
       height: 1.5,
-      letterSpacing: 1.55,
+      letterSpacing: 0.14,
     ),
     bodyMedium: TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w400,
-      color: textDefault, 
+      color: textDefault,
       height: 1.5,
-      letterSpacing: 1.45,  
+      letterSpacing: 0.08,
     ),
     bodyLarge: TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.w400,
       color: textDefault,
       height: 1,
-      letterSpacing: 1.45,
+      letterSpacing: 0.04,
     ),
     titleLarge: TextStyle(
       fontSize: 36,
@@ -107,12 +107,19 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontWeight: FontWeight.w700,
       color: textDefault,
       height: 1.01,
+      letterSpacing: -0.28,
     ),
     headlineSmall: TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.w700,
       color: textDefault,
       height: 1,
+      letterSpacing: -1.44,
+    ),
+    labelLarge: TextStyle(
+      color: textDefault,
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
     ),
   ),
 );

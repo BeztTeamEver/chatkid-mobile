@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/widgets/google_button_widget.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/logo.dart';
@@ -7,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class SignUpPage extends ConsumerStatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<SignUpPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _LoginPageState extends ConsumerState<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +34,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     const SizedBox(height: 20),
                     Text.rich(
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
                       TextSpan(
                         children: <TextSpan>[
                           const TextSpan(
@@ -54,23 +55,29 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ],
                 ),
                 const SizedBox(height: 100),
-                const GoogleButton(),
+                const GoogleButton(
+                  isLogin: false,
+                ),
                 const SizedBox(height: 20),
                 Text.rich(
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(),
                   TextSpan(
                     children: <TextSpan>[
-                      const TextSpan(text: "Bạn chưa có tài khoản? "),
+                      const TextSpan(text: "Bạn đã có tài khoản? "),
                       TextSpan(
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).primaryColor,
                         ),
-                        text: "Đăng kí ",
+                        text: "Đăng nhập ngay",
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {
-                            print("hello");
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const LoginPage(),
+                              ),
+                            );
                           },
                       ),
                     ],
