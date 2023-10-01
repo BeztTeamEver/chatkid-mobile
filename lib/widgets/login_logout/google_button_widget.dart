@@ -1,13 +1,10 @@
-import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
-import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_btn/loading_btn.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GoogleButton extends StatelessWidget {
   final bool isLogin;

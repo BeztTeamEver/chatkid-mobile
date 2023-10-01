@@ -1,8 +1,18 @@
+import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:pinput/pinput.dart';
 
 class OtpTextField extends StatefulWidget {
-  const OtpTextField({super.key});
+  final int length;
+  final Function? onCompleted;
+  final Function? validation;
+  const OtpTextField({
+    super.key,
+    this.length = 6,
+    this.onCompleted,
+    this.validation,
+  });
 
   @override
   State<OtpTextField> createState() => _OtpTextFieldState();
@@ -11,25 +21,59 @@ class OtpTextField extends StatefulWidget {
 class _OtpTextFieldState extends State<OtpTextField> {
   @override
   Widget build(BuildContext context) {
-    final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 56,
-      textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: Theme.of(context).primaryColor,
+    // theme for the pin
+    PinTheme defaultPinTheme = PinTheme(
+      width: 70,
+      height: 70,
+      textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            fontSize: 70,
           ),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.1),
-        //border bottom
+        color: Theme.of(context).colorScheme.background.withOpacity(0.1),
         border: Border(
           bottom: BorderSide(
-            color: Theme.of(context).primaryColor,
             width: 2,
+            color: neutral.shade500,
           ),
         ),
-        borderRadius: BorderRadius.circular(8),
       ),
     );
 
-    return Row(children: []);
+    PinTheme selectedPinTheme = defaultPinTheme.copyWith(
+      textStyle: defaultPinTheme.textStyle!.copyWith(
+        color: Theme.of(context).primaryColor,
+      ),
+      decoration: defaultPinTheme.decoration!.copyWith(
+        border: const Border(),
+      ),
+    );
+
+    final cursor = Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          height: 2,
+          color: Theme.of(context).primaryColor,
+          width: double.infinity,
+        )
+      ],
+    );
+
+    //Focus
+    final FocusNode focusNode = FocusNode();
+    focusNode.requestFocus();
+
+    return Pinput(
+      focusNode: focusNode,
+      animationDuration: const Duration(milliseconds: 100),
+      pinAnimationType: PinAnimationType.scale,
+      cursor: cursor,
+      defaultPinTheme: defaultPinTheme,
+      animationCurve: Curves.easeIn,
+      focusedPinTheme: selectedPinTheme,
+      length: widget.length,
+      onCompleted: (value) => widget.onCompleted!(value),
+      validator: (value) => widget.validation!(value),
+    );
   }
 }

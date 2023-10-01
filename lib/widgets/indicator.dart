@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class Indicator extends StatefulWidget {
   final int index;
-  const Indicator({super.key, required this.index});
+  final int lenght;
+  const Indicator({super.key, required this.index, this.lenght = 3});
 
   @override
   State<Indicator> createState() => _IndicatorState();
@@ -16,7 +17,7 @@ class _IndicatorState extends State<Indicator> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
-        3,
+        widget.lenght,
         (index) => Padding(
           padding: const EdgeInsets.all(2.0),
           child: AnimatedContainer(
