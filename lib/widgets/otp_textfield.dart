@@ -19,6 +19,17 @@ class OtpTextField extends StatefulWidget {
 }
 
 class _OtpTextFieldState extends State<OtpTextField> {
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    _focusNode.unfocus();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // theme for the pin
@@ -60,11 +71,11 @@ class _OtpTextFieldState extends State<OtpTextField> {
     );
 
     //Focus
-    final FocusNode focusNode = FocusNode();
-    focusNode.requestFocus();
+
+    _focusNode.requestFocus();
 
     return Pinput(
-      focusNode: focusNode,
+      focusNode: _focusNode,
       animationDuration: const Duration(milliseconds: 100),
       pinAnimationType: PinAnimationType.scale,
       cursor: cursor,

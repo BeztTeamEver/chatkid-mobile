@@ -46,73 +46,80 @@ class _InitPageState extends State<InitPage> {
   void dispose() {
     // TODO: implement dispose
     _timer!.cancel();
+    _pageController.dispose();
+    print("disposed");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const LogoWidget(),
-              const SizedBox(
-                height: 70,
-              ),
-              SizedBox(
-                height: 320,
-                child: PageView.builder(
-                  onPageChanged: (value) => setState(() {
-                    _currentPage = value;
-                  }),
-                  itemCount: MAX_ITEMS,
-                  scrollDirection: Axis.horizontal,
-                  controller: _pageController,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/initPage/illusion${index + 1}.svg',
-                          height: 300,
-                        )
-                      ],
-                    );
-                  },
+    return WillPopScope(
+      onWillPop: () async =>
+          !Navigator.of(context).userGestureInProgress, //disable back button
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const LogoWidget(),
+                const SizedBox(
+                  height: 70,
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Indicator(index: _currentPage),
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                "Sử dụng chat AI có thể giúp trẻ em rèn luyện kỹ năng xã hội, bao gồm việc học cách tương tác, đặt câu hỏi, và nắm vững ngôn ngữ.",
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _timer?.cancel();
-                  Navigator.pushNamed(
-                      context, routesName['${AppRoutes.signUp}']!);
-                },
-                style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                      minimumSize: MaterialStateProperty.all<Size>(
-                        const Size(double.infinity, 48),
+                SizedBox(
+                  height: 320,
+                  child: PageView.builder(
+                    onPageChanged: (value) => setState(() {
+                      _currentPage = value;
+                    }),
+                    itemCount: MAX_ITEMS,
+                    scrollDirection: Axis.horizontal,
+                    controller: _pageController,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/initPage/illusion${index + 1}.svg',
+                            height: 300,
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Indicator(index: _currentPage),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Sử dụng chat AI có thể giúp trẻ em rèn luyện kỹ năng xã hội, bao gồm việc học cách tương tác, đặt câu hỏi, và nắm vững ngôn ngữ.",
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _timer?.cancel();
+                    Navigator.pushNamed(
+                        context, routesName['${AppRoutes.signUp}']!);
+                    dispose();
+                  },
+                  style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                        minimumSize: MaterialStateProperty.all<Size>(
+                          const Size(double.infinity, 48),
+                        ),
                       ),
-                    ),
-                child: const Text("Tiếp tục"),
-              ),
-            ],
+                  child: const Text("Tiếp tục"),
+                ),
+              ],
+            ),
           ),
         ),
       ),

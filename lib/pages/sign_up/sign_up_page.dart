@@ -60,7 +60,7 @@ class _LoginPageState extends ConsumerState<SignUpPage> {
                   isLogin: false,
                 ),
                 const SizedBox(height: 20),
-                SwichSignIn(
+                const SwichSignIn(
                   isSwitchLogin: true,
                 ),
                 const SizedBox(height: 20),
