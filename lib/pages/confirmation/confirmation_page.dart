@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:chatkid_mobile/pages/confirmation/successful_confirm_page.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/login_logout/switch_page.dart';
 import 'package:chatkid_mobile/widgets/logo.dart';
 import 'package:chatkid_mobile/widgets/otp_textfield.dart';
@@ -147,7 +149,13 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                           const Size(double.infinity, 50),
                         ),
                       ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      createRoute(
+                        () => const SuccessfulConFirmPage(),
+                      ),
+                    );
+                  },
                   child: const Text('Tiếp tục'),
                 ),
                 const SizedBox(
