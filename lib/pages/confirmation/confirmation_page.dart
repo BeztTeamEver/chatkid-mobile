@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chatkid_mobile/pages/confirmation/fail_confirm_page.dart';
 import 'package:chatkid_mobile/pages/confirmation/successful_confirm_page.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -52,9 +53,14 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
     super.dispose();
   }
 
+  Future<void> _verify(Function callback) async {
+    //TODO: call api to verify here
+    callback();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final email = "ngia@gmail.com";
+    final email = "nghia@gmail.com";
 
     return Scaffold(
       body: SafeArea(
@@ -150,11 +156,11 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                         ),
                       ),
                   onPressed: () {
-                    Navigator.of(context).push(
-                      createRoute(
-                        () => const SuccessfulConFirmPage(),
-                      ),
-                    );
+                    _verify(() => Navigator.of(context).push(
+                          createRoute(
+                            () => const FailConfirmPage(),
+                          ),
+                        ));
                   },
                   child: const Text('Tiếp tục'),
                 ),

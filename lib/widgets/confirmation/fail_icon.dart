@@ -5,15 +5,14 @@ import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SuccessfullIcon extends StatefulWidget {
-  const SuccessfullIcon({super.key});
+class FailIcon extends StatefulWidget {
+  const FailIcon({super.key});
 
   @override
-  State<SuccessfullIcon> createState() => _SuccessfullIconState();
+  State<FailIcon> createState() => _FailIconState();
 }
 
-class _SuccessfullIconState extends State<SuccessfullIcon>
-    with TickerProviderStateMixin {
+class _FailIconState extends State<FailIcon> with TickerProviderStateMixin {
   @override
   void initState() {
     // TODO: implement initState
@@ -48,18 +47,18 @@ class _SuccessfullIconState extends State<SuccessfullIcon>
                 width: 120,
                 height: 120,
                 decoration: ShapeDecoration(
-                  color: Theme.of(context).primaryColor,
+                  color: red.shade500,
                   shape: OvalBorder(
                     side: BorderSide(
                       width: 9.32,
                       strokeAlign: BorderSide.strokeAlignCenter,
-                      color: primary.shade200,
+                      color: red.shade100,
                     ),
                   ),
                 ),
                 child: const Center(
                   child: SvgIcon(
-                    icon: "success",
+                    icon: "fail",
                     color: Colors.white,
                     size: 94,
                   ),
