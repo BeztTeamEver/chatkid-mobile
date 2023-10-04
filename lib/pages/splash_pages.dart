@@ -19,7 +19,7 @@ class _SplashPagesState extends State<SplashPages>
   void checkIsFirstScreen(BuildContext context) {
     SharedPreferences prefs = LocalStorage.instance.preferences;
 
-    bool isFirstScreen = prefs.getBool('isFirstScreen') ?? true;
+    bool isFirstScreen = prefs.getBool('isFirstScreen') ?? false;
     if (!isFirstScreen) {
       // await prefs.setBool('isFirstScreen', false);
       Navigator.of(context)

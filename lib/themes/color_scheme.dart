@@ -38,11 +38,11 @@ final MaterialColor neutral = MaterialColor(_neutralColorValue, <int, Color>{
 });
 
 final MaterialColor red = MaterialColor(_redColorValue, <int, Color>{
-  50: HexColor('E3F6FF'),
-  100: HexColor('CCEAFF'),
-  500: HexColor('0B2FE5'),
-  800: HexColor('031677'),
-  900: HexColor('020E4B'),
+  50: HexColor('FEF6F6'),
+  100: HexColor('FFDADA'),
+  500: HexColor('F03C3C'),
+  800: HexColor('B30000'),
+  900: HexColor('6A0101'),
 });
 
 final MaterialColor green = MaterialColor(_greenColorValue, <int, Color>{
