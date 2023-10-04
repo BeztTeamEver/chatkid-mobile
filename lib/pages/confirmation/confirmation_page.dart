@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:chatkid_mobile/pages/confirmation/fail_confirm_page.dart';
 import 'package:chatkid_mobile/pages/confirmation/successful_confirm_page.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/login_logout/switch_page.dart';
@@ -47,6 +48,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   @override
   void dispose() {
     // TODO: implement dispose
+
     if (_timer != null) {
       _timer!.cancel();
     }
@@ -55,7 +57,8 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   Future<void> _verify(Function callback) async {
     //TODO: call api to verify here
-    callback();
+    print("sign outttttttttttttttttttttttttttt");
+    await FirebaseService.instance.signOut().then((value) => callback());
   }
 
   @override
