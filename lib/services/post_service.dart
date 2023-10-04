@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 List<PostModal> parserPost(String responseBody) {
-  var list = json.decode(responseBody) as List<dynamic>;
+  var list = jsonDecode(responseBody) as List<dynamic>;
   List<PostModal> posts =
       list.map((modal) => PostModal.fromJson(modal)).toList();
   return posts;

@@ -42,32 +42,34 @@ class _BottomMenuState extends State<BottomMenu> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          type: BottomNavigationBarType.fixed,
-          elevation: 0,
-          currentIndex: widget.currentIndex,
-          onTap: (index) {
-            widget.onTap(index);
-          },
-          selectedItemColor: Colors.white,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          items: menu.map(
-            (item) {
-              return BottomNavigationBarItem(
-                label: "",
-                icon: SvgIcon(
-                  size: 24,
-                  icon: item.icon,
-                  color: item.route == menu[widget.currentIndex].route
-                      ? Theme.of(context).colorScheme.primary
-                      : neutral.shade300,
-                ),
-                backgroundColor: Colors.transparent,
-              );
+        child: Center(
+          child: BottomNavigationBar(
+            backgroundColor: Colors.white,
+            type: BottomNavigationBarType.fixed,
+            elevation: 0,
+            currentIndex: widget.currentIndex,
+            onTap: (index) {
+              widget.onTap(index);
             },
-          ).toList(),
+            selectedItemColor: Colors.white,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            items: menu.map(
+              (item) {
+                return BottomNavigationBarItem(
+                  label: "",
+                  icon: SvgIcon(
+                    size: 24,
+                    icon: item.icon,
+                    color: item.route == menu[widget.currentIndex].route
+                        ? Theme.of(context).colorScheme.primary
+                        : neutral.shade300,
+                  ),
+                  backgroundColor: Colors.transparent,
+                );
+              },
+            ).toList(),
+          ),
         ),
       ),
     );

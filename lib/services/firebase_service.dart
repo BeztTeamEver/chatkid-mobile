@@ -8,9 +8,14 @@ class FirebaseService {
   String? appId = "";
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
-  FirebaseService() {
+  static FirebaseService? _instance;
+  FirebaseService._interal() {
     FirebaseInAppMessaging.instance.setAutomaticDataCollectionEnabled(true);
+  }
+
+  static FirebaseService get instance {
+    _instance ??= FirebaseService._interal();
+    return _instance!;
   }
 
   @pragma('vm:entry-point')
@@ -25,11 +30,10 @@ class FirebaseService {
     // await _firebaseAuth.useAuthEmulator('localhost', 9099);
   }
 
-  Future<void> getToken() async {
+  Future<void> getFCMToken() async {
     fcmToken = await _firebaseMessaging.getToken();
-    print(fcmToken);
-    appId = fcmToken?.split(':').first ?? "";
 
+    appId = fcmToken?.split(':').first ?? "";
     FirebaseMessaging.onBackgroundMessage(
         (message) => _firebaseMessagingBackgroundHandler(message));
   }
@@ -48,7 +52,7 @@ class FirebaseService {
       idToken: googleAuth?.idToken,
     );
 
-    print(googleAuth?.accessToken);
+    print(credential.accessToken);
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
@@ -73,5 +77,6 @@ class FirebaseService {
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
   }
 }

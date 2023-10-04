@@ -43,11 +43,20 @@ class _InitPageState extends State<InitPage> {
   }
 
   @override
+  void setState(VoidCallback fn) {
+    // TODO: implement setState
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   void dispose() {
     // TODO: implement dispose
-    _timer!.cancel();
-    _pageController.dispose();
-    print("disposed");
+    if (mounted) {
+      _timer!.cancel();
+      _pageController.dispose();
+    }
     super.dispose();
   }
 
@@ -109,7 +118,6 @@ class _InitPageState extends State<InitPage> {
                     _timer?.cancel();
                     Navigator.pushNamed(
                         context, routesName['${AppRoutes.signUp}']!);
-                    dispose();
                   },
                   style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                         minimumSize: MaterialStateProperty.all<Size>(

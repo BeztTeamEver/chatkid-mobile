@@ -1,10 +1,12 @@
 import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_btn/loading_btn.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleButton extends StatelessWidget {
   final bool isLogin;
@@ -12,7 +14,7 @@ class GoogleButton extends StatelessWidget {
   const GoogleButton({super.key, required this.isLogin});
   _signInWithGoogle(
       Function callback, Function errorCallback, Function stopLoading) async {
-    await FirebaseService().signInWithGoogle().then((value) {
+    await FirebaseService.instance.signInWithGoogle().then((value) {
       callback();
     }).catchError(
       (err) async {

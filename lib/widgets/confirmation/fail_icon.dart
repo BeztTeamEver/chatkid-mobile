@@ -22,7 +22,6 @@ class _FailIconState extends State<FailIcon> with TickerProviderStateMixin {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    setState(() {});
   }
 
   @override

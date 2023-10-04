@@ -24,10 +24,16 @@ class _OtpTextFieldState extends State<OtpTextField> {
   @override
   void dispose() {
     // TODO: implement dispose
-
     _focusNode.unfocus();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _focusNode.requestFocus();
   }
 
   @override
@@ -72,8 +78,6 @@ class _OtpTextFieldState extends State<OtpTextField> {
 
     //Focus
 
-    _focusNode.requestFocus();
-
     return Pinput(
       focusNode: _focusNode,
       animationDuration: const Duration(milliseconds: 100),
@@ -83,7 +87,10 @@ class _OtpTextFieldState extends State<OtpTextField> {
       animationCurve: Curves.easeIn,
       focusedPinTheme: selectedPinTheme,
       length: widget.length,
-      onCompleted: (value) => widget.onCompleted!(value),
+      onCompleted: (value) {
+        _focusNode.unfocus();
+        widget.onCompleted!(value);
+      },
       validator: (value) => widget.validation!(value),
     );
   }
