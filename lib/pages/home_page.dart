@@ -1,5 +1,11 @@
 import 'package:chatkid_mobile/pages/chat_page.dart';
+import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,27 +23,21 @@ class _HomePageState extends ConsumerState<HomePage> {
       padding: const EdgeInsets.all(0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Center(
-            child: Text(
-              "Home page text s",
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(),
-            ),
+          Text(
+            "Home page text s",
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(),
           ),
           const SizedBox(height: 10),
-          Center(
-            child: Text(
-              "Home page text m",
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
-            ),
+          Text(
+            "Home page text m",
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
           ),
           const SizedBox(height: 10),
-          Center(
-            child: Text(
-              "Home page text l",
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(),
-            ),
+          Text(
+            "Home page text l",
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(),
           ),
           const SizedBox(height: 10),
           Center(
@@ -47,32 +47,39 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
           const SizedBox(height: 10),
-          Center(
-            child: Text(
-              "Home page head m",
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(),
-            ),
+          Text(
+            "Home page head m",
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(),
           ),
           const SizedBox(height: 10),
-          Center(
-            child: Text(
-              "Home page head s",
-              style: Theme.of(context).textTheme.titleSmall!.copyWith(),
-            ),
+          Text(
+            "Home page head s",
+            style: Theme.of(context).textTheme.titleSmall!.copyWith(),
           ),
           const SizedBox(height: 10),
-          Center(
-            child: ElevatedButton(
-              child: const Text("Go to chat route"),
-              onPressed: () {
-                Navigator.of(context).push(
-                  createRoute(
-                    () => const ChatPage(),
-                  ),
-                );
+          ElevatedButton(
+            child: const Text("Go to chat route"),
+            onPressed: () {
+              Navigator.of(context).push(
+                createRoute(
+                  () => const ChatPage(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+              onPressed: () async {
+                await FirebaseService.instance.signOut().then((value) {
+                  AuthService.signOut();
+                  Navigator.of(context).pushReplacement(
+                    createRoute(
+                      () => const LoginPage(),
+                    ),
+                  );
+                });
               },
-            ),
-          ),
+              child: const Text("Sign out"))
         ],
       ),
     );

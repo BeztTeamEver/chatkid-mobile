@@ -10,6 +10,7 @@ List<PostModal> parserPost(String responseBody) {
   return posts;
 }
 
+// FIX: This just use for example for testing list api
 class PostService {
   String endpoint = 'https://jsonplaceholder.typicode.com/posts';
 

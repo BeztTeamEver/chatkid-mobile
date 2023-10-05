@@ -1,4 +1,4 @@
-import 'package:chatkid_mobile/modals/auth.modal.dart';
+import 'package:chatkid_mobile/modals/auth_modal.dart';
 import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
@@ -12,17 +12,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleButton extends StatelessWidget {
   final bool isLogin;
+  final LocalStorage _localStorage = LocalStorage.instance;
 
-  const GoogleButton({super.key, required this.isLogin});
+  GoogleButton({super.key, required this.isLogin});
 
   Future<void> _signInFunction(String accessToken) async {
-    //TODO: implement sign in function
-    await AuthService.googleLogin(accessToken).then((value) async {
-      print(value);
-      SharedPreferences prefs = LocalStorage.instance.preferences;
-      prefs.setString('accessToken', value.token);
-      prefs.setString('refreshToken', value.refreshToken);
-    });
+    await AuthService.googleLogin(accessToken);
   }
 
   Future<void> _signUpFunction(String accessToken) async {
@@ -36,7 +31,6 @@ class GoogleButton extends StatelessWidget {
     await FirebaseService.instance.signInWithGoogle().then((value) async {
       String token = value.credential!.accessToken!;
       SharedPreferences prefs = LocalStorage.instance.preferences;
-
       if (isLogin) {
         prefs.setBool('isFirstScreen', true);
         await _signInFunction(token);

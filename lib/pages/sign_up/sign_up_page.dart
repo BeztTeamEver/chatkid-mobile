@@ -56,7 +56,7 @@ class _LoginPageState extends ConsumerState<SignUpPage> {
                   ],
                 ),
                 const SizedBox(height: 100),
-                const GoogleButton(
+                GoogleButton(
                   isLogin: false,
                 ),
                 const SizedBox(height: 20),
