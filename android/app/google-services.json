@@ -12,7 +12,20 @@
           "package_name": "com.example.chatkid_mobile"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "343387729372-pi947t2hl1e9rt8euhba8gs9g2qjlq3i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatkid_mobile",
+            "certificate_hash": "54cadd72bc6c9b41673a4e85c722a043e9c18a04"
+          }
+        },
+        {
+          "client_id": "343387729372-2q7mlkltgdbus2cqtfuk5i2l41o0mu09.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBPmoK9aQZkSuBScfKh8mEXSGagVt86qf4"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343387729372-2q7mlkltgdbus2cqtfuk5i2l41o0mu09.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "343387729372-nb73qt631kiielr499f7l68nah3adl5c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatkidMobile.RunnerTests"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +56,12 @@
           "package_name": "com.kidtalkie.notification"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "343387729372-2q7mlkltgdbus2cqtfuk5i2l41o0mu09.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBPmoK9aQZkSuBScfKh8mEXSGagVt86qf4"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343387729372-2q7mlkltgdbus2cqtfuk5i2l41o0mu09.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "343387729372-nb73qt631kiielr499f7l68nah3adl5c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatkidMobile.RunnerTests"
+              }
+            }
+          ]
         }
       }
     }

@@ -67,6 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '343387729372',
     projectId: 'kidtalkie-979b7',
     storageBucket: 'kidtalkie-979b7.appspot.com',
+    androidClientId: '343387729372-pi947t2hl1e9rt8euhba8gs9g2qjlq3i.apps.googleusercontent.com',
+    iosClientId: '343387729372-qr8bv2mmru4912solp6e43sbc898t2oc.apps.googleusercontent.com',
     iosBundleId: 'com.example.chatkidMobile',
   );
 
@@ -76,6 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '343387729372',
     projectId: 'kidtalkie-979b7',
     storageBucket: 'kidtalkie-979b7.appspot.com',
+    androidClientId: '343387729372-pi947t2hl1e9rt8euhba8gs9g2qjlq3i.apps.googleusercontent.com',
+    iosClientId: '343387729372-nb73qt631kiielr499f7l68nah3adl5c.apps.googleusercontent.com',
     iosBundleId: 'com.example.chatkidMobile.RunnerTests',
   );
 }
