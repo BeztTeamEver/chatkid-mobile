@@ -1,6 +1,8 @@
+import 'package:chatkid_mobile/modals/auth.modal.dart';
 import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
@@ -12,9 +14,35 @@ class GoogleButton extends StatelessWidget {
   final bool isLogin;
 
   const GoogleButton({super.key, required this.isLogin});
-  _signInWithGoogle(
+
+  Future<void> _signInFunction(String accessToken) async {
+    //TODO: implement sign in function
+    await AuthService.googleLogin(accessToken).then((value) async {
+      print(value);
+      SharedPreferences prefs = LocalStorage.instance.preferences;
+      prefs.setString('accessToken', value.token);
+      prefs.setString('refreshToken', value.refreshToken);
+    });
+  }
+
+  Future<void> _signUpFunction(String accessToken) async {
+    await AuthService.signUp(accessToken).then((value) {
+      // TODO: call otp here
+    });
+  }
+
+  Future<void> _signInWithGoogle(
       Function callback, Function errorCallback, Function stopLoading) async {
-    await FirebaseService.instance.signInWithGoogle().then((value) {
+    await FirebaseService.instance.signInWithGoogle().then((value) async {
+      String token = value.credential!.accessToken!;
+      SharedPreferences prefs = LocalStorage.instance.preferences;
+
+      if (isLogin) {
+        prefs.setBool('isFirstScreen', true);
+        await _signInFunction(token);
+      } else {
+        await _signUpFunction(token);
+      }
       callback();
     }).catchError(
       (err) async {
@@ -57,7 +85,7 @@ class GoogleButton extends StatelessWidget {
               // call your network api
               // await _signInWithGoogle(stopLoading);
               // await Future.delayed(const Duration(seconds: 5));
-              _signInWithGoogle(
+              await _signInWithGoogle(
                 () {
                   Navigator.push(context, createRoute(() => route));
                 },

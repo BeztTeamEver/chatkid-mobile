@@ -20,6 +20,12 @@ class _SplashPagesState extends State<SplashPages>
     SharedPreferences prefs = LocalStorage.instance.preferences;
 
     bool isFirstScreen = prefs.getBool('isFirstScreen') ?? false;
+    String? accessToken = prefs.getString('accessToken');
+    print("Access token: $accessToken");
+    if (accessToken != null) {
+      Navigator.pushNamed(context, routesName['${AppRoutes.home}']!);
+      return;
+    }
     if (!isFirstScreen) {
       // await prefs.setBool('isFirstScreen', false);
       Navigator.of(context)

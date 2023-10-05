@@ -54,7 +54,6 @@ class FirebaseService {
       idToken: googleAuth?.idToken,
     );
 
-    print(credential.accessToken);
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
