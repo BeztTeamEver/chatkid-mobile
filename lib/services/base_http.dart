@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/config.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,7 +29,7 @@ class BaseHttp {
     return {
       "Content-Type": "application/json",
       "Authorization": "Bearer",
-      "Accept": "application/json",
+      "Accept": "application/json, text/plain, */*",
       ...?headers,
     };
   }
@@ -37,7 +39,7 @@ class BaseHttp {
       Map<String, dynamic>? param,
       Map<String, String>? headers}) async {
     String url = _combineUrl(endpoint, param);
-    return await http.get(
+    return await http.Client().get(
       Uri.parse(url),
       headers: _getHeaders(headers),
     );
@@ -47,12 +49,19 @@ class BaseHttp {
       {required String endpoint,
       Map<String, dynamic>? param,
       Map<String, String>? headers,
-      Map<String, dynamic>? body}) async {
+      String? body}) async {
     String url = _combineUrl(endpoint, param);
-    return await http.post(
+    return await http
+        .post(
       Uri.parse(url),
       body: body,
       headers: _getHeaders(headers),
+    )
+        .timeout(
+      const Duration(seconds: 3),
+      onTimeout: () {
+        throw Exception('The connection has timed out, Please try again!');
+      },
     );
   }
 

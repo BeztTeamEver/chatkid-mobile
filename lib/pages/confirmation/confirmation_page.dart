@@ -57,7 +57,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   Future<void> _verify(Function callback) async {
     //TODO: call api to verify here
-    print("sign outttttttttttttttttttttttttttt");
     await FirebaseService.instance.signOut().then((value) => callback());
   }
 
