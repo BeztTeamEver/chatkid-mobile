@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseService {
@@ -28,16 +29,26 @@ class FirebaseService {
     print('Message: ${message.data}');
   }
 
-  Future<void> initAuth() async {
+  Future<void> init() async {
     // await _firebaseAuth.useAuthEmulator('localhost', 9099);
+    await _firebaseMessaging.requestPermission();
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      _firebaseMessaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
   }
 
-  Future<void> getFCMToken() async {
+  Future<String> getFCMToken() async {
     fcmToken = await _firebaseMessaging.getToken();
 
     appId = fcmToken?.split(':').first ?? "";
     FirebaseMessaging.onBackgroundMessage(
         (message) => _firebaseMessagingBackgroundHandler(message));
+
+    return fcmToken!;
   }
 
   Future<UserCredential> signInWithGoogle() async {

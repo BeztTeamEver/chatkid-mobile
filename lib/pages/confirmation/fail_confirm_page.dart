@@ -34,7 +34,7 @@ class FailConfirmPage extends StatelessWidget {
               const SizedBox(
                 height: 40,
               ),
-              const GoogleButton(isLogin: true),
+              GoogleButton(isLogin: true),
               const SizedBox(
                 height: 20,
               ),

@@ -20,11 +20,16 @@ class ConfirmationPage extends StatefulWidget {
 }
 
 class _ConfirmationPageState extends State<ConfirmationPage> {
-  int _remainingTime = 120;
-  Timer? _timer;
+  static const defaultReMainingTime = 120;
+  int _remainingTime = defaultReMainingTime;
+  bool _isResend = false;
+  Timer? _availableTokenTimeOut;
+  // TODO: remove this when api is ready
+  Timer? _resendTimeOut;
 
   void startCountdown() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _availableTokenTimeOut =
+        Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime <= 0) {
         timer.cancel();
         return;
@@ -39,9 +44,22 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
     });
   }
 
+  void resetTime() {
+    setState(() {
+      _remainingTime = defaultReMainingTime;
+    });
+  }
+
+  void setResend() {
+    setState(() {
+      _isResend = !_isResend;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+
     startCountdown();
   }
 
@@ -49,8 +67,8 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   void dispose() {
     // TODO: implement dispose
 
-    if (_timer != null) {
-      _timer!.cancel();
+    if (_availableTokenTimeOut != null) {
+      _availableTokenTimeOut!.cancel();
     }
     super.dispose();
   }
@@ -58,6 +76,16 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   Future<void> _verify(Function callback) async {
     //TODO: call api to verify here
     await FirebaseService.instance.signOut().then((value) => callback());
+  }
+
+  Future<void> _resend(Function callback) async {
+    if (!_isResend) setResend();
+    //TODO: call api to resend here
+    Future.delayed(const Duration(seconds: 2), () {
+      setResend();
+      resetTime();
+      callback();
+    });
   }
 
   @override
@@ -139,9 +167,16 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                           ),
                           TextSpan(
                             text: 'Gửi lại',
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                _resend(() {});
+                              },
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor),
+                              fontWeight: FontWeight.bold,
+                              color: !_isResend
+                                  ? Theme.of(context).primaryColor
+                                  : neutral.shade300,
+                            ),
                           ),
                         ],
                       ),

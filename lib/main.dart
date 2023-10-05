@@ -17,7 +17,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await FirebaseService.instance.getFCMToken();
+  final firebaseService = FirebaseService.instance;
+  await firebaseService.init();
+
   // share preferrence setup for one time page
   await LocalStorage.getInstance();
   // load env file

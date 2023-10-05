@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/config.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:http/http.dart' as http;
 
 class BaseHttp {
   static BaseHttp? _instance;
+  LocalStorage _localStorage = LocalStorage.instance;
 
   BaseHttp._internal();
 
@@ -30,6 +32,7 @@ class BaseHttp {
       "Content-Type": "application/json",
       "Authorization": "Bearer",
       "Accept": "application/json, text/plain, */*",
+      "Authorization": "Bearer ${_localStorage.getToken()}",
       ...?headers,
     };
   }
@@ -39,9 +42,16 @@ class BaseHttp {
       Map<String, dynamic>? param,
       Map<String, String>? headers}) async {
     String url = _combineUrl(endpoint, param);
-    return await http.Client().get(
+    return await http.Client()
+        .get(
       Uri.parse(url),
       headers: _getHeaders(headers),
+    )
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        throw Exception('Connection Timeout!');
+      },
     );
   }
 
@@ -57,10 +67,13 @@ class BaseHttp {
       body: body,
       headers: _getHeaders(headers),
     )
-        .timeout(
-      const Duration(seconds: 3),
+        .catchError((err) {
+      print(err.toString());
+      throw Exception(err);
+    }).timeout(
+      const Duration(seconds: 10),
       onTimeout: () {
-        throw Exception('The connection has timed out, Please try again!');
+        throw Exception('Connection Timeout!');
       },
     );
   }
@@ -69,23 +82,39 @@ class BaseHttp {
       {required String endpoint,
       Map<String, dynamic>? param,
       Map<String, String>? headers,
-      Map<String, dynamic>? body}) async {
+      String? body}) async {
     String url = _combineUrl(endpoint, param);
-    return await http.put(
+    return await http
+        .put(
       Uri.parse(url),
       body: body,
       headers: _getHeaders(headers),
+    )
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        throw Exception('Connection Timeout!');
+      },
     );
   }
 
   Future<http.Response> delete(
       {required String endpoint,
       Map<String, dynamic>? param,
-      Map<String, String>? headers}) async {
+      Map<String, String>? headers,
+      String? body}) async {
     String url = _combineUrl(endpoint, param);
-    return await http.delete(
+    return await http
+        .delete(
       Uri.parse(url),
       headers: _getHeaders(headers),
+      body: body,
+    )
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        throw Exception('Connection Timeout!');
+      },
     );
   }
 }
