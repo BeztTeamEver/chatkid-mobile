@@ -8,6 +8,7 @@ import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_btn/loading_btn.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleButton extends StatelessWidget {
@@ -20,8 +21,7 @@ class GoogleButton extends StatelessWidget {
     try {
       await AuthService.googleLogin(accessToken);
     } catch (e) {
-      print(e);
-      throw e;
+      rethrow;
     }
   }
 
@@ -29,8 +29,7 @@ class GoogleButton extends StatelessWidget {
     try {
       await AuthService.signUp(accessToken);
     } catch (e) {
-      print(e);
-      throw e;
+      rethrow;
     }
   }
 
@@ -38,24 +37,26 @@ class GoogleButton extends StatelessWidget {
       Function callback, Function errorCallback, Function stopLoading) async {
     LocalStorage prefs = LocalStorage.instance;
 
-    await FirebaseService.instance.signInWithGoogle().then((value) async {
-      String token = value.credential!.accessToken!;
-      if (isLogin) {
-        prefs.preferences.setBool('isFirstScreen', true);
-        await _signInFunction(token);
-      } else {
-        await _signUpFunction(token);
-      }
-      callback();
-    }).catchError(
-      (err) async {
-        print(err);
+    try {
+      await FirebaseService.instance.signInWithGoogle().then((value) async {
+        String token = value.credential!.accessToken!;
+        if (isLogin) {
+          prefs.preferences.setBool('isFirstScreen', true);
+          await _signInFunction(token);
+        } else {
+          await _signUpFunction(token);
+        }
+        callback();
+      }).catchError((err) {
         prefs.removeToken();
         errorCallback(err);
-      },
-    ).whenComplete(
-      () => stopLoading(),
-    );
+      }).whenComplete(
+        () => stopLoading(),
+      );
+    } catch (err, stack) {
+      prefs.removeToken();
+      errorCallback(err, stack);
+    }
   }
 
   @override
@@ -93,10 +94,11 @@ class GoogleButton extends StatelessWidget {
                 () {
                   Navigator.push(context, createRoute(() => route));
                 },
-                (error) {
+                (error, stack) {
+                  Logger().d(error.toString(), stackTrace: stack);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(error),
+                      content: Text(error.toString().split(':')[1]),
                     ),
                   );
                 },

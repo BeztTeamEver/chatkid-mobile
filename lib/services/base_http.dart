@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 class BaseHttp {
   static BaseHttp? _instance;
@@ -71,8 +72,9 @@ class BaseHttp {
       body: body,
       headers: _getHeaders(headers),
     )
-        .catchError((err) {
-      print(err.toString());
+        .catchError((err, s) {
+      Logger().e(err);
+      Logger().e(s);
       throw Exception(err);
     }).timeout(
       const Duration(seconds: 10),
