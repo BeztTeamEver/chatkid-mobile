@@ -17,22 +17,31 @@ class GoogleButton extends StatelessWidget {
   GoogleButton({super.key, required this.isLogin});
 
   Future<void> _signInFunction(String accessToken) async {
-    await AuthService.googleLogin(accessToken);
+    try {
+      await AuthService.googleLogin(accessToken);
+    } catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   Future<void> _signUpFunction(String accessToken) async {
-    await AuthService.signUp(accessToken).then((value) {
-      // TODO: call otp here
-    });
+    try {
+      await AuthService.signUp(accessToken);
+    } catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   Future<void> _signInWithGoogle(
       Function callback, Function errorCallback, Function stopLoading) async {
+    LocalStorage prefs = LocalStorage.instance;
+
     await FirebaseService.instance.signInWithGoogle().then((value) async {
       String token = value.credential!.accessToken!;
-      SharedPreferences prefs = LocalStorage.instance.preferences;
       if (isLogin) {
-        prefs.setBool('isFirstScreen', true);
+        prefs.preferences.setBool('isFirstScreen', true);
         await _signInFunction(token);
       } else {
         await _signUpFunction(token);
@@ -41,7 +50,8 @@ class GoogleButton extends StatelessWidget {
     }).catchError(
       (err) async {
         print(err);
-        errorCallback();
+        prefs.removeToken();
+        errorCallback(err);
       },
     ).whenComplete(
       () => stopLoading(),
@@ -83,10 +93,10 @@ class GoogleButton extends StatelessWidget {
                 () {
                   Navigator.push(context, createRoute(() => route));
                 },
-                () {
+                (error) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Đăng nhập thất bại'),
+                    SnackBar(
+                      content: Text(error),
                     ),
                   );
                 },

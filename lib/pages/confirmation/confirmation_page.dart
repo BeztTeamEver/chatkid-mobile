@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:chatkid_mobile/pages/confirmation/fail_confirm_page.dart';
 import 'package:chatkid_mobile/pages/confirmation/successful_confirm_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/login_logout/switch_page.dart';
@@ -11,6 +12,7 @@ import 'package:chatkid_mobile/widgets/otp_textfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:loading_btn/loading_btn.dart';
 
 class ConfirmationPage extends StatefulWidget {
   const ConfirmationPage({super.key});
@@ -24,8 +26,10 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   int _remainingTime = defaultReMainingTime;
   bool _isResend = false;
   Timer? _availableTokenTimeOut;
+  int _triedTime = 3;
   // TODO: remove this when api is ready
   Timer? _resendTimeOut;
+  String _otp = "";
 
   void startCountdown() {
     _availableTokenTimeOut =
@@ -41,6 +45,12 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   void countdownToken() {
     setState(() {
       _remainingTime--;
+    });
+  }
+
+  void decreaseTriedTime() {
+    setState(() {
+      _triedTime--;
     });
   }
 
@@ -73,9 +83,28 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
     super.dispose();
   }
 
-  Future<void> _verify(Function callback) async {
+  Future<void> _verify(Function callback, Function stopLoading) async {
     //TODO: call api to verify here
-    await FirebaseService.instance.signOut().then((value) => callback());
+    await AuthService.verifyOtp(_otp).then((value) {
+      callback();
+    }).catchError((err) {
+      print(err);
+      if (_triedTime == 0) {
+        Navigator.of(context).push(
+          createRoute(
+            () => const FailConfirmPage(),
+          ),
+        );
+      } else {
+        decreaseTriedTime();
+      }
+      SnackBar snackBar = const SnackBar(
+        content: Text('Mã OTP không đúng'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }).whenComplete(() {
+      stopLoading();
+    });
   }
 
   Future<void> _resend(Function callback) async {
@@ -124,7 +153,14 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 const SizedBox(
                   height: 100,
                 ),
-                const OtpTextField(),
+                OtpTextField(
+                  length: 6,
+                  onCompleted: (value) {
+                    setState(() {
+                      _otp = value;
+                    });
+                  },
+                ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -186,18 +222,28 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                     ),
                   ],
                 ),
-                ElevatedButton(
-                  style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                        minimumSize: MaterialStateProperty.all(
-                          const Size(double.infinity, 50),
+                LoadingBtn(
+                  height: 60,
+                  width: MediaQuery.of(context).size.width - 40,
+                  animate: true,
+                  borderRadius: 40,
+                  loader: Container(
+                    padding: const EdgeInsets.all(10),
+                    width: 40,
+                    height: 40,
+                    child: const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                  onTap: (startLoading, stopLoading, btnState) async {
+                    startLoading();
+                    await _verify(() {
+                      Navigator.of(context).push(
+                        createRoute(
+                          () => const SuccessfulConFirmPage(),
                         ),
-                      ),
-                  onPressed: () {
-                    _verify(() => Navigator.of(context).push(
-                          createRoute(
-                            () => const FailConfirmPage(),
-                          ),
-                        ));
+                      );
+                    }, stopLoading);
                   },
                   child: const Text('Tiếp tục'),
                 ),

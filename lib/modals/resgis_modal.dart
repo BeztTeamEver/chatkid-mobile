@@ -1,11 +1,9 @@
 class RegisModal {
-  bool succeeded;
-  String? otp;
+  String verifyToken;
 
-  RegisModal({required this.succeeded, required this.otp});
+  RegisModal({required this.verifyToken});
 
   factory RegisModal.fromJson(Map<String, dynamic> json) => RegisModal(
-        succeeded: json['succeeded'],
-        otp: json['otp'],
+        verifyToken: json['verifyToken'],
       );
 }

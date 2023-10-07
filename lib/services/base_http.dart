@@ -28,11 +28,15 @@ class BaseHttp {
   }
 
   Map<String, String> _getHeaders(Map<String, String>? headers) {
+    String token =
+        _localStorage.getToken() != null ? _localStorage.getToken()!.token : "";
+    if (token.isEmpty) {
+      token = _localStorage.preferences.getString("accessToken") ?? "";
+    }
     return {
       "Content-Type": "application/json",
-      "Authorization": "Bearer",
       "Accept": "application/json, text/plain, */*",
-      "Authorization": "Bearer ${_localStorage.getToken()}",
+      "authorization": "$token",
       ...?headers,
     };
   }
