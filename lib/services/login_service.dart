@@ -4,6 +4,7 @@ import 'package:chatkid_mobile/modals/auth_modal.dart';
 import 'package:chatkid_mobile/modals/resgis_modal.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:logger/logger.dart';
 
 class AuthService {
   static const _googleEndPoint = "/api/auth/google-auth";

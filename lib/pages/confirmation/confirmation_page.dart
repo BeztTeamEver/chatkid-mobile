@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:chatkid_mobile/pages/confirmation/fail_confirm_page.dart';
 import 'package:chatkid_mobile/pages/confirmation/successful_confirm_page.dart';
-import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -11,11 +10,13 @@ import 'package:chatkid_mobile/widgets/logo.dart';
 import 'package:chatkid_mobile/widgets/otp_textfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:loading_btn/loading_btn.dart';
+import 'package:logger/logger.dart';
 
 class ConfirmationPage extends StatefulWidget {
-  const ConfirmationPage({super.key});
+  final String email;
+
+  const ConfirmationPage({super.key, required this.email});
 
   @override
   State<ConfirmationPage> createState() => _ConfirmationPageState();
@@ -27,7 +28,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   bool _isResend = false;
   Timer? _availableTokenTimeOut;
   int _triedTime = 3;
-  // TODO: remove this when api is ready
   Timer? _resendTimeOut;
   String _otp = "";
 
@@ -75,8 +75,12 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-
+    if (_availableTokenTimeOut != null) {
+      _availableTokenTimeOut!.cancel();
+    }
+    if (_resendTimeOut != null) {
+      _resendTimeOut!.cancel();
+    }
     if (_availableTokenTimeOut != null) {
       _availableTokenTimeOut!.cancel();
     }
@@ -84,22 +88,20 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   }
 
   Future<void> _verify(Function callback, Function stopLoading) async {
-    //TODO: call api to verify here
     await AuthService.verifyOtp(_otp).then((value) {
       callback();
-    }).catchError((err) {
-      print(err);
+    }).catchError((err, stack) {
+      Logger().e(err.toString(), stackTrace: stack);
+
       if (_triedTime == 0) {
         Navigator.of(context).push(
           createRoute(
             () => const FailConfirmPage(),
           ),
         );
-      } else {
-        decreaseTriedTime();
       }
-      SnackBar snackBar = const SnackBar(
-        content: Text('Mã OTP không đúng'),
+      SnackBar snackBar = SnackBar(
+        content: Text(err.toString().split(":")[1]),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }).whenComplete(() {
@@ -109,7 +111,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   Future<void> _resend(Function callback) async {
     if (!_isResend) setResend();
-    //TODO: call api to resend here
     Future.delayed(const Duration(seconds: 2), () {
       setResend();
       resetTime();
@@ -119,7 +120,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final email = "nghia@gmail.com";
+    // TODO: remove this when not use
 
     return Scaffold(
       body: SafeArea(
@@ -140,8 +141,9 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(),
                   TextSpan(
                     children: <TextSpan>[
+                      // TODO: change email
                       const TextSpan(text: 'Mã xác nhận đã được gửi đến '),
-                      TextSpan(text: email),
+                      TextSpan(text: widget.email),
                     ],
                   ),
                 ),
@@ -238,7 +240,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                   onTap: (startLoading, stopLoading, btnState) async {
                     startLoading();
                     await _verify(() {
-                      Navigator.of(context).push(
+                      Navigator.of(context).pushReplacement(
                         createRoute(
                           () => const SuccessfulConFirmPage(),
                         ),

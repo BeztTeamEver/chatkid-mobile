@@ -37,7 +37,7 @@ class BaseHttp {
     return {
       "Content-Type": "application/json",
       "Accept": "application/json, text/plain, */*",
-      "authorization": "$token",
+      "Authorization": "Bearer $token",
       ...?headers,
     };
   }
@@ -47,10 +47,11 @@ class BaseHttp {
       Map<String, dynamic>? param,
       Map<String, String>? headers}) async {
     String url = _combineUrl(endpoint, param);
+    final combineHeaders = _getHeaders(headers);
     return await http.Client()
         .get(
       Uri.parse(url),
-      headers: _getHeaders(headers),
+      headers: combineHeaders,
     )
         .timeout(
       const Duration(seconds: 10),
@@ -73,8 +74,7 @@ class BaseHttp {
       headers: _getHeaders(headers),
     )
         .catchError((err, s) {
-      Logger().e(err);
-      Logger().e(s);
+      Logger().e(err, stackTrace: s);
       throw Exception(err);
     }).timeout(
       const Duration(seconds: 10),

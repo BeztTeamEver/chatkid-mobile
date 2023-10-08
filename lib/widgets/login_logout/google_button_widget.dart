@@ -14,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GoogleButton extends StatelessWidget {
   final bool isLogin;
   final LocalStorage _localStorage = LocalStorage.instance;
+  late String _email = "";
+  late Widget _route = const MainPage();
 
   GoogleButton({super.key, required this.isLogin});
 
@@ -40,16 +42,18 @@ class GoogleButton extends StatelessWidget {
     try {
       await FirebaseService.instance.signInWithGoogle().then((value) async {
         String token = value.credential!.accessToken!;
+        _email = value.user!.email!;
         if (isLogin) {
           prefs.preferences.setBool('isFirstScreen', true);
           await _signInFunction(token);
         } else {
+          _route = ConfirmationPage(email: _email);
           await _signUpFunction(token);
         }
         callback();
       }).catchError((err) {
         prefs.removeToken();
-        errorCallback(err);
+        errorCallback(err, StackTrace.current);
       }).whenComplete(
         () => stopLoading(),
       );
@@ -64,9 +68,7 @@ class GoogleButton extends StatelessWidget {
     final label = isLogin
         ? 'Đăng nhập bằng tài khoản google'
         : 'Đăng ký bằng tài khoản Google';
-    final route = isLogin
-        ? const MainPage()
-        : const ConfirmationPage(); // Todo: for testing only
+
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -87,18 +89,15 @@ class GoogleButton extends StatelessWidget {
           onTap: (startLoading, stopLoading, btnState) async {
             if (btnState == ButtonState.idle) {
               startLoading();
-              // call your network api
-              // await _signInWithGoogle(stopLoading);
-              // await Future.delayed(const Duration(seconds: 5));
               await _signInWithGoogle(
                 () {
-                  Navigator.push(context, createRoute(() => route));
+                  Navigator.push(context, createRoute(() => _route));
                 },
                 (error, stack) {
                   Logger().d(error.toString(), stackTrace: stack);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(error.toString().split(':')[1]),
+                    const SnackBar(
+                      content: Text("Đăng nhập thất bại, vui lòng thử lại!"),
                     ),
                   );
                 },
