@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:flutter/material.dart';
 
 class StartPage extends StatefulWidget {
@@ -24,6 +25,7 @@ class _StartPageState extends State<StartPage> {
             const SizedBox(
               height: 20,
             ),
+            SelectButton()
           ],
         ),
       ),
