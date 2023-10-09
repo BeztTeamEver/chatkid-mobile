@@ -25,7 +25,9 @@ class _StartPageState extends State<StartPage> {
             const SizedBox(
               height: 20,
             ),
-            SelectButton()
+            SelectButton(
+              icon: 'animal/bear',
+            )
           ],
         ),
       ),
