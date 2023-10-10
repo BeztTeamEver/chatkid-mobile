@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-class AuthModal {
+class AuthModel {
   String token;
   String refreshToken;
-  AuthModal({required this.token, required this.refreshToken});
+  AuthModel({required this.token, required this.refreshToken});
 
-  factory AuthModal.fromJson(Map<String, dynamic> json) => AuthModal(
+  factory AuthModel.fromJson(Map<String, dynamic> json) => AuthModel(
         refreshToken: json['refreshToken'],
         token: json['token'],
       );

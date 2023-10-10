@@ -1,4 +1,4 @@
-import 'package:chatkid_mobile/modals/auth_modal.dart';
+import 'package:chatkid_mobile/models/auth_model.dart';
 import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
@@ -42,6 +42,7 @@ class GoogleButton extends StatelessWidget {
     try {
       await FirebaseService.instance.signInWithGoogle().then((value) async {
         String token = value.credential!.accessToken!;
+        Logger().d(token);
         _email = value.user!.email!;
         if (isLogin) {
           prefs.preferences.setBool('isFirstScreen', true);

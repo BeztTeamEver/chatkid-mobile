@@ -1,4 +1,4 @@
-import 'package:chatkid_mobile/modals/auth_modal.dart';
+import 'package:chatkid_mobile/models/auth_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
@@ -31,12 +31,12 @@ class LocalStorage {
     await _instance!.preferences.remove('refreshToken');
   }
 
-  AuthModal? getToken() {
+  AuthModel? getToken() {
     String? accessToken = _instance!.preferences.getString('accessToken');
     String? refreshToken = _instance!.preferences.getString('refreshToken');
     if (accessToken == null || refreshToken == null) {
       return null;
     }
-    return AuthModal(token: accessToken!, refreshToken: refreshToken!);
+    return AuthModel(token: accessToken!, refreshToken: refreshToken!);
   }
 }

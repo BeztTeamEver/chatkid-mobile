@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:chatkid_mobile/modals/auth_modal.dart';
-import 'package:chatkid_mobile/modals/resgis_modal.dart';
+import 'package:chatkid_mobile/models/auth_model.dart';
+import 'package:chatkid_mobile/models/resgis_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:logger/logger.dart';
@@ -10,10 +10,10 @@ class AuthService {
   static const _googleEndPoint = "/api/auth/google-auth";
   static const _regisEndPoint = "/api/auth/register";
   static const _verifyOtpEndPoint = "/api/auth/otp-verify";
-
+  static const _resendOtp = "/api/auth/otp";
   static final _localStorage = LocalStorage.instance;
 
-  static Future<AuthModal> googleLogin(String token) async {
+  static Future<AuthModel> googleLogin(String token) async {
     RequestAuthModal requestAuthModal = RequestAuthModal(accessToken: token);
     final response = await BaseHttp.instance.post(
       endpoint: _googleEndPoint,
@@ -21,7 +21,7 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      final authTokens = AuthModal.fromJson(jsonDecode(response.body));
+      final authTokens = AuthModel.fromJson(jsonDecode(response.body));
       _saveToken(authTokens);
       return authTokens;
     } else {
@@ -37,7 +37,7 @@ class AuthService {
     }
   }
 
-  static Future<RegisModal> signUp(String token) async {
+  static Future<RegisModel> signUp(String token) async {
     final RequestAuthModal requestAuthModal =
         RequestAuthModal(accessToken: token);
 
@@ -47,10 +47,10 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      final regisToken = RegisModal.fromJson(jsonDecode(response.body));
+      final regisToken = RegisModel.fromJson(jsonDecode(response.body));
       _localStorage.preferences
           .setString('accessToken', regisToken.verifyToken);
-      return RegisModal.fromJson(jsonDecode(response.body));
+      return RegisModel.fromJson(jsonDecode(response.body));
     } else {
       switch (response.statusCode) {
         case 401:
@@ -76,7 +76,7 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      final authTokens = AuthModal.fromJson(jsonDecode(response.body));
+      final authTokens = AuthModel.fromJson(jsonDecode(response.body));
       _saveToken(authTokens);
       return true;
     } else {
@@ -92,7 +92,20 @@ class AuthService {
     }
   }
 
-  static void _saveToken(AuthModal authTokens) async {
+  static Future<bool> resendOtp() async {
+    final response = await BaseHttp.instance.get(
+      endpoint: _resendOtp,
+    );
+    if (response.statusCode == 200) {
+      return true;
+    }
+    switch (response.statusCode) {
+      default:
+        throw Exception('Đã xảy ra lỗi, không thể gửi lại OTP');
+    }
+  }
+
+  static void _saveToken(AuthModel authTokens) async {
     await _localStorage.saveToken(
       authTokens.token,
       authTokens.refreshToken,

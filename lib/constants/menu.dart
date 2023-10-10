@@ -1,5 +1,5 @@
 import 'package:chatkid_mobile/constants/routes.dart';
-import 'package:chatkid_mobile/modals/menu_modal.dart';
+import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/pages/activation_page.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 

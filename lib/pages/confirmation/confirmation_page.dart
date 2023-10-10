@@ -4,6 +4,7 @@ import 'package:chatkid_mobile/pages/confirmation/fail_confirm_page.dart';
 import 'package:chatkid_mobile/pages/confirmation/successful_confirm_page.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/login_logout/switch_page.dart';
 import 'package:chatkid_mobile/widgets/logo.dart';
@@ -28,7 +29,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   bool _isResend = false;
   Timer? _availableTokenTimeOut;
   int _triedTime = 3;
-  Timer? _resendTimeOut;
   String _otp = "";
 
   void startCountdown() {
@@ -78,9 +78,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
     if (_availableTokenTimeOut != null) {
       _availableTokenTimeOut!.cancel();
     }
-    if (_resendTimeOut != null) {
-      _resendTimeOut!.cancel();
-    }
     if (_availableTokenTimeOut != null) {
       _availableTokenTimeOut!.cancel();
     }
@@ -91,8 +88,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
     await AuthService.verifyOtp(_otp).then((value) {
       callback();
     }).catchError((err, stack) {
-      Logger().e(err.toString(), stackTrace: stack);
-
       if (_triedTime == 0) {
         Navigator.of(context).push(
           createRoute(
@@ -100,21 +95,19 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
           ),
         );
       }
-      SnackBar snackBar = SnackBar(
-        content: Text(err.toString().split(":")[1]),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      ErrorSnackbar.showError(err: err, stack: stack, context: context);
     }).whenComplete(() {
       stopLoading();
     });
   }
 
-  Future<void> _resend(Function callback) async {
+  Future<void> _resend() async {
     if (!_isResend) setResend();
-    Future.delayed(const Duration(seconds: 2), () {
-      setResend();
+    await AuthService.resendOtp().then((value) {
+      if (_isResend) setResend();
       resetTime();
-      callback();
+    }).catchError((err, stack) {
+      ErrorSnackbar.showError(err: err, stack: stack, context: context);
     });
   }
 
@@ -133,6 +126,14 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 const Center(
                   child: LogoWidget(),
                 ),
+                _triedTime != 3
+                    ? Text(
+                        'Bạn còn ${_triedTime} lần thử',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: red.shade500,
+                            ),
+                      )
+                    : Container(),
                 const SizedBox(
                   height: 20,
                 ),
@@ -141,7 +142,6 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(),
                   TextSpan(
                     children: <TextSpan>[
-                      // TODO: change email
                       const TextSpan(text: 'Mã xác nhận đã được gửi đến '),
                       TextSpan(text: widget.email),
                     ],
@@ -207,7 +207,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                             text: 'Gửi lại',
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                _resend(() {});
+                                _resend();
                               },
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
