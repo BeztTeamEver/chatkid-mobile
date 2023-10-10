@@ -85,9 +85,16 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   }
 
   Future<void> _verify(Function callback, Function stopLoading) async {
+    if (_otp.isEmpty) {
+      stopLoading();
+      ErrorSnackbar.showError(
+          err: ":Mã OTP không được trống", context: context);
+      return;
+    }
     await AuthService.verifyOtp(_otp).then((value) {
       callback();
     }).catchError((err, stack) {
+      decreaseTriedTime();
       if (_triedTime == 0) {
         Navigator.of(context).push(
           createRoute(
@@ -126,14 +133,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 const Center(
                   child: LogoWidget(),
                 ),
-                _triedTime != 3
-                    ? Text(
-                        'Bạn còn ${_triedTime} lần thử',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: red.shade500,
-                            ),
-                      )
-                    : Container(),
+
                 const SizedBox(
                   height: 20,
                 ),
@@ -166,6 +166,14 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 const SizedBox(
                   height: 20,
                 ),
+                _triedTime != 3
+                    ? Text(
+                        'Bạn còn ${_triedTime} lần thử',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: red.shade500,
+                            ),
+                      )
+                    : Container(),
                 const SizedBox(
                   height: 10,
                 ),
@@ -220,7 +228,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                       ),
                     ),
                     const SizedBox(
-                      height: 165,
+                      height: 145,
                     ),
                   ],
                 ),
