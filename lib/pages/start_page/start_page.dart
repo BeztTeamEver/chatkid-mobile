@@ -1,18 +1,26 @@
 import 'package:chatkid_mobile/constants/account_list.dart';
+import 'package:chatkid_mobile/pages/start_page/role_page.dart';
+import 'package:chatkid_mobile/services/family_service.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
-class StartPage extends StatefulWidget {
+class StartPage extends ConsumerStatefulWidget {
   const StartPage({super.key});
 
   @override
-  State<StartPage> createState() => _StartPageState();
+  ConsumerState<StartPage> createState() => _StartPageState();
 }
 
-class _StartPageState extends State<StartPage> {
+class _StartPageState extends ConsumerState<StartPage> {
   @override
   Widget build(BuildContext context) {
+    // GET FAMILY ACCOUNTS
+    // final familyAccounts = ref.watch(familyServiceProvider).getFamilyAccounts();
+    // Logger().d(familyAccounts);
+
     return Scaffold(
       body: Center(
         child: Padding(
@@ -29,6 +37,7 @@ class _StartPageState extends State<StartPage> {
               ListView(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+                //TODO: render by using family accounts
                 children: iconAnimalList
                     .map(
                       (icon) => Padding(
@@ -37,8 +46,7 @@ class _StartPageState extends State<StartPage> {
                           icon: icon,
                           onPressed: () {
                             // TODO: IMPLEMENT NEXT PAGE
-                            Logger()
-                                .i("Tai khoan ${iconAnimalList.indexOf(icon)}");
+                            // Navigator.push(context, createRoute(() => const RolePage()))
                           },
                           label: "Tai khoan ${iconAnimalList.indexOf(icon)}",
                         ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chatkid_mobile/pages/start_page/family_name_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/confirmation/successful_icon.dart';
@@ -13,7 +14,7 @@ class SuccessfulConFirmPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(
-        createRoute(() => const StartPage()),
+        createRoute(() => FamilyNamePage()),
       );
     });
     return Scaffold(

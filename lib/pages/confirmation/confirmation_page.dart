@@ -228,7 +228,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                       ),
                     ),
                     const SizedBox(
-                      height: 145,
+                      height: 125,
                     ),
                   ],
                 ),

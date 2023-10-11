@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/auth_model.dart';
 import 'package:chatkid_mobile/models/resgis_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
@@ -7,16 +8,12 @@ import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:logger/logger.dart';
 
 class AuthService {
-  static const _googleEndPoint = "/api/auth/google-auth";
-  static const _regisEndPoint = "/api/auth/register";
-  static const _verifyOtpEndPoint = "/api/auth/otp-verify";
-  static const _resendOtp = "/api/auth/otp";
   static final _localStorage = LocalStorage.instance;
 
   static Future<AuthModel> googleLogin(String token) async {
     RequestAuthModal requestAuthModal = RequestAuthModal(accessToken: token);
     final response = await BaseHttp.instance.post(
-      endpoint: _googleEndPoint,
+      endpoint: Endpoint.googleEndPoint,
       body: requestAuthModal.toJson(),
     );
 
@@ -42,7 +39,7 @@ class AuthService {
         RequestAuthModal(accessToken: token);
 
     final response = await BaseHttp.instance.post(
-      endpoint: _regisEndPoint,
+      endpoint: Endpoint.regisEndPoint,
       body: requestAuthModal.toJson(),
     );
 
@@ -72,7 +69,7 @@ class AuthService {
 
   static Future<bool> verifyOtp(String otp) async {
     final response = await BaseHttp.instance.get(
-      endpoint: '$_verifyOtpEndPoint/$otp',
+      endpoint: '${Endpoint.verifyOtpEndPoint}/$otp',
     );
 
     if (response.statusCode == 200) {
@@ -94,7 +91,7 @@ class AuthService {
 
   static Future<bool> resendOtp() async {
     final response = await BaseHttp.instance.get(
-      endpoint: _resendOtp,
+      endpoint: Endpoint.resendOtp,
     );
     if (response.statusCode == 200) {
       return true;
