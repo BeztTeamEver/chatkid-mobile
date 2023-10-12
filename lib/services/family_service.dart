@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -15,7 +16,7 @@ class FamilyService {
       endpoint: Endpoint.familiesEndPoint,
       body: body.toJson(),
     );
-
+    Logger().d(response.body);
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       return ResponseModel.fromJson(jsonDecode(response.body));
     }
@@ -27,6 +28,32 @@ class FamilyService {
             'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
       default:
         throw Exception('Lỗi tạo gia đình, vui lòng thử lại sau!');
+    }
+  }
+
+  Future<List<UserModel>> getFamilyAccounts(
+    FamilyRequestModel? familyRequestModel,
+  ) async {
+    final response = await BaseHttp.instance.get(
+      endpoint: Endpoint.familyUsersEndPoint,
+      param: {
+        'id': familyRequestModel?.id,
+        'email': familyRequestModel?.email,
+      },
+    );
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      final data = jsonDecode(response.body);
+      final family = FamilyModel.fromJson(data);
+      return family.users;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      default:
+        throw Exception('Không thể lấy thông tin gia đình, vui lòng thử lại!');
     }
   }
 }

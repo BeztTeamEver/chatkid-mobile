@@ -2,6 +2,7 @@ import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:flutter/gestures.dart';
@@ -32,19 +33,11 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
   Future<void> onSubmit(callback) async {
     try {
       if (_formKey.currentState!.saveAndValidate()) {
-        AsyncValue<List<UserModel>>? users =
-            ref.watch(createFamilyProvider(_controller.text));
-        users!.when(
-            data: (data) {
-              callback(data);
-            },
-            loading: () {},
-            error: (err, stack) {
-              Logger().e(err);
-            });
+        await createFamilyProvider(_controller.text);
+        callback();
       }
-    } catch (e) {
-      throw Exception(e);
+    } catch (err) {
+      Logger().e(err);
     }
   }
 
@@ -100,10 +93,8 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                     child: ElevatedButton(
                       onPressed: () {
                         onSubmit(
-                          (users) => Navigator.of(context).pushReplacement(
-                            createRoute(() => StartPage(
-                                  users: users,
-                                )),
+                          () => Navigator.of(context).pushReplacement(
+                            createRoute(() => const StartPage()),
                           ),
                         );
                       },

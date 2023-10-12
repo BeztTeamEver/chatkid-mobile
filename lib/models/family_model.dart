@@ -4,12 +4,24 @@ import 'package:chatkid_mobile/models/user_model.dart';
 
 class FamilyRequestModel {
   final String? name;
+  final String? id;
+  final String? email;
 
-  FamilyRequestModel({this.name});
+  const FamilyRequestModel({this.name, this.id, this.email});
+
+  factory FamilyRequestModel.fromJson(Map<String, dynamic> json) {
+    return FamilyRequestModel(
+      name: json['name'],
+      id: json['id'],
+      email: json['email'],
+    );
+  }
 
   String toJson() {
     return jsonEncode({
       "name": name,
+      "id": id,
+      "email": email,
     });
   }
 }
@@ -21,7 +33,7 @@ class FamilyModel {
   final int status;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final UserModel users;
+  final List<UserModel> users;
 
   const FamilyModel(
       {required this.id,

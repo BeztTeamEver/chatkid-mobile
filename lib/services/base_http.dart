@@ -21,9 +21,11 @@ class BaseHttp {
     if (param != null) {
       url += "?";
       param.forEach((key, value) {
-        url += "$key=$value&";
+        if (value != null) {
+          url += "$key=$value&";
+        }
       });
-      url = url.substring(0, url.length - 1);
+      // url = url.substring(0, url.length - 1);
     }
     return url;
   }

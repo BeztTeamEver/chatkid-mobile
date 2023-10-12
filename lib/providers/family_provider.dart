@@ -6,13 +6,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 final createFamilyProvider =
-    FutureProvider.family<List<UserModel>, String>((ref, name) async {
+    FutureProvider.family<ResponseModel<dynamic>, String>((ref, name) async {
   try {
-    final result =
-        await ref.watch(familyServiceProvider).createFamily(name: name);
-    return result.data;
+    return await ref.watch(familyServiceProvider).createFamily(name: name);
   } catch (e, s) {
     Logger().e(e, stackTrace: s);
     throw Exception(e);
   }
 });
+
+final getFamilyProvider =
+    FutureProvider.family<List<UserModel>, FamilyRequestModel?>(
+  (ref, arg) async {
+    try {
+      final result =
+          await ref.watch(familyServiceProvider).getFamilyAccounts(arg);
+      return result;
+    } catch (e, s) {
+      throw Exception(e);
+    }
+  },
+);
