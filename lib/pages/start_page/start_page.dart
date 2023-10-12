@@ -10,7 +10,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 class StartPage extends ConsumerStatefulWidget {
-  const StartPage({super.key});
+  final List<UserModel> _users;
+
+  const StartPage({Key? key, users})
+      : _users = users,
+        super(key: key);
   @override
   ConsumerState<StartPage> createState() => _StartPageState();
 }
@@ -23,8 +27,8 @@ class _StartPageState extends ConsumerState<StartPage> {
     // Logger().d(familyAccounts);
     // final familyAccounts = ref.watch(createFamilyProvidr);
     // Logger().d(familyAccounts);
-    final familyUsers = ref.read(familyServiceProvider);
-    Logger().d(familyUsers);
+    // final familyUsers = ref.watch(createFamilyProvider);
+    Logger().d(widget._users.join(", "));
     return Scaffold(
       body: Center(
         child: Padding(

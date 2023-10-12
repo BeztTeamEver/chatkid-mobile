@@ -21,7 +21,7 @@ class FamilyNamePage extends ConsumerStatefulWidget {
 class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
   final TextEditingController _controller = TextEditingController();
   final _formKey = GlobalKey<FormBuilderState>();
-  AsyncLoading<dynamic>? _users;
+
   String? _validate(String? value) {
     if (value == null || value.isEmpty) {
       return "Vui lòng nhập tên chung cho gia đình bạn";
@@ -32,8 +32,16 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
   Future<void> onSubmit(callback) async {
     try {
       if (_formKey.currentState!.saveAndValidate()) {
-        ref.watch(createFamilyProvider(_controller.text));
-        callback();
+        AsyncValue<List<UserModel>>? users =
+            ref.watch(createFamilyProvider(_controller.text));
+        users!.when(
+            data: (data) {
+              callback(data);
+            },
+            loading: () {},
+            error: (err, stack) {
+              Logger().e(err);
+            });
       }
     } catch (e) {
       throw Exception(e);
@@ -92,8 +100,10 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                     child: ElevatedButton(
                       onPressed: () {
                         onSubmit(
-                          () => Navigator.of(context).pushReplacement(
-                            createRoute(() => StartPage()),
+                          (users) => Navigator.of(context).pushReplacement(
+                            createRoute(() => StartPage(
+                                  users: users,
+                                )),
                           ),
                         );
                       },
