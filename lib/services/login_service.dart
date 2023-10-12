@@ -4,6 +4,7 @@ import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/auth_model.dart';
 import 'package:chatkid_mobile/models/resgis_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:logger/logger.dart';
 
@@ -22,6 +23,7 @@ class AuthService {
       _saveToken(authTokens);
       return authTokens;
     } else {
+      FirebaseService.instance.signOut();
       switch (response.statusCode) {
         case 404:
           throw Exception('Tài khoản này chưa được đăng ký');
@@ -49,6 +51,7 @@ class AuthService {
           .setString('accessToken', regisToken.verifyToken);
       return RegisModel.fromJson(jsonDecode(response.body));
     } else {
+      FirebaseService.instance.signOut();
       switch (response.statusCode) {
         case 401:
           throw Exception('Unauthorized');
@@ -69,11 +72,13 @@ class AuthService {
 
   static Future<bool> verifyOtp(String otp) async {
     final response = await BaseHttp.instance.get(
-      endpoint: '${Endpoint.verifyOtpEndPoint}/$otp',
+      endpoint: Endpoint.verifyOtpEndPoint,
+      param: {'otp': otp},
     );
-
     if (response.statusCode == 200) {
       final authTokens = AuthModel.fromJson(jsonDecode(response.body));
+      Logger().d(authTokens.token);
+
       _saveToken(authTokens);
       return true;
     } else {

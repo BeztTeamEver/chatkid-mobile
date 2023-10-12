@@ -1,9 +1,11 @@
 import 'dart:convert';
 
-class FamilyRequestModel {
-  final String name;
+import 'package:chatkid_mobile/models/user_model.dart';
 
-  FamilyRequestModel({required this.name});
+class FamilyRequestModel {
+  final String? name;
+
+  FamilyRequestModel({this.name});
 
   String toJson() {
     return jsonEncode({
@@ -19,6 +21,7 @@ class FamilyModel {
   final int status;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final UserModel users;
 
   const FamilyModel(
       {required this.id,
@@ -26,7 +29,8 @@ class FamilyModel {
       required this.ownerMail,
       required this.status,
       required this.createdAt,
-      required this.updatedAt});
+      required this.updatedAt,
+      required this.users});
 
   factory FamilyModel.fromJson(Map<String, dynamic> json) {
     return FamilyModel(
@@ -36,6 +40,7 @@ class FamilyModel {
       status: json['status'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
+      users: json['users'],
     );
   }
 
@@ -47,6 +52,7 @@ class FamilyModel {
       "status": status,
       "createdAt": createdAt,
       "updatedAt": updatedAt,
+      "users": users,
     });
   }
 }

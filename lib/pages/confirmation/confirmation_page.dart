@@ -30,6 +30,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   Timer? _availableTokenTimeOut;
   int _triedTime = 3;
   String _otp = "";
+  final _key = GlobalKey<FormState>();
 
   void startCountdown() {
     _availableTokenTimeOut =
@@ -123,6 +124,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
     // TODO: remove this when not use
 
     return Scaffold(
+      key: _key,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),

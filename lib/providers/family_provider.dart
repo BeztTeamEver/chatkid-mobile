@@ -1,12 +1,17 @@
 import 'package:chatkid_mobile/models/family_model.dart';
+import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 final createFamilyProvider =
-    FutureProvider.family<FamilyModel, String>((ref, name) async {
+    FutureProvider.family<ResponseModel<dynamic>, String>((ref, name) async {
   try {
-    return await ref.watch(familyServiceProvider).createFamily(name: name);
-  } catch (e) {
+    final result =
+        await ref.watch(familyServiceProvider).createFamily(name: name);
+    return result;
+  } catch (e, s) {
+    Logger().e(e, stackTrace: s);
     throw Exception(e);
   }
 });

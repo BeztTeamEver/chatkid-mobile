@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:logger/logger.dart';
 
 class FamilyNamePage extends ConsumerStatefulWidget {
   FamilyNamePage({super.key});
@@ -18,9 +20,8 @@ class FamilyNamePage extends ConsumerStatefulWidget {
 
 class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
   final TextEditingController _controller = TextEditingController();
-
   final _formKey = GlobalKey<FormBuilderState>();
-
+  AsyncLoading<dynamic>? _users;
   String? _validate(String? value) {
     if (value == null || value.isEmpty) {
       return "Vui lòng nhập tên chung cho gia đình bạn";
@@ -91,8 +92,9 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                     child: ElevatedButton(
                       onPressed: () {
                         onSubmit(
-                          Navigator.pushReplacement(
-                              context, createRoute(() => const StartPage())),
+                          () => Navigator.of(context).pushReplacement(
+                            createRoute(() => StartPage()),
+                          ),
                         );
                       },
                       child: const Text("Tiếp tục"),
