@@ -9,14 +9,18 @@ class SelectButton extends StatelessWidget {
   final VoidCallback? _onPressed;
   final bool _hasBackground;
   final Color? _borderColor;
+  final bool _isSelected;
+
   const SelectButton(
       {super.key,
       String? icon,
       Color? borderColor,
       required String label,
       VoidCallback? onPressed,
+      bool isSelected = false,
       bool hasBackground = false})
       : _icon = icon,
+        _isSelected = isSelected,
         _label = label,
         _onPressed = onPressed,
         _hasBackground = hasBackground,
@@ -46,7 +50,7 @@ class SelectButton extends StatelessWidget {
         onPressed: _onPressed,
         style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
             backgroundColor: MaterialStateProperty.all<Color>(
-              Colors.transparent,
+              _isSelected ? primary.shade400 : Colors.transparent,
             ),
             shadowColor: MaterialStateProperty.all<Color>(
               Colors.transparent,
@@ -81,7 +85,9 @@ class SelectButton extends StatelessWidget {
               ),
               Text(
                 _label,
-                style: Theme.of(context).textTheme.labelLarge,
+                style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                      color: _isSelected ? Colors.white : neutral.shade800,
+                    ),
               ),
             ],
           ),

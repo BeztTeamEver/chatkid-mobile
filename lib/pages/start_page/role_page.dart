@@ -23,7 +23,11 @@ class RolePage extends StatelessWidget {
         const SizedBox(
           height: 40,
         ),
-        SelectButton(label: "Phụ huynh", onPressed: () {}),
+        SelectButton(
+          label: "Phụ huynh",
+          onPressed: () {},
+          isSelected: true,
+        ),
         const SizedBox(
           height: 10,
         ),

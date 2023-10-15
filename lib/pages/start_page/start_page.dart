@@ -43,29 +43,34 @@ class _StartPageState extends ConsumerState<StartPage> {
               ),
               familyUsers.when(
                 data: (data) => ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: data.length,
-                  separatorBuilder: (context, index) => const SizedBox(
-                    height: 10,
-                  ),
-                  itemBuilder: (context, index) => SizedBox(
-                    width: double.infinity,
-                    child: SelectButton(
-                      borderColor: primary.shade100,
-                      hasBackground: true,
-                      icon: data[index].avatarUrl ?? iconAnimalList[index],
-                      label: data[index].name ?? "No name",
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          createRoute(
-                            () => FormPage(id: data[index].id),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
+                    shrinkWrap: true,
+                    itemCount: data.length,
+                    separatorBuilder: (context, index) => const SizedBox(
+                          height: 10,
+                        ),
+                    itemBuilder: (context, index) {
+                      final icon = data[index].avatarUrl != null &&
+                              data[index].avatarUrl != ""
+                          ? data[index].avatarUrl
+                          : iconAnimalList[index];
+                      return SizedBox(
+                        width: double.infinity,
+                        child: SelectButton(
+                          borderColor: primary.shade100,
+                          hasBackground: true,
+                          icon: icon,
+                          label: data[index].name ?? "No name",
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              createRoute(
+                                () => FormPage(id: data[index].id!),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }),
                 error: (error, stack) {
                   Logger().e(error, stackTrace: stack);
                   return Container();

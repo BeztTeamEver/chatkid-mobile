@@ -1,20 +1,22 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 class UserModel {
-  String id;
+  String? id;
   String? avatarUrl;
   String? password;
   String? name;
   String? role;
-  int status;
+  int? status;
   String? familyId;
   String? deviceToken;
 
   UserModel(
-      {required this.id,
+      {this.id,
       this.avatarUrl,
       this.password,
       this.name,
       this.role,
-      required this.status,
+      this.status,
       this.familyId,
       this.deviceToken});
 
@@ -43,4 +45,22 @@ class UserModel {
     data['deviceToken'] = deviceToken;
     return data;
   }
+}
+
+class UserFormNotifier extends AutoDisposeNotifier<UserModel> {
+  UserModel _userModel;
+
+  UserFormNotifier(this._userModel);
+
+  UserModel get userModel => _userModel;
+
+  @override
+  UserModel build() {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
+
+  @override
+  // TODO: implement state
+  UserModel get state => _userModel;
 }

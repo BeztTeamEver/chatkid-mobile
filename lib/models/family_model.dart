@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 class FamilyRequestModel {

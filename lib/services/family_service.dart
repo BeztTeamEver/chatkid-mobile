@@ -57,6 +57,7 @@ class FamilyService {
         throw Exception(
             'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
       case 404:
+        LocalStorage.instance.clear();
         throw Exception('Không tìm thấy gia đình, vui lòng thử lại!');
       default:
         throw Exception('Không thể lấy thông tin gia đình, vui lòng thử lại!');
