@@ -5,6 +5,7 @@ import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,14 +17,15 @@ class FamilyService {
       endpoint: Endpoint.familiesEndPoint,
       body: body.toJson(),
     );
-    Logger().d(response.body);
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       return ResponseModel.fromJson(jsonDecode(response.body));
     }
     switch (response.statusCode) {
       case 401:
+        LocalStorage.instance.clear();
         throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
       case 403:
+        LocalStorage.instance.clear();
         throw Exception(
             'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
       default:
@@ -48,10 +50,14 @@ class FamilyService {
     }
     switch (response.statusCode) {
       case 401:
+        LocalStorage.instance.clear();
         throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
       case 403:
+        LocalStorage.instance.clear();
         throw Exception(
             'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gia đình, vui lòng thử lại!');
       default:
         throw Exception('Không thể lấy thông tin gia đình, vui lòng thử lại!');
     }

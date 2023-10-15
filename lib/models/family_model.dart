@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:logger/logger.dart';
 
 class FamilyRequestModel {
   final String? name;
@@ -45,6 +46,9 @@ class FamilyModel {
       required this.users});
 
   factory FamilyModel.fromJson(Map<String, dynamic> json) {
+    json['users'] = json['users'] != null
+        ? (json['users'] as List).map((e) => UserModel.fromJson(e)).toList()
+        : [];
     return FamilyModel(
       id: json['id'],
       name: json['name'],
@@ -52,7 +56,7 @@ class FamilyModel {
       status: json['status'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
-      users: json['users'],
+      users: json['users'] as List<UserModel>,
     );
   }
 

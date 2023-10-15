@@ -1,5 +1,11 @@
+import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
+import 'package:chatkid_mobile/pages/start_page/form_page.dart';
+import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
+import 'package:chatkid_mobile/providers/step_provider.dart';
+import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,13 +21,10 @@ class StartPage extends ConsumerStatefulWidget {
 class _StartPageState extends ConsumerState<StartPage> {
   @override
   Widget build(BuildContext context) {
-    // GET FAMILY ACCOUNTS
-    // final familyAccounts = ref.watch(familyServiceProvider).getFamilyAccounts();
-    // Logger().d(familyAccounts);
-    // final familyAccounts = ref.watch(createFamilyProvidr);
-    // Logger().d(familyAccounts);
-    final familyUsers = ref.read(getFamilyProvider(const FamilyRequestModel()));
-    Logger().d(familyUsers);
+    ref.watch(saveStepProvider(1));
+
+    final familyUsers =
+        ref.watch(getFamilyProvider(const FamilyRequestModel()));
     return Scaffold(
       body: Center(
         child: Padding(
@@ -39,17 +42,29 @@ class _StartPageState extends ConsumerState<StartPage> {
                 height: 40,
               ),
               familyUsers.when(
-                data: (data) => ListView(
+                data: (data) => ListView.separated(
                   shrinkWrap: true,
-                  children: [
-                    for (final user in data)
-                      SelectButton(
-                        label: user.name ?? "No name",
-                        onPressed: () {
-                          Logger().d(user.id);
-                        },
-                      ),
-                  ],
+                  itemCount: data.length,
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 10,
+                  ),
+                  itemBuilder: (context, index) => SizedBox(
+                    width: double.infinity,
+                    child: SelectButton(
+                      borderColor: primary.shade100,
+                      hasBackground: true,
+                      icon: data[index].avatarUrl ?? iconAnimalList[index],
+                      label: data[index].name ?? "No name",
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          createRoute(
+                            () => FormPage(id: data[index].id),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
                 error: (error, stack) {
                   Logger().e(error, stackTrace: stack);
@@ -64,7 +79,7 @@ class _StartPageState extends ConsumerState<StartPage> {
                 onPressed: () {},
                 style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                       minimumSize: MaterialStateProperty.all<Size>(
-                        Size(double.infinity, 45),
+                        const Size(double.infinity, 45),
                       ),
                     ),
                 child: const Text("Xác Nhận"),

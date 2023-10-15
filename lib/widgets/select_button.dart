@@ -7,11 +7,20 @@ class SelectButton extends StatelessWidget {
   final String? _icon;
   final String _label;
   final VoidCallback? _onPressed;
+  final bool _hasBackground;
+  final Color? _borderColor;
   const SelectButton(
-      {super.key, String? icon, required String label, VoidCallback? onPressed})
+      {super.key,
+      String? icon,
+      Color? borderColor,
+      required String label,
+      VoidCallback? onPressed,
+      bool hasBackground = false})
       : _icon = icon,
         _label = label,
-        _onPressed = onPressed;
+        _onPressed = onPressed,
+        _hasBackground = hasBackground,
+        _borderColor = borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +30,16 @@ class SelectButton extends StatelessWidget {
       height: 80,
       decoration: BoxDecoration(
         border: Border.all(
-          color: primary.shade100,
+          color: _borderColor ?? neutral.shade100,
           width: 2,
         ),
         color: Theme.of(context).colorScheme.surface,
-        image: const DecorationImage(
-          image: AssetImage('assets/selectButton/background.png'),
-          fit: BoxFit.cover,
-        ),
+        image: _hasBackground
+            ? const DecorationImage(
+                image: AssetImage('assets/selectButton/background.png'),
+                fit: BoxFit.cover,
+              )
+            : null,
         borderRadius: BorderRadius.circular(40),
       ),
       child: ElevatedButton(
@@ -45,26 +56,26 @@ class SelectButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: alignContent,
             children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 2,
-                    ),
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  child: _icon != null
-                      ? SvgIcon(
+              _icon != null
+                  ? AspectRatio(
+                      aspectRatio: 1,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: _borderColor ?? neutral.shade400,
+                            width: 2,
+                          ),
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: SvgIcon(
                           icon: _icon!,
                           size: 18,
-                        )
-                      : Container(),
-                ),
-              ),
+                        ),
+                      ),
+                    )
+                  : Container(),
               const SizedBox(
                 width: 12,
               ),

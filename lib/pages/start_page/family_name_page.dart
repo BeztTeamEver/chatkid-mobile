@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:loading_btn/loading_btn.dart';
 import 'package:logger/logger.dart';
 
 class FamilyNamePage extends ConsumerStatefulWidget {
@@ -33,8 +34,15 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
   Future<void> onSubmit(callback) async {
     try {
       if (_formKey.currentState!.saveAndValidate()) {
-        await createFamilyProvider(_controller.text);
-        callback();
+        ref
+            .watch(
+              createFamilyProvider(_controller.text).future,
+            )
+            .then((value) => (callback()))
+            .catchError((err) {
+          Logger().e(err);
+          ErrorSnackbar.showError(context: context, err: err);
+        });
       }
     } catch (err) {
       Logger().e(err);
@@ -90,15 +98,39 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        onSubmit(
-                          () => Navigator.of(context).pushReplacement(
-                            createRoute(() => const StartPage()),
-                          ),
-                        );
+                    child: LoadingBtn(
+                      height: 60,
+                      borderRadius: 40,
+                      width: double.infinity,
+                      loader: Container(
+                        padding: const EdgeInsets.all(10),
+                        width: 40,
+                        height: 40,
+                        child: const CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ),
+                      onTap: (startLoading, stopLoading, btnState) async {
+                        if (btnState == ButtonState.idle) {
+                          startLoading();
+                          onSubmit(() {
+                            stopLoading();
+                            Navigator.push(
+                              context,
+                              createRoute(
+                                () => StartPage(),
+                              ),
+                            );
+                          });
+                        }
                       },
-                      child: const Text("Tiếp tục"),
+                      child: Text(
+                        "Tiếp tục",
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
                     ),
                   ),
                 ],

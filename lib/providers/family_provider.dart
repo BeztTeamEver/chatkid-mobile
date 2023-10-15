@@ -8,7 +8,9 @@ import 'package:logger/logger.dart';
 final createFamilyProvider =
     FutureProvider.family<ResponseModel<dynamic>, String>((ref, name) async {
   try {
-    return await ref.watch(familyServiceProvider).createFamily(name: name);
+    final result =
+        await ref.watch(familyServiceProvider).createFamily(name: name);
+    return result;
   } catch (e, s) {
     Logger().e(e, stackTrace: s);
     throw Exception(e);

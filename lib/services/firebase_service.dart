@@ -23,11 +23,7 @@ class FirebaseService {
 
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    print('Title: ${message.notification!.title}');
-    print('Body: ${message.notification!.body}');
-    print('Message: ${message.data}');
-  }
+      RemoteMessage message) async {}
 
   Future<void> init() async {
     // await _firebaseAuth.useAuthEmulator('localhost', 9099);

@@ -20,12 +20,19 @@ class SvgIcon extends StatefulWidget {
 class _SvgIconState extends State<SvgIcon> {
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      'assets/icons/${widget.icon}.svg',
-      colorFilter: widget.color != null
-          ? ColorFilter.mode(widget.color!, BlendMode.srcIn)
-          : null,
-      height: widget.size,
-    );
+    final isUrl = RegExp(r'^https?:\/\/').hasMatch(widget.icon);
+    return isUrl
+        ? SvgPicture.network(
+            widget.icon,
+            colorFilter: ColorFilter.mode(widget.color!, BlendMode.srcIn),
+            height: widget.size,
+          )
+        : SvgPicture.asset(
+            'assets/icons/${widget.icon}.svg',
+            colorFilter: widget.color != null
+                ? ColorFilter.mode(widget.color!, BlendMode.srcIn)
+                : null,
+            height: widget.size,
+          );
   }
 }
