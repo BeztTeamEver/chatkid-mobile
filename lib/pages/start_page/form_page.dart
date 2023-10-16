@@ -1,11 +1,13 @@
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 class FormPage extends ConsumerStatefulWidget {
-  final String id;
-  const FormPage({super.key, required this.id});
+  final UserModel user;
+  const FormPage({super.key, required this.user});
 
   @override
   ConsumerState<FormPage> createState() => _FormPageState();
@@ -17,8 +19,7 @@ class _FormPageState extends ConsumerState<FormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final form = ref.watch(userFormProvider).userModel;
-
+    final form = ref.watch(userFormProvider(widget.user)).userModel;
     return Scaffold(
       body: SafeArea(
         child: Padding(

@@ -64,7 +64,7 @@ class _StartPageState extends ConsumerState<StartPage> {
                             Navigator.push(
                               context,
                               createRoute(
-                                () => FormPage(id: data[index].id!),
+                                () => FormPage(user: data[index]),
                               ),
                             );
                           },
