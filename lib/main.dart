@@ -19,6 +19,7 @@ void main() async {
   );
   final firebaseService = FirebaseService.instance;
   await firebaseService.init();
+  await firebaseService.getFCMToken();
 
   // share preferrence setup for one time page
   await LocalStorage.getInstance();

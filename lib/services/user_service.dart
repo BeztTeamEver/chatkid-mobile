@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserService {
   Future<UserModel> getUser(id) async {
@@ -28,3 +30,7 @@ class UserService {
     }
   }
 }
+
+final userServiceProvider = Provider<UserService>((ref) {
+  return UserService();
+});

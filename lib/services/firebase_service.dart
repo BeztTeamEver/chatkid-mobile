@@ -12,6 +12,7 @@ class FirebaseService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static FirebaseService? _instance;
+
   FirebaseService._interal() {
     FirebaseInAppMessaging.instance.setAutomaticDataCollectionEnabled(true);
   }

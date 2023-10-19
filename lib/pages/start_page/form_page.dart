@@ -3,8 +3,11 @@ import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/info_page.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
+import 'package:chatkid_mobile/widgets/error_handler.dart';
 import 'package:chatkid_mobile/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -35,11 +38,35 @@ class _FormPageState extends ConsumerState<FormPage> {
   }
 
   void _onSubmitInfo(stopLoading) async {
-    if (_formKey.currentState!.saveAndValidate()) {
-      await controller.nextPage(
-        duration: Duration(milliseconds: 500),
-        curve: Curves.ease,
-      );
+    final isValid = _formKey.currentState!.saveAndValidate() &&
+        _formKey.currentState!.isValid;
+    if (isValid) {
+      UserModel newUser = UserModel.fromJson({
+        ..._formKey.currentState!.value,
+        "id": widget.user.id,
+        "role": widget.user.role,
+        "familyId:": widget.user.familyId,
+        "avatar": widget.user.avatarUrl,
+        "status": widget.user.status,
+        "deviceToken": FirebaseService.instance.fcmToken,
+      });
+
+      ref.watch(updateUserProvider(newUser)).when(
+            data: (data) {
+              stopLoading();
+              Logger().d(data);
+              controller.nextPage(
+                duration: Duration(milliseconds: 500),
+                curve: Curves.ease,
+              );
+            },
+            error: (error, stackTrace) {
+              Logger().e(error);
+              stopLoading();
+              ErrorSnackbar.showError(err: error, context: context);
+            },
+            loading: () {},
+          );
     }
     stopLoading();
     _formKey.currentState!.errors.forEach((key, value) {
