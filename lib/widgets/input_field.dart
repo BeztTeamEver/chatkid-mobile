@@ -32,7 +32,7 @@ class _InputFieldState extends State<InputField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        !widget.label.isEmpty
+        widget.label.isNotEmpty
             ? Text(
                 widget.label,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -44,7 +44,8 @@ class _InputFieldState extends State<InputField> {
         FormBuilderTextField(
           name: widget.name,
           controller: widget.controller,
-          autofocus: widget.autoFocus!,
+          keyboardType: widget.type,
+          autofocus: widget.autoFocus,
           validator: widget.validator,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: widget.type == TextInputType.visiblePassword,

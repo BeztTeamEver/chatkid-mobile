@@ -8,4 +8,7 @@ class Endpoint {
   static const regisEndPoint = "/api/auth/register";
   static const verifyOtpEndPoint = "/api/auth/otp";
   static const resendOtp = "/api/auth/otp";
+
+  // User
+  static const userEndPoint = "/api/profiles";
 }

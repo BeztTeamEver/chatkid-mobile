@@ -46,21 +46,3 @@ class UserModel {
     return data;
   }
 }
-
-class UserFormNotifier extends AutoDisposeNotifier<UserModel> {
-  UserModel _userModel;
-
-  UserFormNotifier(this._userModel);
-
-  UserModel get userModel => _userModel;
-
-  @override
-  UserModel build() {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-
-  @override
-  // TODO: implement state
-  UserModel get state => _userModel;
-}

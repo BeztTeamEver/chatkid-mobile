@@ -1,9 +1,22 @@
+import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RolePage extends StatelessWidget {
+class RolePage extends ConsumerStatefulWidget {
   const RolePage({super.key});
+
+  @override
+  ConsumerState<RolePage> createState() => _RolePageState();
+}
+
+class _RolePageState extends ConsumerState<RolePage> {
+  String _role = "";
+
+  setFormField(value) {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +38,25 @@ class RolePage extends StatelessWidget {
         ),
         SelectButton(
           label: "Phụ huynh",
-          onPressed: () {},
-          isSelected: true,
+          onPressed: () {
+            setState(() {
+              _role = "parent";
+            });
+          },
+          isSelected: _role == "parent",
         ),
         const SizedBox(
           height: 10,
         ),
-        SelectButton(label: "Trẻ em", onPressed: () {}),
+        SelectButton(
+          label: "Trẻ em",
+          isSelected: _role == "children",
+          onPressed: () {
+            setState(() {
+              _role = "children";
+            });
+          },
+        ),
       ],
     );
   }
