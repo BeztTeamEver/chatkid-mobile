@@ -1,12 +1,14 @@
 import 'package:chatkid_mobile/enum/role.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/info_page.dart';
+import 'package:chatkid_mobile/pages/start_page/password_page.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/error_handler.dart';
 import 'package:chatkid_mobile/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
@@ -23,13 +25,13 @@ class FormPage extends ConsumerStatefulWidget {
 }
 
 class _FormPageState extends ConsumerState<FormPage> {
-  PageController controller = PageController();
-  int _currentPage = 0;
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
   final TextEditingController _yearBirthDayController = TextEditingController();
-
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -37,7 +39,7 @@ class _FormPageState extends ConsumerState<FormPage> {
     _nameController.text = widget.user.name ?? "";
   }
 
-  void _onSubmitInfo(stopLoading) async {
+  void _onSubmitInfo(callback, stopLoading) async {
     final isValid = _formKey.currentState!.saveAndValidate() &&
         _formKey.currentState!.isValid;
     if (isValid) {
@@ -46,27 +48,39 @@ class _FormPageState extends ConsumerState<FormPage> {
         "id": widget.user.id,
         "role": widget.user.role,
         "familyId:": widget.user.familyId,
-        "avatar": widget.user.avatarUrl,
+        "avatarUrl": widget.user.avatarUrl,
         "status": widget.user.status,
+        "password": widget.user.password,
         "deviceToken": FirebaseService.instance.fcmToken,
       });
-
-      ref.watch(updateUserProvider(newUser)).when(
-            data: (data) {
-              stopLoading();
-              Logger().d(data);
-              controller.nextPage(
-                duration: Duration(milliseconds: 500),
-                curve: Curves.ease,
-              );
-            },
-            error: (error, stackTrace) {
-              Logger().e(error);
-              stopLoading();
-              ErrorSnackbar.showError(err: error, context: context);
-            },
-            loading: () {},
-          );
+      callback();
+      stopLoading();
+      return;
+      try {
+        await ref.watch(updateUserProvider(newUser).future).then((value) {
+          Logger().d(value);
+        });
+      } catch (e) {
+        Logger().e(e);
+      } finally {
+        stopLoading();
+      }
+      // ref.watch(updateUserProvider(newUser)).when(
+      //       data: (data) {
+      //         stopLoading();
+      //         Logger().d(data);
+      //         controller.nextPage(
+      //           duration: Duration(milliseconds: 500),
+      //           curve: Curves.ease,
+      //         );
+      //       },
+      //       error: (error, stackTrace) {
+      //         Logger().e(error);
+      //         stopLoading();
+      //         ErrorSnackbar.showError(err: error, context: context);
+      //       },
+      //       loading: () {},
+      //     );
     }
     stopLoading();
     _formKey.currentState!.errors.forEach((key, value) {
@@ -90,23 +104,12 @@ class _FormPageState extends ConsumerState<FormPage> {
               children: [
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.7,
-                  child: PageView(
-                    controller: controller,
-                    scrollDirection: Axis.horizontal,
-                    onPageChanged: (value) => setState(
-                      () {
-                        _currentPage = value;
-                      },
-                    ),
-                    children: [
-                      InfoPage(
-                        genderController: _genderController,
-                        nameController: _nameController,
-                        yearBirthDayController: _yearBirthDayController,
-                        isParent: widget.user.role ==
-                            Role.Parent.toString().split('.').last,
-                      ),
-                    ],
+                  child: InfoPage(
+                    genderController: _genderController,
+                    nameController: _nameController,
+                    yearBirthDayController: _yearBirthDayController,
+                    isParent: widget.user.role ==
+                        Role.Parent.toString().split('.').last,
                   ),
                 ),
                 Row(
@@ -144,7 +147,14 @@ class _FormPageState extends ConsumerState<FormPage> {
                     ),
                     Expanded(
                       child: LoadingButton(
-                        handleOnTap: _onSubmitInfo,
+                        handleOnTap: ((stopLoading) => _onSubmitInfo(() {
+                              Navigator.push(
+                                context,
+                                createRoute(
+                                  () => PasswordPage(),
+                                ),
+                              );
+                            }, stopLoading)),
                         label: "Tiếp theo",
                       ),
                     )
