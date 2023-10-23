@@ -114,7 +114,7 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontWeight: FontWeight.w700,
       color: textDefault,
       height: 1,
-      letterSpacing: -1.44,
+      letterSpacing: 1.1,
     ),
     labelLarge: TextStyle(
       color: textDefault,

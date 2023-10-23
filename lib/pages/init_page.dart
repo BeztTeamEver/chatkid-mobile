@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:chatkid_mobile/constants/init_page.dart';
+import 'package:chatkid_mobile/constants/init_item.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
 import 'package:chatkid_mobile/widgets/logo.dart';

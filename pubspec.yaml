@@ -53,6 +53,12 @@ dependencies:
   firebase_auth: ^4.10.0
   flutter_dotenv: ^5.1.0
   pinput: ^3.0.1
+  logger: ^2.0.2+1
+  geolocator: ^10.1.0
+  flutter_form_builder: ^9.1.1
+  riverpod_annotation: ^2.2.0
+  signalr_netcore: ^0.1.7+2-nullsafety.3
+  form_validator: ^2.1.1
 
 flutter_launcher_icons:
   android: 'launcher_icon'
@@ -71,6 +77,9 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   build_runner: ^2.4.6
   json_serializable: ^6.7.1
+  riverpod_generator: ^3.0.0-dev.3
+  custom_lint: ^0.5.3
+  riverpod_lint: ^2.3.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -85,10 +94,12 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icons/
+    - assets/icons/animal/
     - assets/loginPage/
     - assets/initPage/
     - assets/successConfirmPage/
     - assets/failConfirmPage/
+    - assets/selectButton/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

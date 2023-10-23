@@ -1,8 +1,13 @@
 import 'package:chatkid_mobile/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:chatkid_mobile/firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -12,6 +17,7 @@ class FirebaseService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static FirebaseService? _instance;
+
   FirebaseService._interal() {
     FirebaseInAppMessaging.instance.setAutomaticDataCollectionEnabled(true);
   }
@@ -23,11 +29,7 @@ class FirebaseService {
 
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    print('Title: ${message.notification!.title}');
-    print('Body: ${message.notification!.body}');
-    print('Message: ${message.data}');
-  }
+      RemoteMessage message) async {}
 
   Future<void> init() async {
     // await _firebaseAuth.useAuthEmulator('localhost', 9099);

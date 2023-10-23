@@ -1,51 +1,68 @@
-import 'package:chatkid_mobile/modals/auth_modal.dart';
+import 'package:chatkid_mobile/models/auth_model.dart';
 import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_btn/loading_btn.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleButton extends StatelessWidget {
   final bool isLogin;
   final LocalStorage _localStorage = LocalStorage.instance;
+  late String _email = "";
+  late Widget _route = const MainPage();
 
   GoogleButton({super.key, required this.isLogin});
 
   Future<void> _signInFunction(String accessToken) async {
-    await AuthService.googleLogin(accessToken);
+    try {
+      await AuthService.googleLogin(accessToken);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> _signUpFunction(String accessToken) async {
-    await AuthService.signUp(accessToken).then((value) {
-      // TODO: call otp here
-    });
+    try {
+      await AuthService.signUp(accessToken);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> _signInWithGoogle(
       Function callback, Function errorCallback, Function stopLoading) async {
-    await FirebaseService.instance.signInWithGoogle().then((value) async {
-      String token = value.credential!.accessToken!;
-      SharedPreferences prefs = LocalStorage.instance.preferences;
-      if (isLogin) {
-        prefs.setBool('isFirstScreen', true);
-        await _signInFunction(token);
-      } else {
-        await _signUpFunction(token);
-      }
-      callback();
-    }).catchError(
-      (err) async {
-        print(err);
-        errorCallback();
-      },
-    ).whenComplete(
-      () => stopLoading(),
-    );
+    LocalStorage prefs = LocalStorage.instance;
+
+    try {
+      await FirebaseService.instance.signInWithGoogle().then((value) async {
+        String token = value.credential!.accessToken!;
+        Logger().d(token);
+        _email = value.user!.email!;
+        if (isLogin) {
+          prefs.preferences.setBool('isFirstScreen', true);
+          await _signInFunction(token);
+        } else {
+          _route = ConfirmationPage(email: _email);
+          await _signUpFunction(token);
+        }
+        callback();
+      }).catchError((err) {
+        prefs.removeToken();
+        errorCallback(err, StackTrace.current);
+      }).whenComplete(
+        () => stopLoading(),
+      );
+    } catch (err, stack) {
+      prefs.removeToken();
+      errorCallback(err, stack);
+    }
   }
 
   @override
@@ -53,9 +70,7 @@ class GoogleButton extends StatelessWidget {
     final label = isLogin
         ? 'Đăng nhập bằng tài khoản google'
         : 'Đăng ký bằng tài khoản Google';
-    final route = isLogin
-        ? const MainPage()
-        : const ConfirmationPage(); // Todo: for testing only
+
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -76,19 +91,13 @@ class GoogleButton extends StatelessWidget {
           onTap: (startLoading, stopLoading, btnState) async {
             if (btnState == ButtonState.idle) {
               startLoading();
-              // call your network api
-              // await _signInWithGoogle(stopLoading);
-              // await Future.delayed(const Duration(seconds: 5));
               await _signInWithGoogle(
                 () {
-                  Navigator.push(context, createRoute(() => route));
+                  Navigator.push(context, createRoute(() => _route));
                 },
-                () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Đăng nhập thất bại'),
-                    ),
-                  );
+                (error, stack) {
+                  Logger().d(error.toString(), stackTrace: stack);
+                  ErrorSnackbar.showError(err: error, context: context);
                 },
                 stopLoading,
               );

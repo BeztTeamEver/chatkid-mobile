@@ -1,4 +1,4 @@
-import 'package:chatkid_mobile/modals/menu_modal.dart';
+import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';

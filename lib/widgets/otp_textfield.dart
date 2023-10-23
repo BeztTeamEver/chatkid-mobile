@@ -91,7 +91,11 @@ class _OtpTextFieldState extends State<OtpTextField> {
         _focusNode.unfocus();
         widget.onCompleted!(value);
       },
-      validator: (value) => widget.validation!(value),
+      validator: widget.validation != null
+          ? (value) {
+              return widget.validation!(value);
+            }
+          : null,
     );
   }
 }

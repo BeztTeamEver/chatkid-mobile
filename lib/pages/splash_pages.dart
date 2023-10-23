@@ -1,5 +1,6 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
+import 'package:chatkid_mobile/constants/sign_up_list.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/init_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
@@ -24,6 +25,12 @@ class _SplashPagesState extends State<SplashPages>
 
     bool isFirstScreen = prefs.getBool('isFirstScreen') ?? false;
     String? accessToken = prefs.getString('accessToken');
+    int? currentStep = prefs.getInt('step');
+    if (currentStep != null) {
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => signUpStep[currentStep]));
+      return;
+    }
     if (accessToken != null) {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => const MainPage()));

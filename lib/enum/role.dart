@@ -1,1 +1,1 @@
-enum Role { child, parent, expert, admin }
+enum Role { child, Parent, expert, admin }

@@ -5,6 +5,7 @@ import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
+import 'package:chatkid_mobile/widgets/error_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,6 +20,7 @@ void main() async {
   );
   final firebaseService = FirebaseService.instance;
   await firebaseService.init();
+  await firebaseService.getFCMToken();
 
   // share preferrence setup for one time page
   await LocalStorage.getInstance();
@@ -76,14 +78,46 @@ class MyApp extends StatelessWidget {
             borderSide: const BorderSide(color: Color(0xFFE8EAF1), width: 3),
           ),
           filled: true,
-          contentPadding: const EdgeInsets.only(
-            left: 26,
-            top: 28,
-            bottom: 28,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: neutral.shade400,
+              width: 1,
+            ),
           ),
-          fillColor: neutral.shade50,
-          hintStyle: const TextStyle(
-            color: Colors.white,
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: red.shade100,
+              width: 1,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: red.shade100,
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(40),
+            borderSide: BorderSide(
+              color: primary.shade400,
+              width: 1,
+            ),
+          ),
+          errorStyle: textTheme.bodyMedium!.copyWith(
+            color: red.shade800,
+          ),
+          contentPadding: const EdgeInsets.only(
+            left: 22,
+            top: 14,
+            bottom: 14,
+            right: 18,
+          ),
+          fillColor: Colors.transparent,
+          hintStyle: TextStyle(
+            color: neutral.shade400,
           ),
         ),
       ),

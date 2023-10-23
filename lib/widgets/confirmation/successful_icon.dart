@@ -23,7 +23,6 @@ class _SuccessfullIconState extends State<SuccessfullIcon>
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    setState(() {});
   }
 
   @override

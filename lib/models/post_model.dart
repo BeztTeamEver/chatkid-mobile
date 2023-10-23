@@ -1,12 +1,12 @@
-class PostModal {
+class PostModel {
   int? userId;
   int? id;
   String? title;
   String? body;
 
-  PostModal({this.userId, this.id, this.title, this.body});
+  PostModel({this.userId, this.id, this.title, this.body});
 
-  PostModal.fromJson(Map<String, dynamic> json) {
+  PostModel.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
     id = json['id'];
     title = json['title'];

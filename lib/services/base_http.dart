@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/config.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 class BaseHttp {
   static BaseHttp? _instance;
+  static final String apiVersion = "1.0";
   LocalStorage _localStorage = LocalStorage.instance;
 
   BaseHttp._internal();
@@ -20,19 +23,23 @@ class BaseHttp {
     if (param != null) {
       url += "?";
       param.forEach((key, value) {
-        url += "$key=$value&";
+        if (value != null) {
+          url += "$key=$value&";
+        }
       });
-      url = url.substring(0, url.length - 1);
+      // url = url.substring(0, url.length - 1);
     }
     return url;
   }
 
-  Map<String, String> _getHeaders(Map<String, String>? headers) {
+  Future<Map<String, String>> _getHeaders(Map<String, String>? headers) async {
+    String token = await AuthService.getAccessToken();
+
     return {
       "Content-Type": "application/json",
-      "Authorization": "Bearer",
       "Accept": "application/json, text/plain, */*",
-      "Authorization": "Bearer ${_localStorage.getToken()}",
+      "Authorization": "Bearer $token",
+      "api-version": apiVersion,
       ...?headers,
     };
   }
@@ -42,10 +49,11 @@ class BaseHttp {
       Map<String, dynamic>? param,
       Map<String, String>? headers}) async {
     String url = _combineUrl(endpoint, param);
+    final combineHeaders = await _getHeaders(headers);
     return await http.Client()
         .get(
       Uri.parse(url),
-      headers: _getHeaders(headers),
+      headers: combineHeaders,
     )
         .timeout(
       const Duration(seconds: 10),
@@ -65,10 +73,10 @@ class BaseHttp {
         .post(
       Uri.parse(url),
       body: body,
-      headers: _getHeaders(headers),
+      headers: await _getHeaders(headers),
     )
-        .catchError((err) {
-      print(err.toString());
+        .catchError((err, s) {
+      Logger().e(err, stackTrace: s);
       throw Exception(err);
     }).timeout(
       const Duration(seconds: 10),
@@ -88,7 +96,7 @@ class BaseHttp {
         .put(
       Uri.parse(url),
       body: body,
-      headers: _getHeaders(headers),
+      headers: await _getHeaders(headers),
     )
         .timeout(
       const Duration(seconds: 10),
@@ -107,7 +115,7 @@ class BaseHttp {
     return await http
         .delete(
       Uri.parse(url),
-      headers: _getHeaders(headers),
+      headers: await _getHeaders(headers),
       body: body,
     )
         .timeout(

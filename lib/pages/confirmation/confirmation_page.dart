@@ -2,18 +2,22 @@ import 'dart:async';
 
 import 'package:chatkid_mobile/pages/confirmation/fail_confirm_page.dart';
 import 'package:chatkid_mobile/pages/confirmation/successful_confirm_page.dart';
-import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/login_logout/switch_page.dart';
 import 'package:chatkid_mobile/widgets/logo.dart';
 import 'package:chatkid_mobile/widgets/otp_textfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:loading_btn/loading_btn.dart';
+import 'package:logger/logger.dart';
 
 class ConfirmationPage extends StatefulWidget {
-  const ConfirmationPage({super.key});
+  final String email;
+
+  const ConfirmationPage({super.key, required this.email});
 
   @override
   State<ConfirmationPage> createState() => _ConfirmationPageState();
@@ -24,8 +28,9 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   int _remainingTime = defaultReMainingTime;
   bool _isResend = false;
   Timer? _availableTokenTimeOut;
-  // TODO: remove this when api is ready
-  Timer? _resendTimeOut;
+  int _triedTime = 3;
+  String _otp = "";
+  final _key = GlobalKey<FormState>();
 
   void startCountdown() {
     _availableTokenTimeOut =
@@ -41,6 +46,12 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   void countdownToken() {
     setState(() {
       _remainingTime--;
+    });
+  }
+
+  void decreaseTriedTime() {
+    setState(() {
+      _triedTime--;
     });
   }
 
@@ -65,34 +76,55 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-
+    if (_availableTokenTimeOut != null) {
+      _availableTokenTimeOut!.cancel();
+    }
     if (_availableTokenTimeOut != null) {
       _availableTokenTimeOut!.cancel();
     }
     super.dispose();
   }
 
-  Future<void> _verify(Function callback) async {
-    //TODO: call api to verify here
-    await FirebaseService.instance.signOut().then((value) => callback());
+  Future<void> _verify(Function callback, Function stopLoading) async {
+    if (_otp.isEmpty) {
+      stopLoading();
+      ErrorSnackbar.showError(
+          err: ":Mã OTP không được trống", context: context);
+      return;
+    }
+    await AuthService.verifyOtp(_otp).then((value) {
+      callback();
+    }).catchError((err, stack) {
+      decreaseTriedTime();
+      if (_triedTime == 0) {
+        Navigator.of(context).push(
+          createRoute(
+            () => const FailConfirmPage(),
+          ),
+        );
+      }
+      ErrorSnackbar.showError(err: err, stack: stack, context: context);
+    }).whenComplete(() {
+      stopLoading();
+    });
   }
 
-  Future<void> _resend(Function callback) async {
+  Future<void> _resend() async {
     if (!_isResend) setResend();
-    //TODO: call api to resend here
-    Future.delayed(const Duration(seconds: 2), () {
-      setResend();
+    await AuthService.resendOtp().then((value) {
+      if (_isResend) setResend();
       resetTime();
-      callback();
+    }).catchError((err, stack) {
+      ErrorSnackbar.showError(err: err, stack: stack, context: context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final email = "nghia@gmail.com";
+    // TODO: remove this when not use
 
     return Scaffold(
+      key: _key,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
@@ -103,6 +135,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 const Center(
                   child: LogoWidget(),
                 ),
+
                 const SizedBox(
                   height: 20,
                 ),
@@ -112,7 +145,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                   TextSpan(
                     children: <TextSpan>[
                       const TextSpan(text: 'Mã xác nhận đã được gửi đến '),
-                      TextSpan(text: email),
+                      TextSpan(text: widget.email),
                     ],
                   ),
                 ),
@@ -124,10 +157,25 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 const SizedBox(
                   height: 100,
                 ),
-                const OtpTextField(),
+                OtpTextField(
+                  length: 6,
+                  onCompleted: (value) {
+                    setState(() {
+                      _otp = value;
+                    });
+                  },
+                ),
                 const SizedBox(
                   height: 20,
                 ),
+                _triedTime != 3
+                    ? Text(
+                        'Bạn còn ${_triedTime} lần thử',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: red.shade500,
+                            ),
+                      )
+                    : Container(),
                 const SizedBox(
                   height: 10,
                 ),
@@ -169,7 +217,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                             text: 'Gửi lại',
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                _resend(() {});
+                                _resend();
                               },
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -182,22 +230,32 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                       ),
                     ),
                     const SizedBox(
-                      height: 165,
+                      height: 125,
                     ),
                   ],
                 ),
-                ElevatedButton(
-                  style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                        minimumSize: MaterialStateProperty.all(
-                          const Size(double.infinity, 50),
+                LoadingBtn(
+                  height: 60,
+                  width: MediaQuery.of(context).size.width - 40,
+                  animate: true,
+                  borderRadius: 40,
+                  loader: Container(
+                    padding: const EdgeInsets.all(10),
+                    width: 40,
+                    height: 40,
+                    child: const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                  onTap: (startLoading, stopLoading, btnState) async {
+                    startLoading();
+                    await _verify(() {
+                      Navigator.of(context).pushReplacement(
+                        createRoute(
+                          () => const SuccessfulConFirmPage(),
                         ),
-                      ),
-                  onPressed: () {
-                    _verify(() => Navigator.of(context).push(
-                          createRoute(
-                            () => const FailConfirmPage(),
-                          ),
-                        ));
+                      );
+                    }, stopLoading);
                   },
                   child: const Text('Tiếp tục'),
                 ),

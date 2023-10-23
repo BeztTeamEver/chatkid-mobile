@@ -1,4 +1,4 @@
-import 'package:chatkid_mobile/modals/menu_modal.dart';
+import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:chatkid_mobile/pages/start_page/family_name_page.dart';
+import 'package:chatkid_mobile/pages/start_page/start_page.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/confirmation/successful_icon.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -8,14 +12,19 @@ class SuccessfulConFirmPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.of(context).pushReplacement(
+        createRoute(() => FamilyNamePage()),
+      );
+    });
     return Scaffold(
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SuccessfullIcon(),
-              SizedBox(
+              const SuccessfullIcon(),
+              const SizedBox(
                 height: 32,
               ),
               Text(
@@ -25,7 +34,7 @@ class SuccessfulConFirmPage extends StatelessWidget {
                     .bodyLarge!
                     .copyWith(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 86,
               ),
               SvgPicture.asset("assets/successConfirmPage/success_robot.svg")
