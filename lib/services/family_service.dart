@@ -37,7 +37,7 @@ class FamilyService {
     FamilyRequestModel? familyRequestModel,
   ) async {
     final response = await BaseHttp.instance.get(
-      endpoint: Endpoint.familyUsersEndPoint,
+      endpoint: Endpoint.infoEndpoint,
       param: {
         'id': familyRequestModel?.id,
         'email': familyRequestModel?.email,

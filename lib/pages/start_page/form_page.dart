@@ -46,22 +46,21 @@ class _FormPageState extends ConsumerState<FormPage> {
       UserModel newUser = UserModel.fromJson({
         ..._formKey.currentState!.value,
         "id": widget.user.id,
-        "role": widget.user.role,
-        "familyId:": widget.user.familyId,
         "avatarUrl": widget.user.avatarUrl,
-        "status": widget.user.status,
         "password": widget.user.password,
         "deviceToken": FirebaseService.instance.fcmToken,
       });
-      callback();
-      stopLoading();
-      return;
+      // callback();
+      // stopLoading();
+      // return;
       try {
         await ref.watch(updateUserProvider(newUser).future).then((value) {
           Logger().d(value);
+          callback();
         });
       } catch (e) {
         Logger().e(e);
+        ErrorSnackbar.showError(err: e, context: context);
       } finally {
         stopLoading();
       }
@@ -151,7 +150,9 @@ class _FormPageState extends ConsumerState<FormPage> {
                               Navigator.push(
                                 context,
                                 createRoute(
-                                  () => PasswordPage(),
+                                  () => PasswordPage(
+                                    userId: widget.user.id!,
+                                  ),
                                 ),
                               );
                             }, stopLoading)),

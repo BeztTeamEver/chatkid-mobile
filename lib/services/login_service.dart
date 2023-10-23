@@ -49,9 +49,31 @@ class AuthService {
       final regisToken = RegisModel.fromJson(jsonDecode(response.body));
       _localStorage.preferences
           .setString('accessToken', regisToken.verifyToken);
+      Logger().d(regisToken.verifyToken);
       return RegisModel.fromJson(jsonDecode(response.body));
     } else {
       FirebaseService.instance.signOut();
+      switch (response.statusCode) {
+        case 401:
+          throw Exception('Tài khoản này đã được đăng kí');
+        case 403:
+          throw Exception(
+              'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+        default:
+          throw Exception('Lỗi đăng nhập, vui lòng thử lại sau!');
+      }
+    }
+  }
+
+  static Future<AuthModel> refreshToken() async {
+    final response = await BaseHttp.instance.get(
+      endpoint: Endpoint.refreshTokenEndPoint,
+    );
+    if (response.statusCode == 200) {
+      final authTokens = AuthModel.fromJson(jsonDecode(response.body));
+      _saveToken(authTokens);
+      return authTokens;
+    } else {
       switch (response.statusCode) {
         case 401:
           throw Exception('Unauthorized');
@@ -112,5 +134,36 @@ class AuthService {
       authTokens.token,
       authTokens.refreshToken,
     );
+  }
+
+  static Future<String> getAccessToken() async {
+    String accessToken = _localStorage.getToken()?.token ?? "";
+
+    if (accessToken.isEmpty) {
+      accessToken = _localStorage.preferences.getString("accessToken") ?? "";
+      return accessToken;
+    }
+    if (isTokenExpired()) {
+      AuthModel tokens = await refreshToken();
+      _localStorage.saveToken(tokens.token, tokens.refreshToken);
+      return tokens.token;
+    }
+    return accessToken;
+  }
+
+  static bool isTokenExpired() {
+    final token = _localStorage.getToken()?.token;
+    if (token == null) {
+      return true;
+    }
+    final parts = token.split('.');
+    if (parts.length != 3) {
+      return true;
+    }
+    final payload = parts[1];
+    final decoded =
+        jsonDecode(ascii.decode(base64.decode(base64.normalize(payload))));
+    final exp = decoded['exp'] * 1000;
+    return DateTime.now().isAfter(DateTime.fromMillisecondsSinceEpoch(exp));
   }
 }

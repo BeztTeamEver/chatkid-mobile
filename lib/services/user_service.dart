@@ -18,13 +18,13 @@ class UserService {
     }
   }
 
-  Future<ResponseModel<dynamic>> updateUser(UserModel user) async {
+  Future<UserModel> updateUser(UserModel user) async {
     final response = await BaseHttp.instance.put(
       endpoint: '${Endpoint.userEndPoint}/${user.id}',
       body: jsonEncode(user.toJson()),
     );
     if (response.statusCode == 200) {
-      return ResponseModel<dynamic>.fromJson(jsonDecode(response.body));
+      return UserModel.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to update user');
     }

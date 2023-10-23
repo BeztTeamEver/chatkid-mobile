@@ -127,7 +127,7 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                       },
                       child: Text(
                         "Tiếp tục",
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
                               color: Colors.white,
                             ),
                       ),

@@ -110,6 +110,7 @@ class _InfoPageState extends State<InfoPage> {
                   onChanged: (value) {
                     widget.genderController.text = value.toString();
                   },
+                  initialValue: widget.genderController.text,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ],

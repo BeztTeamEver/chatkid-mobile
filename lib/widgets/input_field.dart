@@ -8,6 +8,7 @@ class InputField extends StatefulWidget {
   final TextInputType type;
   final String? Function(String?)? validator;
   final controller;
+  final String? errorText;
   final String name;
   final bool autoFocus;
 
@@ -19,6 +20,7 @@ class InputField extends StatefulWidget {
     this.hint = "",
     required this.name,
     this.validator,
+    this.errorText,
     required this.controller,
   });
 
@@ -53,8 +55,12 @@ class _InputFieldState extends State<InputField> {
                 fontWeight: FontWeight.bold,
                 color: neutral.shade500,
               ),
+          onTapOutside: (event) {
+            FocusScope.of(context).unfocus();
+          },
           decoration: InputDecoration(
             hintText: widget.hint,
+            errorText: widget.errorText,
           ),
         ),
       ],

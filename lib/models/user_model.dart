@@ -5,6 +5,7 @@ class UserModel {
   String? avatarUrl;
   String? password;
   String? name;
+  String? gender;
   String? role;
   int? status;
   String? familyId;
@@ -18,6 +19,7 @@ class UserModel {
       this.role,
       this.status,
       this.familyId,
+      this.gender,
       this.deviceToken});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class UserModel {
       role: json['role'],
       status: json['status'],
       familyId: json['familyId'],
+      gender: json['gender'],
       deviceToken: json['deviceToken'],
     );
   }
@@ -36,13 +39,30 @@ class UserModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['avatarUrl'] = avatarUrl;
-    data['password'] = password;
-    data['name'] = name;
-    data['role'] = role;
-    data['status'] = status;
-    data['familyId'] = familyId;
-    data['deviceToken'] = deviceToken;
+    if (avatarUrl != null) {
+      data['avatarUrl'] = avatarUrl;
+    }
+    if (password != null) {
+      data['password'] = password;
+    }
+    if (name != null) {
+      data['name'] = name;
+    }
+    if (role != null) {
+      data['role'] = role;
+    }
+    if (status != null) {
+      data['status'] = status;
+    }
+    if (familyId != null) {
+      data['familyId'] = familyId;
+    }
+    if (gender != null) {
+      data['gender'] = gender;
+    }
+    if (deviceToken != null) {
+      data['deviceToken'] = deviceToken;
+    }
     return data;
   }
 }

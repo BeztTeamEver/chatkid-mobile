@@ -3,6 +3,7 @@ import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
@@ -96,11 +97,7 @@ class GoogleButton extends StatelessWidget {
                 },
                 (error, stack) {
                   Logger().d(error.toString(), stackTrace: stack);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Đăng nhập thất bại, vui lòng thử lại!"),
-                    ),
-                  );
+                  ErrorSnackbar.showError(err: error, context: context);
                 },
                 stopLoading,
               );

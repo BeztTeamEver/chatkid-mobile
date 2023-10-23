@@ -10,6 +10,7 @@ final createFamilyProvider =
   try {
     final result =
         await ref.watch(familyServiceProvider).createFamily(name: name);
+
     return result;
   } catch (e, s) {
     Logger().e(e, stackTrace: s);

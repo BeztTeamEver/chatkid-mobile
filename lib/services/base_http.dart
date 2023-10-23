@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/config.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class BaseHttp {
   static BaseHttp? _instance;
+  static final String apiVersion = "1.0";
   LocalStorage _localStorage = LocalStorage.instance;
 
   BaseHttp._internal();
@@ -30,16 +32,14 @@ class BaseHttp {
     return url;
   }
 
-  Map<String, String> _getHeaders(Map<String, String>? headers) {
-    String token =
-        _localStorage.getToken() != null ? _localStorage.getToken()!.token : "";
-    if (token.isEmpty) {
-      token = _localStorage.preferences.getString("accessToken") ?? "";
-    }
+  Future<Map<String, String>> _getHeaders(Map<String, String>? headers) async {
+    String token = await AuthService.getAccessToken();
+
     return {
       "Content-Type": "application/json",
       "Accept": "application/json, text/plain, */*",
       "Authorization": "Bearer $token",
+      "api-version": apiVersion,
       ...?headers,
     };
   }
@@ -49,7 +49,7 @@ class BaseHttp {
       Map<String, dynamic>? param,
       Map<String, String>? headers}) async {
     String url = _combineUrl(endpoint, param);
-    final combineHeaders = _getHeaders(headers);
+    final combineHeaders = await _getHeaders(headers);
     return await http.Client()
         .get(
       Uri.parse(url),
@@ -73,7 +73,7 @@ class BaseHttp {
         .post(
       Uri.parse(url),
       body: body,
-      headers: _getHeaders(headers),
+      headers: await _getHeaders(headers),
     )
         .catchError((err, s) {
       Logger().e(err, stackTrace: s);
@@ -96,7 +96,7 @@ class BaseHttp {
         .put(
       Uri.parse(url),
       body: body,
-      headers: _getHeaders(headers),
+      headers: await _getHeaders(headers),
     )
         .timeout(
       const Duration(seconds: 10),
@@ -115,7 +115,7 @@ class BaseHttp {
     return await http
         .delete(
       Uri.parse(url),
-      headers: _getHeaders(headers),
+      headers: await _getHeaders(headers),
       body: body,
     )
         .timeout(
