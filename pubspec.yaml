@@ -100,6 +100,8 @@ flutter:
     - assets/successConfirmPage/
     - assets/failConfirmPage/
     - assets/selectButton/
+    - assets/robot/
+    - assets/botChatPage/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

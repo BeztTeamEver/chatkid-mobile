@@ -1,0 +1,1 @@
+enum BotType { PUMKIN, CHERRY }

@@ -1,6 +1,8 @@
 import 'package:chatkid_mobile/models/auth_model.dart';
 import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
+import 'package:chatkid_mobile/pages/start_page/role_page.dart';
+import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
@@ -16,7 +18,7 @@ class GoogleButton extends StatelessWidget {
   final bool isLogin;
   final LocalStorage _localStorage = LocalStorage.instance;
   late String _email = "";
-  late Widget _route = const MainPage();
+  late Widget _route = const StartPage();
 
   GoogleButton({super.key, required this.isLogin});
 

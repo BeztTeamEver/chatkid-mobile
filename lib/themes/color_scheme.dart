@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final _primaryColorValue = HexColor('FF9B06').value;
+final _secondaryColorValue = HexColor('FF0634').value;
 final _neutralColorValue = HexColor('F8D92AA').value;
 final _redColorValue = HexColor('0B2FE5').value;
 final _textDefaultColorValue = HexColor('303030').value;
@@ -23,6 +24,20 @@ final MaterialColor primary = MaterialColor(
     900: HexColor('752B01'),
   },
 );
+
+final MaterialColor secondary =
+    MaterialColor(_secondaryColorValue, <int, Color>{
+  50: HexColor('FFF5F7'),
+  100: HexColor('FFD1DA'),
+  200: HexColor('FF8FA3'),
+  300: HexColor('FF5C7A'),
+  400: HexColor('FF3358'),
+  500: HexColor('FF0634'),
+  600: HexColor('DD042B'),
+  700: HexColor('C20024'),
+  800: HexColor('9D011E'),
+  900: HexColor('6B0014')
+});
 
 final MaterialColor neutral = MaterialColor(_neutralColorValue, <int, Color>{
   50: HexColor('FAFAFA'),

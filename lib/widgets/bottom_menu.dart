@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/models/menu_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 
@@ -15,16 +19,19 @@ class BottomMenu extends StatefulWidget {
 }
 
 class _BottomMenuState extends State<BottomMenu> {
+  UserModel currentAccount = UserModel.fromJson(
+      jsonDecode(LocalStorage.instance.preferences.getString('user') ?? "{}"));
+  final double _borderRadius = 40;
   @override
   Widget build(BuildContext context) {
-    final menu = MenuList(role: 'child').getMenu();
+    final menu = MenuList(role: currentAccount.role ?? "").getMenu();
 
     return Container(
-      margin: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(30),
       height: 62,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(_borderRadius),
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).shadowColor.withOpacity(0.08),
@@ -41,7 +48,7 @@ class _BottomMenuState extends State<BottomMenu> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(_borderRadius),
         child: Center(
           child: BottomNavigationBar(
             backgroundColor: Colors.white,

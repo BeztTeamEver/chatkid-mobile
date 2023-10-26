@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
       color: primary,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
+          accentColor: secondary,
           primarySwatch: primary,
           backgroundColor: primary.shade50,
           errorColor: Colors.green.shade100,
