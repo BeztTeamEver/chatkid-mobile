@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/enum/bot_type.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/widgets/speech_to_text.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -16,14 +17,48 @@ class BotChatPage extends StatefulWidget {
 class _BotChatPageState extends State<BotChatPage> {
   @override
   Widget build(BuildContext context) {
+    final primaryColor = widget.botType == BotType.PUMKIN ? primary : secondary;
+    final botName =
+        widget.botType == BotType.PUMKIN ? 'full_pumkin' : 'full_cherry';
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Container(
+        padding: EdgeInsets.only(bottom: 20),
+        height: 86,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: SvgIcon(
+                icon: "info",
+                size: 43,
+                color: primaryColor.shade500,
+              ),
+            ),
+            SpeechToTextButton(
+              color: primaryColor,
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: SvgIcon(
+                icon: "history",
+                size: 43,
+                color: primaryColor.shade500,
+              ),
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: primaryColor.shade50,
       body: SafeArea(
         child: Stack(
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -33,7 +68,7 @@ class _BotChatPageState extends State<BotChatPage> {
                       color: Colors.white,
                       border: Border.all(
                         width: 2,
-                        color: primary.shade200,
+                        color: primaryColor.shade200,
                       ),
                       borderRadius: BorderRadius.circular(40),
                     ),
@@ -46,6 +81,7 @@ class _BotChatPageState extends State<BotChatPage> {
                         SvgIcon(
                           icon: 'bolt',
                           size: 24,
+                          color: primaryColor.shade500,
                         ),
                         Text(
                           "1000",
@@ -55,7 +91,8 @@ class _BotChatPageState extends State<BotChatPage> {
                     ),
                   ),
                   Container(
-                    child: SvgPicture.asset('assets/robot/full_pumkin.svg'),
+                    padding: EdgeInsets.only(bottom: 110),
+                    child: SvgPicture.asset('assets/robot/${botName}.svg'),
                   ),
                 ],
               ),

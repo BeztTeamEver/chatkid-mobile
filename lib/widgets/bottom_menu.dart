@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
@@ -20,11 +21,13 @@ class BottomMenu extends StatefulWidget {
 
 class _BottomMenuState extends State<BottomMenu> {
   UserModel currentAccount = UserModel.fromJson(
-      jsonDecode(LocalStorage.instance.preferences.getString('user') ?? "{}"));
+    jsonDecode(LocalStorage.instance.preferences.getString('user') ?? "{}"),
+  );
   final double _borderRadius = 40;
   @override
   Widget build(BuildContext context) {
-    final menu = MenuList(role: currentAccount.role ?? "").getMenu();
+    final menu =
+        MenuList(role: currentAccount.role ?? RoleConstant.Child).getMenu();
 
     return Container(
       margin: const EdgeInsets.all(30),

@@ -65,7 +65,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                 width: 10,
               ),
               CustomCard(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    createRoute(() => BotChatPage(botType: BotType.CHERRY)),
+                  );
+                },
                 onTapColor: secondary.shade100,
                 children: [
                   SvgPicture.asset('assets/robot/cherry.svg'),

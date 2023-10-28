@@ -48,7 +48,7 @@ class LocalStorage {
   }
 
   UserModel getUser() {
-    String user = _instance!.preferences.getString('user') ?? "";
+    String user = _instance!.preferences.getString('user') ?? "{}";
     return UserModel.fromJson(jsonDecode(user));
   }
 }

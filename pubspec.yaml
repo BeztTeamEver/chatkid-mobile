@@ -59,6 +59,7 @@ dependencies:
   riverpod_annotation: ^2.2.0
   signalr_netcore: ^0.1.7+2-nullsafety.3
   form_validator: ^2.1.1
+  speech_to_text: ^6.3.0
 
 flutter_launcher_icons:
   android: 'launcher_icon'
