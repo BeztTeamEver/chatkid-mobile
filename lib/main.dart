@@ -2,6 +2,7 @@ import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
@@ -19,9 +20,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final firebaseService = FirebaseService.instance;
+  final ttsService = TtsService().instance;
   await firebaseService.init();
   await firebaseService.getFCMToken();
 
+  await TtsService().initState();
   // share preferrence setup for one time page
   await LocalStorage.getInstance();
   // load env file

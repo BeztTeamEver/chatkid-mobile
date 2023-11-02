@@ -1,26 +1,78 @@
+import 'package:chatkid_mobile/constants/gpt_voice.dart';
 import 'package:chatkid_mobile/enum/bot_type.dart';
+import 'package:chatkid_mobile/providers/gpt_provider.dart';
+import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/speech_to_text.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:logger/logger.dart';
 
-class BotChatPage extends StatefulWidget {
+class BotChatPage extends ConsumerStatefulWidget {
   final BotType botType;
   const BotChatPage({super.key, required this.botType});
 
   @override
-  State<BotChatPage> createState() => _BotChatPageState();
+  ConsumerState<BotChatPage> createState() => _BotChatPageState();
 }
 
-class _BotChatPageState extends State<BotChatPage> {
+class _BotChatPageState extends ConsumerState<BotChatPage> {
+  TtsService ttsService = TtsService().instance;
+  Future<void> _onResult(String result) async {
+    // _speechEnabled = await _speechToText.initialize();
+    // setState(() {});
+    try {
+      final gptNotifier = ref.read(gptProvider.notifier);
+    } catch (e) {
+      Logger().e(e);
+    }
+  }
+
+  Future<void> _hello() async {
+    // _speechEnabled = await _speechToText.initialize();
+    // setState(() {});
+    await ttsService
+        .speak("Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?");
+  }
+
+  void initTts() async {
+    if (widget.botType == BotType.PUMKIN) {
+      await ttsService.setVoice(GptVoice.PumkinVoice);
+      await ttsService
+          .getVoices()
+          .then((value) => {Logger().d(value)})
+          .catchError((e) => {
+                Logger().e(e),
+              });
+    } else {
+      await ttsService.setVoice(GptVoice.CherryVoice);
+    }
+    await _hello();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ttsService.stop();
+  }
+
+  @override
+  void dispose() {
+    ttsService.stop();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    initTts();
+
     final primaryColor = widget.botType == BotType.PUMKIN ? primary : secondary;
     final botName =
         widget.botType == BotType.PUMKIN ? 'full_pumkin' : 'full_cherry';
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -39,6 +91,7 @@ class _BotChatPageState extends State<BotChatPage> {
               ),
             ),
             SpeechToTextButton(
+              onResult: _onResult,
               color: primaryColor,
             ),
             IconButton(

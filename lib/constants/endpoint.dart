@@ -15,4 +15,7 @@ class Endpoint {
   static const refreshTokenEndPoint = "/api/auth/refresh-token";
   // User
   static const userEndPoint = "/api/profiles";
+
+  // GPT chat
+  static const gptChatEndPoint = "/api/gpt/chat";
 }

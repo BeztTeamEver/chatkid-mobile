@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,12 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 class SpeechToTextButton extends StatefulWidget {
   final MaterialColor _color;
+  final Function _onResult;
 
-  const SpeechToTextButton({super.key, required MaterialColor color})
-      : _color = color;
+  const SpeechToTextButton(
+      {super.key, required MaterialColor color, required Function onResult})
+      : _color = color,
+        _onResult = onResult;
 
   @override
   State<SpeechToTextButton> createState() => _SpeechToTextButtonState();
@@ -20,7 +24,7 @@ class SpeechToTextButton extends StatefulWidget {
 
 class _SpeechToTextButtonState extends State<SpeechToTextButton> {
   final SpeechToText _speechToText = SpeechToText();
-
+  final TtsService ttsService = TtsService().instance;
   bool _speechEnabled = false;
   String _lastWords = '';
 
@@ -39,6 +43,7 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
   /// Each time to start a speech recognition session
   void _startListening() async {
     try {
+      ttsService.stop();
       await _speechToText.listen(
         onResult: _onSpeechResult,
       );
@@ -54,15 +59,23 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
   /// and the SpeechToText plugin supports setting timeouts on the
   /// listen method.
   void _stopListening() async {
-    _speechToText.stop();
-    setState(() {});
+    try {
+      Logger().d(_lastWords);
+      if (_lastWords != '') {
+        await widget._onResult(_lastWords);
+      }
+    } catch (e) {
+      print('Error stopping speech recognition');
+      Logger().e(e.toString());
+    } finally {
+      _speechToText.stop();
+      setState(() {});
+    }
   }
 
   /// This is the callback that the SpeechToText plugin calls when
   /// the platform returns recognized words.
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    Logger().d('onSpeechResult: $result');
-
+  void _onSpeechResult(SpeechRecognitionResult result) async {
     setState(() {
       _lastWords = result.recognizedWords;
     });
@@ -105,18 +118,16 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
           )
         ],
       ),
-      child: Expanded(
-        child: ElevatedButton(
-          style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                backgroundColor: MaterialStatePropertyAll(
-                  widget._color.shade300,
-                ),
+      child: ElevatedButton(
+        style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+              backgroundColor: MaterialStatePropertyAll(
+                widget._color.shade300,
               ),
-          onPressed:
-              // If not yet listening for speech start, otherwise stop
-              _speechToText.isNotListening ? _startListening : _stopListening,
-          child: SvgIcon(icon: 'voice_on', size: 24),
-        ),
+            ),
+        onPressed:
+            // If not yet listening for speech start, otherwise stop
+            _speechToText.isNotListening ? _startListening : _stopListening,
+        child: SvgIcon(icon: 'voice_on', size: 24),
       ),
     );
   }

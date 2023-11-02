@@ -10,5 +10,5 @@ const iconAnimalList = [
 
 class RoleConstant {
   static final Parent = Role.Parent.toString().split('.')[1];
-  static final Child = Role.Child.toString().split('.')[1];
+  static final Child = Role.Children.toString().split('.')[1];
 }

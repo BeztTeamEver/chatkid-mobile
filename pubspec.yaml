@@ -60,6 +60,7 @@ dependencies:
   signalr_netcore: ^0.1.7+2-nullsafety.3
   form_validator: ^2.1.1
   speech_to_text: ^6.3.0
+  flutter_tts: ^3.8.3
 
 flutter_launcher_icons:
   android: 'launcher_icon'

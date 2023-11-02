@@ -21,7 +21,7 @@ class UserService {
   Future<UserModel> updateUser(UserModel user) async {
     final response = await BaseHttp.instance.put(
       endpoint: '${Endpoint.userEndPoint}/${user.id}',
-      body: jsonEncode(user.toJson()),
+      body: jsonEncode(user.toMap()),
     );
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));

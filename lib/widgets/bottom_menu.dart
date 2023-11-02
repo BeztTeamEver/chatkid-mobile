@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class BottomMenu extends StatefulWidget {
   final int currentIndex;

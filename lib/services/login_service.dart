@@ -66,6 +66,7 @@ class AuthService {
   }
 
   static Future<AuthModel> refreshToken() async {
+    _localStorage.preferences.remove('accessToken');
     final response = await BaseHttp.instance.get(
       endpoint: Endpoint.refreshTokenEndPoint,
     );

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserModel {
@@ -36,7 +38,7 @@ class UserModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     if (avatarUrl != null) {
@@ -65,4 +67,6 @@ class UserModel {
     }
     return data;
   }
+
+  String toJson() => jsonEncode(toMap());
 }

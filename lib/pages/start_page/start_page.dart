@@ -57,7 +57,7 @@ class _StartPageState extends ConsumerState<StartPage> {
     }
     LocalStorage.instance.preferences.setInt('step', 2);
     LocalStorage.instance.preferences
-        .setString('user', jsonEncode(_selectedAccount!.toJson()));
+        .setString('user', jsonEncode(_selectedAccount!.toMap()));
     Navigator.pushReplacement(
       context,
       createRoute(
