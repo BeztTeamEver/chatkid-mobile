@@ -26,7 +26,6 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
   final SpeechToText _speechToText = SpeechToText();
   final TtsService ttsService = TtsService().instance;
   bool _speechEnabled = false;
-  String _lastWords = '';
 
   @override
   void initState() {
@@ -45,8 +44,8 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
     try {
       ttsService.stop();
       await _speechToText.listen(
-        onResult: _onSpeechResult,
-      );
+          // onResult: _onSpeechResult,
+          );
     } catch (e) {
       print('Error starting speech recognition');
       Logger().e(e.toString());
@@ -60,9 +59,9 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
   /// listen method.
   void _stopListening() async {
     try {
-      Logger().d(_lastWords);
-      if (_lastWords != '') {
-        await widget._onResult(_lastWords);
+      final lastWords = _speechToText.lastRecognizedWords;
+      if (lastWords.isNotEmpty) {
+        await widget._onResult(lastWords);
       }
     } catch (e) {
       print('Error stopping speech recognition');
@@ -75,10 +74,8 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
 
   /// This is the callback that the SpeechToText plugin calls when
   /// the platform returns recognized words.
-  void _onSpeechResult(SpeechRecognitionResult result) async {
-    setState(() {
-      _lastWords = result.recognizedWords;
-    });
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {});
   }
 
   @override

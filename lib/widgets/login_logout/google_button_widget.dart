@@ -99,7 +99,8 @@ class GoogleButton extends StatelessWidget {
                 },
                 (error, stack) {
                   Logger().d(error.toString(), stackTrace: stack);
-                  ErrorSnackbar.showError(err: error, context: context);
+                  ErrorSnackbar.showError(
+                      err: error, context: context, stack: stack);
                 },
                 stopLoading,
               );

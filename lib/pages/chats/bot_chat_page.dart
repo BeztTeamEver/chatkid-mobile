@@ -27,8 +27,11 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   Future<void> _onResult(String result) async {
     // _speechEnabled = await _speechToText.initialize();
     // setState(() {});
+    Logger.level = Level.debug;
+
     try {
       Logger().d(result);
+
       final gptNotifier = ref.read(gptProvider.notifier);
       await gptNotifier.chat(result).then((value) async {
         await ttsService.speak(value);
