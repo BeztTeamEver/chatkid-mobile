@@ -92,7 +92,7 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: _speechToText.isNotListening ? 152 : 168,
-      height: _speechToText.isNotListening ? 60 : 86,
+      height: _speechToText.isNotListening ? 70 : 96,
       padding: _speechToText.isNotListening
           ? const EdgeInsets.all(8)
           : const EdgeInsets.all(8),

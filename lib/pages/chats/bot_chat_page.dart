@@ -22,19 +22,26 @@ class BotChatPage extends ConsumerStatefulWidget {
 
 class _BotChatPageState extends ConsumerState<BotChatPage> {
   TtsService ttsService = TtsService().instance;
+  int _currentEnergy = 1000;
+  //TODO: current energy
   Future<void> _onResult(String result) async {
     // _speechEnabled = await _speechToText.initialize();
     // setState(() {});
     try {
+      Logger().d(result);
       final gptNotifier = ref.read(gptProvider.notifier);
+      await gptNotifier.chat(result).then((value) async {
+        await ttsService.speak(value);
+        setState(() {
+          _currentEnergy -= 1;
+        });
+      });
     } catch (e) {
       Logger().e(e);
     }
   }
 
   Future<void> _hello() async {
-    // _speechEnabled = await _speechToText.initialize();
-    // setState(() {});
     await ttsService
         .speak("Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?");
   }
@@ -42,12 +49,6 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   void initTts() async {
     if (widget.botType == BotType.PUMKIN) {
       await ttsService.setVoice(GptVoice.PumkinVoice);
-      await ttsService
-          .getVoices()
-          .then((value) => {Logger().d(value)})
-          .catchError((e) => {
-                Logger().e(e),
-              });
     } else {
       await ttsService.setVoice(GptVoice.CherryVoice);
     }
@@ -73,12 +74,13 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     final primaryColor = widget.botType == BotType.PUMKIN ? primary : secondary;
     final botName =
         widget.botType == BotType.PUMKIN ? 'full_pumkin' : 'full_cherry';
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Container(
         padding: EdgeInsets.only(bottom: 20),
-        height: 86,
+        height: 96,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -137,7 +139,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                           color: primaryColor.shade500,
                         ),
                         Text(
-                          "1000",
+                          _currentEnergy.toString(),
                           style: Theme.of(context).textTheme.bodyLarge,
                         )
                       ],
