@@ -15,4 +15,8 @@ class Endpoint {
   static const refreshTokenEndPoint = "/api/auth/refresh-token";
   // User
   static const userEndPoint = "/api/profiles";
+
+  //Blog
+  static const blogEndPoint = "/api/blogs";
+  static const blogTypeEndPoint = "/api/blog-types";
 }
