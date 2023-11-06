@@ -61,6 +61,8 @@ dependencies:
   form_validator: ^2.1.1
   speech_to_text: ^6.3.0
   flutter_tts: ^3.8.3
+  flutter_audio_waveforms: ^1.2.1+8
+  audioplayers: ^5.2.0
 
 flutter_launcher_icons:
   android: 'launcher_icon'
@@ -104,6 +106,8 @@ flutter:
     - assets/selectButton/
     - assets/robot/
     - assets/botChatPage/
+    - assets/thumbnails/
+    - assets/audio/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
