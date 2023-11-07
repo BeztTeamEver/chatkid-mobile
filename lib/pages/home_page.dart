@@ -68,7 +68,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    createRoute(() => BotChatPage(botType: BotType.CHERRY)),
+                    createRoute(() => BotChatPage(botType: BotType.STRAWBERRY)),
                   );
                 },
                 onTapColor: secondary.shade100,
@@ -85,20 +85,6 @@ class _HomePageState extends ConsumerState<HomePage> {
               )
             ],
           ),
-          const Text("Home Page"),
-          ElevatedButton(
-            onPressed: () async {
-              await FirebaseService.instance.signOut().then((value) {
-                AuthService.signOut();
-                Navigator.of(context).pushReplacement(
-                  createRoute(
-                    () => const LoginPage(),
-                  ),
-                );
-              });
-            },
-            child: const Text("Sign out"),
-          )
         ],
       ),
     );

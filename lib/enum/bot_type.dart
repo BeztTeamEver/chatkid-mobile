@@ -1,1 +1,1 @@
-enum BotType { PUMKIN, CHERRY }
+enum BotType { PUMKIN, STRAWBERRY }

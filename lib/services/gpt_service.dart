@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 class GptService {
-  Future<String> chat(String message) async {
-    final body = GptRequestModal(message: message);
+  Future<String> chat(String message, String kidServiceId) async {
+    final body = GptRequestModal(message: message, kidServiceId: kidServiceId);
     final response = await BaseHttp.instance
         .post(endpoint: Endpoint.gptChatEndPoint, body: body.toJson());
     Logger().d(response.body);
@@ -33,16 +33,15 @@ class GptService {
 class GptNotifier extends StateNotifier<GptRequestModal> {
   final GptService _gptService = GptService();
 
-  GptNotifier() : super(GptRequestModal(message: ''));
+  GptNotifier() : super(GptRequestModal(message: '', kidServiceId: ''));
 
-  void setMessage(String message) {
-    state = GptRequestModal(message: message);
+  void setMessage(String message, String kidServiceId) {
+    state = GptRequestModal(message: message, kidServiceId: kidServiceId);
   }
 
-  Future<String> chat(String message) async {
+  Future<String> chat(String message, String kidServiceId) async {
     try {
-      Logger().d(message);
-      String result = await _gptService.chat(message);
+      String result = await _gptService.chat(message, kidServiceId);
       state.message = result;
       return result;
     } catch (e) {

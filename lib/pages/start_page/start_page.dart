@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/start_page/form_page.dart';
+import 'package:chatkid_mobile/pages/start_page/password_login_page.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/providers/step_provider.dart';
@@ -58,7 +59,7 @@ class _StartPageState extends ConsumerState<StartPage> {
     LocalStorage.instance.preferences.setInt('step', 2);
     LocalStorage.instance.preferences
         .setString('user', jsonEncode(_selectedAccount!.toMap()));
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       createRoute(
         () => MainPage(),

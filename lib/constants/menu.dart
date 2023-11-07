@@ -2,7 +2,9 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/pages/activation_page.dart';
+import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
+import 'package:chatkid_mobile/pages/user/user_page.dart';
 
 final List<Menu> menu = [
   Menu(
@@ -31,7 +33,7 @@ final List<Menu> menu = [
     icon: 'rocket',
     route: routesName['${AppRoutes.activities}']!,
     role: [RoleConstant.Child],
-    widget: const HomePage(),
+    widget: const ExplorePage(),
   ),
   Menu(
     title: 'notification',
@@ -45,6 +47,6 @@ final List<Menu> menu = [
     icon: 'user',
     route: routesName['${AppRoutes.profile}']!,
     role: [RoleConstant.Parent, RoleConstant.Child],
-    widget: const HomePage(),
+    widget: const UserPage(),
   ),
 ];

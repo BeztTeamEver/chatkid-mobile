@@ -12,10 +12,15 @@ import 'package:speech_to_text/speech_to_text.dart';
 class SpeechToTextButton extends StatefulWidget {
   final MaterialColor _color;
   final Function _onResult;
+  final Function? _onSpeechResult;
 
   const SpeechToTextButton(
-      {super.key, required MaterialColor color, required Function onResult})
+      {super.key,
+      required MaterialColor color,
+      required Function onResult,
+      Function? onSpeechResult})
       : _color = color,
+        _onSpeechResult = onSpeechResult,
         _onResult = onResult;
 
   @override
@@ -44,8 +49,8 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
     try {
       ttsService.stop();
       await _speechToText.listen(
-          // onResult: _onSpeechResult,
-          );
+        onResult: _onSpeechResult,
+      );
     } catch (e) {
       print('Error starting speech recognition');
       Logger().e(e.toString());
@@ -74,7 +79,8 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
 
   /// This is the callback that the SpeechToText plugin calls when
   /// the platform returns recognized words.
-  void _onSpeechResult(SpeechRecognitionResult result) {
+  void _onSpeechResult(SpeechRecognitionResult result) async {
+    widget._onSpeechResult?.call(result);
     setState(() {});
   }
 
