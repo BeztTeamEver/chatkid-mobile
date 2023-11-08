@@ -106,6 +106,13 @@ class _InfoPageState extends State<InfoPage> {
                       ),
                       value: "female",
                     ),
+                    DropdownMenuItem(
+                      child: Text(
+                        "Khác",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      value: "other",
+                    ),
                   ],
                   onChanged: (value) {
                     widget.genderController.text = value.toString();

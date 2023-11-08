@@ -60,16 +60,17 @@ class FamilyModel {
       users: json['users'] as List<UserModel>,
     );
   }
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "name": name,
+        "ownerMail": ownerMail,
+        "status": status,
+        "createdAt": createdAt,
+        "updatedAt": updatedAt,
+        "users": users,
+      };
 
   String toJson() {
-    return jsonEncode({
-      "id": id,
-      "name": name,
-      "ownerMail": ownerMail,
-      "status": status,
-      "createdAt": createdAt,
-      "updatedAt": updatedAt,
-      "users": users,
-    });
+    return jsonEncode(toMap());
   }
 }

@@ -43,14 +43,18 @@ class FirebaseService {
     }
   }
 
-  Future<String> getFCMToken() async {
-    fcmToken = await _firebaseMessaging.getToken();
+  Future<String?> getFCMToken() async {
+    try {
+      fcmToken = await _firebaseMessaging.getToken();
 
-    appId = fcmToken?.split(':').first ?? "";
-    FirebaseMessaging.onBackgroundMessage(
-        (message) => _firebaseMessagingBackgroundHandler(message));
-
-    return fcmToken!;
+      appId = fcmToken?.split(':').first ?? "";
+      FirebaseMessaging.onBackgroundMessage(
+          (message) => _firebaseMessagingBackgroundHandler(message));
+      return fcmToken ?? '';
+    } catch (e) {
+      print(e);
+      return "";
+    }
   }
 
   Future<UserCredential> signInWithGoogle() async {
