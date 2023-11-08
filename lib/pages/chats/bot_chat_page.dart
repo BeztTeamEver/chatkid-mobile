@@ -214,7 +214,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                           maxHeight: 120,
                         ),
                         decoration: BoxDecoration(
-                          color: primary.shade100,
+                          color: primary.shade100.withOpacity(0.8),
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(40),
                             bottomRight: Radius.circular(8),
