@@ -8,7 +8,7 @@ import 'package:logger/logger.dart';
 
 class BaseHttp {
   static BaseHttp? _instance;
-  static final String apiVersion = "1.0";
+  static const String apiVersion = "1.0";
   LocalStorage _localStorage = LocalStorage.instance;
 
   BaseHttp._internal();

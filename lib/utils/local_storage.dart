@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/models/auth_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
@@ -38,5 +41,14 @@ class LocalStorage {
       return null;
     }
     return AuthModel(token: accessToken!, refreshToken: refreshToken!);
+  }
+
+  String get(String key) {
+    return jsonEncode(_instance!.preferences.getString(key)) ?? "";
+  }
+
+  UserModel getUser() {
+    String user = _instance!.preferences.getString('user') ?? "{}";
+    return UserModel.fromJson(jsonDecode(user));
   }
 }
