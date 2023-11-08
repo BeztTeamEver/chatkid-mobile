@@ -8,7 +8,6 @@ import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/profile/payment_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 import 'package:chatkid_mobile/pages/profile/subcription_page.dart';
-import 'package:chatkid_mobile/pages/user/user_page.dart';
 
 final List<Menu> menu = [
   Menu(
