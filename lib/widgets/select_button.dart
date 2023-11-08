@@ -49,12 +49,13 @@ class SelectButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: _onPressed,
         style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-            backgroundColor: MaterialStateProperty.all<Color>(
-              _isSelected ? primary.shade400 : Colors.transparent,
+              backgroundColor: MaterialStateProperty.all<Color>(
+                _isSelected ? primary.shade400 : Colors.transparent,
+              ),
+              shadowColor: MaterialStateProperty.all<Color>(
+                Colors.transparent,
+              ),
             ),
-            shadowColor: MaterialStateProperty.all<Color>(
-              Colors.transparent,
-            )),
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: Row(
@@ -70,7 +71,7 @@ class SelectButton extends StatelessWidget {
                             color: _borderColor ?? neutral.shade400,
                             width: 2,
                           ),
-                          color: Colors.transparent,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(40),
                         ),
                         child: SvgIcon(

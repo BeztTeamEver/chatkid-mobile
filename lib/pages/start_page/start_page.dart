@@ -1,14 +1,18 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/start_page/form_page.dart';
+import 'package:chatkid_mobile/pages/start_page/password_login_page.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/providers/step_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:flutter/material.dart';
@@ -24,10 +28,43 @@ class StartPage extends ConsumerStatefulWidget {
 
 class _StartPageState extends ConsumerState<StartPage> {
   late final Future<List<UserModel>> familyUsers;
+  UserModel? _selectedAccount = null;
+  int _selectedIndex = -1;
   @override
   void initState() {
     super.initState();
     familyUsers = FamilyService().getFamilyAccounts(null);
+  }
+
+  void onSelectAccount(UserModel data, int index) {
+    if (data.deviceToken != null && data.deviceToken!.isNotEmpty) {
+      setState(() {
+        _selectedIndex = index;
+        _selectedAccount = data;
+      });
+      return;
+    }
+    Navigator.push(
+      context,
+      createRoute(
+        () => FormPage(user: data),
+      ),
+    );
+  }
+
+  void onContinue() {
+    if (_selectedIndex == -1) {
+      return;
+    }
+    LocalStorage.instance.preferences.setInt('step', 2);
+    LocalStorage.instance.preferences
+        .setString('user', jsonEncode(_selectedAccount!.toMap()));
+    Navigator.push(
+      context,
+      createRoute(
+        () => MainPage(),
+      ),
+    );
   }
 
   @override
@@ -108,17 +145,13 @@ class _StartPageState extends ConsumerState<StartPage> {
                         return SizedBox(
                           width: double.infinity,
                           child: SelectButton(
+                            isSelected: _selectedIndex == index,
                             borderColor: primary.shade100,
                             hasBackground: true,
                             icon: icon,
                             label: data[index].name ?? "No name",
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                createRoute(
-                                  () => FormPage(user: data[index]),
-                                ),
-                              );
+                              onSelectAccount(data[index], index);
                             },
                           ),
                         );
@@ -138,12 +171,7 @@ class _StartPageState extends ConsumerState<StartPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    createRoute(
-                      () => MainPage(),
-                    ),
-                  );
+                  onContinue();
                 },
                 style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                       minimumSize: MaterialStateProperty.all<Size>(

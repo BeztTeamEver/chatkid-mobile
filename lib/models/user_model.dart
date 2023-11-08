@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:ffi';
+
+import 'package:chatkid_mobile/models/kid_service_model.dart';
+import 'package:chatkid_mobile/models/wallet_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserModel {
@@ -10,6 +15,8 @@ class UserModel {
   int? status;
   String? familyId;
   String? deviceToken;
+  List<KidServiceModel>? kidServices;
+  List<WalletModel>? wallets;
 
   UserModel(
       {this.id,
@@ -20,7 +27,9 @@ class UserModel {
       this.status,
       this.familyId,
       this.gender,
-      this.deviceToken});
+      this.deviceToken,
+      this.kidServices,
+      this.wallets});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -33,10 +42,20 @@ class UserModel {
       familyId: json['familyId'],
       gender: json['gender'],
       deviceToken: json['deviceToken'],
+      kidServices: json['kidServices'] != null
+          ? (json['kidServices'] as List)
+              .map((e) => KidServiceModel.fromJson(e))
+              .toList()
+          : null,
+      wallets: json['wallets'] != null
+          ? (json['wallets'] as List)
+              .map((e) => WalletModel.fromJson(e))
+              .toList()
+          : null,
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     if (avatarUrl != null) {
@@ -63,6 +82,14 @@ class UserModel {
     if (deviceToken != null) {
       data['deviceToken'] = deviceToken;
     }
+    if (kidServices != null) {
+      data['kidServices'] = kidServices!.map((v) => v.toMap()).toList();
+    }
+    if (wallets != null) {
+      data['wallets'] = wallets!.map((v) => v.toMap()).toList();
+    }
     return data;
   }
+
+  String toJson() => jsonEncode(toMap());
 }
