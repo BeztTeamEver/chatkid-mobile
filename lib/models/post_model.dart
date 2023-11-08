@@ -1,19 +1,21 @@
-class PostModal {
+import 'dart:convert';
+
+class PostModel {
   int? userId;
   int? id;
   String? title;
   String? body;
 
-  PostModal({this.userId, this.id, this.title, this.body});
+  PostModel({this.userId, this.id, this.title, this.body});
 
-  PostModal.fromJson(Map<String, dynamic> json) {
+  PostModel.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
     id = json['id'];
     title = json['title'];
     body = json['body'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['userId'] = userId;
     data['id'] = id;
@@ -21,4 +23,6 @@ class PostModal {
     data['body'] = body;
     return data;
   }
+
+  String toJson() => jsonEncode(toMap());
 }
