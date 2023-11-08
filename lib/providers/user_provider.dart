@@ -13,3 +13,8 @@ final updateUserProvider =
     throw err;
   }
 }));
+
+final userProvider =
+    StateNotifierProvider<UserServiceNotifier, UserModel>((ref) {
+  return UserServiceNotifier();
+});

@@ -59,9 +59,12 @@ dependencies:
   riverpod_annotation: ^2.2.0
   signalr_netcore: ^0.1.7+2-nullsafety.3
   form_validator: ^2.1.1
+  audioplayers: ^5.2.0
+  speech_to_text: ^6.3.0
+  flutter_tts: ^3.8.3
   flutter_audio_waveforms: ^1.2.1+8
   audioplayers: ^5.2.0
-  
+
 flutter_launcher_icons:
   android: 'launcher_icon'
   ios: true
@@ -102,11 +105,12 @@ flutter:
     - assets/successConfirmPage/
     - assets/failConfirmPage/
     - assets/selectButton/
-    - assets/thumbnails/
-    - assets/audio/
-    - assets/bots/
     - assets/advertise-banner/
     - assets/payment/
+    - assets/robot/
+    - assets/botChatPage/
+    - assets/s/
+    - assets/audio/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

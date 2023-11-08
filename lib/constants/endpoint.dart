@@ -20,9 +20,13 @@ class Endpoint {
   static const blogEndPoint = "/api/blogs";
   static const blogTypeEndPoint = "/api/blog-types";
 
+  // GPT chat
+  static const gptChatEndPoint = "/api/gpt/chat";
+
   //Subcription
   static const subcriptionEndPoint = "/api/subcriptions";
 
+  // Paypal
   static const paypalEndPoint = "/api/paypal/create-paypal-order";
   static const capturePaypalEndPoint = "/api/paypal/capture";
 }
