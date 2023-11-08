@@ -44,7 +44,6 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
       setState(() {
         _loading = true;
       });
-
       String kidServiceId = _user?.kidServices!
               .firstWhere((element) => element.serviceType == _botServiceName)
               .id ??
