@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class PostModel {
   int? userId;
   int? id;
@@ -13,7 +15,7 @@ class PostModel {
     body = json['body'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['userId'] = userId;
     data['id'] = id;
@@ -21,4 +23,6 @@ class PostModel {
     data['body'] = body;
     return data;
   }
+
+  String toJson() => jsonEncode(toMap());
 }

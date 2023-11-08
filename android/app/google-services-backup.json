@@ -58,14 +58,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "343387729372-b1lh8bkpuoegjncb251718fnn3v0lkca.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.kidtalkie.notification",
-            "certificate_hash": "54cadd72bc6c9b41673a4e85c722a043e9c18a04"
-          }
-        },
-        {
           "client_id": "343387729372-2q7mlkltgdbus2cqtfuk5i2l41o0mu09.apps.googleusercontent.com",
           "client_type": 3
         }
