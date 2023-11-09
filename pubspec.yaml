@@ -104,6 +104,12 @@ flutter:
     - assets/successConfirmPage/
     - assets/failConfirmPage/
     - assets/selectButton/
+    - assets/advertise-banner/
+    - assets/payment/
+    - assets/robot/
+    - assets/botChatPage/
+    - assets/audio/
+    - assets/thumbnails/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

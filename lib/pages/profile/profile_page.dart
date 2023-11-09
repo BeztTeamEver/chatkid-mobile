@@ -17,7 +17,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: Expanded(
           child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(

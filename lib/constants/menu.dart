@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/pages/explore/blogs/blog_categories_detail_page.d
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
+import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 
 final List<Menu> menu = [
   Menu(
@@ -50,5 +51,12 @@ final List<Menu> menu = [
     route: routesName['${AppRoutes.profile}']!,
     role: [RoleConstant.Parent, RoleConstant.Child],
     widget: const ProfilePage(),
+  ),
+  Menu(
+    title: 'Wallet',
+    icon: 'user',
+    route: routesName['${AppRoutes.profile}']!,
+    role: [RoleConstant.Parent],
+    widget: const WalletPage(),
   ),
 ];
