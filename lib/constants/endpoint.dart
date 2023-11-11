@@ -26,6 +26,9 @@ class Endpoint {
   //Subcription
   static const subcriptionEndPoint = "/api/subcriptions";
 
+  // Message
+  static const messagesEndPoint = "/api/messages";
+
   // Paypal
   static const paypalEndPoint = "/api/paypal/create-paypal-order";
   static const capturePaypalEndPoint = "/api/paypal/capture";

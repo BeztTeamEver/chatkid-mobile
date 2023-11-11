@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 class ResponseModel<TData> {
   final String? statusCode;
   final bool succeeded;

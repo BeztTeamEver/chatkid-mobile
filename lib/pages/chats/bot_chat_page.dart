@@ -25,7 +25,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   TtsService ttsService = TtsService().instance;
   int _currentEnergy = 0;
   bool _loading = false;
-  String? _lastWords;
+  String? _lastWords = "";
   String _botServiceName = "";
   UserModel? _user;
   //TODO: current energy
@@ -40,7 +40,6 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     }
 
     try {
-      Logger().d(result);
       setState(() {
         _loading = true;
       });
@@ -56,6 +55,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
             "Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!");
         return;
       }
+      Logger().d(result);
       final gptNotifier = ref.read(gptProvider.notifier);
       await gptNotifier.chat(result, kidServiceId).then((value) async {
         await ttsService.speak(value);
@@ -70,6 +70,10 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
       Logger().e(e);
       ttsService.speak(
           "Tôi đang nâng cấp rồi, xin lỗi bạn nhé! tôi sẽ sớm trở lại với bạn");
+      setState(() {
+        _lastWords =
+            "Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?";
+      });
     } finally {
       setState(() {
         _loading = false;
@@ -78,8 +82,21 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   }
 
   Future<void> _hello() async {
-    await ttsService
-        .speak("Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?");
+    UserModel user = ref.watch(userProvider.notifier).state;
+    final totalEnergy = user.wallets?.first.totalEnergy ?? 0;
+    String lastWords =
+        'Xin chào, tôi là Kidtalkie. Bạn có câu hỏi gì cho tôi không?';
+
+    if (totalEnergy == 0) {
+      lastWords =
+          'Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!';
+    } else {
+      setState(() {
+        _currentEnergy = totalEnergy;
+        _lastWords = lastWords;
+      });
+    }
+    await ttsService.speak(lastWords);
   }
 
   void initTts() async {
@@ -110,13 +127,29 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     final botName =
         widget.botType == BotType.PUMKIN ? 'full_pumkin' : 'full_cherry';
     UserModel user = ref.watch(userProvider.notifier).state;
+    // if (user != null && user.wallets!.isNotEmpty) {
+    //   final totalEnergy = user.wallets!.first.totalEnergy ?? 0;
+    //   String lastWords =
+    //       'Xin chào, tôi là Kidtalkie. Bạn có câu hỏi gì cho tôi không?';
+    //   if (totalEnergy == 0) {
+    //     ttsService.stop();
+    //     ttsService.speak(
+    //         'Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!');
+    //     lastWords =
+    //         'Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!';
+    //   }
+    //   setState(() {
+    //     _currentEnergy = user.wallets!.first.totalEnergy ?? 0;
+    //     _lastWords = lastWords;
+    //   });
+    // }
     setState(() {
       _user = user;
-      _currentEnergy = _user?.wallets?[0].totalEnergy ?? 0;
       _botServiceName = widget.botType == BotType.PUMKIN
           ? ServiceTypeConstant.PUMPKIN
           : ServiceTypeConstant.STRAWBERRY;
     });
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -219,10 +252,10 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                             transitionBuilder: (child, animation) =>
                                 ScaleTransition(scale: animation, child: child),
                             child: _loading
-                                ? CircularProgressIndicator()
+                                ? const CircularProgressIndicator()
                                 : Text(
                                     _lastWords ??
-                                        'Bạn có câu hỏi gì cho tôi không?',
+                                        "Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?",
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall!
@@ -236,11 +269,11 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Container(
-                        padding: EdgeInsets.only(bottom: 110),
+                        padding: const EdgeInsets.only(bottom: 110),
                         child: SvgPicture.asset('assets/robot/${botName}.svg'),
                       ),
                     ],

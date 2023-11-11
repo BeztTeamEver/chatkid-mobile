@@ -68,3 +68,39 @@ class FamilyService {
 final familyServiceProvider = Provider<FamilyService>((ref) {
   return FamilyService();
 });
+
+class FamilyServiceNotifier extends StateNotifier<FamilyModel> {
+  final FamilyService _familyService = FamilyService();
+
+  FamilyServiceNotifier()
+      : super(FamilyModel(
+          id: "",
+          name: "",
+          ownerMail: "",
+          status: 0,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          users: [],
+        ));
+
+  Future<List<UserModel>> getFamilyAccounts(
+    FamilyRequestModel? familyRequestModel,
+  ) async {
+    try {
+      final data = await _familyService.getFamilyAccounts(familyRequestModel);
+      state = FamilyModel(
+        id: familyRequestModel?.id ?? "",
+        name: familyRequestModel?.name ?? "",
+        ownerMail: familyRequestModel?.email ?? "",
+        status: 0,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        users: data,
+      );
+      return data;
+    } catch (e) {
+      Logger().e(e);
+      rethrow;
+    }
+  }
+}
