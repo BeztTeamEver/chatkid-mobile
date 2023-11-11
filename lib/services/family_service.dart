@@ -23,7 +23,8 @@ class FamilyService {
     switch (response.statusCode) {
       case 401:
         LocalStorage.instance.clear();
-        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+        throw Exception(
+            'L  ỗi không thể xác thực người dùng, vui lòng thử lại!');
       case 403:
         LocalStorage.instance.clear();
         throw Exception(
@@ -45,6 +46,7 @@ class FamilyService {
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       final data = jsonDecode(response.body);
+      Logger().d(response.body);
       final family = FamilyModel.fromJson(data);
       return family.users;
     }

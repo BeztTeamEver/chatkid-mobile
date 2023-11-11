@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/providers/gpt_provider.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/speech_to_text.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,10 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
       setState(() {
         _loading = true;
       });
+      if (_user?.kidServices == null) {
+        throw Exception("Kid service is null");
+      }
+      Logger().d(_botServiceName);
       String kidServiceId = _user?.kidServices!
               .firstWhere((element) => element.serviceType == _botServiceName)
               .id ??
@@ -55,7 +60,6 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
             "Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!");
         return;
       }
-      Logger().d(result);
       final gptNotifier = ref.read(gptProvider.notifier);
       await gptNotifier.chat(result, kidServiceId).then((value) async {
         await ttsService.speak(value);
@@ -82,7 +86,11 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   }
 
   Future<void> _hello() async {
-    UserModel user = ref.watch(userProvider.notifier).state;
+    UserModel currentUser = LocalStorage.instance.getUser();
+    UserModel user = await ref
+        .watch(userProvider.notifier)
+        .getUser(currentUser.id, currentUser.password);
+
     final totalEnergy = user.wallets?.first.totalEnergy ?? 0;
     String lastWords =
         'Xin chào, tôi là Kidtalkie. Bạn có câu hỏi gì cho tôi không?';
@@ -92,7 +100,11 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
           'Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!';
     } else {
       setState(() {
+        _user = user;
         _currentEnergy = totalEnergy;
+        _botServiceName = widget.botType == BotType.PUMKIN
+            ? ServiceTypeConstant.PUMPKIN
+            : ServiceTypeConstant.STRAWBERRY;
         _lastWords = lastWords;
       });
     }
@@ -126,7 +138,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     final primaryColor = widget.botType == BotType.PUMKIN ? primary : secondary;
     final botName =
         widget.botType == BotType.PUMKIN ? 'full_pumkin' : 'full_cherry';
-    UserModel user = ref.watch(userProvider.notifier).state;
+
     // if (user != null && user.wallets!.isNotEmpty) {
     //   final totalEnergy = user.wallets!.first.totalEnergy ?? 0;
     //   String lastWords =
@@ -143,12 +155,6 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     //     _lastWords = lastWords;
     //   });
     // }
-    setState(() {
-      _user = user;
-      _botServiceName = widget.botType == BotType.PUMKIN
-          ? ServiceTypeConstant.PUMPKIN
-          : ServiceTypeConstant.STRAWBERRY;
-    });
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

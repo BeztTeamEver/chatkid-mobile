@@ -183,7 +183,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Tài khoản bé',
+                      'Tài khoản',
                       style: TextStyle(
                           color: Color.fromRGBO(165, 168, 187, 1),
                           fontWeight: FontWeight.w700),

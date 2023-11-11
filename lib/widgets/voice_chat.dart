@@ -103,8 +103,7 @@ class _VoiceChatState extends State<VoiceChat> {
         ),
       ),
       child: ElevatedButton(
-        onPressed:
-            _speechToText.isNotListening ? _startListening : _stopListening,
+        onPressed: _speechToText.isListening ? _stopListening : _startListening,
         child: Icon(
           _speechToText.isListening ? Icons.mic_off : Icons.mic_rounded,
           size: 36,
