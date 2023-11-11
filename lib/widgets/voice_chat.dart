@@ -60,6 +60,7 @@ class _VoiceChatState extends State<VoiceChat> {
   }
 
   void _stopListening() async {
+    await _speechToText.stop();
     try {
       final lastWords = _speechToText.lastRecognizedWords;
       if (lastWords.isNotEmpty) {
@@ -69,7 +70,6 @@ class _VoiceChatState extends State<VoiceChat> {
       print('Error stopping speech recognition');
       Logger().e(e.toString());
     } finally {
-      _speechToText.stop();
       setState(() {});
     }
   }

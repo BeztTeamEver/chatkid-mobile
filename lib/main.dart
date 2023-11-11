@@ -25,7 +25,7 @@ void main() async {
   await firebaseService.init();
   await firebaseService.getFCMToken();
   // chat service setup
-  final hubConnection = ChatServiceSocket.instance;
+  // final hubConnection = ChatServiceSocket.instance;
 
   // tts service setup
   await TtsService().initState();
