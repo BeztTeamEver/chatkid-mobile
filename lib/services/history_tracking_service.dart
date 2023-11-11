@@ -5,7 +5,6 @@ import 'package:chatkid_mobile/models/history_tracking_model.dart';
 import 'package:chatkid_mobile/models/pagination_response_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
-import 'package:logger/logger.dart';
 
 class HistoryTrackingService {
   Future<List<HistoryTrackingModel>> getHistory(String userId) async {
@@ -14,7 +13,6 @@ class HistoryTrackingService {
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       final data = jsonDecode(response.body);
       final model = PaginationResponseModel.fromJson(data);
-      Logger().d(data);
       return model.items
           .map((res) => HistoryTrackingModel.fromJson(res))
           .toList();
