@@ -104,11 +104,12 @@ flutter:
     - assets/successConfirmPage/
     - assets/failConfirmPage/
     - assets/selectButton/
+    - assets/audio/
+    - assets/bots/
     - assets/advertise-banner/
     - assets/payment/
     - assets/robot/
     - assets/botChatPage/
-    - assets/audio/
     - assets/thumbnails/
     - .env
 

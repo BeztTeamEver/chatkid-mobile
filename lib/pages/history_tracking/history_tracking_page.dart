@@ -1,25 +1,29 @@
-import 'package:chatkid_mobile/models/notification_model.dart';
+import 'package:chatkid_mobile/constants/account_list.dart';
+import 'package:chatkid_mobile/models/history_tracking_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
-import 'package:chatkid_mobile/services/notification_service.dart';
-import 'package:chatkid_mobile/utils/number_format.dart';
+import 'package:chatkid_mobile/services/history_tracking_service.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 
-class NotificationPage extends StatefulWidget {
-  const NotificationPage({super.key});
+class HistoryTrackingPage extends StatefulWidget {
+  UserModel? user;
+  int? userIndex;
+  HistoryTrackingPage({super.key, this.userIndex, this.user});
 
   @override
-  State<NotificationPage> createState() => _NotificationPageState();
+  State<HistoryTrackingPage> createState() => _HistoryTrackingPageState();
 }
 
-class _NotificationPageState extends State<NotificationPage> {
-  late final Future<List<NotificationModel>> notifications;
+class _HistoryTrackingPageState extends State<HistoryTrackingPage> {
+  late final Future<List<HistoryTrackingModel>> history;
   @override
   void initState() {
     super.initState();
-    notifications = NotificationService().getNotifications();
+    history = HistoryTrackingService().getHistory(widget.user!.id ?? "");
   }
 
   @override
@@ -30,25 +34,35 @@ class _NotificationPageState extends State<NotificationPage> {
         child: ListView(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: const BoxDecoration(color: Colors.white),
-              child: Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.only(right: 13.0),
-                child: const Text(
-                  "Thông báo",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      overflow: TextOverflow.ellipsis),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
+                    icon: SvgPicture.asset("assets/icons/back.svg"),
+                    onPressed: () => {Navigator.pop(context)},
+                  ),
+                  Flexible(
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.only(right: 13.0),
+                      child: const Text(
+                        "Chi tiết hoạt động",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            overflow: TextOverflow.ellipsis),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             FutureBuilder(
-                future: notifications,
+                future: history,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    final data = snapshot.data as List<NotificationModel>;
+                    final data = snapshot.data as List<HistoryTrackingModel>;
                     return ListView.separated(
                         scrollDirection: Axis.vertical,
                         itemBuilder: (context, index) {
@@ -74,16 +88,24 @@ class _NotificationPageState extends State<NotificationPage> {
                                         color: Color.fromRGBO(78, 41, 20, 0.03),
                                         spreadRadius: 0,
                                         blurRadius: 6,
-                                        offset: const Offset(0, 3))
+                                        offset: Offset(0, 3))
                                   ]),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Row(
                                     children: [
-                                      CircleAvatar(
-                                        child: SvgPicture.asset(
-                                            'assets/icons/logo.svg'),
+                                      Container(
+                                        height: 50,
+                                        width: 50,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1, color: Colors.green),
+                                            borderRadius:
+                                                BorderRadius.circular(50)),
+                                        child: SvgIcon(
+                                            icon: iconAnimalList[
+                                                widget.userIndex ?? 0]),
                                       ),
                                       const SizedBox(
                                         width: 10,
@@ -95,7 +117,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            data[index].title ?? "",
+                                            '${widget.user!.name} đã hỏi ${data[index].content}',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodyMedium!
@@ -104,7 +126,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                                         FontWeight.w600),
                                           ),
                                           Text(
-                                            'lúc ${data[index].createAt!.hour}:${data[index].createAt!.minute}, ${data[index].createAt!.day}/${data[index].createAt!.month}/${data[index].createAt!.year}',
+                                            '${data[index].createdTime!.hour}:${data[index].createdTime!.minute}, ${data[index].createdTime!.day}.${data[index].createdTime!.month}.${data[index].createdTime!.year}',
                                             style: const TextStyle(
                                                 color: Color.fromRGBO(
                                                     165, 168, 187, 1),

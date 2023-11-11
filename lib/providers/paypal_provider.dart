@@ -18,10 +18,11 @@ final createPaypalProvider =
 });
 
 final capturePaypalProvider =
-    FutureProvider.family<bool, String>((ref, orderId) async {
+    FutureProvider.family<bool, OrderCaptureModel>((ref, arg) async {
   try {
-    final result =
-        await ref.watch(paypalServiceProvider).capturePaypalOrder(orderId);
+    final result = await ref
+        .watch(paypalServiceProvider)
+        .capturePaypalOrder(arg.userId ?? "", arg.orderId ?? "");
     return result;
   } catch (e, s) {
     Logger().e(e);
