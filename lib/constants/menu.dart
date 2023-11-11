@@ -2,14 +2,11 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/pages/activation_page.dart';
-import 'package:chatkid_mobile/pages/explore/blogs/blog_categories_detail_page.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
-import 'package:chatkid_mobile/pages/history/history_page.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
-import 'package:chatkid_mobile/pages/profile/payment_page.dart';
+import 'package:chatkid_mobile/pages/history_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
-import 'package:chatkid_mobile/pages/profile/subcription_page.dart';
 
 final List<Menu> menu = [
   Menu(
@@ -31,7 +28,7 @@ final List<Menu> menu = [
     icon: 'history',
     route: routesName['${AppRoutes.history}']!,
     role: [RoleConstant.Parent],
-    widget: const HistoryPage(),
+    widget: const UserProfileNotificationPage(),
   ),
   Menu(
     title: 'Activities',
@@ -52,6 +49,6 @@ final List<Menu> menu = [
     icon: 'user',
     route: routesName['${AppRoutes.profile}']!,
     role: [RoleConstant.Parent, RoleConstant.Child],
-    widget: const ProfilePage(),
+    widget: ProfilePage(),
   ),
 ];

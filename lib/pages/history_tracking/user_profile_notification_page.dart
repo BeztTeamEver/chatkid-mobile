@@ -1,25 +1,30 @@
-import 'package:chatkid_mobile/models/notification_model.dart';
+import 'package:chatkid_mobile/constants/account_list.dart';
+import 'package:chatkid_mobile/models/family_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/history_tracking/history_tracking_page.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
-import 'package:chatkid_mobile/services/notification_service.dart';
-import 'package:chatkid_mobile/utils/number_format.dart';
+import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 
-class NotificationPage extends StatefulWidget {
-  const NotificationPage({super.key});
+class UserProfileNotificationPage extends StatefulWidget {
+  const UserProfileNotificationPage({super.key});
 
   @override
-  State<NotificationPage> createState() => _NotificationPageState();
+  State<UserProfileNotificationPage> createState() =>
+      _UserProfileNotificationPageState();
 }
 
-class _NotificationPageState extends State<NotificationPage> {
-  late final Future<List<NotificationModel>> notifications;
+class _UserProfileNotificationPageState
+    extends State<UserProfileNotificationPage> {
+  late final Future<List<UserModel>> users;
+
   @override
   void initState() {
     super.initState();
-    notifications = NotificationService().getNotifications();
+    users = FamilyService().getKidAccounts(null);
   }
 
   @override
@@ -36,7 +41,7 @@ class _NotificationPageState extends State<NotificationPage> {
                 alignment: Alignment.center,
                 padding: const EdgeInsets.only(right: 13.0),
                 child: const Text(
-                  "Thông báo",
+                  "Theo dõi hoạt động",
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -45,10 +50,10 @@ class _NotificationPageState extends State<NotificationPage> {
               ),
             ),
             FutureBuilder(
-                future: notifications,
+                future: users,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    final data = snapshot.data as List<NotificationModel>;
+                    final data = snapshot.data as List<UserModel>;
                     return ListView.separated(
                         scrollDirection: Axis.vertical,
                         itemBuilder: (context, index) {
@@ -57,7 +62,10 @@ class _NotificationPageState extends State<NotificationPage> {
                               Navigator.push(
                                 context,
                                 createRoute(
-                                  () => HomePage(),
+                                  () => HistoryTrackingPage(
+                                    userIndex: index,
+                                    user: data[index],
+                                  ),
                                 ),
                               )
                             },
@@ -79,53 +87,38 @@ class _NotificationPageState extends State<NotificationPage> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        child: SvgPicture.asset(
-                                            'assets/icons/logo.svg'),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            data[index].title ?? "",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium!
-                                                .copyWith(
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                          ),
-                                          Text(
-                                            'lúc ${data[index].createAt!.hour}:${data[index].createAt!.minute}, ${data[index].createAt!.day}/${data[index].createAt!.month}/${data[index].createAt!.year}',
-                                            style: const TextStyle(
-                                                color: Color.fromRGBO(
-                                                    165, 168, 187, 1),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 10),
                                   Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      '${data[index].content}',
-                                      textAlign: TextAlign.start,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(),
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 2, color: Colors.green),
+                                          borderRadius:
+                                              BorderRadius.circular(50)),
+                                      child: SvgIcon(
+                                        icon: iconAnimalList[index],
+                                        size: 30,
+                                      ),
                                     ),
+                                  ),
+                                  Text(
+                                    '${data[index].name} đang không hoạt động',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(),
+                                  ),
+                                  Text(
+                                    'Có 1 hoạt động của Minh mà bạn chưa xem',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                            color: const Color.fromRGBO(
+                                                251, 143, 4, 1)),
                                   )
                                 ],
                               ),

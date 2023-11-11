@@ -32,4 +32,10 @@ class Endpoint {
   // Paypal
   static const paypalEndPoint = "/api/paypal/create-paypal-order";
   static const capturePaypalEndPoint = "/api/paypal/capture";
+
+  //Notification
+  static const notificationEndPoint = "/api/notifications";
+
+  //History
+  static const historyEndPoint = "/api/history";
 }

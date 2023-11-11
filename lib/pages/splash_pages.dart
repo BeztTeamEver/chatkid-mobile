@@ -28,7 +28,7 @@ class _SplashPagesState extends State<SplashPages>
     // Navigator.push(
     //   context,
     //   createRoute(
-    //     () => const ExplorePage(),
+    //     () => const ProfilePage(),
     //   ),
     // );
     // return;
