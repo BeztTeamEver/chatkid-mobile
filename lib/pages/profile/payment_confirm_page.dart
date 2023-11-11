@@ -39,8 +39,8 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
     var json = LocalStorage.instance.preferences.getString('user');
     var userId = UserModel.fromJson(jsonDecode(json ?? "")).id;
     Logger().d(UserModel.fromJson(jsonDecode(json ?? "")).id);
-    final OrderCaptureModel model =
-        OrderCaptureModel(orderId: orderId, userId: userId);
+    final OrderCaptureModel model = OrderCaptureModel(
+        orderId: orderId, userId: userId, energy: widget.supcription.energy);
     try {
       ref
           .watch(

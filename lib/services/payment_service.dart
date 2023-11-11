@@ -22,10 +22,11 @@ class PaymentService {
     }
   }
 
-  Future<bool> capturePaypalOrder(String userId, String orderId) async {
+  Future<bool> capturePaypalOrder(
+      String userId, String orderId, int energy) async {
     final response = await BaseHttp.instance.post(
       endpoint: Endpoint.capturePaypalEndPoint,
-      param: {'id': userId, 'orderId': orderId},
+      param: {'id': userId, 'orderId': orderId, 'energy': energy},
     );
     if (response.statusCode >= 200 && response.statusCode <= 204) {
       return true;
