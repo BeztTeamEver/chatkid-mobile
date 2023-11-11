@@ -111,7 +111,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     letterSpacing: 0.5),
                               ),
                               Text(
-                                '${data.users.firstWhere((e) => e.id == currentUser.id).wallets != null ? data.users.firstWhere((e) => e.id == currentUser.id).wallets!.first.totalEnergy : 0} năng lượng',
+                                '${data.users.firstWhere((e) => e.id == currentUser.id).wallets!.isNotEmpty ? data.users.firstWhere((e) => e.id == currentUser.id).wallets!.first.totalEnergy : 0} năng lượng',
                                 style: const TextStyle(
                                     color: Color.fromRGBO(165, 168, 187, 1),
                                     fontSize: 12,
