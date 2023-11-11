@@ -66,3 +66,25 @@ class PaypalRequestModel {
     return data;
   }
 }
+
+class OrderCaptureModel {
+  String? userId;
+  String? orderId;
+  int? energy;
+
+  OrderCaptureModel({this.userId, this.orderId, this.energy});
+
+  OrderCaptureModel.fromJson(Map<String, dynamic> json) {
+    userId = json['userId'];
+    orderId = json['orderId'];
+    energy = json['energy'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['userId'] = userId;
+    data['orderId'] = orderId;
+    data['energy'] = energy;
+    return data;
+  }
+}
