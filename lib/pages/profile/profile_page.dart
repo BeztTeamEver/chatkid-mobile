@@ -51,6 +51,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             final data = snapshot.data as FamilyModel;
             final currentUser = UserModel.fromJson(jsonDecode(
                 LocalStorage.instance.preferences.getString('user') ?? ""));
+            final wallets =
+                data.users.firstWhere((e) => e.id == currentUser.id).wallets;
+            int totalEnergy = 0;
+            if (wallets != null && wallets.isNotEmpty) {
+              totalEnergy = wallets.first.totalEnergy ?? 0;
+            }
+
             return ListView(
               children: [
                 SizedBox(
@@ -111,7 +118,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     letterSpacing: 0.5),
                               ),
                               Text(
-                                '${data.users.firstWhere((e) => e.id == currentUser.id).wallets != null ? data.users.firstWhere((e) => e.id == currentUser.id).wallets!.first.totalEnergy : 0} năng lượng',
+                                '${totalEnergy} năng lượng',
                                 style: const TextStyle(
                                     color: Color.fromRGBO(165, 168, 187, 1),
                                     fontSize: 12,
@@ -176,7 +183,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Tài khoản bé',
+                      'Tài khoản',
                       style: TextStyle(
                           color: Color.fromRGBO(165, 168, 187, 1),
                           fontWeight: FontWeight.w700),

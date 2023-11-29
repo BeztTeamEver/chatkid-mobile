@@ -1,4 +1,4 @@
-import 'package:chatkid_mobile/models/gpt_modal.dart';
+import 'package:chatkid_mobile/models/gpt_model.dart';
 import 'package:chatkid_mobile/services/gpt_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -2,18 +2,11 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/pages/activation_page.dart';
-import 'package:chatkid_mobile/pages/explore/blogs/blog_categories_detail_page.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
-import 'package:chatkid_mobile/pages/explore/blogs/blog_categories_detail_page.dart';
-import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
-import 'package:chatkid_mobile/pages/history_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
+import 'package:chatkid_mobile/pages/history_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
-import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
-import 'package:chatkid_mobile/pages/profile/payment_page.dart';
-import 'package:chatkid_mobile/pages/profile/profile_page.dart';
-import 'package:chatkid_mobile/pages/profile/subcription_page.dart';
 
 final List<Menu> menu = [
   Menu(

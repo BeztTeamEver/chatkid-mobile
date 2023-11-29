@@ -29,8 +29,8 @@ class FamilyRequestModel {
 }
 
 class FamilyModel {
-  final String id;
   final String name;
+  final String id;
   final String ownerMail;
   final int status;
   final DateTime createdAt;
