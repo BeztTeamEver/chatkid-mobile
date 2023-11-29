@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:chatkid_mobile/models/kid_service_model.dart';
 import 'package:chatkid_mobile/models/wallet_model.dart';
