@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ffi';
 
 class ResponseModel<TData> {

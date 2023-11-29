@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';

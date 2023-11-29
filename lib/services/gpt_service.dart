@@ -1,5 +1,5 @@
 import 'package:chatkid_mobile/constants/endpoint.dart';
-import 'package:chatkid_mobile/models/gpt_modal.dart';
+import 'package:chatkid_mobile/models/gpt_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';

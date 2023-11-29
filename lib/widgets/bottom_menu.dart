@@ -31,7 +31,7 @@ class _BottomMenuState extends State<BottomMenu> {
         MenuList(role: currentAccount.role ?? RoleConstant.Child).getMenu();
 
     return Container(
-      margin: const EdgeInsets.all(30),
+      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
       height: 62,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,

@@ -31,7 +31,7 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
     return null;
   }
 
-  Future<void> onSubmit(callback) async {
+  Future<void> onSubmit(callback, stopLoading) async {
     try {
       if (_formKey.currentState!.saveAndValidate()) {
         ref
@@ -46,6 +46,8 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
       }
     } catch (err) {
       Logger().e(err);
+    } finally {
+      stopLoading();
     }
   }
 
@@ -115,14 +117,13 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                         if (btnState == ButtonState.idle) {
                           startLoading();
                           onSubmit(() {
-                            stopLoading();
                             Navigator.push(
                               context,
                               createRoute(
                                 () => StartPage(),
                               ),
                             );
-                          });
+                          }, stopLoading);
                         }
                       },
                       child: Text(

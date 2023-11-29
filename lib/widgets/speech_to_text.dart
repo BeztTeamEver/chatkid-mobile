@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
@@ -50,6 +48,7 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
       ttsService.stop();
       await _speechToText.listen(
         onResult: _onSpeechResult,
+        listenMode: ListenMode.confirmation,
       );
     } catch (e) {
       print('Error starting speech recognition');
