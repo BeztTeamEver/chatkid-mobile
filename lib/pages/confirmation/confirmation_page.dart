@@ -262,7 +262,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 const SizedBox(
                   height: 10,
                 ),
-                const SwichSignIn(
+                const SwitchSignIn(
                   isSwitchLogin: true,
                 ),
               ],
