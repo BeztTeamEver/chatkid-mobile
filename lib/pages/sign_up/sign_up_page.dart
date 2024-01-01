@@ -1,3 +1,5 @@
+import 'package:chatkid_mobile/pages/activation_page.dart';
+import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
@@ -10,8 +12,11 @@ import 'package:chatkid_mobile/widgets/logo.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:form_validator/form_validator.dart';
+import 'package:logger/logger.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
@@ -22,6 +27,32 @@ class SignUpPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<SignUpPage> {
   final _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormBuilderState>();
+
+  void _onSubmit() {
+    final isValid = _formKey.currentState!.saveAndValidate();
+
+    if (!isValid) return;
+
+    try {
+      //TODO: implement sign up with email
+      Logger().d(_emailController.text);
+      Navigator.push(
+          context,
+          createRoute(() => ConfirmationPage(
+                email: _emailController.text,
+              )));
+    } catch (e) {
+      Logger().e(e);
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +60,10 @@ class _LoginPageState extends ConsumerState<SignUpPage> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const LogoWidget(isShowText: false),
-            const SizedBox(height: 20),
             Text(
               "Đăng ký tài khoản".toUpperCase(),
               style: Theme.of(context).textTheme.headlineSmall!.copyWith(
@@ -41,51 +71,58 @@ class _LoginPageState extends ConsumerState<SignUpPage> {
                     fontWeight: FontWeight.w800,
                   ),
             ),
-            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  InputField(
-                    name: "email",
-                    label: "Email",
-                    controller: _emailController,
-                    hint: "Nhập email của bạn",
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  FullWidthButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context, createRoute(() => const MainPage()));
-                    },
-                    child: Text(
-                      "Xác nhận",
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Colors.white,
-                          ),
+              child: FormBuilder(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    InputField(
+                      name: "email",
+                      label: "Email",
+                      controller: _emailController,
+                      hint: "Nhập email của bạn",
+                      validator: ValidationBuilder(
+                              requiredMessage: "Vui lòng nhập Email")
+                          .required()
+                          .email("Định dang email chưa đúng")
+                          .build(),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Hoặc",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  GoogleButton(
-                    isLogin: false,
-                  ),
-                  const SizedBox(height: 20),
-                  const SwitchSignIn(
-                    isSwitchLogin: true,
-                  ),
-                ],
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    FullWidthButton(
+                      onPressed: () {
+                        // Navigator.push(
+                        //     context, createRoute(() => const MainPage()));
+                        _onSubmit();
+                      },
+                      child: Text(
+                        "Xác nhận",
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "Hoặc",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    GoogleButton(
+                      isLogin: false,
+                    ),
+                    const SizedBox(height: 20),
+                    const SwitchSignIn(
+                      isSwitchLogin: true,
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 20),
             SvgPicture.asset(
               'assets/loginPage/illusion.svg',
               width: MediaQuery.of(context).size.width - 50,

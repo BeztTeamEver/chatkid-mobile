@@ -194,31 +194,6 @@ class _FullWidthButtonState extends State<FullWidthButton>
                   ),
                 ),
               ),
-              // AnimatedPositioned(
-              //   duration: Duration(milliseconds: widget.duration ?? 200),
-              //   top: _isPressed ? 10 : 6,
-              //   left: 8,
-              //   // child: SvgIcon(
-              //   //   icon: 'shape/eclipse1',
-              //   //   size: 10,
-              //   //   color: Colors.white.withOpacity(_opacity / 255),
-              //   // ),
-              //   child: AnimatedSvg(
-              //     controller: _svgController,
-              //     duration: Duration(milliseconds: widget.duration ?? 200),
-              //     size: 10,
-              //     clockwise: false,
-              //     isActive: true,
-              //     children: [
-              //       SvgPicture.asset(
-              //         'assets/icons/shape/eclipse1.svg',
-              //       ),
-              //       SvgPicture.asset(
-              //         'assets/icons/shape/eclipse2.svg',
-              //       ),
-              //     ],
-              //   ),
-              // ),
               Positioned(
                 right: 3,
                 top: 30,
