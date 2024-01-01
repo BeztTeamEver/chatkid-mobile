@@ -23,7 +23,6 @@ class _OtpTextFieldState extends State<OtpTextField> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _focusNode.unfocus();
     _focusNode.dispose();
     super.dispose();
@@ -31,7 +30,6 @@ class _OtpTextFieldState extends State<OtpTextField> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _focusNode.requestFocus();
   }

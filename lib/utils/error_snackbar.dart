@@ -5,9 +5,11 @@ class ErrorSnackbar {
   static void showError(
       {required err, StackTrace? stack, required BuildContext context}) {
     Logger().e(err.toString(), stackTrace: stack);
+    final errorMessage =
+        err.toString().split(":")[err.toString().split(":").length - 1].trim();
     SnackBar snackBar = SnackBar(
       content: Text(
-        err.toString().split(":")[1].trim(),
+        errorMessage,
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);

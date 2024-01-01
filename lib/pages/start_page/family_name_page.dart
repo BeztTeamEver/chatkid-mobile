@@ -1,9 +1,14 @@
+import 'package:chatkid_mobile/constants/account_list.dart';
+import 'package:chatkid_mobile/enum/role.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/start_page/form_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
+import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -31,24 +36,38 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
     return null;
   }
 
-  Future<void> onSubmit(callback, stopLoading) async {
+  Future<void> onSubmit() async {
     try {
       if (_formKey.currentState!.saveAndValidate()) {
-        ref
-            .watch(
-              createFamilyProvider(_controller.text).future,
-            )
-            .then((value) => (callback()))
-            .catchError((err) {
-          Logger().e(err);
-          ErrorSnackbar.showError(context: context, err: err);
-        });
+        //   ref
+        //       .watch(
+        //         createFamilyProvider(_controller.text).future,
+        //       )
+        //       .then((value) => {
+        //             Navigator.push(
+        //               context,
+        //               createRoute(
+        //                 () => StartPage(),
+        //               ),
+        //             )
+        //           })
+        //       .catchError((err) {
+        //     Logger().e(err);
+        //     ErrorSnackbar.showError(context: context, err: err);
+        //   });
+        Navigator.push(
+          context,
+          createRoute(
+            // TODO: change to the user from api
+            () => FormPage(
+              user: UserModel(role: RoleConstant.Parent),
+            ),
+          ),
+        );
       }
     } catch (err) {
       Logger().e(err);
-    } finally {
-      stopLoading();
-    }
+    } finally {}
   }
 
   @override
@@ -59,25 +78,30 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref
+        .watch(
+          createFamilyProvider(_controller.text),
+        )
+        .isLoading;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Tên chung cho gia đình bạn",
-                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                      fontSize: 20,
-                    ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Column(
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 21),
+              child: Column(
                 children: [
+                  Text(
+                    "Tên chung cho gia đình bạn",
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          fontSize: 20,
+                        ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   FormBuilder(
                     key: _formKey,
                     child: InputField(
@@ -88,6 +112,13 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                       autoFocus: true,
                     ),
                   ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 21),
+              child: Column(
+                children: [
                   const SizedBox(
                     height: 80,
                   ),
@@ -98,46 +129,30 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                   const SizedBox(
                     height: 105,
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: LoadingBtn(
-                      height: 60,
-                      borderRadius: 40,
-                      width: double.infinity,
-                      loader: Container(
-                        padding: const EdgeInsets.all(10),
-                        width: 40,
-                        height: 40,
-                        child: const CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                  FullWidthButton(
+                    onPressed: () async {
+                      onSubmit();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        isLoading
+                            ? const CustomCircleProgressIndicator()
+                            : Container(),
+                        Text(
+                          "Tiếp tục",
+                          style:
+                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: Colors.white,
+                                  ),
                         ),
-                      ),
-                      onTap: (startLoading, stopLoading, btnState) async {
-                        if (btnState == ButtonState.idle) {
-                          startLoading();
-                          onSubmit(() {
-                            Navigator.push(
-                              context,
-                              createRoute(
-                                () => StartPage(),
-                              ),
-                            );
-                          }, stopLoading);
-                        }
-                      },
-                      child: Text(
-                        "Tiếp tục",
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                              color: Colors.white,
-                            ),
-                      ),
+                      ],
                     ),
                   ),
                 ],
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );

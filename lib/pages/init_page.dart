@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:chatkid_mobile/constants/init_item.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
+import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
 import 'package:chatkid_mobile/widgets/logo.dart';
 import 'package:flutter/material.dart';
@@ -62,22 +63,22 @@ class _InitPageState extends State<InitPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async =>
-          !Navigator.of(context).userGestureInProgress, //disable back button
+    return PopScope(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 28),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const LogoWidget(),
                 const SizedBox(
-                  height: 70,
+                  height: 30,
                 ),
                 SizedBox(
-                  height: 320,
+                  height: 310,
                   child: PageView.builder(
                     onPageChanged: (value) => setState(() {
                       _currentPage = value;
@@ -113,18 +114,31 @@ class _InitPageState extends State<InitPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                ElevatedButton(
+                // ElevatedButton(
+                //   onPressed: () {
+                //     _timer?.cancel();
+                //     Navigator.pushNamed(
+                //         context, routesName['${AppRoutes.signUp}']!);
+                //   },
+                //   style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                //         minimumSize: MaterialStateProperty.all<Size>(
+                //           const Size(double.infinity, 48),
+                //         ),
+                //       ),
+                //   child: const Text("Tiếp tục"),
+                // ),
+                FullWidthButton(
                   onPressed: () {
                     _timer?.cancel();
                     Navigator.pushNamed(
                         context, routesName['${AppRoutes.signUp}']!);
                   },
-                  style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                        minimumSize: MaterialStateProperty.all<Size>(
-                          const Size(double.infinity, 48),
+                  child: Text(
+                    "Tiếp tục",
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          color: Colors.white,
                         ),
-                      ),
-                  child: const Text("Tiếp tục"),
+                  ),
                 ),
               ],
             ),

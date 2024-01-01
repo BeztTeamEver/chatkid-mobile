@@ -74,7 +74,7 @@ class _BottomMenuState extends State<BottomMenu> {
                     icon: item.icon,
                     color: item.route == menu[widget.currentIndex].route
                         ? Theme.of(context).colorScheme.primary
-                        : neutral.shade300,
+                        : neutral.shade400,
                   ),
                   backgroundColor: Colors.transparent,
                 );

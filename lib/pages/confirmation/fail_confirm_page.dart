@@ -38,7 +38,7 @@ class FailConfirmPage extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              const SwichSignIn(
+              const SwitchSignIn(
                 isSwitchLogin: false,
               ),
             ],

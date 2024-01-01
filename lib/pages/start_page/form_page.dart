@@ -10,6 +10,7 @@ import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/error_handler.dart';
+import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -25,13 +26,12 @@ class FormPage extends ConsumerStatefulWidget {
 }
 
 class _FormPageState extends ConsumerState<FormPage> {
-  final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
-  final TextEditingController _yearBirthDayController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final _formKey = GlobalKey<FormBuilderState>();
+  final _nameController = TextEditingController();
+  final _genderController = TextEditingController();
+  final _yearBirthDayController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -112,6 +112,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                   ),
                 ),
                 Row(
+                  mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
@@ -141,22 +142,26 @@ class _FormPageState extends ConsumerState<FormPage> {
                             ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     ),
                     Expanded(
-                      child: LoadingButton(
-                        handleOnTap: ((stopLoading) => _onSubmitInfo(() {
-                              Navigator.push(
-                                context,
-                                createRoute(
-                                  () => PasswordPage(
-                                    userId: widget.user.id!,
+                      child: ConstrainedBox(
+                        constraints:
+                            BoxConstraints(maxWidth: 150, maxHeight: 100),
+                        child: FullWidthButton(
+                          onPressed: ((stopLoading) => _onSubmitInfo(() {
+                                Navigator.push(
+                                  context,
+                                  createRoute(
+                                    () => PasswordPage(
+                                      userId: widget.user.id!,
+                                    ),
                                   ),
-                                ),
-                              );
-                            }, stopLoading)),
-                        label: "Tiếp theo",
+                                );
+                              }, stopLoading)),
+                          child: Text("Tiếp tục"),
+                        ),
                       ),
                     )
                   ],
