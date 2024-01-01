@@ -1,6 +1,6 @@
 # chatkid_mobile
 
-A new Flutter project.
+A mobile app for Kidtalkie.
 
 ## Getting Started
 
