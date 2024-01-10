@@ -3,14 +3,14 @@ import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SuccessfullIcon extends StatefulWidget {
-  const SuccessfullIcon({super.key});
+class SuccessfulIcon extends StatefulWidget {
+  const SuccessfulIcon({super.key});
 
   @override
-  State<SuccessfullIcon> createState() => _SuccessfullIconState();
+  State<SuccessfulIcon> createState() => _SuccessfulIconState();
 }
 
-class _SuccessfullIconState extends State<SuccessfullIcon>
+class _SuccessfulIconState extends State<SuccessfulIcon>
     with TickerProviderStateMixin {
   @override
   void initState() {
@@ -27,12 +27,12 @@ class _SuccessfullIconState extends State<SuccessfullIcon>
   Widget build(BuildContext context) {
     return SizedBox(
       // duration: const Duration(milliseconds: 400),
-      width: 120,
-      height: 120,
+      width: 100,
+      height: 100,
       child: SizedBox(
         // duration: const Duration(milliseconds: 400),
-        width: 120,
-        height: 120,
+        width: 100,
+        height: 100,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -42,8 +42,8 @@ class _SuccessfullIconState extends State<SuccessfullIcon>
             children: [
               Container(
                 // duration: Duration(milliseconds: 300),
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 decoration: ShapeDecoration(
                   color: Theme.of(context).primaryColor,
                   shape: OvalBorder(

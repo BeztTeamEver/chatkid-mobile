@@ -24,25 +24,25 @@ class _BottomMenuState extends State<BottomMenu> {
   UserModel currentAccount = UserModel.fromJson(
     jsonDecode(LocalStorage.instance.preferences.getString('user') ?? "{}"),
   );
-  final double _borderRadius = 40;
+  final double _borderRadius = 8;
   @override
   Widget build(BuildContext context) {
     final menu =
         MenuList(role: currentAccount.role ?? RoleConstant.Child).getMenu();
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+      // margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
       height: 62,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         borderRadius: BorderRadius.circular(_borderRadius),
         boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.08),
-            spreadRadius: 0,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
+          // BoxShadow(
+          //   color: Theme.of(context).shadowColor.withOpacity(0.08),
+          //   spreadRadius: 0,
+          //   blurRadius: 8,
+          //   offset: const Offset(0, 4),
+          // ),
           BoxShadow(
             color: Theme.of(context).shadowColor.withOpacity(0.08),
             spreadRadius: 0,
@@ -74,7 +74,7 @@ class _BottomMenuState extends State<BottomMenu> {
                     icon: item.icon,
                     color: item.route == menu[widget.currentIndex].route
                         ? Theme.of(context).colorScheme.primary
-                        : neutral.shade300,
+                        : neutral.shade400,
                   ),
                   backgroundColor: Colors.transparent,
                 );
