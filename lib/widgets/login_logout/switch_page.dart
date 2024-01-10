@@ -5,18 +5,18 @@ import 'package:chatkid_mobile/utils/route.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class SwichSignIn extends StatefulWidget {
+class SwitchSignIn extends StatefulWidget {
   final bool isSwitchLogin;
-  const SwichSignIn({
+  const SwitchSignIn({
     super.key,
     this.isSwitchLogin = false,
   });
 
   @override
-  State<SwichSignIn> createState() => _SwichSignInState();
+  State<SwitchSignIn> createState() => _SwitchSignInState();
 }
 
-class _SwichSignInState extends State<SwichSignIn> {
+class _SwitchSignInState extends State<SwitchSignIn> {
   @override
   Widget build(BuildContext context) {
     final label = widget.isSwitchLogin
