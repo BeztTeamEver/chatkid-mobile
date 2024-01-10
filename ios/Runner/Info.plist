@@ -46,6 +46,15 @@
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true />
 
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true />
+		</dict>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>explain why app uses the microphone here</string>
+
+
 		<!-- Put me in the [my_project]/ios/Runner/Info.plist file -->
 		<!-- Google Sign-in Section -->
 		<key>CFBundleURLTypes</key>
