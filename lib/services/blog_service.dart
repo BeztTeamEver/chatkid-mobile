@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/models/blog_type_model.dart';
 import 'package:chatkid_mobile/models/pagination_response_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:logger/logger.dart';
 
 class BlogService {
   Future<List<BlogTypeModel>> getBlogTypes() async {

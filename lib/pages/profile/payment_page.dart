@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/paypal_model.dart';
 import 'package:chatkid_mobile/models/subcription_model.dart';
 import 'package:chatkid_mobile/pages/profile/payment_confirm_page.dart';
@@ -25,7 +26,6 @@ class PaymentPage extends ConsumerStatefulWidget {
 
 class _PaymentPageState extends ConsumerState<PaymentPage> {
   bool isChecked = true;
-  final _formKey = GlobalKey<FormBuilderState>();
   late PaypalRequestModel model;
   @override
   void initState() {
@@ -51,7 +51,11 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
 
   _launchPaypalURL(String url, String orderId) async {
     if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url)).then((resultingValue) {
+      await launchUrl(Uri.parse(url),
+              mode: LaunchMode.inAppWebView,
+              webViewConfiguration:
+                  const WebViewConfiguration(enableDomStorage: false))
+          .then((resultingValue) {
         Navigator.push(
           context,
           createRoute(
@@ -82,14 +86,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                   children: [
                     IconButton(
                       icon: SvgPicture.asset("assets/icons/back.svg"),
-                      onPressed: () => {
-                        Navigator.pop(
-                          context,
-                          createRoute(
-                            () => const SubcriptionPage(),
-                          ),
-                        )
-                      },
+                      onPressed: () => {Navigator.pop(context)},
                     ),
                     Flexible(
                       child: Container(
@@ -362,14 +359,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ElevatedButton(
-                  onPressed: () => {
-                    Navigator.pop(
-                      context,
-                      createRoute(
-                        () => const SubcriptionPage(),
-                      ),
-                    )
-                  },
+                  onPressed: () => {Navigator.pop(context)},
                   style: ButtonStyle(
                     side: const MaterialStatePropertyAll(BorderSide(
                         color: Color.fromRGBO(255, 155, 6, 1), width: 1.5)),

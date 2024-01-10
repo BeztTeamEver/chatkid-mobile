@@ -1,9 +1,15 @@
+import 'dart:convert';
+
+import 'package:chatkid_mobile/models/family_model.dart';
+import 'package:chatkid_mobile/models/paypal_model.dart';
 import 'package:chatkid_mobile/models/subcription_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/profile/payment_page.dart';
 import 'package:chatkid_mobile/pages/profile/payment_success_page.dart';
 import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/providers/paypal_provider.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/number_format.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:flutter/material.dart';
@@ -30,10 +36,15 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
   }
 
   Future<void> onSubmit(callback) async {
+    var json = LocalStorage.instance.preferences.getString('user');
+    var userId = UserModel.fromJson(jsonDecode(json ?? "")).id;
+    Logger().d(UserModel.fromJson(jsonDecode(json ?? "")).id);
+    final OrderCaptureModel model = OrderCaptureModel(
+        orderId: orderId, userId: userId, energy: widget.supcription.energy);
     try {
       ref
           .watch(
-            capturePaypalProvider(orderId).future,
+            capturePaypalProvider(model).future,
           )
           .then((value) => (callback()))
           .catchError((err) {
@@ -60,14 +71,7 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
                   children: [
                     IconButton(
                       icon: SvgPicture.asset("assets/icons/back.svg"),
-                      onPressed: () => {
-                        Navigator.pop(
-                          context,
-                          createRoute(
-                            () => PaymentPage(subcription: widget.supcription),
-                          ),
-                        )
-                      },
+                      onPressed: () => {Navigator.pop(context)},
                     ),
                     Flexible(
                       child: Container(
@@ -85,62 +89,36 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
                   ],
                 ),
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Thông tin gói nạp',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 0,
-                                blurRadius: 6,
-                                offset: const Offset(1, 1))
-                          ]),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                widget.supcription.energy.toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 24),
-                              ),
-                              const Icon(
-                                Icons.bolt_outlined,
-                                color: Color.fromRGBO(255, 155, 6, 1),
-                              )
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 5),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: const Color.fromRGBO(255, 155, 6, 1)),
-                            child: Text(
-                              '${NumberFormat.formatAmount(widget.supcription.actualPrice!.toStringAsFixed(0))} vnđ',
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(
+                height: 10,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Số tiền thanh toán',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          NumberFormat.formatAmount(widget
+                              .supcription.actualPrice!
+                              .toStringAsFixed(0)),
+                          style: const TextStyle(
+                              color: Color.fromRGBO(255, 155, 6, 1),
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold)),
+                      const Text('vnđ',
+                          style: TextStyle(
+                              color: Color.fromRGBO(255, 155, 6, 1),
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold))
+                    ],
+                  )
+                ],
               ),
               Container(
                 padding:
@@ -347,16 +325,7 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ElevatedButton(
-                  onPressed: () => {
-                    Navigator.pop(
-                      context,
-                      createRoute(
-                        () => PaymentPage(
-                          subcription: widget.supcription,
-                        ),
-                      ),
-                    )
-                  },
+                  onPressed: () => {Navigator.pop(context)},
                   style: ButtonStyle(
                     side: const MaterialStatePropertyAll(BorderSide(
                         color: Color.fromRGBO(255, 155, 6, 1), width: 1.5)),
