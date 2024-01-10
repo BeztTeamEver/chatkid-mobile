@@ -8,8 +8,8 @@ import 'package:chatkid_mobile/utils/local_storage.dart';
 
 class NotificationService {
   Future<List<NotificationModel>> getNotifications() async {
-    final response = await BaseHttp.instance.get(
-        endpoint: Endpoint.notificationEndPoint, param: {'sort': '-createAt'});
+    final response =
+        await BaseHttp.instance.get(endpoint: Endpoint.notificationEndPoint);
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       final data = jsonDecode(response.body);
       final model = PaginationResponseModel.fromJson(data);

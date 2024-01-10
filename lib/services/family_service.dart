@@ -75,9 +75,11 @@ class FamilyService {
       },
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
+      Logger().d(response.body);
       final data = jsonDecode(response.body);
       final family = FamilyModel.fromJson(data);
-      return family.users.where((e) => e.role == 'Kid').toList();
+      Logger().d(family.users.where((e) => e.role == 'Children').toList());
+      return family.users.where((e) => e.role == 'Children').toList();
     }
     switch (response.statusCode) {
       case 401:
