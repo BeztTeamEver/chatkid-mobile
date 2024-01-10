@@ -23,7 +23,8 @@ class FamilyService {
     switch (response.statusCode) {
       case 401:
         LocalStorage.instance.clear();
-        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+        throw Exception(
+            'L  ỗi không thể xác thực người dùng, vui lòng thử lại!');
       case 403:
         LocalStorage.instance.clear();
         throw Exception(

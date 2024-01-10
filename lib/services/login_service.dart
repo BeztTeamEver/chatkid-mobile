@@ -113,7 +113,7 @@ class AuthService {
           throw Exception(
               'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
         default:
-          throw Exception('Lỗi đăng nhập, vui lòng thử lại sau!');
+          throw Exception('Lỗi xác thực OTP, vui lòng thử lại sau!');
       }
     }
   }
