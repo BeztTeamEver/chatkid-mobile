@@ -58,6 +58,9 @@ class _HistoryTrackingPageState extends State<HistoryTrackingPage> {
                 ],
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
             FutureBuilder(
                 future: history,
                 builder: (context, snapshot) {
