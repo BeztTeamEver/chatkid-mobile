@@ -9,7 +9,6 @@ import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logger/logger.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});
