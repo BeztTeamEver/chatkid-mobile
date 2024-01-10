@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:chatkid_mobile/models/blog_model.dart';
 import 'package:chatkid_mobile/models/blog_type_model.dart';
 import 'package:chatkid_mobile/pages/explore/blogs/blog_categories_detail_page.dart';
@@ -16,9 +19,54 @@ class BlogDetailPage extends StatefulWidget {
 }
 
 class _BlogDetailPageState extends State<BlogDetailPage> {
+  final audioPlayer = AudioPlayer();
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future setAudio() async {
+      audioPlayer.setReleaseMode(ReleaseMode.loop);
+
+      final player = AudioCache(prefix: 'assets/audio/');
+      final url = await player.load('animalbattle.mp3');
+      audioPlayer.setSourceUrl(widget.blog.voiceUrl ?? url.path);
+    }
+
+    setAudio();
+
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlaying = state == PlayerState.playing;
+      });
+    });
+
+    audioPlayer.onDurationChanged.listen((newDuration) {
+      setState(() {
+        duration = newDuration;
+      });
+    });
+
+    audioPlayer.onPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Container(
           margin: const EdgeInsets.only(top: 25),
@@ -30,6 +78,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                   IconButton(
                     icon: SvgPicture.asset("assets/icons/back.svg"),
                     onPressed: () => {
+                      audioPlayer.stop(),
                       Navigator.push(
                         context,
                         createRoute(
@@ -95,17 +144,55 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                               color: const Color.fromRGBO(255, 155, 6, 1),
                               borderRadius: BorderRadius.circular(18)),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              SvgPicture.asset(
-                                'assets/icons/play.svg',
-                                width: 15,
+                              IconButton(
+                                padding: const EdgeInsets.all(0.0),
+                                visualDensity:
+                                    VisualDensity.adaptivePlatformDensity,
+                                alignment: Alignment.center,
+                                color: Colors.white,
+                                iconSize: 30,
+                                icon: Icon(
+                                  isPlaying ? Icons.pause : Icons.play_arrow,
+                                ),
+                                onPressed: () async {
+                                  if (isPlaying) {
+                                    await audioPlayer.pause();
+                                  } else {
+                                    final url = await AudioCache(
+                                            prefix: 'assets/audio/')
+                                        .load('animalbattle.mp3');
+                                    audioPlayer.play(UrlSource(
+                                        widget.blog.voiceUrl ?? url.path));
+                                  }
+                                },
                               ),
-                              SvgPicture.asset('assets/audio/waveform.svg'),
-                              const Text(
-                                "14:37",
-                                style: TextStyle(
+                              Container(
+                                  padding: const EdgeInsets.only(left: 0),
+                                  width: 220,
+                                  child: SliderTheme(
+                                    data: SliderTheme.of(context).copyWith(
+                                      overlayShape:
+                                          SliderComponentShape.noOverlay,
+                                    ),
+                                    child: Slider(
+                                        inactiveColor: Colors.white,
+                                        activeColor: Colors.white,
+                                        thumbColor: Colors.white,
+                                        min: 0,
+                                        max: duration.inSeconds.toDouble(),
+                                        value: position.inSeconds.toDouble(),
+                                        onChanged: (value) async {
+                                          final position =
+                                              Duration(seconds: value.toInt());
+                                          await audioPlayer.seek(position);
+                                          await audioPlayer.resume();
+                                        }),
+                                  )),
+                              Text(
+                                formatTime(duration - position),
+                                style: const TextStyle(
                                     fontSize: 13, color: Colors.white),
                               )
                             ],
@@ -142,4 +229,13 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
       ),
     );
   }
+}
+
+String formatTime(Duration duration) {
+  String twoDigits(int n) => n.toString().padLeft(2, '0');
+  final hours = twoDigits(duration.inHours);
+  final minutes = twoDigits(duration.inMinutes.remainder(60));
+  final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+  return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
 }
