@@ -23,7 +23,8 @@ class FamilyService {
     switch (response.statusCode) {
       case 401:
         LocalStorage.instance.clear();
-        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+        throw Exception(
+            'L  ỗi không thể xác thực người dùng, vui lòng thử lại!');
       case 403:
         LocalStorage.instance.clear();
         throw Exception(
@@ -45,6 +46,7 @@ class FamilyService {
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       final data = jsonDecode(response.body);
+      Logger().d(response.body);
       final family = FamilyModel.fromJson(data);
       return family.users;
     }
@@ -132,3 +134,39 @@ class FamilyService {
 final familyServiceProvider = Provider<FamilyService>((ref) {
   return FamilyService();
 });
+
+class FamilyServiceNotifier extends StateNotifier<FamilyModel> {
+  final FamilyService _familyService = FamilyService();
+
+  FamilyServiceNotifier()
+      : super(FamilyModel(
+          id: "",
+          name: "",
+          ownerMail: "",
+          status: 0,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          users: [],
+        ));
+
+  Future<List<UserModel>> getFamilyAccounts(
+    FamilyRequestModel? familyRequestModel,
+  ) async {
+    try {
+      final data = await _familyService.getFamilyAccounts(familyRequestModel);
+      state = FamilyModel(
+        id: familyRequestModel?.id ?? "",
+        name: familyRequestModel?.name ?? "",
+        ownerMail: familyRequestModel?.email ?? "",
+        status: 0,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        users: data,
+      );
+      return data;
+    } catch (e) {
+      Logger().e(e);
+      rethrow;
+    }
+  }
+}

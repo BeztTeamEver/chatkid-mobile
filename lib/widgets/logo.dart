@@ -15,15 +15,17 @@ class LogoWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SvgIcon(icon: 'logo', color: Theme.of(context).primaryColor, size: 64),
-        const SizedBox(height: 20),
-        Text(
-          isShowText ? 'KidTalkie' : '',
-          style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                color: Theme.of(context).primaryColor,
-              ),
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr,
-        ),
+        isShowText ? const SizedBox(height: 20) : Container(),
+        isShowText
+            ? Text(
+                'KidTalkie',
+                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                textAlign: TextAlign.center,
+                textDirection: TextDirection.ltr,
+              )
+            : Container(),
       ],
     );
   }

@@ -48,6 +48,7 @@ class _SpeechToTextButtonState extends State<SpeechToTextButton> {
       ttsService.stop();
       await _speechToText.listen(
         onResult: _onSpeechResult,
+        listenMode: ListenMode.confirmation,
       );
     } catch (e) {
       print('Error starting speech recognition');

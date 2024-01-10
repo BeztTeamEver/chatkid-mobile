@@ -9,6 +9,7 @@ import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});
@@ -35,8 +36,8 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final data =
-    //     ref.watch(userProvider.notifier).getUser(currentAccount.id!, null);
+    final data =
+        ref.watch(userProvider.notifier).getUser(currentAccount.id!, null);
     List<Widget> menu =
         MenuList(role: currentAccount.role ?? "Children").getWidgets();
 
