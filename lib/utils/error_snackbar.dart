@@ -6,16 +6,8 @@ class ErrorSnackbar {
       {required err, StackTrace? stack, required BuildContext context}) {
     Logger().e(err.toString(), stackTrace: stack);
     SnackBar snackBar = SnackBar(
-      content: Column(
-        children: [
-          Text(
-            err.toString(),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(stack.toString()),
-        ],
+      content: Text(
+        err.toString().split(":")[1].trim(),
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);

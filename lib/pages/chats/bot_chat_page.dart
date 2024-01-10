@@ -5,19 +5,13 @@ import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/providers/gpt_provider.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
-import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/speech_to_text.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:logger/logger.dart';
-import 'package:material_color_utilities/material_color_utilities.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
 
 class BotChatPage extends ConsumerStatefulWidget {
   final BotType botType;
@@ -32,7 +26,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   int _currentEnergy = 0;
   bool _loading = false;
   String? _lastWords;
-  String? _botServiceName;
+  String _botServiceName = "";
   UserModel? _user;
   //TODO: current energy
   Future<void> _onResult(String result) async {
@@ -50,13 +44,17 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
       setState(() {
         _loading = true;
       });
-
       String kidServiceId = _user?.kidServices!
               .firstWhere((element) => element.serviceType == _botServiceName)
               .id ??
           '';
       if (kidServiceId.isEmpty) {
         throw Exception('Kid service id is empty');
+      }
+      if (_currentEnergy == 0) {
+        await ttsService.speak(
+            "Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!");
+        return;
       }
       final gptNotifier = ref.read(gptProvider.notifier);
       await gptNotifier.chat(result, kidServiceId).then((value) async {
@@ -78,18 +76,6 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
       });
     }
   }
-
-  // Future<void> _onSpeechResult(SpeechRecognitionResult result) async {
-  //   // _speechEnabled = await _speechToText.initialize();
-  //   // setState(() {});
-  //   Logger.level = Level.debug;
-
-  //   if (result.recognizedWords.isNotEmpty) {
-  //     setState(() {
-  //       _lastWords = result.recognizedWords;
-  //     });
-  //   }
-  // }
 
   Future<void> _hello() async {
     await ttsService

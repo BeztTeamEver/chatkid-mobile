@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:chatkid_mobile/models/blog_model.dart';
 import 'package:chatkid_mobile/models/blog_type_model.dart';
@@ -79,7 +77,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     icon: SvgPicture.asset("assets/icons/back.svg"),
                     onPressed: () => {
                       audioPlayer.stop(),
-                      Navigator.push(
+                      Navigator.pop(
                         context,
                         createRoute(
                           () => BlogPage(type: widget.type),
