@@ -1,4 +1,3 @@
-import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
@@ -6,7 +5,6 @@ import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
-import 'package:chatkid_mobile/widgets/error_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -23,7 +21,10 @@ void main() async {
   final ttsService = TtsService().instance;
   await firebaseService.init();
   await firebaseService.getFCMToken();
+  // chat service setup
+  // final hubConnection = ChatServiceSocket.instance;
 
+  // tts service setup
   await TtsService().initState();
   // share preferrence setup for one time page
   await LocalStorage.getInstance();
