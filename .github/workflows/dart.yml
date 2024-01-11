@@ -19,7 +19,10 @@ jobs:
   main:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.2
       - name: Install Flutter SDK
         uses: mobiledevops/flutter-sdk-action@v1.0.0
         with:
