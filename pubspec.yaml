@@ -67,6 +67,7 @@ dependencies:
   signalr_netcore: ^0.1.7+2-nullsafety.3
   animated_svg: ^2.0.0
   rive: ^0.12.3
+  wheel_chooser: ^1.1.2
 
 flutter_launcher_icons:
   android: 'launcher_icon'
