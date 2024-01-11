@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:wheel_chooser/wheel_chooser.dart';
 
 class FormPage extends ConsumerStatefulWidget {
   final UserModel user;
@@ -27,6 +28,7 @@ class FormPage extends ConsumerStatefulWidget {
 
 class _FormPageState extends ConsumerState<FormPage> {
   final _formKey = GlobalKey<FormBuilderState>();
+  final _roleController = TextEditingController();
   final _nameController = TextEditingController();
   final _genderController = TextEditingController();
   final _yearBirthDayController = TextEditingController();
@@ -104,6 +106,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.7,
                   child: InfoPage(
+                    roleController: _roleController,
                     genderController: _genderController,
                     nameController: _nameController,
                     yearBirthDayController: _yearBirthDayController,
@@ -146,24 +149,44 @@ class _FormPageState extends ConsumerState<FormPage> {
                       width: 20,
                     ),
                     Expanded(
-                      child: ConstrainedBox(
-                        constraints:
-                            BoxConstraints(maxWidth: 150, maxHeight: 100),
-                        child: FullWidthButton(
-                          onPressed: ((stopLoading) => _onSubmitInfo(() {
-                                Navigator.push(
-                                  context,
-                                  createRoute(
-                                    () => PasswordPage(
-                                      userId: widget.user.id!,
-                                    ),
-                                  ),
-                                );
-                              }, stopLoading)),
-                          child: Text("Tiếp tục"),
+                      child: ElevatedButton(
+                        onPressed: () => _onSubmitInfo(
+                          () => {
+                            Navigator.push(
+                              context,
+                              createRoute(
+                                () => PasswordPage(
+                                  userId: widget.user.id!,
+                                ),
+                              ),
+                            )
+                          },
+                          () {},
                         ),
+                        child: Text("Tiếp tục"),
                       ),
-                    )
+                    ),
+                    //   Expanded(
+                    //     child: ConstrainedBox(
+                    //       constraints: BoxConstraints(
+                    //         maxWidth: 150,
+                    //         maxHeight: 100,
+                    //       ),
+                    //       child: FullWidthButton(
+                    //         onPressed: ((stopLoading) => _onSubmitInfo(() {
+                    //               Navigator.push(
+                    //                 context,
+                    //                 createRoute(
+                    //                   () => PasswordPage(
+                    //                     userId: widget.user.id!,
+                    //                   ),
+                    //                 ),
+                    //               );
+                    //             }, stopLoading)),
+                    //         child: Text("Tiếp tục"),
+                    //       ),
+                    //     ),
+                    //   )
                   ],
                 )
                 // InfoPage(),

@@ -32,6 +32,7 @@ class _SvgIconState extends State<SvgIcon> {
             colorFilter: widget.color != null
                 ? ColorFilter.mode(widget.color!, BlendMode.srcIn)
                 : null,
+            fit: BoxFit.contain,
             height: widget.size,
           );
   }

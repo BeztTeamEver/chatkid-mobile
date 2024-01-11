@@ -75,6 +75,9 @@ class MyApp extends StatelessWidget {
             padding: MaterialStateProperty.all<EdgeInsets>(
               const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             ),
+            backgroundColor: MaterialStateColor.resolveWith(
+              (states) => primary.shade400,
+            ),
           ),
         ),
         scaffoldBackgroundColor: primary.shade50,
