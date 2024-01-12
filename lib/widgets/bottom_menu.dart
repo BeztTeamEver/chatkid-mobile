@@ -31,18 +31,11 @@ class _BottomMenuState extends State<BottomMenu> {
         MenuList(role: currentAccount.role ?? RoleConstant.Child).getMenu();
 
     return Container(
-      // margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
       height: 62,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(_borderRadius),
         boxShadow: [
-          // BoxShadow(
-          //   color: Theme.of(context).shadowColor.withOpacity(0.08),
-          //   spreadRadius: 0,
-          //   blurRadius: 8,
-          //   offset: const Offset(0, 4),
-          // ),
           BoxShadow(
             color: Theme.of(context).shadowColor.withOpacity(0.08),
             spreadRadius: 0,
@@ -55,27 +48,33 @@ class _BottomMenuState extends State<BottomMenu> {
         borderRadius: BorderRadius.circular(_borderRadius),
         child: Center(
           child: BottomNavigationBar(
-            backgroundColor: Colors.white,
             type: BottomNavigationBarType.fixed,
             elevation: 0,
+            backgroundColor: Colors.white,
             currentIndex: widget.currentIndex,
             onTap: (index) {
               widget.onTap(index);
             },
-            selectedItemColor: Colors.white,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
+            selectedItemColor: primary.shade900,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            selectedLabelStyle:
+                const TextStyle(fontWeight: FontWeight.w700, fontSize: 10),
+            unselectedLabelStyle:
+                const TextStyle(fontWeight: FontWeight.w700, fontSize: 10),
             items: menu.map(
               (item) {
                 return BottomNavigationBarItem(
-                  label: "",
+                  label: item.title,
                   icon: SvgIcon(
-                    size: 24,
-                    icon: item.icon,
-                    color: item.route == menu[widget.currentIndex].route
-                        ? Theme.of(context).colorScheme.primary
-                        : neutral.shade400,
-                  ),
+                      size: 28,
+                      icon: item.route == menu[widget.currentIndex].route
+                          ? item.iconActive
+                          : item.iconDefault
+                      // color: item.route == menu[widget.currentIndex].route
+                      //     ? Theme.of(context).colorScheme.primary
+                      //     : neutral.shade200,
+                      ),
                   backgroundColor: Colors.transparent,
                 );
               },
