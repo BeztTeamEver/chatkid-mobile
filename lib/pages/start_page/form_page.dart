@@ -2,21 +2,15 @@ import 'package:chatkid_mobile/enum/role.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/info_page.dart';
 import 'package:chatkid_mobile/pages/start_page/password_page.dart';
-import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
-import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/route.dart';
-import 'package:chatkid_mobile/widgets/error_handler.dart';
-import 'package:chatkid_mobile/widgets/full_width_button.dart';
-import 'package:chatkid_mobile/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:wheel_chooser/wheel_chooser.dart';
 
 class FormPage extends ConsumerStatefulWidget {
   final UserModel user;
@@ -34,6 +28,8 @@ class _FormPageState extends ConsumerState<FormPage> {
   final _yearBirthDayController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _avatarController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -104,12 +100,13 @@ class _FormPageState extends ConsumerState<FormPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.71,
                   child: InfoPage(
                     roleController: _roleController,
                     genderController: _genderController,
                     nameController: _nameController,
                     yearBirthDayController: _yearBirthDayController,
+                    avatarController: _avatarController,
                     isParent: widget.user.role ==
                         Role.Parent.toString().split('.').last,
                   ),
@@ -123,12 +120,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text("Quay lại"),
+                        child: const Text("Quay lại"),
                         style: Theme.of(context)
                             .elevatedButtonTheme
                             .style!
                             .copyWith(
-                              elevation: MaterialStatePropertyAll(2),
+                              elevation: const MaterialStatePropertyAll(2),
                               shape: MaterialStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(40),
@@ -146,7 +143,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                       ),
                     ),
                     const SizedBox(
-                      width: 20,
+                      width: 10,
                     ),
                     Expanded(
                       child: ElevatedButton(
@@ -163,7 +160,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                           },
                           () {},
                         ),
-                        child: Text("Tiếp tục"),
+                        child: const Text("Tiếp tục"),
                       ),
                     ),
                     //   Expanded(

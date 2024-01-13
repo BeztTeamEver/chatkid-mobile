@@ -13,6 +13,7 @@ class WheelInput extends StatefulWidget {
   final String? label;
   final String? hintText;
   final String? defaultValue;
+  final int? defaultSelectionIndex;
   final String? description;
   final SvgIcon? suffixIcon;
   final SvgIcon? prefixIcon;
@@ -30,6 +31,7 @@ class WheelInput extends StatefulWidget {
     super.key,
     required this.controller,
     this.label,
+    this.defaultSelectionIndex,
     this.description,
     required this.options,
     this.validator,
@@ -57,7 +59,7 @@ class _WheelInputState extends State<WheelInput> {
     final defaultIndex = widget.options
         .indexWhere((element) => widget.defaultValue == element.value);
     setState(() {
-      _selectedValueIndex = defaultIndex;
+      _selectedValueIndex = widget.defaultSelectionIndex ?? defaultIndex;
       _selectedValue = widget.defaultValue ?? widget.options[0].value;
     });
     if (widget.controller.text.isEmpty) {
@@ -130,7 +132,7 @@ class _WheelInputState extends State<WheelInput> {
             children: [
               widget.description != null
                   ? Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(24),
                       child: Text(
                         widget.description!,
                         style: Theme.of(context).textTheme.titleMedium,
@@ -159,11 +161,10 @@ class _WheelInputState extends State<WheelInput> {
                     Center(
                       child: WheelChooser.choices(
                         unSelectTextStyle:
-                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                            Theme.of(context).textTheme.labelLarge!.copyWith(
                                   color: neutral.shade400,
                                 ),
-                        selectTextStyle:
-                            Theme.of(context).textTheme.titleMedium,
+                        selectTextStyle: Theme.of(context).textTheme.labelLarge,
                         choices: options
                             .map(
                               (e) => WheelChoice(
