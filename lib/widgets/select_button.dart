@@ -37,7 +37,7 @@ class SelectButton extends StatelessWidget {
           color: _borderColor ?? neutral.shade100,
           width: 2,
         ),
-        color: Theme.of(context).colorScheme.surface,
+        color: Colors.white,
         image: _hasBackground
             ? const DecorationImage(
                 image: AssetImage('assets/selectButton/background.png'),
@@ -90,6 +90,7 @@ class SelectButton extends StatelessWidget {
                 _label,
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
                       color: _isSelected ? Colors.white : neutral.shade800,
+                      fontWeight: FontWeight.w600,
                     ),
               ),
             ],

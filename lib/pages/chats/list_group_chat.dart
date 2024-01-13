@@ -1,181 +1,282 @@
-import 'dart:convert';
+import 'dart:async';
+import 'dart:math';
 
-import 'package:chatkid_mobile/models/chat_model.dart';
-import 'package:chatkid_mobile/providers/chat_provider.dart';
-import 'package:chatkid_mobile/services/chat_service.dart';
+import 'package:avatar_stack/avatar_stack.dart';
+import 'package:chatkid_mobile/constants/account_list.dart';
+import 'package:chatkid_mobile/enum/bot_type.dart';
+import 'package:chatkid_mobile/pages/chats/bot_chat_page.dart';
+import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
+import 'package:chatkid_mobile/providers/family_provider.dart';
+import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
-import 'package:chatkid_mobile/widgets/bottom_menu.dart';
-import 'package:chatkid_mobile/widgets/chat_box.dart';
-import 'package:chatkid_mobile/widgets/input_field.dart';
-import 'package:chatkid_mobile/widgets/speech_to_text.dart';
+import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/avatar.dart';
+import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:chatkid_mobile/widgets/full_width_button.dart';
+import 'package:chatkid_mobile/widgets/indicator.dart';
+import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
-import 'package:chatkid_mobile/widgets/voice_chat.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
+
+const MAX_ITEMS = 3;
 
 class ListGroupChat extends ConsumerStatefulWidget {
   const ListGroupChat({super.key});
+  
 
   @override
   ConsumerState<ListGroupChat> createState() => _ListGroupChatState();
 }
 
 class _ListGroupChatState extends ConsumerState<ListGroupChat> {
-  final TextEditingController _messageController = TextEditingController();
-  final ChatServiceSocket _chatService = ChatServiceSocket.instance;
-  ScrollController _scrollController = ScrollController();
-  List<ChatModel> listMessages = [];
-  final user = LocalStorage.instance.getUser();
-
-  Future<void> _sendMessage(String message) async {
-    if (message.isNotEmpty) {
-      Logger().i(message);
-      try {
-        final user = LocalStorage.instance.getUser();
-        final data = await _chatService.sendMessage(
-          user.id ?? "",
-          message,
-        );
-      } catch (e) {
-        Logger().e(e);
-      }
-    }
-  }
-
-  void _receiveMessage(List<dynamic> data) {
-    Logger().i(data);
-    if (data.length > 1) {
-      final message = ChatModel(content: data[1], id: data[0]);
-      setState(() {
-        listMessages.add(message);
-      });
-    }
-  }
-
-  void _connect() async {
-    await _chatService.startConnection();
-    final messages = await ChatService().getMessages().then((value) {
-      setState(() {
-        listMessages = value;
-      });
-    });
-
-    _chatService.ReceiveMessage(_receiveMessage);
-  }
+  int _currentBanner = 0;
+  Timer? _timer;
+  final _pageController = PageController(initialPage: 0);
 
   @override
   void initState() {
     super.initState();
-    _connect();
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      if (_currentBanner < MAX_ITEMS - 1) {
+        setState(() {
+          _currentBanner++;
+        });
+      } else {
+        setState(() {
+          _currentBanner = 0;
+        });
+      }
+      _pageController.animateToPage(
+        _currentBanner,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeIn,
+      );
+    });
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _pageController.dispose();
     super.dispose();
-    // _chatService.stopConnection();
-    // _messageController.dispose();
-    // _scrollController.dispose();
   }
 
+  final currentUser = LocalStorage.instance.getUser();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.info_outline_rounded), onPressed: () {})
-        ],
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Colors.white,
-        shadowColor: Colors.transparent,
-        centerTitle: true,
-        title: Text(
-          "Gia Đình",
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 10, right: 10, bottom: 40, top: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+    final family = ref.watch(familyServiceProvider);
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: listMessages.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == listMessages.length) {
-                      return const SizedBox(
-                        height: 80,
-                      );
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Container(
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.8,
-                        ),
-                        child: ChatTextBox(
-                          icon: 'animal/bear',
-                          message: listMessages[index].content,
-                          isSender: listMessages[index].id == user.id,
-                        ),
-                      ),
-                    );
-                  },
+              Ink(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40),
+                  border: Border.all(color: primary.shade200, width: 2),
+                  color: Colors.white,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x144E2813),
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                      spreadRadius: 0,
+                    ),
+                    BoxShadow(
+                      color: Color(0x024E2914),
+                      blurRadius: 2,
+                      offset: Offset(0, -1),
+                      spreadRadius: 0,
+                    )
+                  ],
                 ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(40),
+                  overlayColor: MaterialStateProperty.all(primary.shade100),
+                  onTap: () {},
+                  child: const Center(
+                    child: SvgIcon(
+                      icon: "search",
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Wrap(spacing: 12, children: [
+                      Avatar(
+                        icon: iconAnimalList[0],
+                        size: 48,
+                      ),
+                      Avatar(
+                        icon: iconAnimalList[1],
+                        size: 48,
+                      ),
+                      Avatar(
+                        icon: iconAnimalList[2],
+                        size: 48,
+                      ),
+                      Avatar(
+                        icon: iconAnimalList[3],
+                        size: 48,
+                      ),
+                      Avatar(
+                        icon: iconAnimalList[4],
+                        size: 48,
+                      ),
+                      Avatar(
+                        icon: iconAnimalList[2],
+                        size: 48,
+                      ),
+                      Avatar(
+                        icon: iconAnimalList[3],
+                        size: 48,
+                      ),
+                      Avatar(
+                        icon: iconAnimalList[4],
+                        size: 48,
+                      ),
+                    ])),
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          FullWidthButton(
+            onPressed: () {},
+            child: const Text(
+              "Tạo nhóm chat mới",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontFamily: 'Nunito',
+                fontWeight: FontWeight.w800,
+                height: 0,
+                letterSpacing: 0.72,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          Row(
+            children: [
+              CustomCard(
+                onTap: () => {
+                  Navigator.push(
+                    context,
+                    createRoute(
+                      () => GroupChatPage(),
+                    ),
+                  )
+                },
+                children: [
+                  Container(
+                    width: double.infinity,
+                    child: Center(
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          Avatar(
+                            icon: iconAnimalList[0],
+                            size: 40,
+                          ),
+                          Avatar(
+                            icon: iconAnimalList[1],
+                            size: 40,
+                          ),
+                          Avatar(
+                            icon: iconAnimalList[2],
+                            size: 40,
+                          ),
+                          Avatar(
+                            icon: iconAnimalList[3],
+                            size: 40,
+                          ),
+                          Avatar(
+                            icon: iconAnimalList[4],
+                            size: 40,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    "Gia đình",
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  )
+                ],
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              CustomCard(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    createRoute(() => BotChatPage(botType: BotType.PUMKIN)),
+                  );
+                },
+                children: [
+                  SvgPicture.asset('assets/robot/pumkin.svg'),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    "Bí ngô",
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  )
+                ],
               ),
             ],
           ),
-        ),
-      ),
-      floatingActionButton: VoiceChat(color: primary, onResult: _sendMessage),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomSheet: BottomAppBar(
-        height: 80,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 10,
-        color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: const SvgIcon(icon: 'location'),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const SvgIcon(icon: 'camera'),
-            ),
-            const SizedBox(
-              width: 80,
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const SvgIcon(icon: 'sticker'),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const SvgIcon(icon: 'photo'),
-            )
-          ],
-        ),
+          const SizedBox(
+            height: 8,
+          ),
+          Wrap(
+            runSpacing: 8,
+            children: [
+              SelectButton(
+                label: "Gia đình",
+                icon:
+                    "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
+                onPressed: () =>
+                    Navigator.push(context, createRoute(() => GroupChatPage())),
+              ),
+              SelectButton(
+                label: "Gia đình",
+                icon:
+                    "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
+                onPressed: () =>
+                    Navigator.push(context, createRoute(() => GroupChatPage())),
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

@@ -26,10 +26,6 @@ class _CustomCardState extends State<CustomCard> {
   Widget build(BuildContext context) {
     return Expanded(
       child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        clipBehavior: Clip.hardEdge,
         child: InkWell(
           splashColor: widget.onTapColor ?? primary.shade100,
           overlayColor:
