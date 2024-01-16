@@ -4,6 +4,7 @@ import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/pages/activation_page.dart';
 import 'package:chatkid_mobile/pages/chats/list_group_chat.dart';
 import 'package:chatkid_mobile/pages/explore/blogs/blog_page.dart';
+import 'package:chatkid_mobile/pages/explore/explore_homepages.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
@@ -17,7 +18,7 @@ final List<Menu> menu = [
     iconActive: 'bottomMenu/discover_active',
     route: routesName['${AppRoutes.blog}']!,
     role: [RoleConstant.Child],
-    widget: const ExplorePage(),
+    widget: const ExploreHomepage(),
   ),
   Menu(
     title: "Trò chuyện",
