@@ -20,7 +20,6 @@ final List<Menu> menu = [
     role: [RoleConstant.Child],
     widget: const ExploreHomepage(),
   ),
-  (),
   Menu(
     title: "Trò chuyện",
     iconDefault: 'bottomMenu/chat',
