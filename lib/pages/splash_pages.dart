@@ -28,8 +28,6 @@ class _SplashPagesState extends State<SplashPages>
   final isFirstScreen = 0;
   void checkIsFirstScreen(BuildContext context) {
     SharedPreferences prefs = LocalStorage.instance.preferences;
-    Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const MainPage()));
     // Navigator.push(
     //   context,
     //   createRoute(
@@ -37,30 +35,28 @@ class _SplashPagesState extends State<SplashPages>
     //   ),
     // );
     // return;
+    bool isFirstScreen = prefs.getBool('isFirstScreen') ?? false;
+    String? accessToken = prefs.getString('accessToken');
+    int? currentStep = prefs.getInt('step');
+    if (currentStep != null && currentStep < signUpStep.length) {
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => signUpStep[currentStep]));
+      return;
+    }
 
-    // TODO: Un-comment this code after dev
-    // bool isFirstScreen = prefs.getBool('isFirstScreen') ?? false;
-    // String? accessToken = prefs.getString('accessToken');
-    // int? currentStep = prefs.getInt('step');
-    // if (currentStep != null && currentStep < signUpStep.length) {
-    //   Navigator.of(context).push(
-    //       MaterialPageRoute(builder: (context) => signUpStep[currentStep]));
-    //   return;
-    // }
-
-    // if (accessToken != null) {
-    //   Navigator.of(context)
-    //       .push(MaterialPageRoute(builder: (context) => const MainPage()));
-    //   return;
-    // }
-    // if (!isFirstScreen) {
-    //   // await prefs.setBool('isFirstScreen', false);
-    //   Navigator.of(context)
-    //       .push(MaterialPageRoute(builder: (context) => const InitPage()));
-    //   return;
-    // }
-    // Navigator.of(context)
-    //     .push(MaterialPageRoute(builder: (context) => const LoginPage()));
+    if (accessToken != null) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => const MainPage()));
+      return;
+    }
+    if (!isFirstScreen) {
+      // await prefs.setBool('isFirstScreen', false);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => const InitPage()));
+      return;
+    }
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
   @override

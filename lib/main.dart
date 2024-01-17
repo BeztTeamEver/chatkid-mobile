@@ -15,10 +15,10 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //Firesbase setup
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  // final firebaseService = FirebaseService.instance;
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  final firebaseService = FirebaseService.instance;
   final ttsService = TtsService().instance;
   // await firebaseService.init();
   // await firebaseService.getFCMToken();
@@ -77,6 +77,9 @@ class MyApp extends StatelessWidget {
             ),
             padding: MaterialStateProperty.all<EdgeInsets>(
               const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            ),
+            backgroundColor: MaterialStateColor.resolveWith(
+              (states) => primary.shade400,
             ),
           ),
         ),

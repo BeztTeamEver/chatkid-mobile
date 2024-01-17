@@ -2,10 +2,8 @@ import 'package:chatkid_mobile/enum/role.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/info_page.dart';
 import 'package:chatkid_mobile/pages/start_page/password_page.dart';
-import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
-import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -27,11 +25,14 @@ class FormPage extends ConsumerStatefulWidget {
 
 class _FormPageState extends ConsumerState<FormPage> {
   final _formKey = GlobalKey<FormBuilderState>();
+  final _roleController = TextEditingController();
   final _nameController = TextEditingController();
   final _genderController = TextEditingController();
   final _yearBirthDayController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _avatarController = TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -102,11 +103,13 @@ class _FormPageState extends ConsumerState<FormPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.71,
                   child: InfoPage(
+                    roleController: _roleController,
                     genderController: _genderController,
                     nameController: _nameController,
                     yearBirthDayController: _yearBirthDayController,
+                    avatarController: _avatarController,
                     isParent: widget.user.role ==
                         Role.Parent.toString().split('.').last,
                   ),
@@ -120,12 +123,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text("Quay lại"),
+                        child: const Text("Quay lại"),
                         style: Theme.of(context)
                             .elevatedButtonTheme
                             .style!
                             .copyWith(
-                              elevation: MaterialStatePropertyAll(2),
+                              elevation: const MaterialStatePropertyAll(2),
                               shape: MaterialStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(40),
@@ -143,27 +146,47 @@ class _FormPageState extends ConsumerState<FormPage> {
                       ),
                     ),
                     const SizedBox(
-                      width: 20,
+                      width: 10,
                     ),
                     Expanded(
-                      child: ConstrainedBox(
-                        constraints:
-                            BoxConstraints(maxWidth: 150, maxHeight: 100),
-                        child: FullWidthButton(
-                          onPressed: ((stopLoading) => _onSubmitInfo(() {
-                                Navigator.push(
-                                  context,
-                                  createRoute(
-                                    () => PasswordPage(
-                                      userId: widget.user.id!,
-                                    ),
-                                  ),
-                                );
-                              }, stopLoading)),
-                          child: Text("Tiếp tục"),
+                      child: ElevatedButton(
+                        onPressed: () => _onSubmitInfo(
+                          () => {
+                            Navigator.push(
+                              context,
+                              createRoute(
+                                () => PasswordPage(
+                                  userId: widget.user.id!,
+                                ),
+                              ),
+                            )
+                          },
+                          () {},
                         ),
+                        child: const Text("Tiếp tục"),
                       ),
-                    )
+                    ),
+                    //   Expanded(
+                    //     child: ConstrainedBox(
+                    //       constraints: BoxConstraints(
+                    //         maxWidth: 150,
+                    //         maxHeight: 100,
+                    //       ),
+                    //       child: FullWidthButton(
+                    //         onPressed: ((stopLoading) => _onSubmitInfo(() {
+                    //               Navigator.push(
+                    //                 context,
+                    //                 createRoute(
+                    //                   () => PasswordPage(
+                    //                     userId: widget.user.id!,
+                    //                   ),
+                    //                 ),
+                    //               );
+                    //             }, stopLoading)),
+                    //         child: Text("Tiếp tục"),
+                    //       ),
+                    //     ),
+                    //   )
                   ],
                 )
                 // InfoPage(),

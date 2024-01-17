@@ -23,11 +23,11 @@ class _SvgIconState extends State<SvgIcon> {
   @override
   Widget build(BuildContext context) {
     final isUrl = RegExp(r'^https?:\/\/').hasMatch(widget.icon);
-    Logger().d(isUrl);
     return isUrl
         ? SvgPicture.network(
             widget.icon,
-            colorFilter: ColorFilter.mode(widget.color ?? primary.shade500, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(
+                widget.color ?? primary.shade500, BlendMode.srcIn),
             height: widget.size,
           )
         : SvgPicture.asset(
@@ -35,6 +35,7 @@ class _SvgIconState extends State<SvgIcon> {
             colorFilter: widget.color != null
                 ? ColorFilter.mode(widget.color!, BlendMode.srcIn)
                 : null,
+            fit: BoxFit.contain,
             height: widget.size,
           );
   }

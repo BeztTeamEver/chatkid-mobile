@@ -5,6 +5,7 @@ import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:chatkid_mobile/widgets/chat_box.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';

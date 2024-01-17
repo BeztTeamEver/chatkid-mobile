@@ -19,6 +19,7 @@
 			"name": "chatkid_mobile (release mode)",
 			"request": "launch",
 			"type": "dart",
+			
 			"flutterMode": "release"
 		}
 	]

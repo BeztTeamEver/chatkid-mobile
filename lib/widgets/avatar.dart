@@ -31,7 +31,6 @@ class _AvatarState extends State<Avatar> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(40),
           ),
-          //Todo: change to image from internet
           child: SvgIcon(
             icon: widget._icon ?? 'animal/bear',
             size: 18,
