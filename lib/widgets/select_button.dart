@@ -37,7 +37,7 @@ class SelectButton extends StatelessWidget {
           color: _borderColor ?? neutral.shade100,
           width: 2,
         ),
-        color: Theme.of(context).colorScheme.surface,
+        color: Colors.white,
         image: _hasBackground
             ? const DecorationImage(
                 image: AssetImage('assets/selectButton/background.png'),
@@ -65,7 +65,6 @@ class SelectButton extends StatelessWidget {
                   ? AspectRatio(
                       aspectRatio: 1,
                       child: Container(
-                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: _borderColor ?? neutral.shade400,
@@ -74,20 +73,24 @@ class SelectButton extends StatelessWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        child: SvgIcon(
-                          icon: _icon!,
-                          size: 18,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: Image.network(
+                            _icon ??
+                                "https://static.vecteezy.com/system/resources/previews/026/619/142/non_2x/default-avatar-profile-icon-of-social-media-user-photo-image-vector.jpg",
+                            fit: BoxFit.fill,
+                          ),
                         ),
-                      ),
-                    )
+                      ))
                   : Container(),
               const SizedBox(
-                width: 12,
+                width: 16,
               ),
               Text(
                 _label,
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
                       color: _isSelected ? Colors.white : neutral.shade800,
+                      fontWeight: FontWeight.w600,
                     ),
               ),
             ],

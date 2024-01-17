@@ -20,8 +20,8 @@ void main() async {
   );
   final firebaseService = FirebaseService.instance;
   final ttsService = TtsService().instance;
-  await firebaseService.init();
-  await firebaseService.getFCMToken();
+  // await firebaseService.init();
+  // await firebaseService.getFCMToken();
   // chat service setup
   // final hubConnection = ChatServiceSocket.instance;
 
@@ -67,7 +67,10 @@ class MyApp extends StatelessWidget {
               ),
             ),
             overlayColor: MaterialStateColor.resolveWith(
-              (states) => Colors.white.withOpacity(0.4),
+              (states) => primary.shade100,
+            ),
+            surfaceTintColor: MaterialStateColor.resolveWith(
+              (states) => Colors.transparent,
             ),
             foregroundColor: MaterialStateColor.resolveWith(
               (states) => Colors.white,
@@ -79,6 +82,13 @@ class MyApp extends StatelessWidget {
               (states) => primary.shade400,
             ),
           ),
+        ),
+        cardTheme: CardTheme(
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          clipBehavior: Clip.hardEdge,
         ),
         scaffoldBackgroundColor: primary.shade50,
         inputDecorationTheme: InputDecorationTheme(

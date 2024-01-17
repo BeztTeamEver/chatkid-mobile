@@ -1,6 +1,7 @@
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:logger/logger.dart';
 
 class SvgIcon extends StatefulWidget {
   final String icon;
@@ -22,7 +23,6 @@ class _SvgIconState extends State<SvgIcon> {
   @override
   Widget build(BuildContext context) {
     final isUrl = RegExp(r'^https?:\/\/').hasMatch(widget.icon);
-
     return isUrl
         ? SvgPicture.network(
             widget.icon,
