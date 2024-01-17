@@ -1,12 +1,17 @@
 import 'package:after_layout/after_layout.dart';
+import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/constants/sign_up_list.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/init_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
+import 'package:chatkid_mobile/pages/start_page/family_name_page.dart';
+import 'package:chatkid_mobile/pages/start_page/form_page.dart';
+import 'package:chatkid_mobile/pages/start_page/password_page.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:flutter/material.dart';
@@ -25,13 +30,14 @@ class _SplashPagesState extends State<SplashPages>
   final isFirstScreen = 0;
   void checkIsFirstScreen(BuildContext context) {
     SharedPreferences prefs = LocalStorage.instance.preferences;
-    // Navigator.push(
-    //   context,
-    //   createRoute(
-    //     () => const ProfilePage(),
-    //   ),
-    // );
-    // return;
+
+    Navigator.push(
+      context,
+      createRoute(
+        () => FamilyNamePage(),
+      ),
+    );
+    return;
     bool isFirstScreen = prefs.getBool('isFirstScreen') ?? false;
     String? accessToken = prefs.getString('accessToken');
     int? currentStep = prefs.getInt('step');

@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/enum/role.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/info_page.dart';
@@ -6,11 +7,13 @@ import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FormPage extends ConsumerStatefulWidget {
   final UserModel user;
@@ -29,15 +32,26 @@ class _FormPageState extends ConsumerState<FormPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _avatarController = TextEditingController();
-
+  final _preferences = LocalStorage.instance.preferences;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _nameController.text = widget.user.name ?? "";
+    //TODO: check the user if it is the first time register
+    final isFirstRegister =
+        _preferences.getBool(LocalStorageKey.IS_FIRST_REGISTER);
+    if (isFirstRegister == null) {
+      _preferences.setBool(LocalStorageKey.IS_FIRST_REGISTER, true);
+      return;
+    }
+    if (isFirstRegister == true) {
+      _preferences.setBool(LocalStorageKey.IS_FIRST_REGISTER, false);
+    }
   }
 
   void _onSubmitInfo(callback, stopLoading) async {
+    callback();
+    return;
     final isValid = _formKey.currentState!.saveAndValidate() &&
         _formKey.currentState!.isValid;
     if (isValid) {
@@ -153,7 +167,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                               context,
                               createRoute(
                                 () => PasswordPage(
-                                  userId: widget.user.id!,
+                                  userId: widget.user.id ?? "",
                                 ),
                               ),
                             )
@@ -163,6 +177,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                         child: const Text("Tiếp tục"),
                       ),
                     ),
+
                     //   Expanded(
                     //     child: ConstrainedBox(
                     //       constraints: BoxConstraints(

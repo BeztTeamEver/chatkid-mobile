@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:logger/logger.dart';
+import 'package:pinput/pinput.dart';
 import 'package:wheel_chooser/wheel_chooser.dart';
 
 class InfoPage extends StatefulWidget {
@@ -67,6 +68,7 @@ class _InfoPageState extends State<InfoPage> {
                       color: primary.shade400,
                     ),
                   ),
+                  // TODO: change to use image
                   child: SvgIcon(
                     icon: _avatarUrl,
                     size: 50,
@@ -84,8 +86,15 @@ class _InfoPageState extends State<InfoPage> {
                         context,
                         createRoute(
                           () => AvatarChange(
-                            controller: widget.avatarController,
-                            onChange: () {},
+                            value:
+                                widget.avatarController.text ?? "animal/bear",
+                            options: DefaultAvatar.DefaultAvatarList,
+                            onAccept: (value) {
+                              setState(() {
+                                _avatarUrl = value;
+                              });
+                              widget.avatarController.setText(value);
+                            },
                           ),
                         ),
                       );
@@ -121,14 +130,16 @@ class _InfoPageState extends State<InfoPage> {
             Expanded(
               child: Column(
                 children: [
-                  WheelInput(
-                    listHeight: 340,
-                    label: "Vai trò",
-                    options: InfoForm.ROLE_OPTIONS,
-                    controller: widget.roleController,
-                    description: "Chọn vai trò của bạn",
-                    hintText: "Chọn vai trò của bạn",
-                  ),
+                  widget.isParent
+                      ? WheelInput(
+                          listHeight: 340,
+                          label: "Vai trò",
+                          options: InfoForm.ROLE_OPTIONS,
+                          controller: widget.roleController,
+                          description: "Chọn vai trò của bạn",
+                          hintText: "Chọn vai trò của bạn",
+                        )
+                      : Container(),
                   SizedBox(
                     height: 20,
                   ),

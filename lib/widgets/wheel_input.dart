@@ -94,6 +94,10 @@ class _WheelInputState extends State<WheelInput> {
               widget.controller.setText(_selectedValue ?? "");
             });
           },
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: neutral.shade500,
+                fontWeight: FontWeight.bold,
+              ),
           controller: innerController,
           decoration: InputDecoration(
             hintText: widget.hintText ?? "Chọn",

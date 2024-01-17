@@ -35,8 +35,8 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final data =
-        ref.watch(userProvider.notifier).getUser(currentAccount.id!, null);
+    // final data =
+    //     ref.watch(userProvider.notifier).getUser(currentAccount.id!, null);
     List<Widget> menu =
         MenuList(role: currentAccount.role ?? "Children").getWidgets();
 
