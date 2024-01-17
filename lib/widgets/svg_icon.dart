@@ -1,6 +1,7 @@
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:logger/logger.dart';
 
 class SvgIcon extends StatefulWidget {
   final String icon;

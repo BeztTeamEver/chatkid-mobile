@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
@@ -38,7 +39,7 @@ class _MainPageState extends ConsumerState<MainPage> {
     // final data =
     //     ref.watch(userProvider.notifier).getUser(currentAccount.id!, null);
     List<Widget> menu =
-        MenuList(role: currentAccount.role ?? "Children").getWidgets();
+        MenuList(role: currentAccount.role ?? RoleConstant.Child).getWidgets();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
