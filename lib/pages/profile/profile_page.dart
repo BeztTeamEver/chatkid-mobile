@@ -44,8 +44,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         color: Theme.of(context).colorScheme.background,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: SingleChildScrollView(
+      child: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // FutureBuilder(
             //   future: family,

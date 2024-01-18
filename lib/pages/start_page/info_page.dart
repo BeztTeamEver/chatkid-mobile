@@ -86,8 +86,9 @@ class _InfoPageState extends State<InfoPage> {
                         context,
                         createRoute(
                           () => AvatarChange(
-                            value:
-                                widget.avatarController.text ?? "animal/bear",
+                            value: widget.avatarController.text ??
+                                DefaultAvatar.DefaultAvatarList[0],
+                            //TODO: fetch list of avatars
                             options: DefaultAvatar.DefaultAvatarList,
                             onAccept: (value) {
                               setState(() {
@@ -138,6 +139,9 @@ class _InfoPageState extends State<InfoPage> {
                           controller: widget.roleController,
                           description: "Chọn vai trò của bạn",
                           hintText: "Chọn vai trò của bạn",
+                          validator: ValidationBuilder(
+                            requiredMessage: "Vui lòng  chọn vai trò",
+                          ).build(),
                         )
                       : Container(),
                   SizedBox(
@@ -173,6 +177,9 @@ class _InfoPageState extends State<InfoPage> {
                         listHeight: 400,
                         description: "Chọn giới tính của bạn",
                         hintText: "Chọn giới tính của bạn",
+                        validator: ValidationBuilder(
+                          requiredMessage: "Vui lòng chọn giới tính",
+                        ).build(),
                       )
                     ],
                   ),

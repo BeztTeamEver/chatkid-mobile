@@ -57,6 +57,7 @@ class _AvatarChangeState extends State<AvatarChange> {
 
   @override
   Widget build(BuildContext context) {
+    Logger().d(_avatarUrl);
     return Scaffold(
       body: SafeArea(
         child: Center(

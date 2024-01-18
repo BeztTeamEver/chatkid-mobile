@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -44,42 +45,44 @@ class _BottomMenuState extends State<BottomMenu> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(_borderRadius),
-        child: Center(
-          child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            elevation: 0,
-            backgroundColor: Colors.white,
-            currentIndex: widget.currentIndex,
-            onTap: (index) {
-              widget.onTap(index);
+      child: BottomNavigationBarTheme(
+        data: BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          selectedItemColor: primary.shade900,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          selectedLabelStyle:
+              const TextStyle(fontWeight: FontWeight.w700, fontSize: 10),
+          unselectedLabelStyle:
+              const TextStyle(fontWeight: FontWeight.w700, fontSize: 10),
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          elevation: 0,
+          backgroundColor: Colors.white,
+          currentIndex: widget.currentIndex,
+          onTap: (index) {
+            widget.onTap(index);
+          },
+          selectedItemColor: primary.shade900,
+          items: menu.map(
+            (item) {
+              return BottomNavigationBarItem(
+                label: item.title,
+                icon: SvgIcon(
+                    size: 28,
+                    icon: item.route == menu[widget.currentIndex].route
+                        ? item.iconActive
+                        : item.iconDefault
+                    // color: item.route == menu[widget.currentIndex].route
+                    //     ? Theme.of(context).colorScheme.primary
+                    //     : neutral.shade200,
+                    ),
+                backgroundColor: Colors.transparent,
+              );
             },
-            selectedItemColor: primary.shade900,
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
-            selectedLabelStyle:
-                const TextStyle(fontWeight: FontWeight.w700, fontSize: 10),
-            unselectedLabelStyle:
-                const TextStyle(fontWeight: FontWeight.w700, fontSize: 10),
-            items: menu.map(
-              (item) {
-                return BottomNavigationBarItem(
-                  label: item.title,
-                  icon: SvgIcon(
-                      size: 28,
-                      icon: item.route == menu[widget.currentIndex].route
-                          ? item.iconActive
-                          : item.iconDefault
-                      // color: item.route == menu[widget.currentIndex].route
-                      //     ? Theme.of(context).colorScheme.primary
-                      //     : neutral.shade200,
-                      ),
-                  backgroundColor: Colors.transparent,
-                );
-              },
-            ).toList(),
-          ),
+          ).toList(),
         ),
       ),
     );

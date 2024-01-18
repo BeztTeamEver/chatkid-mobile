@@ -50,11 +50,12 @@ class _FormPageState extends ConsumerState<FormPage> {
   }
 
   void _onSubmitInfo(callback, stopLoading) async {
-    callback();
-    return;
     final isValid = _formKey.currentState!.saveAndValidate() &&
         _formKey.currentState!.isValid;
+
     if (isValid) {
+      callback();
+      return;
       UserModel newUser = UserModel.fromJson({
         ..._formKey.currentState!.value,
         "id": widget.user.id,

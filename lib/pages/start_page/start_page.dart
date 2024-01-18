@@ -59,13 +59,15 @@ class _StartPageState extends ConsumerState<StartPage> {
     if (_selectedIndex == -1) {
       return;
     }
+    //TODO: route to home page
+    Navigator.pushReplacement(context, createRoute(() => const MainPage()));
     LocalStorage.instance.preferences.setInt('step', 2);
     LocalStorage.instance.preferences
         .setString('user', jsonEncode(_selectedAccount!.toMap()));
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       createRoute(
-        () => MainPage(),
+        () => const MainPage(),
       ),
     );
   }
@@ -120,6 +122,7 @@ class _StartPageState extends ConsumerState<StartPage> {
                 const SizedBox(
                   height: 40,
                 ),
+                // TODO: render famaly accounts
                 SelectButton(
                   label: "Phụ huynh",
                   icon:
@@ -129,6 +132,7 @@ class _StartPageState extends ConsumerState<StartPage> {
                   onPressed: () {
                     setState(() {
                       _role = "parent";
+                      _selectedIndex = 1;
                     });
                   },
                   isSelected: _role == "parent",
@@ -146,6 +150,7 @@ class _StartPageState extends ConsumerState<StartPage> {
                   onPressed: () {
                     setState(() {
                       _role = "children";
+                      _selectedIndex = 0;
                     });
                   },
                 ),
@@ -196,7 +201,7 @@ class _StartPageState extends ConsumerState<StartPage> {
             ),
             FullWidthButton(
               height: 50,
-              isDisabled: true,
+              isDisabled: _selectedIndex == -1,
               onPressed: () {
                 onContinue();
               },
