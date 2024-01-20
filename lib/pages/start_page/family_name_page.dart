@@ -1,4 +1,5 @@
 import 'package:chatkid_mobile/constants/account_list.dart';
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/enum/role.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/form_page.dart';
@@ -6,6 +7,7 @@ import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
@@ -28,12 +30,22 @@ class FamilyNamePage extends ConsumerStatefulWidget {
 class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
   final TextEditingController _controller = TextEditingController();
   final _formKey = GlobalKey<FormBuilderState>();
-
+  final _preferences = LocalStorage.instance.preferences;
   String? _validate(String? value) {
     if (value == null || value.isEmpty) {
       return "Vui lòng nhập tên chung cho gia đình bạn";
     }
     return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final isFirstRegister =
+        _preferences.getBool(LocalStorageKey.IS_FIRST_REGISTER);
+    if (isFirstRegister != null) {
+      _preferences.remove(LocalStorageKey.IS_FIRST_REGISTER);
+    }
   }
 
   Future<void> onSubmit() async {
