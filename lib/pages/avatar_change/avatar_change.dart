@@ -24,7 +24,7 @@ class AvatarChange extends StatefulWidget {
 }
 
 class _AvatarChangeState extends State<AvatarChange> {
-  String _avatarUrl = "";
+  String _avatarUrl = "animal/bear";
 
   @override
   void initState() {
@@ -57,7 +57,6 @@ class _AvatarChangeState extends State<AvatarChange> {
 
   @override
   Widget build(BuildContext context) {
-    Logger().d(_avatarUrl);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -98,7 +97,7 @@ class _AvatarChangeState extends State<AvatarChange> {
                           child: Avatar(icon: "upload"),
                         ),
                       ),
-                      ...DefaultAvatar.DefaultAvatarList.map(
+                      ...widget.options.map(
                         (e) => GestureDetector(
                           onTap: () {
                             _onChange(e);

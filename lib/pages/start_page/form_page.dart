@@ -3,6 +3,7 @@ import 'package:chatkid_mobile/enum/role.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/info_page.dart';
 import 'package:chatkid_mobile/pages/start_page/password_page.dart';
+import 'package:chatkid_mobile/providers/file_provider.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
@@ -54,8 +55,6 @@ class _FormPageState extends ConsumerState<FormPage> {
         _formKey.currentState!.isValid;
 
     if (isValid) {
-      callback();
-      return;
       UserModel newUser = UserModel.fromJson({
         ..._formKey.currentState!.value,
         "id": widget.user.id,
@@ -102,6 +101,8 @@ class _FormPageState extends ConsumerState<FormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final avatars = ref.watch(getAvatarProvider);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(

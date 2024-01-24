@@ -1,23 +1,20 @@
+import 'dart:async';
+
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/local_storage.dart';
-import 'package:chatkid_mobile/enum/role.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/form_page.dart';
-import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
-import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:loading_btn/loading_btn.dart';
 import 'package:logger/logger.dart';
 
 class FamilyNamePage extends ConsumerStatefulWidget {
@@ -30,6 +27,7 @@ class FamilyNamePage extends ConsumerStatefulWidget {
 class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
   final TextEditingController _controller = TextEditingController();
   final _formKey = GlobalKey<FormBuilderState>();
+  bool _loading = false;
   final _preferences = LocalStorage.instance.preferences;
   String? _validate(String? value) {
     if (value == null || value.isEmpty) {
@@ -50,35 +48,44 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
 
   Future<void> onSubmit() async {
     try {
+      setState(() {
+        _loading = true;
+      });
       if (_formKey.currentState!.saveAndValidate()) {
-        //   ref
-        //       .watch(
-        //         createFamilyProvider(_controller.text).future,
-        //       )
-        //       .then((value) => {
-        //             Navigator.push(
-        //               context,
-        //               createRoute(
-        //                 () => StartPage(),
-        //               ),
-        //             )
-        //           })
-        //       .catchError((err) {
-        //     Logger().e(err);
-        //     ErrorSnackbar.showError(context: context, err: err);
-        //   });
-        Navigator.push(
-          context,
-          createRoute(
-            // TODO: change to the user from api
-            () => FormPage(
-              user: UserModel(role: RoleConstant.Parent),
-            ),
-          ),
+        ref
+            .watch(
+              createFamilyProvider(_controller.text).future,
+            )
+            .then((value) => {
+                  Navigator.push(
+                    context,
+                    createRoute(
+                      () => FormPage(
+                        user: UserModel(role: RoleConstant.Parent),
+                      ),
+                    ),
+                  )
+                })
+            .catchError((err, stack) {
+          ErrorSnackbar.showError(context: context, err: err, stack: stack);
+          throw err;
+        }).whenComplete(
+          () => setState(() {
+            _loading = false;
+          }),
         );
+        // Navigator.push(
+        //   context,
+        //   createRoute(
+        //     // TODO: change to the user from api
+        //     () => FormPage(
+        //       user: UserModel(role: RoleConstant.Parent),
+        //     ),
+        //   ),
+        // );
       }
-    } catch (err) {
-      Logger().e(err);
+    } catch (err, stack) {
+      Logger().e(err, stackTrace: stack);
     } finally {}
   }
 
@@ -90,11 +97,6 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref
-        .watch(
-          createFamilyProvider(_controller.text),
-        )
-        .isLoading;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -148,7 +150,7 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        isLoading
+                        _loading
                             ? const CustomCircleProgressIndicator()
                             : Container(),
                         Text(

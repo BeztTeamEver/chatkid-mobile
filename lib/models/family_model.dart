@@ -8,14 +8,16 @@ class FamilyRequestModel {
   final String? name;
   final String? id;
   final String? email;
+  final String? avatarUrl;
 
-  const FamilyRequestModel({this.name, this.id, this.email});
+  const FamilyRequestModel({this.name, this.id, this.email, this.avatarUrl});
 
   factory FamilyRequestModel.fromJson(Map<String, dynamic> json) {
     return FamilyRequestModel(
       name: json['name'],
       id: json['id'],
       email: json['email'],
+      avatarUrl: json['avatarUrl'],
     );
   }
 
@@ -23,6 +25,7 @@ class FamilyRequestModel {
     return jsonEncode({
       "name": name,
       "id": id,
+      "avatarUrl": avatarUrl,
       "email": email,
     });
   }

@@ -8,7 +8,7 @@ class Endpoint {
   // Auth
   static const googleEndPoint = "/api/auth/login";
   static const regisEndPoint = "/api/auth/register";
-  static const verifyOtpEndPoint = "/api/auth/otp";
+  static const verifyOtpEndPoint = "/api/auth/verify-OTP";
   static const resendOtp = "/api/auth/otp";
   static const infoEndpoint = "/api/auth/info";
 
@@ -38,4 +38,8 @@ class Endpoint {
 
   //History
   static const historyEndPoint = "/api/history";
+
+  // file
+  static const fileUploadEndPoint = "/api/file-upload/upload";
+  static const avatarEndpoint = "/api/file-upload/avatar";
 }

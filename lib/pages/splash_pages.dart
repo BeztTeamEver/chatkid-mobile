@@ -26,7 +26,7 @@ class _SplashPagesState extends State<SplashPages>
   void checkIsFirstScreen(BuildContext context) {
     SharedPreferences prefs = LocalStorage.instance.preferences;
 
-    // Navigator.push(
+    // Navigator.pushReplacement(
     //   context,
     //   createRoute(
     //     () => FamilyNamePage(),
@@ -37,24 +37,24 @@ class _SplashPagesState extends State<SplashPages>
     String? accessToken = prefs.getString('accessToken');
     int? currentStep = prefs.getInt('step');
     if (currentStep != null && currentStep < signUpStep.length) {
-      Navigator.of(context).push(
+      Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => signUpStep[currentStep]));
       return;
     }
 
     if (accessToken != null) {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const MainPage()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MainPage()));
       return;
     }
     if (!isFirstScreen) {
       // await prefs.setBool('isFirstScreen', false);
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const InitPage()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const InitPage()));
       return;
     }
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const LoginPage()));
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
   @override
