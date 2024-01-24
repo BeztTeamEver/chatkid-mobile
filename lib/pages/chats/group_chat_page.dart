@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
 import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
+import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
@@ -19,7 +22,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 class GroupChatPage extends ConsumerStatefulWidget {
-  const GroupChatPage({super.key});
+  final String channelId;
+  const GroupChatPage({super.key, required this.channelId});
 
   @override
   ConsumerState<GroupChatPage> createState() => _GroupChatPageState();
@@ -27,45 +31,68 @@ class GroupChatPage extends ConsumerStatefulWidget {
 
 class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   final TextEditingController _messageController = TextEditingController();
-  final ChatServiceSocket _chatService = ChatServiceSocket.instance;
-  ScrollController _scrollController = ScrollController();
+  // ScrollController _scrollController = ScrollController();
+  final _chatService = SocketService();
   List<ChatModel> listMessages = [];
   final user = LocalStorage.instance.getUser();
 
   Future<void> _sendMessage(String message) async {
-    if (message.isNotEmpty) {
-      Logger().i(message);
-      try {
-        final user = LocalStorage.instance.getUser();
-        final data = await _chatService.sendMessage(
-          user.id ?? "",
-          message,
-        );
-      } catch (e) {
-        Logger().e(e);
-      }
-    }
+    _chatService.sendMessage(ChatModel(
+        content: message,
+        userId: "6dd114cc-a6d6-4395-9f16-82fddf0363c5",
+        channelId: widget.channelId));
+    // setState(() {
+    //   listMessages.add(ChatModel(
+    //       content: message,
+    //       userId: "6dd114cc-a6d6-4395-9f16-82fddf0363c5",
+    //       channelId: widget.channelId));
+    // });
+
+    // _chatService.sendMessage(message);
+    // if (message.isNotEmpty) {
+    //   Logger().i(message);
+    //   try {
+    //     final user = LocalStorage.instance.getUser();
+    //     final data = await _chatService.sendMessage(
+    //       user.id ?? "",
+    //       message,
+    //     );
+    //   } catch (e) {
+    //     Logger().e(e);
+    //   }
+    // }
   }
 
-  void _receiveMessage(List<dynamic> data) {
+  void _receiveMessage(ChatModel data) {
     Logger().i(data);
-    if (data.length > 1) {
-      final message = ChatModel(content: data[1], id: data[0]);
-      setState(() {
-        listMessages.add(message);
-      });
-    }
+    setState(() {
+      listMessages.add(data);
+    });
+    // if (data.length > 1) {
+    //   final message = ChatModel(content: data[1], id: data[0]);
+    //   setState(() {
+    //     listMessages.add(message);
+    //   });
+    // }
   }
 
   void _connect() async {
-    await _chatService.startConnection();
-    final messages = await ChatService().getMessages().then((value) {
-      setState(() {
-        listMessages = value;
-      });
-    });
+    _chatService.joinChannel(
+      ChannelUserModel(
+          channelId: widget.channelId,
+          userId: "6dd114cc-a6d6-4395-9f16-82fddf0363c5"),
+    );
 
-    _chatService.ReceiveMessage(_receiveMessage);
+    // _chatService.joinChannel(
+    //     ChatModel(channelId: "d5b2a3d0-17c5-480e-87e1-b23c12438978"));
+    // await _chatService.startConnection();
+    // final messages = await ChatService().getMessages().then((value) {
+    //   setState(() {
+    //     listMessages = value.data;
+    //   });
+    // });
+
+    // _chatService.ReceiveMessage(_receiveMessage);
   }
 
   @override
@@ -77,6 +104,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   @override
   void dispose() {
     // TODO: implement dispose
+    _chatService.leaveChannel(
+      ChannelUserModel(
+          channelId: widget.channelId,
+          userId: "6dd114cc-a6d6-4395-9f16-82fddf0363c5"),
+    );
     super.dispose();
     // _chatService.stopConnection();
     // _messageController.dispose();
@@ -85,6 +117,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final message = ref.watch(receiveMessage);
+    message.whenData((data) {
+      _receiveMessage(data);
+    });
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -134,13 +171,41 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                         child: ChatTextBox(
                           icon: 'animal/bear',
                           message: listMessages[index].content,
-                          isSender: listMessages[index].id == user.id,
+                          isSender: listMessages[index].userId ==
+                              "6dd114cc-a6d6-4395-9f16-82fddf0363c5",
                         ),
                       ),
                     );
                   },
                 ),
               ),
+              // Expanded(
+              //   child: message.when(
+              //     data: (data) {
+              //       return ListView.builder(itemBuilder: (context, index) {
+              //         return Padding(
+              //           padding: const EdgeInsets.only(bottom: 10),
+              //           child: Container(
+              //             constraints: BoxConstraints(
+              //               maxWidth: MediaQuery.of(context).size.width * 0.8,
+              //             ),
+              //             child: ChatTextBox(
+              //               icon: 'animal/bear',
+              //               message: data[index].content,
+              //               isSender: data[index].id == user.id,
+              //             ),
+              //           ),
+              //         );
+              //       });
+              //     },
+              //     error: (_, __) {
+              //       return const Text("error");
+              //     },
+              //     loading: () {
+              //       return const SizedBox();
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -150,14 +215,16 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       bottomSheet: BottomAppBar(
         height: 80,
         shape: const CircularNotchedRectangle(),
-        notchMargin: 10,
+        notchMargin: 15,
         color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                _sendMessage("hello");
+              },
               icon: const SvgIcon(icon: 'location'),
             ),
             IconButton(

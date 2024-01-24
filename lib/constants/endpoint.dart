@@ -28,7 +28,8 @@ class Endpoint {
   static const subcriptionEndPoint = "/api/subcriptions";
 
   // Message
-  static const messagesEndPoint = "/api/messages";
+  static const messagesEndPoint = "/api/chat/recent";
+  static const channelMessagesEndPoint = "/api/chat/channel";
 
   // Paypal
   static const paypalEndPoint = "/api/paypal/create-paypal-order";
@@ -39,4 +40,18 @@ class Endpoint {
 
   //History
   static const historyEndPoint = "/api/history";
+
+  // Chat service emit
+
+  static const joinChannelEndPoint = "joinChannel";
+  static const sendMessageEndPoint = "createMessage";
+  static const leaveChannelEndPoint = "leaveChannel";
+  static const createGroupEndPoint = "createGroup";
+  static const joinGroupEndPoint = "joinGroup";
+  static const leaveGroupEndPoint = "leaveGroup";
+  // Chat service on
+  static const onMessageEndPoint = "onMessage";
+  static const onGroupCreateEndPoint = "onGroupCreate";
+  static const onGroupJoinEndPoint = "onGroupJoin";
+  static const onGroupLeaveEndPoint = "onGroupLeave";
 }

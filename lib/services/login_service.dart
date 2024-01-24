@@ -18,9 +18,9 @@ class AuthService {
       body: requestAuthModal.toJson(),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
       final authTokens = AuthModel.fromJson(jsonDecode(response.body));
-      Logger().d(authTokens.token);
+      Logger().d(authTokens.accessToken);
       _saveToken(authTokens);
       return authTokens;
     } else {
@@ -101,7 +101,7 @@ class AuthService {
     );
     if (response.statusCode == 200) {
       final authTokens = AuthModel.fromJson(jsonDecode(response.body));
-      Logger().d(authTokens.token);
+      Logger().d(authTokens.accessToken);
 
       _saveToken(authTokens);
       return true;
@@ -133,13 +133,13 @@ class AuthService {
 
   static void _saveToken(AuthModel authTokens) async {
     await _localStorage.saveToken(
-      authTokens.token,
+      authTokens.accessToken,
       authTokens.refreshToken,
     );
   }
 
   static Future<String> getAccessToken() async {
-    String accessToken = _localStorage.getToken()?.token ?? "";
+    String accessToken = _localStorage.getToken()?.accessToken ?? "";
 
     if (accessToken.isEmpty) {
       accessToken = _localStorage.preferences.getString("accessToken") ?? "";
@@ -147,14 +147,14 @@ class AuthService {
     }
     if (isTokenExpired()) {
       AuthModel tokens = await refreshToken();
-      _localStorage.saveToken(tokens.token, tokens.refreshToken);
-      return tokens.token;
+      _localStorage.saveToken(tokens.accessToken, tokens.refreshToken);
+      return tokens.accessToken;
     }
     return accessToken;
   }
 
   static bool isTokenExpired() {
-    final token = _localStorage.getToken()?.token;
+    final token = _localStorage.getToken()?.accessToken;
     if (token == null) {
       return true;
     }

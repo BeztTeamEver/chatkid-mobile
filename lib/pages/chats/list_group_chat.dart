@@ -1,13 +1,18 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:avatar_stack/avatar_stack.dart';
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/enum/bot_type.dart';
+import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/pages/chats/bot_chat_page.dart';
 import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
+import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
+import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
+import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -27,7 +32,6 @@ const MAX_ITEMS = 3;
 
 class ListGroupChat extends ConsumerStatefulWidget {
   const ListGroupChat({super.key});
-  
 
   @override
   ConsumerState<ListGroupChat> createState() => _ListGroupChatState();
@@ -41,6 +45,7 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
   @override
   void initState() {
     super.initState();
+
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_currentBanner < MAX_ITEMS - 1) {
         setState(() {
@@ -68,7 +73,13 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
   final currentUser = LocalStorage.instance.getUser();
   @override
   Widget build(BuildContext context) {
-    final family = ref.watch(familyServiceProvider);
+    // ref.watch(receiveMessage);
+
+    // final family = ref
+    //     .watch(getFamilyProvider(
+    //         FamilyRequestModel(id: '6b02cfc1-0b92-4ec4-97e3-75f57a8c186b')))
+    //     .asData
+    //     ?.value;
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -181,7 +192,9 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
                   Navigator.push(
                     context,
                     createRoute(
-                      () => GroupChatPage(),
+                      () => GroupChatPage(
+                        channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
+                      ),
                     ),
                   )
                 },
@@ -264,16 +277,19 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
                 label: "Gia đình",
                 icon:
                     "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
-                onPressed: () =>
-                    Navigator.push(context, createRoute(() => GroupChatPage())),
+                onPressed: () => Navigator.push(
+                    context,
+                    createRoute(() => GroupChatPage(
+                          channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
+                        ))),
               ),
-              SelectButton(
-                label: "Gia đình",
-                icon:
-                    "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
-                onPressed: () =>
-                    Navigator.push(context, createRoute(() => GroupChatPage())),
-              ),
+              // SelectButton(
+              //   label: "Gia đình",
+              //   icon:
+              //       "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
+              //   onPressed: () =>
+              //       Navigator.push(context, createRoute(() => GroupChatPage())),
+              // ),
             ],
           )
         ],

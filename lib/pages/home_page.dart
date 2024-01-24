@@ -174,7 +174,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                   Navigator.push(
                     context,
                     createRoute(
-                      () => GroupChatPage(),
+                      () => GroupChatPage(
+                        channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
+                      ),
                     ),
                   )
                 },
