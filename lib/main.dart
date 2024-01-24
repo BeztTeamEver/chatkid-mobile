@@ -1,5 +1,5 @@
 import 'package:chatkid_mobile/constants/routes.dart';
-import 'package:chatkid_mobile/pages/splash_pages.dart';
+import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
@@ -20,10 +20,10 @@ void main() async {
   );
   final firebaseService = FirebaseService.instance;
   final ttsService = TtsService().instance;
-  // await firebaseService.init();
-  // await firebaseService.getFCMToken();
+  await firebaseService.init();
+  await firebaseService.getFCMToken();
   // chat service setup
-  // final hubConnection = ChatServiceSocket.instance;
+  final hubConnection = ChatServiceSocket.instance;
 
   // tts service setup
   await TtsService().initState();
@@ -141,7 +141,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const SplashPages(),
+      home: const MainPage(),
       routes: routes,
     );
   }

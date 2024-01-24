@@ -119,6 +119,8 @@ flutter:
         - assets/robot/
         - assets/botChatPage/
         - assets/thumbnails/
+        - assets/blog/
+        - assets/blog/universe/
         - .env
 
     # An image asset can refer to one or more resolution-specific "variants", see

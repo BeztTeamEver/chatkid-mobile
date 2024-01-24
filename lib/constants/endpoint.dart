@@ -19,6 +19,7 @@ class Endpoint {
   //Blog
   static const blogEndPoint = "/api/blogs";
   static const blogTypeEndPoint = "/api/blog-types";
+  static const blogTypeEndPointById = "/api/blog-types/{id}/blogs";
 
   // GPT chat
   static const gptChatEndPoint = "/api/gpt/chat";
