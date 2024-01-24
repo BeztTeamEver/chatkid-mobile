@@ -69,6 +69,7 @@ dependencies:
     rive: ^0.12.3
     wheel_chooser: ^1.1.2
     file_picker: ^6.1.1
+    socket_io_client: ^2.0.3+1
     audio_waveforms: ^1.0.4
 
 flutter_launcher_icons:
@@ -120,6 +121,8 @@ flutter:
         - assets/robot/
         - assets/botChatPage/
         - assets/thumbnails/
+        - assets/blog/
+        - assets/blog/universe/
         - .env
 
     # An image asset can refer to one or more resolution-specific "variants", see
