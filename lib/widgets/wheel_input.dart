@@ -3,6 +3,7 @@ import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:form_validator/form_validator.dart';
 import 'package:logger/logger.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:pinput/pinput.dart';
@@ -10,6 +11,7 @@ import 'package:wheel_chooser/wheel_chooser.dart';
 
 class WheelInput extends StatefulWidget {
   final TextEditingController controller;
+
   final String? label;
   final String? hintText;
   final String? defaultValue;
@@ -18,8 +20,8 @@ class WheelInput extends StatefulWidget {
   final SvgIcon? suffixIcon;
   final SvgIcon? prefixIcon;
 
-  final Function(String?)? validator;
   final Function(String?)? onChange;
+  final String? Function(String?)? validator;
   final Function(String?)? onSave;
 
   final double? optionHeight;
@@ -94,6 +96,11 @@ class _WheelInputState extends State<WheelInput> {
               widget.controller.setText(_selectedValue ?? "");
             });
           },
+          validator: widget.validator,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: neutral.shade500,
+                fontWeight: FontWeight.bold,
+              ),
           controller: innerController,
           decoration: InputDecoration(
             hintText: widget.hintText ?? "Chọn",

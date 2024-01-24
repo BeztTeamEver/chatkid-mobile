@@ -1,6 +1,9 @@
+import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/regex.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/confirmation/successfull_registration.dart';
+import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
@@ -33,6 +36,12 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
       TextEditingController();
 
   Future<void> _submitForm(callback, stopLoading) async {
+    // TODO: delete when integrate with backend
+    Navigator.push(
+        context,
+        createRoute(
+          () => SuccessfulRegistrationPage(),
+        ));
     try {
       final isValid =
           (_formkey.currentState as FormBuilderState).saveAndValidate() &&
@@ -44,7 +53,13 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
         });
         await ref.watch(updateUserProvider(newUser).future).then((value) {
           Navigator.pushReplacement(
-              context, createRoute(() => const StartPage()));
+            context,
+            createRoute(
+              () => SuccessfulRegistrationPage(
+                isParent: value.role == RoleConstant.Parent,
+              ),
+            ),
+          );
         });
       }
     } catch (e) {
@@ -73,17 +88,25 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "Mật Khẩu cho tài khoản",
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(),
+                  "Mật Khẩu cho tài khoản ${widget.userId} của Minh",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        height: 1.45,
+                      ),
                 ),
                 const SizedBox(
                   height: 8,
                 ),
                 Text(
-                  "Để đảm bảo bí mật cho tài khoản",
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: neutral.shade400,
+                  "Để đảm bảo bí mật cho tài khoản phụ huynh ;)",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        height: 1.2,
+                        color: neutral.shade600,
                       ),
+                ),
+                const SizedBox(
+                  height: 8,
                 ),
                 const SizedBox(
                   height: 20,
@@ -121,13 +144,51 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
                   controller: confirmPasswordController,
                 ),
                 const SizedBox(
-                  height: 70,
+                  height: 32,
                 ),
-                LoadingButton(
-                  handleOnTap: (stopLoading) {
-                    _submitForm(() {}, stopLoading);
-                  },
-                  label: "Tiếp tục",
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Quay lại"),
+                        style: Theme.of(context)
+                            .elevatedButtonTheme
+                            .style!
+                            .copyWith(
+                              elevation: const MaterialStatePropertyAll(2),
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                  side: BorderSide(
+                                    color: primary.shade400,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(primary.shade50),
+                              foregroundColor:
+                                  MaterialStatePropertyAll(primary.shade400),
+                            ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: LoadingButton(
+                        handleOnTap: (stopLoading) {
+                          _submitForm(() {}, stopLoading);
+                        },
+                        label: "Tiếp tục",
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 30,
