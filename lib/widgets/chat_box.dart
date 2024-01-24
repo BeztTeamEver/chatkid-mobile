@@ -3,6 +3,7 @@ import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/avatar.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
 
 class ChatTextBox extends StatefulWidget {
   final String? message;
@@ -16,6 +17,7 @@ class ChatTextBox extends StatefulWidget {
 
 class ChatTextBoxState extends State<ChatTextBox> {
   TtsService _ttsService = TtsService().instance;
+  PlayerController _playerController = PlayerController();
 
   Future<void> _speak(String message) async {
     await _ttsService.speak(message);

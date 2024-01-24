@@ -40,7 +40,7 @@ class LocalStorage {
     if (accessToken == null || refreshToken == null) {
       return null;
     }
-    return AuthModel(token: accessToken!, refreshToken: refreshToken!);
+    return AuthModel(accessToken: accessToken!, refreshToken: refreshToken!);
   }
 
   String get(String key) {

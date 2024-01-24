@@ -1,7 +1,7 @@
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
-import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
@@ -14,23 +14,25 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // load env file
+  await dotenv.load(fileName: ".env");
+
   //Firesbase setup
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final firebaseService = FirebaseService.instance;
   final ttsService = TtsService().instance;
-  // await firebaseService.init();
-  // await firebaseService.getFCMToken();
-  // chat service setup
-  // final hubConnection = ChatServiceSocket.instance;
+  await firebaseService.init();
+  await firebaseService.getFCMToken();
 
   // tts service setup
   await TtsService().initState();
   // share preferrence setup for one time page
   await LocalStorage.getInstance();
-  // load env file
-  await dotenv.load(fileName: ".env");
+
+  SocketService();
 
   runApp(
     const ProviderScope(
