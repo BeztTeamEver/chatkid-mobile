@@ -10,9 +10,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 
 class HistoryTrackingPage extends StatefulWidget {
-  UserModel? user;
-  int? userIndex;
-  HistoryTrackingPage({super.key, this.userIndex, this.user});
+  final UserModel? user;
+  final int? userIndex;
+  const HistoryTrackingPage({super.key, this.userIndex, this.user});
 
   @override
   State<HistoryTrackingPage> createState() => _HistoryTrackingPageState();
