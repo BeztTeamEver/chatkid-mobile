@@ -23,6 +23,7 @@ class _SvgIconState extends State<SvgIcon> {
   @override
   Widget build(BuildContext context) {
     final isUrl = RegExp(r'^https?:\/\/').hasMatch(widget.icon);
+
     return isUrl
         ? SvgPicture.network(
             widget.icon,

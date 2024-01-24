@@ -3,19 +3,20 @@ import 'package:chatkid_mobile/widgets/avatar.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:pinput/pinput.dart';
 
 class AvatarChange extends StatefulWidget {
-  final TextEditingController controller;
-  final Function onChange;
+  final String? value;
+  final Function(String) onAccept;
   final options;
 
   const AvatarChange({
     super.key,
     this.options,
-    required this.onChange,
-    required this.controller,
+    required this.onAccept,
+    required this.value,
   });
 
   @override
@@ -30,22 +31,25 @@ class _AvatarChangeState extends State<AvatarChange> {
     // TODO: implement initState
     super.initState();
     setState(() {
-      _avatarUrl = widget.controller.text;
+      _avatarUrl = widget.value ?? "animal/bear";
     });
   }
 
-  _onChange() async {
+  _onChange(String e) {
+    setState(() {
+      _avatarUrl = e;
+    });
+    Logger().d(e);
+  }
+
+  _onFileUpload() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'png', 'jpeg', 'svg'],
     );
     if (result != null) {
-      setState(() {
-        // _avatarUrl = result.files.single.path!;
-        _avatarUrl = result.files.single.path!;
-      });
-      // widget.controller.text = _avatarUrl;
-      widget.controller.setText(result.files.single.path!);
+      // TODO: get the image link from the internet
+      _onChange(result.files.single.path!);
     } else {
       // User canceled the picker
     }
@@ -53,6 +57,7 @@ class _AvatarChangeState extends State<AvatarChange> {
 
   @override
   Widget build(BuildContext context) {
+    Logger().d(_avatarUrl);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -86,7 +91,7 @@ class _AvatarChangeState extends State<AvatarChange> {
                     children: [
                       GestureDetector(
                         onTap: () async {
-                          _onChange();
+                          _onFileUpload();
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -96,10 +101,7 @@ class _AvatarChangeState extends State<AvatarChange> {
                       ...DefaultAvatar.DefaultAvatarList.map(
                         (e) => GestureDetector(
                           onTap: () {
-                            setState(() {
-                              _avatarUrl = e;
-                            });
-                            widget.controller.text = e;
+                            _onChange(e);
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -113,6 +115,7 @@ class _AvatarChangeState extends State<AvatarChange> {
               ),
               FullWidthButton(
                   onPressed: () {
+                    widget.onAccept(_avatarUrl);
                     Navigator.pop(context);
                   },
                   child: Text(

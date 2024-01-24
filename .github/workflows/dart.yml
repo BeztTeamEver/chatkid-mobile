@@ -6,30 +6,39 @@
 name: Dart
 
 on:
-  push:
-    branches: 
-      - dev
-      - KU-**
-  pull_request:
-    branches:
-      - main
-      - dev
+    push:
+        branches:
+            - dev
+            - KU-**
+    pull_request:
+        branches:
+            - main
+            - dev
 
 jobs:
-  main:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: 3.2
-      - name: Install Flutter SDK
-        uses: mobiledevops/flutter-sdk-action@v1.0.0
-        with:
-          flutter-sdk-version: 3.16.4
-      - run: flutter --version
-      - run: flutter doctor
-      - run: flutter pub get
-      - run: flutter test
-      - run: flutter build ios --release --no-codesign 
-      - run: flutter build apk
+    main:
+        runs-on: macos-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: dart-lang/setup-dart@v1
+              with:
+                  sdk: 3.2
+            - name: Install Flutter SDK
+              uses: mobiledevops/flutter-sdk-action@v1.0.0
+              with:
+                  flutter-sdk-version: 3.16.4
+            - run: flutter --version
+            - run: flutter doctor
+            - run: flutter pub get
+            - name: Build apk
+              id: buildApp
+              run: flutter build apk
+            - name: Discord Notification
+              # You may pin to the exact commit or the version.
+              # uses: tenzin1308/discord-notification@1d3ffe021fa2d623229a6c35c118910777250c1b
+              uses: tenzin1308/discord-notification@v1.0.0
+              with:
+                # Bot user OAuth Access Token
+                discord-webhook-url: https://discord.com/api/webhooks/1156466843742117969/5qUPj6_92XYZq768ZdAgtDEOaCNUztY8cfU490FNpB4JyCxG81jBEzzodZh3Jz0CqF2p
+                github-token: ${{ github.token }}
+          

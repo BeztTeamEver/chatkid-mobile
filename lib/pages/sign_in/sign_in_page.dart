@@ -30,23 +30,26 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           children: [
             const LogoWidget(),
             const SizedBox(height: 20),
-            Text.rich(
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
-              TextSpan(
-                children: <TextSpan>[
-                  const TextSpan(
-                      text:
-                          "Chúng tôi sử dụng tính năng đăng ký bằng tài khoản Google để xác minh rằng người lớn đang thiết lập tài khoản "),
-                  TextSpan(
-                    text: "KidTalkie",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor),
-                  ),
-                  const TextSpan(
-                      text: ", và trẻ của bạn có quyền sử dụng ứng dụng này"),
-                ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text.rich(
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
+                TextSpan(
+                  children: <TextSpan>[
+                    const TextSpan(
+                        text:
+                            "Chúng tôi sử dụng tính năng đăng ký bằng tài khoản Google để xác minh rằng người lớn đang thiết lập tài khoản "),
+                    TextSpan(
+                      text: "KidTalkie",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor),
+                    ),
+                    const TextSpan(
+                        text: ", và trẻ của bạn có quyền sử dụng ứng dụng này"),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 100),
