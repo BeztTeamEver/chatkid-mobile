@@ -12,20 +12,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MainPage extends ConsumerStatefulWidget {
-  const MainPage({super.key});
+  final int index;
+  const MainPage({super.key, this.index = 0});
 
   @override
   ConsumerState<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends ConsumerState<MainPage> {
-  int currentIndex = 0;
+   int currentIndex = 0;
   UserModel currentAccount = UserModel.fromJson(
       jsonDecode(LocalStorage.instance.preferences.getString('user') ?? "{}"));
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      currentIndex = widget.index;
+    });
   }
 
   void onTap(index) {
