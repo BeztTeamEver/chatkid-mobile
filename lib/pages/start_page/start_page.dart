@@ -36,7 +36,7 @@ class _StartPageState extends ConsumerState<StartPage> {
   @override
   void initState() {
     super.initState();
-    familyUsers = FamilyService().getFamilyAccounts(null);
+    // familyUsers = FamilyService().getFamilyAccounts(null);
   }
 
   void onSelectAccount(UserModel data, int index) {
@@ -228,7 +228,12 @@ class _StartPageState extends ConsumerState<StartPage> {
             FullWidthButton(
               height: 50,
               onPressed: () {
-                onContinue();
+                Navigator.push(
+                  context,
+                  createRoute(
+                    () => const RolePage(),
+                  ),
+                );
               },
               // style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
               //       minimumSize: MaterialStateProperty.all<Size>(

@@ -30,11 +30,14 @@ class _GoogleButtonState extends State<GoogleButton> {
   final LocalStorage _localStorage = LocalStorage.instance;
 
   late String _email = "";
+  final LocalStorage _prefs = LocalStorage.instance;
 
-  late Widget _route = const StartPage();
+  late Widget _route;
 
   Future<void> _signInFunction(String accessToken) async {
     try {
+      _prefs.preferences.setBool('isFirstScreen', true);
+      _route = const StartPage();
       await AuthService.googleLogin(accessToken);
     } catch (e) {
       rethrow;
@@ -43,16 +46,14 @@ class _GoogleButtonState extends State<GoogleButton> {
 
   Future<void> _signUpFunction(String accessToken) async {
     try {
+      _route = ConfirmationPage(email: _email);
       await AuthService.signUp(accessToken);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> _signInWithGoogle(
-      Function callback, Function errorCallback) async {
-    LocalStorage prefs = LocalStorage.instance;
-
+  Future<void> _signInWithGoogle(Function callback) async {
     try {
       setState(() {
         _isLoading = true;
@@ -62,22 +63,22 @@ class _GoogleButtonState extends State<GoogleButton> {
         Logger().d(token);
         _email = value.user!.email!;
         if (widget.isLogin) {
-          prefs.preferences.setBool('isFirstScreen', true);
           await _signInFunction(token);
         } else {
-          _route = ConfirmationPage(email: _email);
           await _signUpFunction(token);
         }
+        Logger().d("Login success");
         callback();
       }).catchError((err) {
-        prefs.removeToken();
-        errorCallback(err, StackTrace.current);
+        _prefs.removeToken();
+        throw err;
       }).whenComplete(() => setState(() {
             _isLoading = false;
           }));
     } catch (err, stack) {
-      prefs.removeToken();
-      errorCallback(err, stack);
+      _prefs.removeToken();
+      Logger().d(err.toString(), stackTrace: stack);
+      ErrorSnackbar.showError(err: err, context: context, stack: stack);
     }
   }
 
@@ -94,13 +95,9 @@ class _GoogleButtonState extends State<GoogleButton> {
         children: [
           FullWidthButton(
             onPressed: () async {
-              await _signInWithGoogle(() {
-                Navigator.push(context, createRoute(() => _route));
-              }, (error, stack) {
-                Logger().d(error.toString(), stackTrace: stack);
-                ErrorSnackbar.showError(
-                    err: error, context: context, stack: stack);
-              });
+              await _signInWithGoogle(
+                () => Navigator.push(context, createRoute(() => _route)),
+              );
             },
             height: 50,
             child: Row(

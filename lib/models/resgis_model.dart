@@ -1,9 +1,9 @@
 class RegisModel {
-  String verifyToken;
+  String accessToken;
 
-  RegisModel({required this.verifyToken});
+  RegisModel({required this.accessToken});
 
   factory RegisModel.fromJson(Map<String, dynamic> json) => RegisModel(
-        verifyToken: json['verifyToken'],
+        accessToken: json['accessToken'],
       );
 }
