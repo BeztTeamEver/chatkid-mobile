@@ -1,19 +1,23 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/info_form.dart';
+import 'package:chatkid_mobile/models/file_model.dart';
 import 'package:chatkid_mobile/pages/avatar_change/avatar_change.dart';
+import 'package:chatkid_mobile/providers/file_provider.dart';
+import 'package:chatkid_mobile/services/file_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:chatkid_mobile/widgets/wheel_input.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:logger/logger.dart';
 import 'package:pinput/pinput.dart';
-import 'package:wheel_chooser/wheel_chooser.dart';
 
-class InfoPage extends StatefulWidget {
+class InfoPage extends ConsumerStatefulWidget {
   final TextEditingController nameController;
   final bool isParent;
   final TextEditingController roleController;
@@ -31,16 +35,24 @@ class InfoPage extends StatefulWidget {
       required this.yearBirthDayController});
 
   @override
-  State<InfoPage> createState() => _InfoPageState();
+  ConsumerState<InfoPage> createState() => _InfoPageState();
 }
 
-class _InfoPageState extends State<InfoPage> {
-  String _avatarUrl = "";
+class _InfoPageState extends ConsumerState<InfoPage> {
+  String _avatarUrl = "animal/bear";
+  List<String> _avatarList = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     widget.roleController.text = widget.isParent ? "phụ huynh" : "bé";
     final userRole = widget.isParent ? "phụ huynh" : "bé";
+
+    final avatars = ref.watch(getAvatarProvider);
     return Center(
       child: Form(
         child: Column(
@@ -51,7 +63,7 @@ class _InfoPageState extends State<InfoPage> {
                     fontSize: 20,
                   ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Column(
@@ -70,7 +82,9 @@ class _InfoPageState extends State<InfoPage> {
                   ),
                   // TODO: change to use image
                   child: SvgIcon(
-                    icon: _avatarUrl,
+                    icon: _avatarUrl.isNotEmpty
+                        ? _avatarUrl
+                        : DefaultAvatar.DefaultAvatarList[0],
                     size: 50,
                   ), //TODO: change icon
                 ),
@@ -80,47 +94,54 @@ class _InfoPageState extends State<InfoPage> {
                 Container(
                   width: 173,
                   height: 28,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        createRoute(
-                          () => AvatarChange(
-                            value: widget.avatarController.text ??
-                                DefaultAvatar.DefaultAvatarList[0],
-                            //TODO: fetch list of avatars
-                            options: DefaultAvatar.DefaultAvatarList,
-                            onAccept: (value) {
-                              setState(() {
-                                _avatarUrl = value;
-                              });
-                              widget.avatarController.setText(value);
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                    style: ButtonStyle(
-                        padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const SvgIcon(
-                          icon: "edit",
-                          size: 16,
-                        ),
-                        Text(
-                          "Thay đổi ảnh đại diện",
-                          style:
-                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                  child: avatars.when(
+                    data: (data) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            createRoute(() => AvatarChange(
+                                  options: data,
+                                  value: _avatarUrl,
+                                  onAccept: (avatarUrl) {
+                                    setState(() {
+                                      _avatarUrl = avatarUrl;
+                                    });
+                                  },
+                                )),
+                          );
+                        },
+                        style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        )),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const SvgIcon(
+                              icon: "edit",
+                              size: 16,
+                            ),
+                            Text(
+                              "Thay đổi ảnh đại diện",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge!
+                                  .copyWith(
                                     fontSize: 12,
                                     color: Colors.white,
                                   ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
+                    error: (e, s) {
+                      return Container();
+                    },
+                    loading: () {
+                      return Container();
+                    },
                   ),
                 )
               ],
@@ -135,6 +156,7 @@ class _InfoPageState extends State<InfoPage> {
                       ? WheelInput(
                           listHeight: 340,
                           label: "Vai trò",
+                          defaultValue: InfoForm.ROLE_OPTIONS[0].value,
                           options: InfoForm.ROLE_OPTIONS,
                           controller: widget.roleController,
                           description: "Chọn vai trò của bạn",

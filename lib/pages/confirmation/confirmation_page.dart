@@ -96,24 +96,23 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
     setState(() {
       _isLoading = true;
     });
-    callback();
-    //   await AuthService.verifyOtp(_otp).then((value) {
-    //     callback();
-    //   }).catchError((err, stack) {
-    //     decreaseTriedTime();
-    //     if (_triedTime == 0) {
-    //       Navigator.of(context).push(
-    //         createRoute(
-    //           () => const FailConfirmPage(),
-    //         ),
-    //       );
-    //     }
-    //     ErrorSnackbar.showError(err: err, stack: stack, context: context);
-    //   }).whenComplete(() {
-    //     setState(() {
-    //       _isLoading = false;
-    //     });
-    //   });
+    await AuthService.verifyOtp(_otp).then((value) {
+      callback();
+    }).catchError((err, stack) {
+      decreaseTriedTime();
+      if (_triedTime == 0) {
+        Navigator.of(context).push(
+          createRoute(
+            () => const FailConfirmPage(),
+          ),
+        );
+      }
+      ErrorSnackbar.showError(err: err, stack: stack, context: context);
+    }).whenComplete(() {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   Future<void> _resend() async {
@@ -254,8 +253,13 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _isLoading
-                          ? CircularProgressIndicator(
-                              color: Colors.white,
+                          ? Container(
+                              width: 45,
+                              height: 45,
+                              padding: EdgeInsets.all(10),
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
                             )
                           : SizedBox(),
                       Text(
