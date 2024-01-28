@@ -105,12 +105,9 @@ class FamilyService {
   ) async {
     final response = await BaseHttp.instance.get(
       endpoint: Endpoint.infoEndpoint,
-      param: {
-        'id': familyRequestModel?.id,
-        'email': familyRequestModel?.email,
-      },
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
+      Logger().d(response.body);
       final data = jsonDecode(response.body);
       final family = FamilyModel.fromJson(data);
       return family;

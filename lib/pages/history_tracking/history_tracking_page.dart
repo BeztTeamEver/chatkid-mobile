@@ -2,28 +2,29 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/history_tracking_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
-import 'package:chatkid_mobile/services/history_tracking_service.dart';
+import 'package:chatkid_mobile/providers/history_provider.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 
-class HistoryTrackingPage extends StatefulWidget {
+class HistoryTrackingPage extends ConsumerStatefulWidget {
   final UserModel? user;
   final int? userIndex;
   const HistoryTrackingPage({super.key, this.userIndex, this.user});
 
   @override
-  State<HistoryTrackingPage> createState() => _HistoryTrackingPageState();
+  ConsumerState<HistoryTrackingPage> createState() => _HistoryTrackingPageState();
 }
 
-class _HistoryTrackingPageState extends State<HistoryTrackingPage> {
+class _HistoryTrackingPageState extends ConsumerState<HistoryTrackingPage> {
   late final Future<List<HistoryTrackingModel>> history;
   @override
   void initState() {
     super.initState();
-    history = HistoryTrackingService().getHistory(widget.user!.id ?? "");
+    // history = HistoryTrackingService().getHistory(widget.user!.id ?? "");
   }
 
   @override
@@ -62,7 +63,7 @@ class _HistoryTrackingPageState extends State<HistoryTrackingPage> {
               height: 10,
             ),
             FutureBuilder(
-                future: history,
+                future: ref.watch(getHistoryProvider.future),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final data = snapshot.data as List<HistoryTrackingModel>;
