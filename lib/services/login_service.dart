@@ -173,10 +173,11 @@ class AuthService {
     if (parts.length != 3) {
       return true;
     }
+    return false;
     final payload = parts[1];
-    final decoded =
-        jsonDecode(ascii.decode(base64.decode(base64.normalize(payload))));
-    final exp = decoded['exp'] * 1000;
-    return DateTime.now().isAfter(DateTime.fromMillisecondsSinceEpoch(exp));
+    Logger().d(payload);
+    // final decoded = jsonDecode(base64.decode(base64.normalize(payload)));
+    // final exp = decoded['exp'] * 1000;
+    // return DateTime.now().isAfter(DateTime.fromMillisecondsSinceEpoch(exp));
   }
 }
