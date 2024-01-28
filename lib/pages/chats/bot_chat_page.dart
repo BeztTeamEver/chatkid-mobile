@@ -232,58 +232,67 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                       ],
                     ),
                   ),
-                  Column(
-                    children: [
-                      Container(
-                        constraints: BoxConstraints(
-                          maxHeight: 120,
-                        ),
-                        decoration: BoxDecoration(
-                          color: primary.shade100.withOpacity(0.8),
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(40),
-                            bottomRight: Radius.circular(8),
-                            topLeft: Radius.circular(40),
-                            topRight: Radius.circular(40),
+                  Container(
+                    height: 500,
+                    child: Column(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            maxHeight: 120,
+                          ),
+                          decoration: BoxDecoration(
+                            color: primary.shade100.withOpacity(0.8),
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(40),
+                              bottomRight: Radius.circular(8),
+                              topLeft: Radius.circular(40),
+                              topRight: Radius.circular(40),
+                            ),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              transitionBuilder: (child, animation) =>
+                                  ScaleTransition(
+                                      scale: animation, child: child),
+                              child: _loading
+                                  ? const CircularProgressIndicator()
+                                  : Text(
+                                      _lastWords ??
+                                          "Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                            ),
                           ),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
+                        SizedBox(
+                          height: 20,
                         ),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
-                            transitionBuilder: (child, animation) =>
-                                ScaleTransition(scale: animation, child: child),
-                            child: _loading
-                                ? const CircularProgressIndicator()
-                                : Text(
-                                    _lastWords ??
-                                        "Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                    textAlign: TextAlign.center,
-                                  ),
+                        Container(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: SvgPicture.asset(
+                            'assets/robot/${botName}.svg',
+                            height: 350,
+                            fit: BoxFit.fitHeight,
+                            alignment: Alignment.topCenter,
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(bottom: 110),
-                        child: SvgPicture.asset('assets/robot/${botName}.svg'),
-                      ),
-                    ],
-                  )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
