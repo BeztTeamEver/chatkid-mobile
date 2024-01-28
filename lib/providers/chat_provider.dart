@@ -27,15 +27,15 @@ import 'package:web_socket_channel/io.dart';
 //   return ChatServiceNotifier();
 // });
 
-final getMessagesProvider =
-    FutureProvider.autoDispose<List<ChatModel>>((ref) async {
+final getMessagesProvider = FutureProvider<List<ChatModel>>((ref) async {
   final response =
       await ChatService().getMessages(PagingModel(pageSize: 10, pageNumber: 1));
   return response.data;
 });
 
 final getChannelMessagesProvider =
-    FutureProvider.autoDispose<List<ChatModel>>((ref) async {
+    FutureProvider.family<List<ChatModel>, MessageChannelRequest>(
+        (ref, request) async {
   final response = await ChatService().getChannelMessages(
     pagingRequest: PagingModel(pageSize: 10, pageNumber: 1),
     channelId: "60f9b1b0d9b3a1b4e0f0e0b4",
@@ -43,22 +43,19 @@ final getChannelMessagesProvider =
   return response.data;
 });
 
-final receiveMessage = StreamProvider.autoDispose((ref) async* {
-  StreamController stream = StreamController();
-  Logger().d("receiveMessage");
-
+final receiveMessage = StreamProvider<ChatModel>((ref) async* {
+  StreamController<ChatModel> stream = StreamController();
   final socket = SocketService();
+
+  List<ChatModel> listMessages = const <ChatModel>[];
 
   socket.onMessage((data) {
     stream.add(data);
-    Logger().d(jsonEncode(data));
-  });
-
-  ref.onDispose(() {
-    stream.close();
   });
 
   await for (final value in stream.stream) {
+    Logger().i("Message from id: ${value.userId} \n Content: ${value.content}");
+
     yield value;
   }
 });

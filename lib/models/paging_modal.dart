@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class PagingModel {
   int pageSize;
   int pageNumber;
@@ -14,10 +16,14 @@ class PagingModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['page-size'] = this.pageSize;
     data['page-number'] = this.pageNumber;
     return data;
+  }
+
+  String toJson() {
+    return jsonEncode(toMap());
   }
 }
