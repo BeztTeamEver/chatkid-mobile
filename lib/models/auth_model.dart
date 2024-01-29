@@ -22,3 +22,15 @@ class RequestAuthModal {
     });
   }
 }
+
+class RequestOtpModel {
+  String otp;
+
+  RequestOtpModel({required this.otp});
+
+  String toJson() {
+    return jsonEncode({
+      "OTP": otp,
+    });
+  }
+}

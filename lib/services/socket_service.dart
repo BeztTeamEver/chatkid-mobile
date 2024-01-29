@@ -18,8 +18,13 @@ class SocketService {
   SocketService._internal() {
     socket = io(
         Env.socketUrl,
-        OptionBuilder().setTransports(['websocket']).setExtraHeaders(
-            {"authorization": "1f2aad5f-4f7c-4153-9a7b-15d2fef30527"}).build());
+        OptionBuilder()
+            .setTransports(['websocket'])
+            .setExtraHeaders({
+              "authorization": "1f2aad5f-4f7c-4153-9a7b-15d2fef30527",
+            })
+            .enableForceNew()
+            .build());
     initSocket();
   }
 
@@ -28,13 +33,13 @@ class SocketService {
   }
 
   void initSocket() {
-    socket.connect();
     socket.onConnect((_) {
       Logger().i('Connected');
     });
     socket.onDisconnect((_) => Logger().i('Disconnected'));
     socket.onConnectError((err) => ErrorHandler(err));
     socket.onError((err) => ErrorHandler(err));
+    socket.connect();
   }
 
   void ErrorHandler(error) {
@@ -44,22 +49,23 @@ class SocketService {
 
   // Chat service
   void sendMessage(ChatModel message) {
-    socket.emit(Endpoint.sendMessageEndPoint, message);
+    Logger().i('send message');
+    socket.emit(Endpoint.sendMessageEndPoint, message.toMap());
   }
 
   void joinChannel(ChannelUserModel channelUser) {
     Logger().i('join channel');
-    socket.emit(Endpoint.joinChannelEndPoint, channelUser);
+    socket.emit(Endpoint.joinChannelEndPoint, channelUser.toMap());
   }
 
   void leaveChannel(ChannelUserModel channelUser) {
     Logger().i('leave channel');
-    socket.emit(Endpoint.leaveChannelEndPoint, channelUser);
+    socket.emit(Endpoint.leaveChannelEndPoint, channelUser.toMap());
   }
 
   void onMessage(Function(ChatModel) callback) {
     socket.on(Endpoint.onMessageEndPoint, (data) {
-      callback(ChatModel.fromJson(jsonDecode(data)));
+      callback(ChatModel.fromJson(data));
     });
   }
 

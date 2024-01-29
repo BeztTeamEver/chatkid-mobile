@@ -34,10 +34,14 @@ class ChannelUserModel {
     );
   }
 
-  String toJson() {
+  Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['channelId'] = channelId;
     data['userId'] = userId;
-    return jsonEncode(data);
+    return data;
+  }
+
+  String toJson() {
+    return jsonEncode(toMap());
   }
 }

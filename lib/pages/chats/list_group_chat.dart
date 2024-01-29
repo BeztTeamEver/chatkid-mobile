@@ -73,8 +73,6 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
   final currentUser = LocalStorage.instance.getUser();
   @override
   Widget build(BuildContext context) {
-    // ref.watch(receiveMessage);
-
     // final family = ref
     //     .watch(getFamilyProvider(
     //         FamilyRequestModel(id: '6b02cfc1-0b92-4ec4-97e3-75f57a8c186b')))
@@ -277,11 +275,17 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
                 label: "Gia đình",
                 icon:
                     "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
-                onPressed: () => Navigator.push(
+                onPressed: () {
+                  ref.watch(receiveMessage);
+                  Navigator.push(
                     context,
-                    createRoute(() => GroupChatPage(
-                          channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
-                        ))),
+                    createRoute(
+                      () => GroupChatPage(
+                        channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
+                      ),
+                    ),
+                  );
+                },
               ),
               // SelectButton(
               //   label: "Gia đình",

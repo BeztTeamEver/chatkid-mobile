@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class GroupChatPage extends ConsumerStatefulWidget {
@@ -33,20 +34,20 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   final TextEditingController _messageController = TextEditingController();
   // ScrollController _scrollController = ScrollController();
   final _chatService = SocketService();
-  List<ChatModel> listMessages = [];
+  final _listMessages = [];
   final user = LocalStorage.instance.getUser();
 
   Future<void> _sendMessage(String message) async {
     _chatService.sendMessage(ChatModel(
         content: message,
-        userId: "6dd114cc-a6d6-4395-9f16-82fddf0363c5",
+        userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0",
         channelId: widget.channelId));
-    // setState(() {
-    //   listMessages.add(ChatModel(
-    //       content: message,
-    //       userId: "6dd114cc-a6d6-4395-9f16-82fddf0363c5",
-    //       channelId: widget.channelId));
-    // });
+    setState(() {
+      _listMessages.add(ChatModel(
+          content: message,
+          userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0",
+          channelId: widget.channelId));
+    });
 
     // _chatService.sendMessage(message);
     // if (message.isNotEmpty) {
@@ -64,9 +65,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   }
 
   void _receiveMessage(ChatModel data) {
-    Logger().i(data);
+    Logger().i(data.content);
     setState(() {
-      listMessages.add(data);
+      _listMessages.add(data);
     });
     // if (data.length > 1) {
     //   final message = ChatModel(content: data[1], id: data[0]);
@@ -80,9 +81,8 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     _chatService.joinChannel(
       ChannelUserModel(
           channelId: widget.channelId,
-          userId: "6dd114cc-a6d6-4395-9f16-82fddf0363c5"),
+          userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0"),
     );
-
     // _chatService.joinChannel(
     //     ChatModel(channelId: "d5b2a3d0-17c5-480e-87e1-b23c12438978"));
     // await _chatService.startConnection();
@@ -107,7 +107,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     _chatService.leaveChannel(
       ChannelUserModel(
           channelId: widget.channelId,
-          userId: "6dd114cc-a6d6-4395-9f16-82fddf0363c5"),
+          userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0"),
     );
     super.dispose();
     // _chatService.stopConnection();
@@ -115,12 +115,54 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     // _scrollController.dispose();
   }
 
+  _listMessageBuilder(context, index, value) {
+    if (index == value.length) {
+      return const SizedBox(
+        height: 80,
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.8,
+        ),
+        child: ChatTextBox(
+          icon: 'animal/bear',
+          message: value[index].content,
+          isSender:
+              value[index].userId == "91b40aa8-0639-4539-95d3-1ddb5bda21c0",
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final message = ref.watch(receiveMessage);
-    message.whenData((data) {
-      _receiveMessage(data);
-    });
+    // ref
+    //     .watch(getChannelMessagesProvider(MessageChannelRequest(
+    //         pageNumber: 1, pageSize: 1, channelId: widget.channelId)))
+    //     .whenData((value) {
+    //   setState(() {
+    //     listMessages = value;
+    //   });
+    //   Logger().d(value[0].content);
+    // });
+    final message = ref.listen(
+      receiveMessage,
+      (previous, next) {
+        next.whenData(
+          (value) => {
+            setState(() {
+              _listMessages.add(value);
+            })
+          },
+        );
+      },
+      onError: (error, stackTrace) {
+        Logger().e(error);
+      },
+    );
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -152,60 +194,29 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              // switch (message) {
+              //   AsyncData(:final value) =>
+              //     ListView.builder(itemBuilder: (context, index) {
+              //       return _listMessageBuilder(context, index, value);
+              //     }),
+              //   AsyncError(:final error, :final stackTrace) =>
+              //     Text(error.toString()),
+              //   _ => Center(
+              //       child: Container(
+              //         height: 40,
+              //         width: 40,
+              //         child: CircularProgressIndicator(),
+              //       ),
+              //     ),
+              // },
               Expanded(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: listMessages.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == listMessages.length) {
-                      return const SizedBox(
-                        height: 80,
-                      );
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Container(
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.8,
-                        ),
-                        child: ChatTextBox(
-                          icon: 'animal/bear',
-                          message: listMessages[index].content,
-                          isSender: listMessages[index].userId ==
-                              "6dd114cc-a6d6-4395-9f16-82fddf0363c5",
-                        ),
-                      ),
-                    );
-                  },
+                  itemCount: _listMessages.length + 1,
+                  itemBuilder: (context, index) =>
+                      _listMessageBuilder(context, index, _listMessages),
                 ),
               ),
-              // Expanded(
-              //   child: message.when(
-              //     data: (data) {
-              //       return ListView.builder(itemBuilder: (context, index) {
-              //         return Padding(
-              //           padding: const EdgeInsets.only(bottom: 10),
-              //           child: Container(
-              //             constraints: BoxConstraints(
-              //               maxWidth: MediaQuery.of(context).size.width * 0.8,
-              //             ),
-              //             child: ChatTextBox(
-              //               icon: 'animal/bear',
-              //               message: data[index].content,
-              //               isSender: data[index].id == user.id,
-              //             ),
-              //           ),
-              //         );
-              //       });
-              //     },
-              //     error: (_, __) {
-              //       return const Text("error");
-              //     },
-              //     loading: () {
-              //       return const SizedBox();
-              //     },
-              //   ),
-              // ),
             ],
           ),
         ),

@@ -24,7 +24,7 @@ class _UserProfileNotificationPageState
   @override
   void initState() {
     super.initState();
-    users = FamilyService().getKidAccounts(null);
+    // users = FamilyService().getKidAccounts(null);
   }
 
   @override

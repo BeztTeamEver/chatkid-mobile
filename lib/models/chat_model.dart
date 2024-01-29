@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:chatkid_mobile/models/paging_modal.dart';
+
 class ChatModel {
   // String? id;
   // String? content;
@@ -42,19 +44,46 @@ class ChatModel {
     return ChatModel(
       content: json['content'],
       channelId: json['channelUserId'],
+      userId: json['userId'],
     );
   }
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['content'] = content;
-    data['userId'] = channelId;
+    data['userId'] = userId;
     data['channelId'] = channelId;
     return data;
   }
 
   String toJson() {
     return jsonEncode(toMap());
+  }
+}
+
+class MessageChannelRequest extends PagingModel {
+  String channelId;
+
+  MessageChannelRequest(
+      {required super.pageNumber,
+      required super.pageSize,
+      required this.channelId});
+
+  factory MessageChannelRequest.fromJson(Map<String, dynamic> json) {
+    return MessageChannelRequest(
+      pageNumber: json['pageNumber'],
+      pageSize: json['pageSize'],
+      channelId: json['channelId'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    super.toMap().forEach((key, value) {
+      data[key] = value;
+    });
+    data['channelId'] = channelId;
+    return data;
   }
 }
 
