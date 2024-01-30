@@ -30,13 +30,12 @@ class _VoiceChatState extends State<VoiceChat> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _initSpeech();
   }
 
   void _onSpeechResult(SpeechRecognitionResult result) async {
-    widget._onSpeechResult?.call(result);
+    widget._onSpeechResult?.call(result.recognizedWords);
     setState(() {});
   }
 

@@ -20,7 +20,7 @@ class AuthService {
 
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       final authTokens = AuthModel.fromJson(jsonDecode(response.body));
-      Logger().d(authTokens.accessToken);
+      Logger().d(jsonEncode(response.body));
       _saveToken(authTokens);
       return authTokens;
     }

@@ -53,174 +53,181 @@ class _InfoPageState extends ConsumerState<InfoPage> {
     final userRole = widget.isParent ? "phụ huynh" : "bé";
 
     final avatars = ref.watch(getAvatarProvider);
-    return Center(
-      child: Form(
-        child: Column(
-          children: [
-            Text(
-              "Thiết lập tài khoản $userRole",
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                    fontSize: 20,
-                  ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Column(
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(
-                      width: 2,
-                      color: primary.shade400,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Center(
+        child: Form(
+          child: Column(
+            children: [
+              Text(
+                "Thiết lập tài khoản $userRole",
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                      fontSize: 20,
                     ),
-                  ),
-                  // TODO: change to use image
-                  child: SvgIcon(
-                    icon: _avatarUrl.isNotEmpty
-                        ? _avatarUrl
-                        : DefaultAvatar.DefaultAvatarList[0],
-                    size: 50,
-                  ), //TODO: change icon
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  width: 173,
-                  height: 28,
-                  child: avatars.when(
-                    data: (data) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            createRoute(() => AvatarChange(
-                                  options: data,
-                                  value: _avatarUrl,
-                                  onAccept: (avatarUrl) {
-                                    setState(() {
-                                      _avatarUrl = avatarUrl;
-                                    });
-                                  },
-                                )),
-                          );
-                        },
-                        style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        )),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const SvgIcon(
-                              icon: "edit",
-                              size: 16,
-                            ),
-                            Text(
-                              "Thay đổi ảnh đại diện",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge!
-                                  .copyWith(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    error: (e, s) {
-                      return Container();
-                    },
-                    loading: () {
-                      return Container();
-                    },
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: Column(
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Column(
                 children: [
-                  widget.isParent
-                      ? WheelInput(
-                          listHeight: 340,
-                          label: "Vai trò",
-                          defaultValue: InfoForm.ROLE_OPTIONS[0].value,
-                          options: InfoForm.ROLE_OPTIONS,
-                          controller: widget.roleController,
-                          description: "Chọn vai trò của bạn",
-                          hintText: "Chọn vai trò của bạn",
-                          validator: ValidationBuilder(
-                            requiredMessage: "Vui lòng  chọn vai trò",
-                          ).build(),
-                        )
-                      : Container(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  InputField(
-                    hint: 'Nhập tên của bạn',
-                    label: "Họ và Tên",
-                    name: "name",
-                    controller: widget.nameController,
-                    validator: ValidationBuilder(
-                      requiredMessage: "Vui lòng nhập tên",
-                    ).build(),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Giới tính",
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                  Container(
+                    width: 64,
+                    height: 64,
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(
+                        width: 2,
+                        color: primary.shade400,
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      WheelInput(
-                        controller: widget.genderController,
-                        options: InfoForm.GENDER_OPTIONS,
-                        listHeight: 400,
-                        description: "Chọn giới tính của bạn",
-                        hintText: "Chọn giới tính của bạn",
-                        validator: ValidationBuilder(
-                          requiredMessage: "Vui lòng chọn giới tính",
-                        ).build(),
-                      )
-                    ],
+                    ),
+                    // TODO: change to use image
+                    child: SvgIcon(
+                      icon: _avatarUrl.isNotEmpty
+                          ? _avatarUrl
+                          : DefaultAvatar.DefaultAvatarList[0],
+                      size: 50,
+                    ), //TODO: change icon
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
-                  WheelInput(
-                    controller: widget.yearBirthDayController,
-                    options: InfoForm.YEAR_BIRTHDAY_OPTIONS,
-                    defaultSelectionIndex: 10,
-                    listHeight: 400,
-                    label: "Năm sinh",
-                    description: "Chọn năm sinh của bạn",
-                    hintText: "Chọn năm sinh của bạn",
+                  Container(
+                    width: 173,
+                    height: 28,
+                    child: avatars.when(
+                      data: (data) {
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              createRoute(() => AvatarChange(
+                                    options: data,
+                                    value: _avatarUrl,
+                                    onAccept: (avatarUrl) {
+                                      setState(() {
+                                        _avatarUrl = avatarUrl;
+                                      });
+                                    },
+                                  )),
+                            );
+                          },
+                          style: ButtonStyle(
+                              padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          )),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const SvgIcon(
+                                icon: "edit",
+                                size: 16,
+                              ),
+                              Text(
+                                "Thay đổi ảnh đại diện",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      error: (e, s) {
+                        return Container();
+                      },
+                      loading: () {
+                        return Container();
+                      },
+                    ),
                   )
                 ],
               ),
-            )
-          ],
+              SizedBox(
+                height: 20,
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    widget.isParent
+                        ? WheelInput(
+                            name: "role",
+                            listHeight: 340,
+                            label: "Vai trò",
+                            defaultValue: InfoForm.ROLE_OPTIONS[0].value,
+                            options: InfoForm.ROLE_OPTIONS,
+                            controller: widget.roleController,
+                            description: "Chọn vai trò của bạn",
+                            hintText: "Chọn vai trò của bạn",
+                            validator: ValidationBuilder(
+                              requiredMessage: "Vui lòng  chọn vai trò",
+                            ).build(),
+                          )
+                        : Container(),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    InputField(
+                      hint: 'Nhập tên của bạn',
+                      label: "Họ và Tên",
+                      name: "name",
+                      controller: widget.nameController,
+                      validator: ValidationBuilder(
+                        requiredMessage: "Vui lòng nhập tên",
+                      ).required('Vui lòng nhập tên').build(),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Giới tính",
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        WheelInput(
+                          name: 'gender',
+                          controller: widget.genderController,
+                          options: InfoForm.GENDER_OPTIONS,
+                          listHeight: 400,
+                          description: "Chọn giới tính của bạn",
+                          hintText: "Chọn giới tính của bạn",
+                          validator: ValidationBuilder(
+                            requiredMessage: "Vui lòng chọn giới tính",
+                          ).build(),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    WheelInput(
+                      name: "yearOfBirth",
+                      controller: widget.yearBirthDayController,
+                      options: InfoForm.YEAR_BIRTHDAY_OPTIONS,
+                      defaultSelectionIndex: 10,
+                      listHeight: 400,
+                      label: "Năm sinh",
+                      description: "Chọn năm sinh của bạn",
+                      hintText: "Chọn năm sinh của bạn",
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

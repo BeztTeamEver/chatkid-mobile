@@ -76,7 +76,7 @@ class _StartPageState extends ConsumerState<StartPage> {
   Widget build(BuildContext context) {
     ref.watch(saveStepProvider(1));
 
-    // final familyUsers = ref.watch(getFamilyProvider(null));
+    final familyUsers = ref.watch(getFamilyProvider(null));
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

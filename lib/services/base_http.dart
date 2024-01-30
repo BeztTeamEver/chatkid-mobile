@@ -126,4 +126,25 @@ class BaseHttp {
       },
     );
   }
+
+  Future<http.Response> patch({
+    required String endpoint,
+    Map<String, dynamic>? param,
+    Map<String, String>? headers,
+    String? body,
+  }) async {
+    String url = _combineUrl(endpoint, param);
+    return await http
+        .patch(
+      Uri.parse(url),
+      headers: await _getHeaders(headers),
+      body: body,
+    )
+        .timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {
+        throw Exception('Connection Timeout!');
+      },
+    );
+  }
 }

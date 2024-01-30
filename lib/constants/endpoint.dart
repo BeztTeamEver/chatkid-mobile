@@ -1,6 +1,8 @@
 class Endpoint {
   // infor
-
+  static const memberEnpoint = "/api/member";
+  static const memberLoginEnpoint = "/api/member/login";
+  static const memberRefreshTokenEnpoint = "/api/member/refresh-token";
   // Family
   static const familyUsersEndPoint = "/api/families/family";
   static const familiesEndPoint = "/api/families";

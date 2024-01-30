@@ -21,6 +21,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:rive/rive.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class GroupChatPage extends ConsumerStatefulWidget {
   final String channelId;
@@ -32,22 +34,26 @@ class GroupChatPage extends ConsumerStatefulWidget {
 
 class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   final TextEditingController _messageController = TextEditingController();
-  // ScrollController _scrollController = ScrollController();
+  ItemScrollController _scrollController = ItemScrollController();
   final _chatService = SocketService();
   final _listMessages = [];
   final user = LocalStorage.instance.getUser();
 
   Future<void> _sendMessage(String message) async {
+    Logger().i(message);
     _chatService.sendMessage(ChatModel(
         content: message,
         userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0",
         channelId: widget.channelId));
     setState(() {
-      _listMessages.add(ChatModel(
-          content: message,
-          userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0",
-          channelId: widget.channelId));
+      _listMessages.insert(
+          0,
+          ChatModel(
+              content: message,
+              userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0",
+              channelId: widget.channelId));
     });
+    // Scroll to the new widget when the message is sent.
 
     // _chatService.sendMessage(message);
     // if (message.isNotEmpty) {
@@ -154,7 +160,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         next.whenData(
           (value) => {
             setState(() {
-              _listMessages.add(value);
+              _listMessages.insert(0, value);
             })
           },
         );
@@ -190,51 +196,34 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       body: SafeArea(
         child: Padding(
           padding:
-              const EdgeInsets.only(left: 10, right: 10, bottom: 40, top: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              // switch (message) {
-              //   AsyncData(:final value) =>
-              //     ListView.builder(itemBuilder: (context, index) {
-              //       return _listMessageBuilder(context, index, value);
-              //     }),
-              //   AsyncError(:final error, :final stackTrace) =>
-              //     Text(error.toString()),
-              //   _ => Center(
-              //       child: Container(
-              //         height: 40,
-              //         width: 40,
-              //         child: CircularProgressIndicator(),
-              //       ),
-              //     ),
-              // },
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _listMessages.length + 1,
-                  itemBuilder: (context, index) =>
-                      _listMessageBuilder(context, index, _listMessages),
-                ),
-              ),
-            ],
+              const EdgeInsets.only(left: 10, right: 10, bottom: 80, top: 0),
+          child: ScrollablePositionedList.builder(
+            itemBuilder: (context, index) =>
+                _listMessageBuilder(context, index, _listMessages),
+            itemCount: _listMessages.length,
+            padding: const EdgeInsets.only(bottom: 40),
+            itemScrollController: _scrollController,
+            reverse: true,
           ),
         ),
       ),
-      floatingActionButton: VoiceChat(color: primary, onResult: _sendMessage),
+      floatingActionButton: Container(
+        decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.white),
+        child: VoiceChat(color: primary, onResult: _sendMessage),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomSheet: BottomAppBar(
         height: 80,
-        shape: const CircularNotchedRectangle(),
         notchMargin: 15,
         color: Colors.white,
+        surfaceTintColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
               onPressed: () {
-                _sendMessage("hello");
+                _sendMessage("gà con con gà con");
               },
               icon: const SvgIcon(icon: 'location'),
             ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/gpt_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
@@ -10,10 +12,11 @@ class GptService {
     final response = await BaseHttp.instance
         .post(endpoint: Endpoint.gptChatEndPoint, body: body.toJson());
     Logger().d(response.body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final result = GptResponseModal.fromJson(jsonDecode(response.body));
+      return result.answer;
+    }
     switch (response.statusCode) {
-      case 200:
-      case 201:
-        return response.body;
       case 400:
         throw Exception('Bad request');
       case 401:

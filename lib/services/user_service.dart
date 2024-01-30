@@ -22,14 +22,29 @@ class UserService {
   }
 
   Future<UserModel> updateUser(UserModel user) async {
-    final response = await BaseHttp.instance.put(
-      endpoint: '${Endpoint.userEndPoint}/${user.id}',
+    final response = await BaseHttp.instance.patch(
+      endpoint: '${Endpoint.memberEnpoint}/${user.id}',
       body: jsonEncode(user.toMap()),
     );
+    Logger().d(user.toJson());
     if (response.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to update user');
+    }
+  }
+
+  Future<UserModel> createUser(UserModel user) async {
+    final response = await BaseHttp.instance.post(
+      endpoint: '${Endpoint.memberEnpoint}',
+      body: user.toJson(),
+    );
+
+    Logger().d(jsonEncode(response.body));
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return UserModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to create user');
     }
   }
 }
@@ -61,10 +76,10 @@ class UserServiceNotifier extends StateNotifier<UserModel> {
     }
   }
 
-  void subTractEnergy() {
-    int current = state.wallets![0].totalEnergy! - 1;
-    state.wallets![0].totalEnergy = current;
-  }
+  // void subTractEnergy() {
+  //   int current = state.wallets![0].totalEnergy! - 1;
+  //   state.wallets![0].totalEnergy = current;
+  // }
 }
 
 final userServiceProvider = Provider<UserService>((ref) {
