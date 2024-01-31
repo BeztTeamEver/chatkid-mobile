@@ -36,7 +36,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   Future<void> _onResult(String result) async {
     // _speechEnabled = await _speechToText.initialize();
     // setState(() {});
-    Logger.level = Level.debug;
+    Logger().i(result);
 
     if (result.isEmpty) {
       // await ttsService.speak("Bạn có thể nói lại cho tôi được không?");

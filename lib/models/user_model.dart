@@ -14,6 +14,8 @@ class UserModel {
   int? status;
   String? familyId;
   String? deviceToken;
+  String? accessToken;
+  String? refreshToken;
   List<KidServiceModel>? kidServices;
   List<WalletModel>? wallets;
 
@@ -28,6 +30,8 @@ class UserModel {
       this.gender,
       this.deviceToken,
       this.kidServices,
+      this.accessToken,
+      this.refreshToken,
       this.wallets});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +44,8 @@ class UserModel {
       status: json['status'],
       familyId: json['familyId'],
       gender: json['gender'],
+      accessToken: json['accessToken'],
+      refreshToken: json['refreshToken'],
       deviceToken: json['deviceToken'],
       kidServices: json['kidServices'] != null
           ? (json['kidServices'] as List)
@@ -83,6 +89,12 @@ class UserModel {
     }
     if (kidServices != null) {
       data['kidServices'] = kidServices!.map((v) => v.toMap()).toList();
+    }
+    if (accessToken != null) {
+      data['accessToken'] = accessToken;
+    }
+    if (refreshToken != null) {
+      data['refreshToken'] = refreshToken;
     }
     if (wallets != null) {
       data['wallets'] = wallets!.map((v) => v.toMap()).toList();

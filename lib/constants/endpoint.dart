@@ -6,6 +6,7 @@ class Endpoint {
   // Family
   static const familyUsersEndPoint = "/api/families/family";
   static const familiesEndPoint = "/api/families";
+  static const ownFamilyEndpoint = "/api/families/own-family";
 
   // Auth
   static const googleEndPoint = "/api/auth/login";

@@ -48,7 +48,7 @@ class FamilyService {
       final data = jsonDecode(response.body);
       Logger().d(response.body);
       final family = FamilyModel.fromJson(data);
-      return family.users;
+      return family.members;
     }
     switch (response.statusCode) {
       case 401:
@@ -80,8 +80,8 @@ class FamilyService {
       Logger().d(response.body);
       final data = jsonDecode(response.body);
       final family = FamilyModel.fromJson(data);
-      Logger().d(family.users.where((e) => e.role == 'Children').toList());
-      return family.users.where((e) => e.role == 'Children').toList();
+      Logger().d(family.members.where((e) => e.role == 'Children').toList());
+      return family.members.where((e) => e.role == 'Children').toList();
     }
     switch (response.statusCode) {
       case 401:
@@ -99,19 +99,16 @@ class FamilyService {
     }
   }
 
-  Future<FamilyModel> getFamily(
-    FamilyRequestModel? familyRequestModel,
-  ) async {
+  Future<FamilyModel> getFamily() async {
     final response = await BaseHttp.instance.get(
-      endpoint: Endpoint.infoEndpoint,
-      param: {
-        'id': familyRequestModel?.id,
-        'email': familyRequestModel?.email,
-      },
+      endpoint: Endpoint.ownFamilyEndpoint,
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       final data = jsonDecode(response.body);
+
+      Logger().i(response.body);
       final family = FamilyModel.fromJson(data);
+
       return family;
     }
     switch (response.statusCode) {
@@ -140,13 +137,13 @@ class FamilyServiceNotifier extends StateNotifier<FamilyModel> {
 
   FamilyServiceNotifier()
       : super(FamilyModel(
-          id: "",
-          name: "",
-          ownerMail: "",
-          status: 0,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-          users: [],
+          familyId: "",
+          familyName: "",
+          familyEmail: "",
+          // status: 0,
+          // createdAt: DateTime.now(),
+          // updatedAt: DateTime.now(),
+          members: [],
         ));
 
   Future<List<UserModel>> getFamilyAccounts(
@@ -155,13 +152,13 @@ class FamilyServiceNotifier extends StateNotifier<FamilyModel> {
     try {
       final data = await _familyService.getFamilyAccounts(familyRequestModel);
       state = FamilyModel(
-        id: familyRequestModel?.id ?? "",
-        name: familyRequestModel?.name ?? "",
-        ownerMail: familyRequestModel?.email ?? "",
-        status: 0,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        users: data,
+        familyId: familyRequestModel?.id ?? "",
+        familyName: familyRequestModel?.name ?? "",
+        familyEmail: familyRequestModel?.email ?? "",
+        // status: 0,
+        // createdAt: DateTime.now(),
+        // updatedAt: DateTime.now(),
+        members: data,
       );
       return data;
     } catch (e) {

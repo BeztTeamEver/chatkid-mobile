@@ -16,6 +16,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_validator/form_validator.dart';
+import 'package:get/get.dart';
 import 'package:loading_btn/loading_btn.dart';
 import 'package:logger/logger.dart';
 
@@ -117,14 +118,15 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
             label: "Mật khẩu",
             hint: "Mật khẩu của bạn",
             name: "password",
-            validator: ValidationBuilder(
-              requiredMessage: "Vui lòng nhập mật khẩu",
-              optional: widget.formKey.currentState!.fields['step']!.value != 1,
-            )
-                .required()
-                .minLength(8, "Mật khẩu phải có ít nhất 8 ký tự")
-                .regExp(Regex.password, "Mật khẩu bao gồm ký tự và số")
-                .build(),
+            validator: widget.formKey.currentState?.fields['step']?.value != 1
+                ? ValidationBuilder(
+                    requiredMessage: "Vui lòng nhập mật khẩu",
+                  )
+                    .required()
+                    .minLength(8, "Mật khẩu phải có ít nhất 8 ký tự")
+                    .regExp(Regex.password, "Mật khẩu bao gồm ký tự và số")
+                    .build()
+                : null,
             type: TextInputType.visiblePassword,
             controller: widget.passwordController,
             autoFocus: false,
@@ -137,7 +139,7 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
             hint: "Mật khẩu của bạn",
             validator: ValidationBuilder(
               requiredMessage: "Vui lòng nhập mật khẩu",
-              optional: widget.formKey.currentState!.fields['step']!.value != 1,
+              optional: widget.formKey.currentState?.fields['step']?.value != 1,
             )
                 .minLength(8, "Mật khẩu phải có ít nhất 8 ký tự")
                 .regExp(Regex.password, "Mật khẩu bao gồm ký tự và số")

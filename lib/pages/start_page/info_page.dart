@@ -201,6 +201,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                           name: 'gender',
                           controller: widget.genderController,
                           options: InfoForm.GENDER_OPTIONS,
+                          defaultValue: InfoForm.GENDER_OPTIONS[0].value,
                           listHeight: 400,
                           description: "Chọn giới tính của bạn",
                           hintText: "Chọn giới tính của bạn",
@@ -222,7 +223,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                       label: "Năm sinh",
                       description: "Chọn năm sinh của bạn",
                       hintText: "Chọn năm sinh của bạn",
-                    )
+                    ),
                   ],
                 ),
               )

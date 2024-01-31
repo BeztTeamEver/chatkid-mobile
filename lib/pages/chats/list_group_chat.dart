@@ -8,10 +8,13 @@ import 'package:chatkid_mobile/enum/bot_type.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/pages/chats/bot_chat_page.dart';
 import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
+import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
@@ -294,6 +297,19 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
               //   onPressed: () =>
               //       Navigator.push(context, createRoute(() => GroupChatPage())),
               // ),
+              ElevatedButton(
+                onPressed: () async {
+                  await FirebaseService.instance.signOut().then((value) {
+                    AuthService.signOut();
+                    Navigator.of(context).pushReplacement(
+                      createRoute(
+                        () => const LoginPage(),
+                      ),
+                    );
+                  });
+                },
+                child: const Text("Sign out"),
+              )
             ],
           )
         ],

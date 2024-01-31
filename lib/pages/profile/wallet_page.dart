@@ -172,9 +172,9 @@ class _WalletPageState extends State<WalletPage> {
           ),
           ListView.builder(
             shrinkWrap: true,
-            itemCount: widget.family.users.length - 1,
+            itemCount: widget.family.members.length - 1,
             itemBuilder: ((context, index) {
-              final filterUsers = widget.family.users
+              final filterUsers = widget.family.members
                   .where((e) => e.id != widget.currentUser?.id)
                   .toList();
               final user = filterUsers[index];

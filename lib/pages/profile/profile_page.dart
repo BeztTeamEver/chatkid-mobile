@@ -46,7 +46,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       ),
       child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // FutureBuilder(

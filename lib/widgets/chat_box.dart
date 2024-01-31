@@ -47,16 +47,17 @@ class ChatTextBoxState extends State<ChatTextBox> {
           color: widget.isSender == true ? primary.shade500 : primary.shade100,
           borderRadius: BorderRadius.circular(20),
         ),
-        // child: Text(
-        //   widget.message ?? "",
-        //   textAlign: widget.isSender == true ? TextAlign.end : TextAlign.start,
-        //   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-        //         fontWeight: FontWeight.bold,
-        //         color: widget.isSender == true
-        //             ? neutral.shade100
-        //             : primary.shade600,
-        //       ),
-        child: PlayerWave(path: 'assets/audios/1.mp3'),
+        child: Text(
+          widget.message ?? "",
+          textAlign: widget.isSender == true ? TextAlign.end : TextAlign.start,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: widget.isSender == true
+                    ? neutral.shade100
+                    : primary.shade600,
+              ),
+        ),
+        // child: PlayerWave(path: 'assets/audios/1.mp3'),
       ),
       SizedBox(
         width: 10,

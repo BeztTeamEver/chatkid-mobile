@@ -17,14 +17,12 @@ final createFamilyProvider =
   }
 });
 
-final getFamilyProvider =
-    FutureProvider.family<List<UserModel>, FamilyRequestModel?>(
-  (ref, arg) async {
+final getFamilyProvider = FutureProvider<FamilyModel>(
+  (ref) async {
     try {
-      final result =
-          await ref.watch(familyServiceProvider).getFamilyAccounts(arg);
+      final result = await ref.watch(familyServiceProvider).getFamily();
       return result;
-    } catch (e, s) {
+    } catch (e) {
       throw Exception(e);
     }
   },

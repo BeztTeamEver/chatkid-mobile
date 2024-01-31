@@ -66,10 +66,19 @@ class _WheelInputState extends State<WheelInput> {
     setState(() {
       _selectedValueIndex = widget.defaultSelectionIndex ?? defaultIndex;
       _selectedValue = widget.defaultValue ?? widget.options[0].value;
+      if (widget.defaultSelectionIndex != null) {
+        _selectedValue = widget.options[widget.defaultSelectionIndex!].value;
+      }
     });
     if (widget.controller.text.isEmpty) {
       widget.controller.setText(widget.defaultValue ?? "");
     }
+  }
+
+  @override
+  void dispose() {
+    widget.controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -93,37 +102,46 @@ class _WheelInputState extends State<WheelInput> {
         const SizedBox(
           height: 10,
         ),
-        FormBuilderTextField(
+        FormBuilderField(
           name: widget.name,
-          onTap: () {
-            showMenu(widget.options, () {
-              widget.controller.setText(_selectedValue ?? "");
-            });
-          },
           validator: widget.validator,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: neutral.shade500,
-                fontWeight: FontWeight.bold,
-              ),
-          controller: innerController,
-          decoration: InputDecoration(
-            hintText: widget.hintText ?? "Chọn",
-            hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: neutral.shade400,
-                ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-            suffixIcon: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: widget.suffixIcon ??
-                  SvgIcon(
-                    icon: "chevron_updown",
-                    size: 24,
-                    color: neutral.shade400,
+          initialValue: widget.defaultValue,
+          builder: (field) {
+            return TextFormField(
+              onTap: () {
+                showMenu(widget.options, () {
+                  field.didChange(_selectedValue);
+                  innerController.setText(_selectedValue);
+                });
+              },
+              controller: innerController,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: neutral.shade500,
+                    fontWeight: FontWeight.bold,
                   ),
-            ),
-            prefixIcon: widget.prefixIcon,
-          ),
-          readOnly: true,
+              decoration: InputDecoration(
+                hintText: widget.hintText ?? "Chọn",
+                hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: neutral.shade400,
+                    ),
+                errorText: field.errorText,
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: widget.suffixIcon ??
+                      SvgIcon(
+                        icon: "chevron_updown",
+                        size: 24,
+                        color: neutral.shade400,
+                      ),
+                ),
+                prefixIcon: widget.prefixIcon,
+              ),
+              readOnly: true,
+            );
+          },
+          // readOnly: true,
         ),
       ],
     );
@@ -211,6 +229,7 @@ class _WheelInputState extends State<WheelInput> {
                       _selectedValue = innerValue;
                       _selectedValueIndex = innerIndex;
                     });
+                    widget.controller.setText(innerValue);
                     onSelect();
                   },
                   child: Text(

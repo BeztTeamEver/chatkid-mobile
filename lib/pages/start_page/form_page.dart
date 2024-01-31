@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -67,6 +68,23 @@ class _FormPageState extends ConsumerState<FormPage> {
   void _onSubmitInfo(callback, stopLoading) async {
     final isValid = _formKey.currentState!.saveAndValidate() &&
         _formKey.currentState!.isValid;
+
+    if (_currentPage == 0) {
+      setState(() {
+        _currentPage++;
+      });
+      _formKey.currentState?.registerField('step', FormBuilderFieldState());
+      _formKey.currentState?.save();
+      Logger().i(_formKey.currentState?.value);
+
+      _formKey.currentState?.fields['step']?.didChange(1);
+      _pageController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      return;
+    }
 
     if (isValid) {
       UserModel newUser = UserModel.fromJson({
@@ -204,25 +222,6 @@ class _FormPageState extends ConsumerState<FormPage> {
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                if (_currentPage == 0) {
-                  _formKey.currentState!.validate();
-
-                  if (_formKey.currentState!.isValid) {
-                    setState(() {
-                      _currentPage++;
-                    });
-                    // _formKey.currentState!
-                    //     .registerField('step', FormBuilderFieldState());
-                    Logger().i(jsonEncode(_formKey.currentState!.value));
-
-                    _pageController.animateToPage(
-                      _currentPage,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                    return;
-                  }
-                }
                 _onSubmitInfo(
                   () => Navigator.pushReplacement(
                     context,
