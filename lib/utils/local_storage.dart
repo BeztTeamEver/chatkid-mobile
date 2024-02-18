@@ -42,9 +42,16 @@ class LocalStorage {
         _instance!.preferences.getString(LocalStorageKey.ACCESS_TOKEN);
     String? refreshToken =
         _instance!.preferences.getString(LocalStorageKey.REFRESH_TOKEN);
+    UserModel user = getUser();
+
+    if (user.accessToken != null) {
+      return AuthModel(accessToken: user.accessToken!, refreshToken: "");
+    }
+
     if (accessToken == null || refreshToken == null) {
       return null;
     }
+
     return AuthModel(accessToken: accessToken, refreshToken: refreshToken);
   }
 
@@ -60,5 +67,9 @@ class LocalStorage {
     String user =
         _instance!.preferences.getString(LocalStorageKey.USER) ?? "{}";
     return UserModel.fromJson(jsonDecode(user));
+  }
+
+  Future<void> removeUser() async {
+    await _instance!.preferences.remove(LocalStorageKey.USER);
   }
 }

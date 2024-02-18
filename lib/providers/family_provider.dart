@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
@@ -27,3 +28,12 @@ final getFamilyProvider = FutureProvider<FamilyModel>(
     }
   },
 );
+
+final getFamilyChannel = FutureProvider<ChannelModel>((ref) {
+  try {
+    final result = ref.watch(familyServiceProvider).getFamilyChannel();
+    return result;
+  } catch (e) {
+    throw Exception(e);
+  }
+});

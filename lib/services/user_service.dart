@@ -78,6 +78,10 @@ class UserService {
       }
     }
   }
+
+  void Logout() {
+    _localStorage.removeUser();
+  }
 }
 
 class UserServiceNotifier extends StateNotifier<UserModel> {

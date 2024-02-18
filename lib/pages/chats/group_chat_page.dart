@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:chatkid_mobile/constants/service.dart';
 import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
+import 'package:chatkid_mobile/models/paging_modal.dart';
 import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
@@ -34,24 +36,30 @@ class GroupChatPage extends ConsumerStatefulWidget {
 
 class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   final TextEditingController _messageController = TextEditingController();
-  ItemScrollController _scrollController = ItemScrollController();
+  final ItemScrollController _scrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
+  final ScrollOffsetController _scrollOffsetController =
+      ScrollOffsetController();
+  final ScrollOffsetListener _scrollOffsetListener =
+      ScrollOffsetListener.create();
   final _chatService = SocketService();
   final _listMessages = [];
   final user = LocalStorage.instance.getUser();
 
+  int _pageNumber = 0;
+
+  bool _loadMore = true;
+
   Future<void> _sendMessage(String message) async {
     Logger().i(message);
     _chatService.sendMessage(ChatModel(
-        content: message,
-        userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0",
-        channelId: widget.channelId));
+        content: message, userId: user.id!, channelId: widget.channelId));
     setState(() {
       _listMessages.insert(
           0,
           ChatModel(
-              content: message,
-              userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0",
-              channelId: widget.channelId));
+              content: message, userId: user.id!, channelId: widget.channelId));
     });
     // Scroll to the new widget when the message is sent.
 
@@ -83,12 +91,46 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     // }
   }
 
-  void _connect() async {
-    _chatService.joinChannel(
-      ChannelUserModel(
-          channelId: widget.channelId,
-          userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0"),
+  void fetchMesssage() {
+    final request = MessageChannelRequest(
+      pageNumber: _pageNumber,
+      pageSize: 10,
+      channelId: widget.channelId,
     );
+    ref.read(getChannelMessagesProvider(request)).whenData((value) {
+      if (value.isEmpty) {
+        setState(() {
+          _loadMore = false;
+        });
+        return;
+      }
+      setState(() {
+        _pageNumber++;
+        _listMessages.addAll(value);
+      });
+    });
+  }
+
+  void _onConnect() async {
+    _chatService.joinChannel(
+      ChannelUserModel(channelId: widget.channelId, userId: user.id!),
+    );
+    fetchMesssage();
+    _itemPositionsListener.itemPositions.addListener(() async {
+      final positions = _itemPositionsListener.itemPositions.value;
+      if (!_loadMore) {
+        return;
+      }
+
+      if (positions.isEmpty) {
+        return;
+      }
+
+      if (positions.last.index == _listMessages.length - 1 &&
+          _listMessages.length > 10) {
+        fetchMesssage();
+      }
+    });
     // _chatService.joinChannel(
     //     ChatModel(channelId: "d5b2a3d0-17c5-480e-87e1-b23c12438978"));
     // await _chatService.startConnection();
@@ -104,16 +146,14 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   @override
   void initState() {
     super.initState();
-    _connect();
+    _onConnect();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     _chatService.leaveChannel(
-      ChannelUserModel(
-          channelId: widget.channelId,
-          userId: "91b40aa8-0639-4539-95d3-1ddb5bda21c0"),
+      ChannelUserModel(channelId: widget.channelId, userId: user.id!),
     );
     super.dispose();
     // _chatService.stopConnection();
@@ -136,8 +176,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         child: ChatTextBox(
           icon: 'animal/bear',
           message: value[index].content,
-          isSender:
-              value[index].userId == "91b40aa8-0639-4539-95d3-1ddb5bda21c0",
+          isSender: value[index].userId == user.id!,
         ),
       ),
     );
@@ -202,7 +241,10 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
                 _listMessageBuilder(context, index, _listMessages),
             itemCount: _listMessages.length,
             padding: const EdgeInsets.only(bottom: 40),
+            scrollOffsetController: _scrollOffsetController,
+            scrollOffsetListener: _scrollOffsetListener,
             itemScrollController: _scrollController,
+            itemPositionsListener: _itemPositionsListener,
             reverse: true,
           ),
         ),

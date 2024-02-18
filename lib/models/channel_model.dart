@@ -2,22 +2,48 @@ import 'dart:convert';
 
 class ChannelModel {
   final String name;
-  final List<String> members;
+  final String id;
+  final List<String>? members;
+  final int status;
+  final String? createdAt;
+  final String? updatedAt;
+  final String familyId;
 
-  ChannelModel({required this.name, required this.members});
+  ChannelModel(
+      {required this.id,
+      required this.name,
+      this.members,
+      required this.status,
+      this.createdAt,
+      this.updatedAt,
+      required this.familyId});
 
   factory ChannelModel.fromJson(Map<String, dynamic> json) {
     return ChannelModel(
+      id: json['id'],
       name: json['name'],
       members: json['members'],
+      status: json['status'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      familyId: json['familyId'],
     );
   }
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
     data['name'] = name;
     data['members'] = members;
+    data['status'] = status;
+    data['createdAt'] = createdAt;
+    data['updatedAt'] = updatedAt;
+    data['familyId'] = familyId;
     return data;
+  }
+
+  String toJson() {
+    return jsonEncode(toMap());
   }
 }
 

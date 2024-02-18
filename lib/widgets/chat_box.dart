@@ -42,22 +42,22 @@ class ChatTextBoxState extends State<ChatTextBox> {
       ),
       Container(
         width: MediaQuery.of(context).size.width * 0.5,
-        padding: const EdgeInsets.all(10),
+        // padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: widget.isSender == true ? primary.shade500 : primary.shade100,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(
-          widget.message ?? "",
-          textAlign: widget.isSender == true ? TextAlign.end : TextAlign.start,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: widget.isSender == true
-                    ? neutral.shade100
-                    : primary.shade600,
-              ),
-        ),
-        // child: PlayerWave(path: 'assets/audios/1.mp3'),
+        // child: Text(
+        //   widget.message ?? "",
+        //   textAlign: widget.isSender == true ? TextAlign.end : TextAlign.start,
+        //   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+        //         fontWeight: FontWeight.bold,
+        //         color: widget.isSender == true
+        //             ? neutral.shade100
+        //             : primary.shade600,
+        //       ),
+        // ),
+        child: const PlayerWave(path: 'giun.mp3'),
       ),
       SizedBox(
         width: 10,

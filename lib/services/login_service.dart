@@ -97,6 +97,7 @@ class AuthService {
   static Future<bool> signOut() async {
     // TODO: call api sign out here
     await _localStorage.removeToken();
+    await _localStorage.clear();
     return true;
   }
 

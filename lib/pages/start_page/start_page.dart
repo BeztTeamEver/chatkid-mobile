@@ -118,56 +118,45 @@ class _StartPageState extends ConsumerState<StartPage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 40,
-                ),
-                SelectButton(
-                  label: "Phụ huynh",
-                  icon:
-                      "https://static.vecteezy.com/system/resources/previews/026/619/142/non_2x/default-avatar-profile-icon-of-social-media-user-photo-image-vector.jpg",
-                  hasBackground: true,
-                  borderColor: primary.shade100,
-                  onPressed: () {
-                    setState(() {
-                      _role = "parent";
-                      _selectedIndex = 1;
-                    });
-                  },
-                  isSelected: _role == "parent",
+                  height: 20,
                 ),
                 FutureBuilder(
                   future: familyUsers,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data as FamilyModel;
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: data.members.length,
-                        separatorBuilder: (context, index) => const SizedBox(
-                          height: 10,
+                      return SingleChildScrollView(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: data.members.length,
+                          separatorBuilder: (context, index) => const SizedBox(
+                            height: 10,
+                          ),
+                          itemBuilder: (context, index) {
+                            final icon =
+                                data.members[index].avatarUrl != null &&
+                                        data.members[index].avatarUrl != ""
+                                    ? data.members[index].avatarUrl
+                                    : iconAnimalList[0];
+                            return SizedBox(
+                              width: double.infinity,
+                              child: SelectButton(
+                                isSelected: _selectedIndex == index,
+                                borderColor: primary.shade100,
+                                hasBackground: true,
+                                icon: icon,
+                                label: data.members[index].name ?? "No name",
+                                onPressed: () {
+                                  setState(() {
+                                    _role = data.members[index].role!;
+                                    _selectedIndex = index;
+                                    _selectedAccount = data.members[index];
+                                  });
+                                },
+                              ),
+                            );
+                          },
                         ),
-                        itemBuilder: (context, index) {
-                          final icon = data.members[index].avatarUrl != null &&
-                                  data.members[index].avatarUrl != ""
-                              ? data.members[index].avatarUrl
-                              : iconAnimalList[0];
-                          return SizedBox(
-                            width: double.infinity,
-                            child: SelectButton(
-                              isSelected: _selectedIndex == index,
-                              borderColor: primary.shade100,
-                              hasBackground: true,
-                              icon: icon,
-                              label: data.members[index].name ?? "No name",
-                              onPressed: () {
-                                setState(() {
-                                  _role = data.members[index].role!;
-                                  _selectedIndex = index;
-                                  _selectedAccount = data.members[index];
-                                });
-                              },
-                            ),
-                          );
-                        },
                       );
                     }
                     if (snapshot.hasError) {
