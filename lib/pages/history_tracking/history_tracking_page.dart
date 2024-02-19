@@ -23,7 +23,7 @@ class _HistoryTrackingPageState extends State<HistoryTrackingPage> {
   @override
   void initState() {
     super.initState();
-    history = HistoryTrackingService().getHistory(widget.user!.id ?? "");
+    // history = HistoryTrackingService().getHistory(widget.user!.id ?? "");
   }
 
   @override

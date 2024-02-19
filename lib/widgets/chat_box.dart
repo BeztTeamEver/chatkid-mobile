@@ -1,6 +1,7 @@
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/avatar.dart';
+import 'package:chatkid_mobile/widgets/player_wave.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
@@ -41,21 +42,22 @@ class ChatTextBoxState extends State<ChatTextBox> {
       ),
       Container(
         width: MediaQuery.of(context).size.width * 0.5,
-        padding: const EdgeInsets.all(10),
+        // padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: widget.isSender == true ? primary.shade500 : primary.shade100,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(
-          widget.message ?? "",
-          textAlign: widget.isSender == true ? TextAlign.end : TextAlign.start,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: widget.isSender == true
-                    ? neutral.shade100
-                    : primary.shade600,
-              ),
-        ),
+        // child: Text(
+        //   widget.message ?? "",
+        //   textAlign: widget.isSender == true ? TextAlign.end : TextAlign.start,
+        //   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+        //         fontWeight: FontWeight.bold,
+        //         color: widget.isSender == true
+        //             ? neutral.shade100
+        //             : primary.shade600,
+        //       ),
+        // ),
+        child: const PlayerWave(path: 'giun.mp3'),
       ),
       SizedBox(
         width: 10,

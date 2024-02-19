@@ -8,16 +8,20 @@ import 'package:chatkid_mobile/enum/bot_type.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/pages/chats/bot_chat_page.dart';
 import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
+import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/avatar.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
@@ -78,6 +82,7 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
     //         FamilyRequestModel(id: '6b02cfc1-0b92-4ec4-97e3-75f57a8c186b')))
     //     .asData
     //     ?.value;
+    final familyChannel = ref.watch(getFamilyChannel);
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -271,22 +276,30 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
           Wrap(
             runSpacing: 8,
             children: [
-              SelectButton(
-                label: "Gia đình",
-                icon:
-                    "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
-                onPressed: () {
-                  ref.watch(receiveMessage);
-                  Navigator.push(
-                    context,
-                    createRoute(
-                      () => GroupChatPage(
-                        channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
-                      ),
-                    ),
-                  );
-                },
-              ),
+              switch (familyChannel) {
+                AsyncData(:final value) => SelectButton(
+                    label: value.name,
+                    icon:
+                        "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
+                    onPressed: () {
+                      ref.watch(receiveMessage);
+                      Navigator.push(
+                        context,
+                        createRoute(
+                          () => GroupChatPage(
+                            channelId: value.id,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                AsyncError(:final error, :final stackTrace) =>
+                  Builder(builder: (context) {
+                    Logger().e(error, stackTrace: stackTrace);
+                    return Container();
+                  }),
+                AsyncLoading() => CustomCircleProgressIndicator(),
+              },
               // SelectButton(
               //   label: "Gia đình",
               //   icon:
@@ -294,6 +307,19 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
               //   onPressed: () =>
               //       Navigator.push(context, createRoute(() => GroupChatPage())),
               // ),
+              ElevatedButton(
+                onPressed: () async {
+                  await FirebaseService.instance.signOut().then((value) {
+                    AuthService.signOut();
+                    Navigator.of(context).pushReplacement(
+                      createRoute(
+                        () => const LoginPage(),
+                      ),
+                    );
+                  });
+                },
+                child: const Text("Sign out"),
+              )
             ],
           )
         ],

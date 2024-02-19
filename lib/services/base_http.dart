@@ -6,6 +6,8 @@ import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+const TIME_OUT = 30;
+
 class BaseHttp {
   static BaseHttp? _instance;
   static const String apiVersion = "1.0";
@@ -56,7 +58,7 @@ class BaseHttp {
       headers: combineHeaders,
     )
         .timeout(
-      const Duration(seconds: 10),
+      const Duration(seconds: TIME_OUT),
       onTimeout: () {
         throw Exception('Connection Timeout!');
       },
@@ -80,7 +82,7 @@ class BaseHttp {
       Logger().e(err, stackTrace: s);
       throw Exception(err);
     }).timeout(
-      const Duration(seconds: 10),
+      const Duration(seconds: TIME_OUT),
       onTimeout: () {
         throw Exception('Connection Timeout!');
       },
@@ -100,7 +102,7 @@ class BaseHttp {
       headers: await _getHeaders(headers),
     )
         .timeout(
-      const Duration(seconds: 10),
+      const Duration(seconds: TIME_OUT),
       onTimeout: () {
         throw Exception('Connection Timeout!');
       },
@@ -120,7 +122,28 @@ class BaseHttp {
       body: body,
     )
         .timeout(
-      const Duration(seconds: 10),
+      const Duration(seconds: TIME_OUT),
+      onTimeout: () {
+        throw Exception('Connection Timeout!');
+      },
+    );
+  }
+
+  Future<http.Response> patch({
+    required String endpoint,
+    Map<String, dynamic>? param,
+    Map<String, String>? headers,
+    String? body,
+  }) async {
+    String url = _combineUrl(endpoint, param);
+    return await http
+        .patch(
+      Uri.parse(url),
+      headers: await _getHeaders(headers),
+      body: body,
+    )
+        .timeout(
+      const Duration(seconds: TIME_OUT),
       onTimeout: () {
         throw Exception('Connection Timeout!');
       },

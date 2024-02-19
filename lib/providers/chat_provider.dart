@@ -36,10 +36,7 @@ final getMessagesProvider = FutureProvider<List<ChatModel>>((ref) async {
 final getChannelMessagesProvider =
     FutureProvider.family<List<ChatModel>, MessageChannelRequest>(
         (ref, request) async {
-  final response = await ChatService().getChannelMessages(
-    pagingRequest: PagingModel(pageSize: 10, pageNumber: 1),
-    channelId: "60f9b1b0d9b3a1b4e0f0e0b4",
-  );
+  final response = await ChatService().getChannelMessages(request: request);
   return response.data;
 });
 

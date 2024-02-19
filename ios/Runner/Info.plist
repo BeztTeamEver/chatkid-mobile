@@ -52,8 +52,7 @@
 			<true />
 		</dict>
 		<key>NSMicrophoneUsageDescription</key>
-		<string>explain why app uses the microphone here</string>
-
+		<string>This app requires Mic permission.</string>
 
 		<!-- Put me in the [my_project]/ios/Runner/Info.plist file -->
 		<!-- Google Sign-in Section -->

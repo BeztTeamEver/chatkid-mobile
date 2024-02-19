@@ -72,6 +72,9 @@ dependencies:
     socket_io_client: ^2.0.3+1
     audio_waveforms: ^1.0.4
     get: ^4.6.6
+    scrollable_positioned_list: ^0.3.8
+    form_builder_validators: ^9.1.0
+    path_provider: ^2.1.2
 
 flutter_launcher_icons:
     android: 'launcher_icon'
@@ -116,6 +119,7 @@ flutter:
         - assets/failConfirmPage/
         - assets/selectButton/
         - assets/audio/
+        - assets/audio/giun.mp3
         - assets/bots/
         - assets/advertise-banner/
         - assets/payment/

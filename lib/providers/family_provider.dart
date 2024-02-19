@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
@@ -17,15 +18,22 @@ final createFamilyProvider =
   }
 });
 
-final getFamilyProvider =
-    FutureProvider.family<List<UserModel>, FamilyRequestModel?>(
-  (ref, arg) async {
+final getFamilyProvider = FutureProvider<FamilyModel>(
+  (ref) async {
     try {
-      final result =
-          await ref.watch(familyServiceProvider).getFamilyAccounts(arg);
+      final result = await ref.watch(familyServiceProvider).getFamily();
       return result;
-    } catch (e, s) {
+    } catch (e) {
       throw Exception(e);
     }
   },
 );
+
+final getFamilyChannel = FutureProvider<ChannelModel>((ref) {
+  try {
+    final result = ref.watch(familyServiceProvider).getFamilyChannel();
+    return result;
+  } catch (e) {
+    throw Exception(e);
+  }
+});

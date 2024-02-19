@@ -1,9 +1,13 @@
 class Endpoint {
   // infor
-
+  static const memberEnpoint = "/api/member";
+  static const memberLoginEnpoint = "/api/member/login";
+  static const memberRefreshTokenEnpoint = "/api/member/refresh-token";
   // Family
   static const familyUsersEndPoint = "/api/families/family";
   static const familiesEndPoint = "/api/families";
+  static const familyChannelsEndPoint = "/api/families/{id}/channels";
+  static const ownFamilyEndpoint = "/api/families/own-family";
 
   // Auth
   static const googleEndPoint = "/api/auth/login";

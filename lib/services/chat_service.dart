@@ -36,13 +36,10 @@ class ChatService {
   }
 
   Future<PagingResponseModel<List<ChatModel>>> getChannelMessages(
-      {required PagingModel pagingRequest, required String channelId}) async {
+      {required MessageChannelRequest request}) async {
     final response = await BaseHttp.instance.get(
       endpoint: Endpoint.messagesEndPoint,
-      param: {
-        ...pagingRequest.toMap(),
-        'channelId': channelId,
-      },
+      param: request.toMap(),
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       final data = PagingResponseModel<List<ChatModel>>.fromJson(
@@ -82,8 +79,11 @@ class ChatServiceNotifier extends StateNotifier<List<ChatModel>> {
     required String channelId,
   }) async {
     final messages = await ChatService().getChannelMessages(
-      pagingRequest: pagingRequest,
-      channelId: channelId,
+      request: MessageChannelRequest(
+        channelId: channelId,
+        pageNumber: pagingRequest.pageNumber,
+        pageSize: pagingRequest.pageSize,
+      ),
     );
     state = messages.data;
     return messages.data;
