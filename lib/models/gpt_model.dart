@@ -22,3 +22,23 @@ class GptRequestModal {
 
   String toJson() => jsonEncode(toMap());
 }
+
+class GptResponseModal {
+  String answer;
+
+  GptResponseModal({required this.answer});
+
+  factory GptResponseModal.fromJson(Map<String, dynamic> json) {
+    return GptResponseModal(
+      answer: json['answer'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    final data = <String, dynamic>{};
+    data['answer'] = answer;
+    return data;
+  }
+
+  String toJson() => jsonEncode(toMap());
+}

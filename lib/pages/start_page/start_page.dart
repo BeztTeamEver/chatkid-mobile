@@ -60,14 +60,12 @@ class _StartPageState extends ConsumerState<StartPage> {
       return;
     }
     //TODO: route to home page
-    Navigator.pushReplacement(context, createRoute(() => const MainPage()));
-    LocalStorage.instance.preferences.setInt('step', 2);
-    LocalStorage.instance.preferences
-        .setString('user', jsonEncode(_selectedAccount!.toMap()));
-    Navigator.pushReplacement(
+    // Navigator.pushReplacement(context, createRoute(() => const MainPage()));
+
+    Navigator.push(
       context,
       createRoute(
-        () => const MainPage(),
+        () => PasswordLoginPage(userId: _selectedAccount!.id!),
       ),
     );
   }
@@ -76,7 +74,7 @@ class _StartPageState extends ConsumerState<StartPage> {
   Widget build(BuildContext context) {
     ref.watch(saveStepProvider(1));
 
-    // final familyUsers = ref.watch(getFamilyProvider(null));
+    final familyUsers = ref.watch(getFamilyProvider.future);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -120,82 +118,58 @@ class _StartPageState extends ConsumerState<StartPage> {
                   ),
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 20,
                 ),
-                // TODO: render famaly accounts
-                SelectButton(
-                  label: "Phụ huynh",
-                  icon:
-                      "https://static.vecteezy.com/system/resources/previews/026/619/142/non_2x/default-avatar-profile-icon-of-social-media-user-photo-image-vector.jpg",
-                  hasBackground: true,
-                  borderColor: primary.shade100,
-                  onPressed: () {
-                    setState(() {
-                      _role = "parent";
-                      _selectedIndex = 1;
-                    });
-                  },
-                  isSelected: _role == "parent",
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                SelectButton(
-                  label: "Trẻ em",
-                  icon:
-                      "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg",
-                  hasBackground: true,
-                  borderColor: primary.shade100,
-                  isSelected: _role == "children",
-                  onPressed: () {
-                    setState(() {
-                      _role = "children";
-                      _selectedIndex = 0;
-                    });
+                FutureBuilder(
+                  future: familyUsers,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final data = snapshot.data as FamilyModel;
+                      return SingleChildScrollView(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: data.members.length,
+                          separatorBuilder: (context, index) => const SizedBox(
+                            height: 10,
+                          ),
+                          itemBuilder: (context, index) {
+                            final icon =
+                                data.members[index].avatarUrl != null &&
+                                        data.members[index].avatarUrl != ""
+                                    ? data.members[index].avatarUrl
+                                    : iconAnimalList[0];
+                            return SizedBox(
+                              width: double.infinity,
+                              child: SelectButton(
+                                isSelected: _selectedIndex == index,
+                                borderColor: primary.shade100,
+                                hasBackground: true,
+                                icon: icon,
+                                label: data.members[index].name ?? "No name",
+                                onPressed: () {
+                                  setState(() {
+                                    _role = data.members[index].role!;
+                                    _selectedIndex = index;
+                                    _selectedAccount = data.members[index];
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      Logger()
+                          .e(snapshot.error, stackTrace: snapshot.stackTrace);
+                      return Container();
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
                   },
                 ),
               ],
             ),
-            // FutureBuilder(
-            //   future: familyUsers,
-            //   builder: (context, snapshot) {
-            //     if (snapshot.hasData) {
-            //       final data = snapshot.data as List<UserModel>;
-            //       return ListView.separated(
-            //         shrinkWrap: true,
-            //         itemCount: data.length,
-            //         separatorBuilder: (context, index) => const SizedBox(
-            //           height: 10,
-            //         ),
-            //         itemBuilder: (context, index) {
-            //           final icon = data[index].avatarUrl != null &&
-            //                   data[index].avatarUrl != ""
-            //               ? data[index].avatarUrl
-            //               : iconAnimalList[index];
-            //           return SizedBox(
-            //             width: double.infinity,
-            //             child: SelectButton(
-            //               isSelected: _selectedIndex == index,
-            //               borderColor: primary.shade100,
-            //               hasBackground: true,
-            //               icon: icon,
-            //               label: data[index].name ?? "No name",
-            //               onPressed: () {
-            //                 onSelectAccount(data[index], index);
-            //               },
-            //             ),
-            //           );
-            //         },
-            //       );
-            //     }
-            //     if (snapshot.hasError) {
-            //       Logger().e(snapshot.error);
-            //       return Container();
-            //     } else {
-            //       return const CircularProgressIndicator();
-            //     }
-            //   },
-            // ),
             const SizedBox(
               height: 40,
             ),
@@ -205,12 +179,6 @@ class _StartPageState extends ConsumerState<StartPage> {
               onPressed: () {
                 onContinue();
               },
-
-              // style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-              //       minimumSize: MaterialStateProperty.all<Size>(
-              //         const Size(double.infinity, 45),
-              //       ),
-              //     ),
               child: const Text(
                 "Xác nhận đăng nhập",
                 style: TextStyle(

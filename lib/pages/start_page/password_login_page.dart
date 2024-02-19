@@ -1,10 +1,16 @@
 import 'package:chatkid_mobile/constants/regex.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/loading_button.dart';
 import 'package:flutter/material.dart';
@@ -25,32 +31,33 @@ class PasswordLoginPage extends ConsumerStatefulWidget {
 }
 
 class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
-  GlobalKey _formkey = GlobalKey<FormBuilderState>();
+  GlobalKey<FormBuilderState> _formkey = GlobalKey<FormBuilderState>();
   String? _errorText;
 
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
-  Future<void> _submitForm(callback, stopLoading) async {
+  _submit(Function callback) async {
     try {
-      final isValid =
-          (_formkey.currentState as FormBuilderState).saveAndValidate() &&
-              (_formkey.currentState as FormBuilderState).isValid;
+      final isValid = _formkey.currentState!.saveAndValidate();
       if (isValid) {
-        UserModel newUser = UserModel.fromJson({
-          "id": widget.userId,
-          "password": passwordController.text,
-        });
-        await ref.watch(updateUserProvider(newUser).future).then((value) {
-          Navigator.pushReplacement(
-              context, createRoute(() => const StartPage()));
+        String password = _formkey.currentState?.fields['password']!.value;
+        await UserService()
+            .login(UserModel(
+          id: widget.userId,
+          deviceToken: await FirebaseService.instance.getFCMToken(),
+          password: password,
+        ))
+            .then((value) async {
+          await LocalStorage.instance.preferences.setInt('step', 2);
+          callback();
         });
       }
     } catch (e) {
       Logger().e(e);
-    } finally {
-      stopLoading();
+      _formkey.currentState!.fields['password']!
+          .invalidate(e.toString().split(":")[1], shouldFocus: false);
     }
   }
 
@@ -103,8 +110,8 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
                   validator: ValidationBuilder(
                           requiredMessage: "Vui lòng nhập mật khẩu")
                       .required()
-                      .minLength(8, "Mật khẩu phải có ít nhất 8 ký tự")
-                      .regExp(Regex.password, "Mật khẩu bao gồm ký tự và số")
+                      // .minLength(8, "Mật khẩu phải có ít nhất 8 ký tự")
+                      // .regExp(Regex.password, "Mật khẩu bao gồm ký tự và số")
                       .build(),
                   type: TextInputType.visiblePassword,
                   controller: passwordController,
@@ -112,11 +119,24 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
                 const SizedBox(
                   height: 70,
                 ),
-                LoadingButton(
-                  handleOnTap: (stopLoading) {
-                    _submitForm(() {}, stopLoading);
+                FullWidthButton(
+                  onPressed: () {
+                    _submit(
+                      () => Navigator.pushReplacement(
+                        context,
+                        createRoute(
+                          () => MainPage(),
+                        ),
+                      ),
+                    );
                   },
-                  label: "Tiếp tục",
+                  child: Text(
+                    "Tiếp tục",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(color: Colors.white),
+                  ),
                 ),
                 const SizedBox(
                   height: 70,

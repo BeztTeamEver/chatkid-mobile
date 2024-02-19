@@ -55,6 +55,6 @@ final List<Menu> menu = [
     iconActive: 'bottomMenu/profile_active',
     route: routesName['${AppRoutes.profile}']!,
     role: [RoleConstant.Parent, RoleConstant.Child],
-    widget: ProfilePage(),
+    widget: const ProfilePage(),
   ),
 ];

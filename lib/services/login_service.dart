@@ -19,9 +19,8 @@ class AuthService {
     );
 
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      Logger().d(response.body);
       final authTokens = AuthModel.fromJson(jsonDecode(response.body));
-      Logger().d(authTokens.accessToken);
+      Logger().d(jsonEncode(response.body));
       _saveToken(authTokens);
       return authTokens;
     }
@@ -98,6 +97,7 @@ class AuthService {
   static Future<bool> signOut() async {
     // TODO: call api sign out here
     await _localStorage.removeToken();
+    await _localStorage.clear();
     return true;
   }
 

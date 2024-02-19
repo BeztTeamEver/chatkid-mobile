@@ -25,7 +25,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const LogoWidget(),
@@ -52,9 +52,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 100),
             GoogleButton(isLogin: true),
-            const SizedBox(height: 20),
             const SwitchSignIn(),
             const SizedBox(height: 20),
             SvgPicture.asset(

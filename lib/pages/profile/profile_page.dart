@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/account_list.dart';
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
@@ -46,7 +47,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       ),
       child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // FutureBuilder(
@@ -297,6 +298,24 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 });
               },
               child: const Text("Sign out"),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseService.instance.signOut().then((value) {
+                  // AuthService.signOut();
+                  LocalStorage.instance.preferences
+                      .remove(LocalStorageKey.USER);
+                  Navigator.of(context).pushReplacement(
+                    createRoute(
+                      () => const StartPage(),
+                    ),
+                  );
+                });
+              },
+              child: const Text("Switch account"),
             )
           ],
         ),
