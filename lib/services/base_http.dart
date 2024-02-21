@@ -34,8 +34,8 @@ class BaseHttp {
     return url;
   }
 
-  Future<Map<String, String>> _getHeaders(Map<String, String>? headers) async {
-    String token = await AuthService.getAccessToken();
+  Future<Map<String, String>> _getHeaders(bool? isUseFamilyToken, Map<String, String>? headers) async {
+    String token = await AuthService.getAccessToken(isUseFamilyToken: isUseFamilyToken);
 
     return {
       "Content-Type": "application/json",
@@ -48,10 +48,11 @@ class BaseHttp {
 
   Future<http.Response> get(
       {required String endpoint,
+      bool? isUseFamilyToken,
       Map<String, dynamic>? param,
       Map<String, String>? headers}) async {
     String url = _combineUrl(endpoint, param);
-    final combineHeaders = await _getHeaders(headers);
+    final combineHeaders = await _getHeaders(isUseFamilyToken, headers);
     return await http.Client()
         .get(
       Uri.parse(url),
@@ -67,6 +68,7 @@ class BaseHttp {
 
   Future<http.Response> post(
       {required String endpoint,
+      bool? isUseFamilyToken,
       Map<String, dynamic>? param,
       Map<String, String>? headers,
       String? body}) async {
@@ -76,7 +78,7 @@ class BaseHttp {
         .post(
       Uri.parse(url),
       body: body,
-      headers: await _getHeaders(headers),
+      headers: await _getHeaders(isUseFamilyToken, headers),
     )
         .catchError((err, s) {
       Logger().e(err, stackTrace: s);
@@ -91,6 +93,7 @@ class BaseHttp {
 
   Future<http.Response> put(
       {required String endpoint,
+      bool? isUseFamilyToken,
       Map<String, dynamic>? param,
       Map<String, String>? headers,
       String? body}) async {
@@ -99,7 +102,7 @@ class BaseHttp {
         .put(
       Uri.parse(url),
       body: body,
-      headers: await _getHeaders(headers),
+      headers: await _getHeaders(isUseFamilyToken, headers),
     )
         .timeout(
       const Duration(seconds: TIME_OUT),
@@ -111,6 +114,7 @@ class BaseHttp {
 
   Future<http.Response> delete(
       {required String endpoint,
+      bool? isUseFamilyToken,
       Map<String, dynamic>? param,
       Map<String, String>? headers,
       String? body}) async {
@@ -118,7 +122,7 @@ class BaseHttp {
     return await http
         .delete(
       Uri.parse(url),
-      headers: await _getHeaders(headers),
+      headers: await _getHeaders(isUseFamilyToken, headers),
       body: body,
     )
         .timeout(
@@ -131,6 +135,7 @@ class BaseHttp {
 
   Future<http.Response> patch({
     required String endpoint,
+    bool? isUseFamilyToken,
     Map<String, dynamic>? param,
     Map<String, String>? headers,
     String? body,
@@ -139,7 +144,7 @@ class BaseHttp {
     return await http
         .patch(
       Uri.parse(url),
-      headers: await _getHeaders(headers),
+      headers: await _getHeaders(isUseFamilyToken, headers),
       body: body,
     )
         .timeout(

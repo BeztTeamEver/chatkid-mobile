@@ -150,8 +150,8 @@ class AuthService {
     );
   }
 
-  static Future<String> getAccessToken() async {
-    String accessToken = _localStorage.getToken()?.accessToken ?? "";
+  static Future<String> getAccessToken({bool? isUseFamilyToken}) async {
+    String accessToken = _localStorage.getToken(isUseFamilyToken: isUseFamilyToken)?.accessToken ?? "";
 
     if (accessToken.isEmpty) {
       accessToken = _localStorage.preferences.getString("accessToken") ?? "";

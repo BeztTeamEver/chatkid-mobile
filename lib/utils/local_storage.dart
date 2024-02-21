@@ -37,13 +37,15 @@ class LocalStorage {
     await _instance!.preferences.remove(LocalStorageKey.REFRESH_TOKEN);
   }
 
-  AuthModel? getToken() {
+  AuthModel? getToken({bool? isUseFamilyToken}) {
     String? accessToken =
         _instance!.preferences.getString(LocalStorageKey.ACCESS_TOKEN);
     String? refreshToken =
         _instance!.preferences.getString(LocalStorageKey.REFRESH_TOKEN);
     UserModel user = getUser();
-
+    if (isUseFamilyToken != null && isUseFamilyToken) {
+      return AuthModel(accessToken: accessToken ?? "", refreshToken: refreshToken ?? "");
+    } 
     if (user.accessToken != null) {
       return AuthModel(accessToken: user.accessToken!, refreshToken: "");
     }

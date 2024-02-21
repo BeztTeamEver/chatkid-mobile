@@ -105,6 +105,7 @@ class FamilyService {
   Future<FamilyModel> getFamily() async {
     final response = await BaseHttp.instance.get(
       endpoint: Endpoint.ownFamilyEndpoint,
+      isUseFamilyToken: true
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       Logger().d(response.body);
