@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/init_item.dart';
@@ -10,7 +11,7 @@ import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:chatkid_mobile/widgets/indicator.dart';
 
 class WalletPage extends StatefulWidget {
   final FamilyModel family;
@@ -76,20 +77,55 @@ class _WalletPageState extends State<WalletPage> {
         child: ListView(children: [
           SizedBox(
             height: 200,
-            child: PageView.builder(
-              onPageChanged: (value) => setState(() {
-                _currentBanner = value;
-              }),
-              itemCount: MAX_ITEMS,
-              scrollDirection: Axis.horizontal,
-              controller: _pageController,
-              itemBuilder: (context, index) {
-                return Padding(
-                    padding: const EdgeInsets.all(0),
-                    child: SvgPicture.asset(
-                      'assets/advertise-banner/banner${index + 1}.svg',
-                    ));
-              },
+            width: double.infinity,
+            child: Stack(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: PageView.builder(
+                    onPageChanged: (value) => setState(() {
+                      _currentBanner = value;
+                    }),
+                    itemCount: MAX_ITEMS,
+                    scrollDirection: Axis.horizontal,
+                    controller: _pageController,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.7),
+                          image: const DecorationImage(
+                            image: NetworkImage(
+                                "https://www.bigc.vn/files/banners/2023/jan/megatet-sale-1080x540-go.jpg"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: null,
+                      );
+                    },
+                  ),
+                ),
+                Positioned(
+                  bottom: 8,
+                  child: Container(
+                    decoration: const BoxDecoration(boxShadow: [
+                      BoxShadow(
+                          color: Colors.black26,
+                          spreadRadius: 0,
+                          blurRadius: 20,
+                          offset: Offset(0, 0))
+                    ]),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(
+                        child: Indicator(
+                          index: _currentBanner,
+                          lenght: MAX_ITEMS,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -144,112 +180,112 @@ class _WalletPageState extends State<WalletPage> {
                       blurRadius: 6,
                       offset: Offset(0, 3))
                 ]),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'THÔNG TIN NĂNG LƯỢNG',
-                  style: TextStyle(
-                      color: Color.fromRGBO(197, 92, 2, 1),
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Bạn đang có ${widget.currentUser!.wallets!.first.totalEnergy ?? 0}',
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    const Icon(
-                      Icons.bolt_outlined,
-                      color: Color.fromRGBO(255, 155, 6, 1),
-                    )
-                  ],
-                )
-              ],
-            ),
+            // child: Column(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     const Text(
+            //       'THÔNG TIN NĂNG LƯỢNG',
+            //       style: TextStyle(
+            //           color: Color.fromRGBO(197, 92, 2, 1),
+            //           fontWeight: FontWeight.w700,
+            //           fontSize: 18),
+            //     ),
+            //     Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         Text(
+            //           'Bạn đang có ${widget.currentUser!.wallets!.first.totalEnergy ?? 0}',
+            //           style: const TextStyle(fontWeight: FontWeight.w700),
+            //         ),
+            //         const Icon(
+            //           Icons.bolt_outlined,
+            //           color: Color.fromRGBO(255, 155, 6, 1),
+            //         )
+            //       ],
+            //     )
+            //   ],
+            // ),
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: widget.family.members.length - 1,
-            itemBuilder: ((context, index) {
-              final filterUsers = widget.family.members
-                  .where((e) => e.id != widget.currentUser?.id)
-                  .toList();
-              final user = filterUsers[index];
-              return Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: const [
-                      BoxShadow(
-                          color: Color.fromRGBO(78, 41, 20, 0.03),
-                          spreadRadius: 0,
-                          blurRadius: 6,
-                          offset: Offset(0, 3))
-                    ]),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                              border: Border.all(width: 2, color: Colors.green),
-                              borderRadius: BorderRadius.circular(50)),
-                          child: SvgIcon(icon: iconAnimalList[3]),
-                        ),
-                        Positioned(
-                          bottom: -5,
-                          right: -10,
-                          child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: const Color.fromRGBO(255, 155, 6, 1)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    user.wallets!.isNotEmpty
-                                        ? user.wallets!.first.totalEnergy
-                                            .toString()
-                                        : '0',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const Icon(
-                                    Icons.bolt_outlined,
-                                    size: 14,
-                                    color: Colors.white,
-                                  )
-                                ],
-                              )),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      user.name ?? "Ẩn danh",
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              );
-            }),
-          )
+          //   ListView.builder(
+          //     shrinkWrap: true,
+          //     itemCount: widget.family.members.length - 1,
+          //     itemBuilder: ((context, index) {
+          //       final filterUsers = widget.family.members
+          //           .where((e) => e.id != widget.currentUser?.id)
+          //           .toList();
+          //       final user = filterUsers[index];
+          //       return Container(
+          //         margin:
+          //             const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          //         padding:
+          //             const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          //         decoration: BoxDecoration(
+          //             color: Colors.white,
+          //             borderRadius: BorderRadius.circular(15),
+          //             boxShadow: const [
+          //               BoxShadow(
+          //                   color: Color.fromRGBO(78, 41, 20, 0.03),
+          //                   spreadRadius: 0,
+          //                   blurRadius: 6,
+          //                   offset: Offset(0, 3))
+          //             ]),
+          //         child: Column(
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           children: [
+          //             Stack(
+          //               clipBehavior: Clip.none,
+          //               children: [
+          //                 Container(
+          //                   height: 50,
+          //                   width: 50,
+          //                   decoration: BoxDecoration(
+          //                       border: Border.all(width: 2, color: Colors.green),
+          //                       borderRadius: BorderRadius.circular(50)),
+          //                   child: SvgIcon(icon: iconAnimalList[3]),
+          //                 ),
+          //                 Positioned(
+          //                   bottom: -5,
+          //                   right: -10,
+          //                   child: Container(
+          //                       padding:
+          //                           const EdgeInsets.symmetric(horizontal: 20),
+          //                       decoration: BoxDecoration(
+          //                           borderRadius: BorderRadius.circular(30),
+          //                           color: const Color.fromRGBO(255, 155, 6, 1)),
+          //                       child: Row(
+          //                         mainAxisAlignment: MainAxisAlignment.center,
+          //                         children: [
+          //                           Text(
+          //                             user.wallets!.isNotEmpty
+          //                                 ? user.wallets!.first.totalEnergy
+          //                                     .toString()
+          //                                 : '0',
+          //                             style: const TextStyle(
+          //                               fontWeight: FontWeight.w600,
+          //                               fontSize: 12,
+          //                               color: Colors.white,
+          //                             ),
+          //                           ),
+          //                           const Icon(
+          //                             Icons.bolt_outlined,
+          //                             size: 14,
+          //                             color: Colors.white,
+          //                           )
+          //                         ],
+          //                       )),
+          //                 ),
+          //               ],
+          //             ),
+          //             const SizedBox(height: 5),
+          //             Text(
+          //               user.name ?? "Ẩn danh",
+          //               style: const TextStyle(fontWeight: FontWeight.w600),
+          //             ),
+          //           ],
+          //         ),
+          //       );
+          //     }),
+          //   )
         ]),
       ),
     );

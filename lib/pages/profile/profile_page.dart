@@ -104,7 +104,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             ),
                             const SizedBox(height: 16),
                             GestureDetector(
-                              onTap: () => {},
+                              onTap: () => {
+                                Navigator.of(context).push(
+                                  createRoute(
+                                    () => WalletPage(family: data, currentUser: currentUser),
+                                  ),
+                                )
+                              },
                               child: Row(
                                 children: [
                                   const CircleAvatar(
@@ -230,7 +236,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 children: data.members
                                     .map(
                                       (e) => Padding(
-                                        padding: const EdgeInsets.only(bottom: 16),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 16),
                                         child: Row(
                                           children: [
                                             AvatarPng(
