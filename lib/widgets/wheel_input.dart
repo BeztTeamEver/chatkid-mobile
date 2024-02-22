@@ -77,7 +77,7 @@ class _WheelInputState extends State<WheelInput> {
 
   @override
   void dispose() {
-    widget.controller.dispose();
+    // widget.controller.dispose();
     super.dispose();
   }
 

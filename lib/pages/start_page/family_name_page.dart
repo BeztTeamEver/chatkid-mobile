@@ -61,7 +61,7 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
                     context,
                     createRoute(
                       () => FormPage(
-                        user: UserModel(role: RoleConstant.Parent),
+                        userRole: RoleConstant.Parent,
                       ),
                     ),
                   )

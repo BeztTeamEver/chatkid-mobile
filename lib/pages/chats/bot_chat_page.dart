@@ -100,7 +100,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     }
   }
 
-  Future<void> _hello() async {
+  Future<void> _hello({bool? test = true}) async {
     UserModel currentUser = LocalStorage.instance.getUser();
     // TODO: revert this
     // UserModel user = await ref

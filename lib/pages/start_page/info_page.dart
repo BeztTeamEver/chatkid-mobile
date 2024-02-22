@@ -73,7 +73,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                   Container(
                     width: 64,
                     height: 64,
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(100),
@@ -90,7 +90,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                       size: 50,
                     ), //TODO: change icon
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Container(
@@ -115,7 +115,8 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                           },
                           style: ButtonStyle(
                               padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
                           )),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -148,7 +149,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                   )
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Expanded(
@@ -169,7 +170,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                             ).build(),
                           )
                         : Container(),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     InputField(
@@ -178,10 +179,10 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                       name: "name",
                       controller: widget.nameController,
                       validator: ValidationBuilder(
-                        requiredMessage: "Vui lòng nhập tên",
-                      ).required('Vui lòng nhập tên').build(),
+                        requiredMessage: 'Vui lòng nhập tên',
+                      ).build(),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Column(
@@ -194,7 +195,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                                     fontWeight: FontWeight.bold,
                                   ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         WheelInput(
@@ -211,14 +212,15 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                         )
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     WheelInput(
                       name: "yearOfBirth",
                       controller: widget.yearBirthDayController,
                       options: InfoForm.YEAR_BIRTHDAY_OPTIONS,
-                      defaultSelectionIndex: 10,
+                      defaultSelectionIndex: 2,
+                      defaultValue: InfoForm.YEAR_BIRTHDAY_OPTIONS[2].value,
                       listHeight: 400,
                       label: "Năm sinh",
                       description: "Chọn năm sinh của bạn",

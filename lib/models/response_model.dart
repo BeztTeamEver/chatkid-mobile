@@ -1,3 +1,6 @@
+import 'package:chatkid_mobile/models/base_model.dart';
+import 'package:chatkid_mobile/utils/utils.dart';
+
 class ResponseModel<TData> {
   final String? statusCode;
   final TData? data;
@@ -14,14 +17,14 @@ class ResponseModel<TData> {
   }
 }
 
-class PagingResponseModel<T> {
-  T data;
+class PagingResponseModel<T extends IBaseModel> {
+  List<T> items;
   int limit;
   int totalItems;
   int page;
 
   PagingResponseModel({
-    required this.data,
+    required this.items,
     required this.limit,
     required this.totalItems,
     required this.page,
@@ -29,7 +32,7 @@ class PagingResponseModel<T> {
 
   factory PagingResponseModel.fromJson(Map<String, dynamic> json) {
     return PagingResponseModel(
-      data: json['data'],
+      items: json['items'],
       limit: json['limit'],
       totalItems: json['totalItems'],
       page: json['page'],
@@ -37,8 +40,8 @@ class PagingResponseModel<T> {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['data'] = this.data;
+    final Map<String, dynamic> data = {};
+    data['items'] = this.items;
     data['limit'] = this.limit;
     data['totalItems'] = this.totalItems;
     data['page'] = this.page;

@@ -30,14 +30,15 @@ import 'package:web_socket_channel/io.dart';
 final getMessagesProvider = FutureProvider<List<ChatModel>>((ref) async {
   final response =
       await ChatService().getMessages(PagingModel(pageSize: 10, pageNumber: 1));
-  return response.data;
+  return response.items;
 });
 
 final getChannelMessagesProvider =
     FutureProvider.family<List<ChatModel>, MessageChannelRequest>(
         (ref, request) async {
-  final response = await ChatService().getChannelMessages(request: request);
-  return response.data;
+  final response =
+      await ChatServiceNotifier().getChannelMessages(request: request);
+  return response;
 });
 
 final receiveMessage = StreamProvider<ChatModel>((ref) async* {

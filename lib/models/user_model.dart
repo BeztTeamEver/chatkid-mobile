@@ -62,7 +62,9 @@ class UserModel {
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    if (id != null) {
+      data['id'] = id;
+    }
     if (avatarUrl != null) {
       data['avatarUrl'] = avatarUrl;
     }
