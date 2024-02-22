@@ -1,32 +1,28 @@
-import 'dart:convert';
-
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/local_storage.dart';
-import 'package:chatkid_mobile/enum/role.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/pages/confirmation/successfull_registration.dart';
 import 'package:chatkid_mobile/pages/start_page/info_page.dart';
 import 'package:chatkid_mobile/pages/start_page/password_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/providers/file_provider.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FormPage extends ConsumerStatefulWidget {
-  final UserModel user;
-  const FormPage({super.key, required this.user});
+  final String userRole;
+
+  const FormPage({super.key, required this.userRole});
 
   @override
   ConsumerState<FormPage> createState() => _FormPageState();
@@ -42,7 +38,6 @@ class _FormPageState extends ConsumerState<FormPage> {
   final _confirmPasswordController = TextEditingController();
   final _avatarController = TextEditingController();
   final _preferences = LocalStorage.instance.preferences;
-
   final _pageController = PageController(
     initialPage: 0,
     viewportFraction: 1,
@@ -52,7 +47,6 @@ class _FormPageState extends ConsumerState<FormPage> {
   @override
   void initState() {
     super.initState();
-    _nameController.text = widget.user.name ?? "";
     //TODO: check the user if it is the first time register
     final isFirstRegister =
         _preferences.getBool(LocalStorageKey.IS_FIRST_REGISTER);
@@ -66,18 +60,14 @@ class _FormPageState extends ConsumerState<FormPage> {
   }
 
   void _onSubmitInfo(callback, stopLoading) async {
-    final isValid = _formKey.currentState!.saveAndValidate() &&
-        _formKey.currentState!.isValid;
-
+    // Validate first form page
     if (_currentPage == 0) {
+      if (!_formKey.currentState!.fields['name']!.validate()) {
+        return;
+      }
       setState(() {
         _currentPage++;
       });
-      _formKey.currentState?.registerField('step', FormBuilderFieldState());
-      _formKey.currentState?.save();
-      Logger().i(_formKey.currentState?.value);
-
-      _formKey.currentState?.fields['step']?.didChange(1);
       _pageController.animateToPage(
         _currentPage,
         duration: const Duration(milliseconds: 300),
@@ -86,27 +76,32 @@ class _FormPageState extends ConsumerState<FormPage> {
       return;
     }
 
+    // Submit form
+    final isValid = _formKey.currentState!.saveAndValidate();
+
     if (isValid) {
+      final familyId =
+          LocalStorage.instance.getString(LocalStorageKey.FAMILY_ID);
       UserModel newUser = UserModel.fromJson({
         ..._formKey.currentState!.value,
-        "avatarUrl": widget.user.avatarUrl,
-        "password": widget.user.password,
+        "avatarUrl": _avatarController.text,
+        // "password": widget.user.password,
+        "role": widget.userRole,
+        "familyId": familyId,
         "deviceToken": FirebaseService.instance.fcmToken,
       });
+      Logger().i(_formKey.currentState!.value.toString());
       // callback();
       // stopLoading();
       // return;
-      try {
-        await ref.watch(createUserProvider(newUser)).whenData((data) {
-          Logger().d(data);
-          callback();
-        });
-      } catch (e) {
+      ref.watch(userServiceProvider).createUser(newUser).then((value) {
+        callback();
+      }).catchError((e) {
         Logger().e(e);
         ErrorSnackbar.showError(err: e, context: context);
-      } finally {
-        stopLoading();
-      }
+      });
+
+      stopLoading();
     }
     stopLoading();
     _formKey.currentState!.errors.forEach((key, value) {
@@ -117,6 +112,7 @@ class _FormPageState extends ConsumerState<FormPage> {
   @override
   Widget build(BuildContext context) {
     final avatars = ref.watch(getAvatarProvider);
+
     final formPages = <Widget>[
       InfoPage(
         roleController: _roleController,
@@ -124,20 +120,22 @@ class _FormPageState extends ConsumerState<FormPage> {
         nameController: _nameController,
         yearBirthDayController: _yearBirthDayController,
         avatarController: _avatarController,
-        isParent: widget.user.role == RoleConstant.Parent,
+        isParent: widget.userRole == RoleConstant.Parent,
       ),
       PasswordPage(
-        userId: widget.user.id ?? "",
+        userId: "",
+        name: _formKey.currentState?.fields['name']?.value ?? "",
         formKey: _formKey,
         passwordController: _passwordController,
         confirmPasswordController: _confirmPasswordController,
       ),
     ];
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 36, 16, 60),
+          padding: const EdgeInsets.fromLTRB(16, 36, 16, 10),
           child: FormBuilder(
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -157,9 +155,12 @@ class _FormPageState extends ConsumerState<FormPage> {
                   ),
                 ),
                 ActionButton(context),
+                SizedBox(
+                  height: 20,
+                ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  height: _currentPage == 0 ? 0 : 250,
+                  height: _currentPage == 0 ? 0 : 240,
                   width: 300,
                   curve: Curves.easeInOut,
                   child: SvgPicture.asset(

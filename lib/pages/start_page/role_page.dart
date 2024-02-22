@@ -102,15 +102,41 @@ class _RolePageState extends ConsumerState<RolePage> {
                   ),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        createRoute(
-                          () => FormPage(
-                            user: UserModel(role: _role),
-                          ),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          _role.isNotEmpty
+                              ? primary.shade400
+                              : neutral.shade200,
+                        ),
+                        surfaceTintColor: MaterialStateProperty.all<Color>(
+                          _role.isNotEmpty
+                              ? neutral.shade500
+                              : primary.shade200,
                         ),
                       ),
-                      child: const Text("Tiếp tục"),
+                      onPressed: () {
+                        if (_role.isEmpty) {
+                          return;
+                        }
+
+                        Navigator.push(
+                          context,
+                          createRoute(
+                            () => FormPage(
+                              userRole: _role,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Tiếp tục",
+                        style: TextStyle(
+                          color:
+                              _role.isEmpty ? neutral.shade600 : Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
                 ],

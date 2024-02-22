@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/models/base_model.dart';
 import 'package:flutter/material.dart';
 
 class HexColor extends Color {
@@ -11,3 +12,7 @@ class HexColor extends Color {
     return int.parse(hexColor, radix: 16);
   }
 }
+
+final factories = <Type, Function>{
+  BaseModel: (json) => BaseModel.fromJson(json),
+};
