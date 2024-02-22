@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chatkid_mobile/constants/service.dart';
-import 'package:chatkid_mobile/constants/service.dart';
 import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
 import 'package:chatkid_mobile/models/paging_modal.dart';
 import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
@@ -47,13 +45,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
       ScrollOffsetController();
   final ScrollOffsetListener _scrollOffsetListener =
       ScrollOffsetListener.create();
-  final ItemScrollController _scrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener =
-      ItemPositionsListener.create();
-  final ScrollOffsetController _scrollOffsetController =
-      ScrollOffsetController();
-  final ScrollOffsetListener _scrollOffsetListener =
-      ScrollOffsetListener.create();
   final _chatService = SocketService();
   final _listMessages = [];
   final user = LocalStorage.instance.getUser();
@@ -75,12 +66,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
           0,
           ChatModel(
               content: message, userId: user.id!, channelId: widget.channelId));
-      _listMessages.insert(
-          0,
-          ChatModel(
-              content: message, userId: user.id!, channelId: widget.channelId));
     });
-    // Scroll to the new widget when the message is sent.
     // Scroll to the new widget when the message is sent.
 
     // _chatService.sendMessage(message);
@@ -205,7 +191,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   void initState() {
     super.initState();
     _onConnect();
-    _onConnect();
   }
 
   @override
@@ -237,7 +222,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
           user: value[index].user,
           message: value[index].content,
           isSender: value[index].userId == user.id!,
-          isSender: value[index].userId == user.id!,
         ),
       ),
     );
@@ -251,7 +235,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         next.whenData(
           (value) => {
             setState(() {
-              _listMessages.insert(0, value);
               _listMessages.insert(0, value);
             })
           },
@@ -313,16 +296,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.white),
         child: VoiceChat(color: primary, onResult: _sendMessage),
       ),
-      floatingActionButton: Container(
-        decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.white),
-        child: VoiceChat(color: primary, onResult: _sendMessage),
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomSheet: BottomAppBar(
         height: 80,
         notchMargin: 15,
         color: Colors.white,
-        surfaceTintColor: Colors.white,
         surfaceTintColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Row(
@@ -330,7 +308,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
           children: [
             IconButton(
               onPressed: () {
-                _sendMessage("gà con con gà con");
                 _sendMessage("gà con con gà con");
               },
               icon: const SvgIcon(icon: 'location'),

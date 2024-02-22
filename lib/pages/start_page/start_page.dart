@@ -21,6 +21,7 @@ import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:chatkid_mobile/widgets/loading_indicator.dart';
 
 class StartPage extends ConsumerStatefulWidget {
   const StartPage({super.key});
@@ -153,10 +154,12 @@ class _StartPageState extends ConsumerState<StartPage> {
                           .e(snapshot.error, stackTrace: snapshot.stackTrace);
                       return Container();
                     } else {
-                      return SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: CircularProgressIndicator(),
+                      return const Center(
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: Loading(),
+                        ),
                       );
                     }
                   },

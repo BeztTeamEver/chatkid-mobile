@@ -8,7 +8,7 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: EdgeInsets.all(4.0),
       child: SizedBox(
         width: 24,
         height: 24,
