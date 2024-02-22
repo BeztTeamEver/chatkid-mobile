@@ -83,7 +83,6 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
     //     .asData
     //     ?.value;
     final familyChannel = ref.watch(getFamilyChannel);
-
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(

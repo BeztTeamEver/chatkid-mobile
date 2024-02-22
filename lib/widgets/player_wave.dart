@@ -48,7 +48,6 @@ class _PlayerWaveState extends State<PlayerWave> {
       // read the file to the app
       final appDirectory = await getApplicationDocumentsDirectory();
       file = File("${appDirectory.path}/${widget.path}");
-
       if (file?.path == null) {
         return;
       }
