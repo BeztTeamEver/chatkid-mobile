@@ -23,10 +23,11 @@ class ChatService {
           .map((item) => ChatModel.fromJson(item))
           .toList() as List<ChatModel>;
       final pagingResponseModel = PagingResponseModel<ChatModel>(
-        limit: data['limit'],
+        // limit: data['limit'],
+        pageSize: data['pageSize'],
         items: listChat,
-        page: data['page'],
-        totalItems: data['totalItems'],
+        pageNumber: data['pageNumber'],
+        totalItem: data['totalItem'],
       );
       return pagingResponseModel;
     }

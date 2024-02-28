@@ -108,7 +108,7 @@ class _ChildrenTrackingPageState extends ConsumerState<ChildrenTrackingPage> {
                           context,
                           createRoute(
                             () => TrackingDetailPage(
-                              activityId: user.id as String,
+                              user: user,
                             ),
                           ),
                         );

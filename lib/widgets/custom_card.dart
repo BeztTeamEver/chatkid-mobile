@@ -39,6 +39,7 @@ class _CustomCardState extends State<CustomCard> {
           padding: widget.padding ?? const EdgeInsets.all(10),
           height: widget.height,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: widget.mainAxisAlignment,
             crossAxisAlignment: widget.crossAxisAlignment,
             children: widget.children,
