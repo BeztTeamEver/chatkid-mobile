@@ -75,10 +75,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               const SizedBox(
                                 height: 20,
                               ),
-                              AvatarPng(
-                                imageUrl: currentUser.avatarUrl,
-                                borderRadius: 40,
-                                size: 88,
+                              SizedBox(
+                                width: 80,
+                                height: 80,
+                                child: AvatarPng(
+                                  imageUrl: currentUser.avatarUrl,
+                                ),
                               ),
                               const SizedBox(
                                 height: 8,
@@ -107,7 +109,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               onTap: () => {
                                 Navigator.of(context).push(
                                   createRoute(
-                                    () => WalletPage(family: data, currentUser: currentUser),
+                                    () => WalletPage(
+                                        family: data, currentUser: currentUser),
                                   ),
                                 )
                               },
@@ -240,10 +243,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                             const EdgeInsets.only(bottom: 16),
                                         child: Row(
                                           children: [
-                                            AvatarPng(
-                                              imageUrl: e.avatarUrl,
-                                              borderRadius: 40,
-                                              size: 40,
+                                            SizedBox(
+                                              width: 40,
+                                              height: 40,
+                                              child: AvatarPng(
+                                                imageUrl: e.avatarUrl,
+                                              ),
                                             ),
                                             const SizedBox(width: 12),
                                             Text(

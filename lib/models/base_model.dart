@@ -10,6 +10,8 @@ class BaseModel implements IBaseModel {
     throw UnimplementedError();
   }
 
+  BaseModel();
+
   @override
   Map<String, dynamic> toMap() {
     throw UnimplementedError();

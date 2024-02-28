@@ -251,10 +251,12 @@ class _WalletPageState extends State<WalletPage> {
                           decoration: BoxDecoration(
                               border: Border.all(width: 2, color: Colors.green),
                               borderRadius: BorderRadius.circular(50)),
-                          child: AvatarPng(
-                            imageUrl: user.avatarUrl,
-                            borderRadius: 40,
-                            size: 40,
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            child: AvatarPng(
+                              imageUrl: user.avatarUrl,
+                            ),
                           ),
                         ),
                         Positioned(

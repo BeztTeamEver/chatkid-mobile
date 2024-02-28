@@ -1,7 +1,7 @@
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/pages/history_tracking/history_tracking_page.dart';
+import 'package:chatkid_mobile/pages/children_tracking/children_tracking_page.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/route.dart';
