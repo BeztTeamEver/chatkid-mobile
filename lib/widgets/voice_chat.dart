@@ -87,10 +87,10 @@ class _VoiceChatState extends State<VoiceChat> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(
-          width: 2,
-          color: primary.shade400,
-        ),
+        // border: Border.all(
+        //   width: 2,
+        //   color: primary.shade400,
+        // ),
         boxShadow: List.generate(
           3,
           (index) => BoxShadow(

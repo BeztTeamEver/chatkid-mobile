@@ -9,6 +9,7 @@ import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
@@ -308,23 +309,37 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
           children: [
             IconButton(
               onPressed: () {
-                _sendMessage("gà con con gà con");
+                ErrorSnackbar.showError(
+                    err: Exception("Chức năng này đang được phát triển"),
+                    context: context);
               },
               icon: const SvgIcon(icon: 'location'),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                ErrorSnackbar.showError(
+                    err: Exception("Chức năng này đang được phát triển"),
+                    context: context);
+              },
               icon: const SvgIcon(icon: 'camera'),
             ),
             const SizedBox(
               width: 80,
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                ErrorSnackbar.showError(
+                    err: Exception("Chức năng này đang được phát triển"),
+                    context: context);
+              },
               icon: const SvgIcon(icon: 'sticker'),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                ErrorSnackbar.showError(
+                    err: Exception("Chức năng này đang được phát triển"),
+                    context: context);
+              },
               icon: const SvgIcon(icon: 'photo'),
             )
           ],

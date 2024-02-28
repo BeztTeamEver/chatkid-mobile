@@ -22,12 +22,14 @@ class PagingResponseModel<T extends IBaseModel> {
   int limit;
   int totalItems;
   int page;
+  String? search;
 
   PagingResponseModel({
     required this.items,
     required this.limit,
     required this.totalItems,
     required this.page,
+    this.search,
   });
 
   factory PagingResponseModel.fromJson(Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class PagingResponseModel<T extends IBaseModel> {
       limit: json['limit'],
       totalItems: json['totalItems'],
       page: json['page'],
+      search: json['search'],
     );
   }
 
@@ -45,6 +48,7 @@ class PagingResponseModel<T extends IBaseModel> {
     data['limit'] = this.limit;
     data['totalItems'] = this.totalItems;
     data['page'] = this.page;
+    data['search'] = this.search;
     return data;
   }
 }

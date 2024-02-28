@@ -16,6 +16,8 @@ class UserModel {
   String? deviceToken;
   String? accessToken;
   String? refreshToken;
+  String? notSeenActivities;
+  String? doing;
   List<KidServiceModel>? kidServices;
   List<WalletModel>? wallets;
 
@@ -32,6 +34,8 @@ class UserModel {
       this.kidServices,
       this.accessToken,
       this.refreshToken,
+      this.doing,
+      this.notSeenActivities,
       this.wallets});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +51,8 @@ class UserModel {
       accessToken: json['accessToken'],
       refreshToken: json['refreshToken'],
       deviceToken: json['deviceToken'],
+      notSeenActivities: json['notSeenActivities'],
+      doing: json['doing'],
       kidServices: json['kidServices'] != null
           ? (json['kidServices'] as List)
               .map((e) => KidServiceModel.fromJson(e))
