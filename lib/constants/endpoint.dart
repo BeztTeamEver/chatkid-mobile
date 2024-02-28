@@ -34,7 +34,7 @@ class Endpoint {
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";
-  static const channelMessagesEndPoint = "/api/chat/channel";
+  static const channelMessagesEndPoint = "/api/chat/channels";
 
   // Paypal
   static const paypalEndPoint = "/api/paypal/create-paypal-order";

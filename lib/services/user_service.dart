@@ -37,8 +37,6 @@ class UserService {
   }
 
   Future<UserModel> createUser(UserModel user) async {
-    Logger().d(jsonEncode(user.password));
-
     final response = await BaseHttp.instance.post(
       endpoint: '${Endpoint.memberEnpoint}',
       body: user.toJson(),
@@ -48,7 +46,20 @@ class UserService {
       final result = UserModel.fromJson(jsonDecode(response.body));
       return result;
     } else {
-      throw Exception('Failed to create user');
+      switch (response.statusCode) {
+        case 400:
+          throw Exception('Lỗi dữ liệu không hợp lệ, vui lòng thử lại!');
+        case 401:
+          throw Exception(
+              'Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+        case 403:
+          throw Exception('Không có quyền tạo người dùng, vui lòng thử lại!');
+        case 404:
+          throw Exception('Không tìm thấy gia đình, vui lòng thử lại!');
+        default:
+          throw Exception(
+              'Có lỗi xảy ra khi tạo người dùng, vui lòng thử lại!');
+      }
     }
   }
 

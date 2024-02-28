@@ -33,9 +33,9 @@ class SuccessfulRegistrationPage extends StatelessWidget {
                   createRoute(
                     // TODO: replace with the child role
                     () => FormPage(
-                        user: UserModel(
-                      role: RoleConstant.Child,
-                    )),
+                      userRole:
+                          _isParent ? RoleConstant.Parent : RoleConstant.Child,
+                    ),
                   ),
                 )
               });

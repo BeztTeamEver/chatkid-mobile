@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/auth_model.dart';
+import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/resgis_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
@@ -19,8 +21,11 @@ class AuthService {
     );
 
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      final authTokens = AuthModel.fromJson(jsonDecode(response.body));
-      Logger().d(jsonEncode(response.body));
+      final body = jsonDecode(response.body);
+      final authTokens = AuthModel.fromJson(body);
+      final family = FamilyModel.fromJson(body['family']);
+      Logger().d(family.familyId);
+      _localStorage.setString(LocalStorageKey.FAMILY_ID, family.familyId);
       _saveToken(authTokens);
       return authTokens;
     }
@@ -151,7 +156,10 @@ class AuthService {
   }
 
   static Future<String> getAccessToken({bool? isUseFamilyToken}) async {
-    String accessToken = _localStorage.getToken(isUseFamilyToken: isUseFamilyToken)?.accessToken ?? "";
+    String accessToken = _localStorage
+            .getToken(isUseFamilyToken: isUseFamilyToken)
+            ?.accessToken ??
+        "";
 
     if (accessToken.isEmpty) {
       accessToken = _localStorage.preferences.getString("accessToken") ?? "";

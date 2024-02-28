@@ -1,8 +1,12 @@
 import 'dart:convert';
 
+import 'package:chatkid_mobile/models/base_model.dart';
+import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class ChatModel {
+class ChatModel implements IBaseModel {
   // String? id;
   // String? content;
   // String? sentTime;
@@ -37,14 +41,20 @@ class ChatModel {
   String? content;
   String? channelId;
   String? userId;
+  String? imageUrl;
+  String? voiceUrl;
+  UserModel? user;
 
-  ChatModel({this.content, this.channelId, this.userId});
+  ChatModel({this.content, this.channelId, this.userId, this.user});
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
       content: json['content'],
       channelId: json['channelUserId'],
-      userId: json['userId'],
+      userId: json['ChannelUser']?['Member']?['id'],
+      user: json['ChannelUser']?['Member'] != null
+          ? UserModel.fromJson(json['ChannelUser']?['Member'])
+          : UserModel(),
     );
   }
 
