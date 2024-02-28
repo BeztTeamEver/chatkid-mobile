@@ -30,7 +30,7 @@ class Endpoint {
   static const gptChatEndPoint = "/api/gpt/chat";
 
   //Subcription
-  static const subcriptionEndPoint = "/api/subcriptions";
+  static const subcriptionEndPoint = "/api/subscription";
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";

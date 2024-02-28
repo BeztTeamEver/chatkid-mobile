@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chatkid_mobile/models/kid_service_model.dart';
 import 'package:chatkid_mobile/models/wallet_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 class UserModel {
   String? id;
@@ -12,6 +13,7 @@ class UserModel {
   String? gender;
   String? role;
   int? status;
+  int? energy;
   String? familyId;
   String? deviceToken;
   String? accessToken;
@@ -26,6 +28,7 @@ class UserModel {
       this.name,
       this.role,
       this.status,
+      this.energy,
       this.familyId,
       this.gender,
       this.deviceToken,
@@ -42,6 +45,7 @@ class UserModel {
       name: json['name'],
       role: json['role'],
       status: json['status'],
+      energy: json['energy'],
       familyId: json['familyId'],
       gender: json['gender'],
       accessToken: json['accessToken'],
@@ -77,6 +81,9 @@ class UserModel {
     }
     if (status != null) {
       data['status'] = status;
+    }
+    if (energy != null) {
+      data['energy'] = energy;
     }
     if (familyId != null) {
       data['familyId'] = familyId;

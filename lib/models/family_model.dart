@@ -32,8 +32,8 @@ class FamilyRequestModel {
 }
 
 class FamilyModel {
-  final String familyName;
   final String familyId;
+  final String familyName;
   final String familyEmail;
   // final int status;
   final List<UserModel> members;
