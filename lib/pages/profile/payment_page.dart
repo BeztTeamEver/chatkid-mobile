@@ -1,13 +1,16 @@
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/paypal_model.dart';
 import 'package:chatkid_mobile/models/subcription_model.dart';
+import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/profile/payment_confirm_page.dart';
+import 'package:chatkid_mobile/pages/profile/payment_momo_qrcode.dart';
 import 'package:chatkid_mobile/pages/profile/subcription_page.dart';
 import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/providers/paypal_provider.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/number_format.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,8 +32,8 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   late PaypalRequestModel model;
   @override
   void initState() {
-    model = PaypalRequestModel(
-        amount: widget.subcription.price, returnUrl: "", cancelUrl: "");
+    // model = PaypalRequestModel(
+    //     amount: widget.subcription.price, returnUrl: "", cancelUrl: "");
   }
 
   Future<void> onSubmit(callback) async {
@@ -75,35 +78,27 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon:
+              const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.grey),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text("Thanh toán"),
+        titleTextStyle: const TextStyle(
+          color: Color(0xFF242837),
+          fontSize: 16,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.w600,
+          height: 0,
+        ),
+        centerTitle: true,
+      ),
       body: Center(
         child: Container(
           child: ListView(
             children: [
-              Container(
-                decoration: const BoxDecoration(color: Colors.white),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    IconButton(
-                      icon: SvgPicture.asset("assets/icons/back.svg"),
-                      onPressed: () => {Navigator.pop(context)},
-                    ),
-                    Flexible(
-                      child: Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.only(right: 13.0),
-                        child: Text(
-                          'Thanh toán',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
@@ -151,7 +146,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                                 borderRadius: BorderRadius.circular(30),
                                 color: const Color.fromRGBO(255, 155, 6, 1)),
                             child: Text(
-                              '${NumberFormat.formatAmount(widget.subcription.actualPrice!.toStringAsFixed(0))} vnđ',
+                              '${NumberFormat.formatAmount(widget.subcription.actualPrice!)} vnđ',
                               style: const TextStyle(color: Colors.white),
                             ),
                           )
@@ -197,7 +192,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  '${NumberFormat.formatAmount(widget.subcription.actualPrice!.toStringAsFixed(0))} vnđ',
+                                  '${NumberFormat.formatAmount(widget.subcription.actualPrice!)} vnđ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -237,7 +232,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  '${NumberFormat.formatAmount(widget.subcription.actualPrice!.toStringAsFixed(0))} vnđ',
+                                  '${NumberFormat.formatAmount(widget.subcription.actualPrice!)} vnđ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -282,12 +277,12 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                               Row(
                                 children: [
                                   Image.asset(
-                                    'assets/payment/paypal.png',
+                                    'assets/payment/momo.png',
                                     width: 42,
                                   ),
                                   const SizedBox(width: 10),
                                   Text(
-                                    'PayPal',
+                                    'MoMo',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium!
@@ -303,6 +298,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                                 side: const BorderSide(width: 0),
                                 shape: const CircleBorder(),
                                 activeColor: Colors.orangeAccent,
+                                checkColor: Colors.white,
                                 value: isChecked,
                                 onChanged: (val) {
                                   setState(() {
@@ -336,13 +332,21 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                       ),
                     ),
                     onTap: (startLoading, stopLoading, btnState) async {
-                      if (btnState == ButtonState.idle) {
-                        startLoading();
-                        onSubmit((orderId, link) {
-                          stopLoading();
-                          _launchPaypalURL(link, orderId);
-                        });
-                      }
+                      // if (btnState == ButtonState.idle) {
+                      //   startLoading();
+                      //   onSubmit((orderId, link) {
+                      //     stopLoading();
+                      //     _launchPaypalURL(link, orderId);
+                      //   });
+                      // }
+                      Navigator.push(
+                        context,
+                        createRoute(
+                          () => MoMoQRCodePage(
+                            index: widget.subcription.energy,
+                          ),
+                        ),
+                      );
                     },
                     child: Text(
                       "Tiếp tục",
@@ -384,6 +388,13 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomMenu(
+        currentIndex: 3,
+        onTap: (index) {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => MainPage(index: index)));
+        },
       ),
     );
   }

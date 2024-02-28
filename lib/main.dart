@@ -1,7 +1,9 @@
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
+import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
@@ -14,7 +16,11 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // load env file
+  await dotenv.load(fileName: ".env");
+
   //Firesbase setup
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -22,15 +28,13 @@ void main() async {
   final ttsService = TtsService().instance;
   await firebaseService.init();
   await firebaseService.getFCMToken();
-  // chat service setup
-  // final hubConnection = ChatServiceSocket.instance;
 
   // tts service setup
   await TtsService().initState();
   // share preferrence setup for one time page
   await LocalStorage.getInstance();
-  // load env file
-  await dotenv.load(fileName: ".env");
+
+  SocketService();
 
   runApp(
     const ProviderScope(
@@ -67,7 +71,10 @@ class MyApp extends StatelessWidget {
               ),
             ),
             overlayColor: MaterialStateColor.resolveWith(
-              (states) => Colors.white.withOpacity(0.4),
+              (states) => primary.shade100,
+            ),
+            surfaceTintColor: MaterialStateColor.resolveWith(
+              (states) => Colors.transparent,
             ),
             foregroundColor: MaterialStateColor.resolveWith(
               (states) => Colors.white,
@@ -75,7 +82,17 @@ class MyApp extends StatelessWidget {
             padding: MaterialStateProperty.all<EdgeInsets>(
               const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             ),
+            backgroundColor: MaterialStateColor.resolveWith(
+              (states) => primary.shade400,
+            ),
           ),
+        ),
+        cardTheme: CardTheme(
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          clipBehavior: Clip.hardEdge,
         ),
         scaffoldBackgroundColor: primary.shade50,
         inputDecorationTheme: InputDecorationTheme(

@@ -1,8 +1,10 @@
+import 'package:chatkid_mobile/constants/init_item.dart';
 import 'package:chatkid_mobile/pages/explore/blogs/blog_categories_detail_page.dart';
-import 'package:chatkid_mobile/pages/explore/education_games/education_categories_page.dart';
+import 'package:chatkid_mobile/pages/explore/button/button.dart';
+import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:chatkid_mobile/widgets/indicator.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
@@ -12,269 +14,142 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
+  int _currentBanner = 0;
+
+  final PageController _pageController = PageController(
+    initialPage: 0,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
         children: [
-          GestureDetector(
-            onTap: () => {
-              Navigator.push(
-                context,
-                createRoute(
-                  () => const BlogCategoriesDetailPage(),
+          SizedBox(
+            height: 200,
+            width: double.infinity,
+            child: Stack(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: PageView.builder(
+                    onPageChanged: (value) => setState(() {
+                      _currentBanner = value;
+                    }),
+                    itemCount: MAX_ITEMS,
+                    scrollDirection: Axis.horizontal,
+                    controller: _pageController,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                "https://bizweb.dktcdn.net/100/396/591/files/kv-web-banner-dl-25-10.jpg?v=1666775796140"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: null,
+                      );
+                    },
+                  ),
                 ),
-              )
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              elevation: 5,
-              margin: const EdgeInsets.all(15),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.all(10.0),
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular((8.0)))),
-                    child: Image.asset(
-                      'assets/thumbnails/animals.png',
-                      width: MediaQuery.of(context).size.width - 40,
+                Positioned(
+                  bottom: 8,
+                  child: Container(
+                    decoration: const BoxDecoration(boxShadow: [
+                      BoxShadow(
+                          color: Colors.black26,
+                          spreadRadius: 0,
+                          blurRadius: 20,
+                          offset: Offset(0, 0))
+                    ]),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(
+                        child: Indicator(
+                          index: _currentBanner,
+                          lenght: MAX_ITEMS,
+                        ),
+                      ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      "1000 CÂU HỎI VÌ SAO",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () => {
-              Navigator.push(
-                context,
-                createRoute(
-                  () => const EducationCategoriesPage(),
                 ),
-              )
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              elevation: 5,
-              margin: const EdgeInsets.all(15),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.all(10.0),
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular((8.0)))),
-                    child: SvgPicture.asset(
-                      'assets/thumbnails/education_games.svg',
-                      width: MediaQuery.of(context).size.width - 40,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      "TRÒ CHƠI GIÁO DỤC",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  )
-                ],
-              ),
+              ],
             ),
           ),
+          const SizedBox(
+            height: 16,
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0F4E2813),
+                  blurRadius: 12,
+                  offset: Offset(0, 6),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: Color(0x0A4E2914),
+                  blurRadius: 2,
+                  offset: Offset(0, -1),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: Color(0x0F742B00),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                  spreadRadius: 0,
+                )
+              ],
+            ),
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 16,
+              children: [
+                ButtonBlogAnimated(
+                  text: 'Kiến thức',
+                  icon: "bottomMenu/reward",
+                  onPressed: () {
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      Navigator.push(
+                          context, createRoute(() => const BlogCategoriesDetailPage()));
+                    });
+                  },
+                ),
+                ButtonBlogAnimated(
+                  text: 'Trò chơi',
+                  icon: "logo",
+                  onPressed: () {
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      Navigator.push(
+                          context, createRoute(() => const BlogCategoriesDetailPage()));
+                    });
+                  },
+                  primaryColor: const Color(0xFF32FF2D),
+                  secondaryColor: const Color(0xFF00E24C),
+                ),
+                ButtonBlogAnimated(
+                  text: 'Năng lượng',
+                  icon: "sparkle",
+                  onPressed: () {
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      Navigator.push(
+                          context, createRoute(() => const BlogCategoriesDetailPage()));
+                    });
+                  },
+                  primaryColor: primary.shade500,
+                  secondaryColor: primary.shade700,
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
   }
 }
-/*
-
-Container(
-        margin: const EdgeInsets.symmetric(vertical: 15.0),
-        color: const Color.fromRGBO(255, 251, 245, 1),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: () => {
-                Navigator.push(
-                  context,
-                  createRoute(
-                    () => BlogCategoriesDetailPage(),
-                  ),
-                )
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                elevation: 5,
-                margin: const EdgeInsets.all(15),
-                child: Column(
-                  children: <Widget>[
-                    Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.all(10.0),
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular((8.0)))),
-                          child: Image.asset(
-                            'assets/thumbnails/animals.png',
-                            width: MediaQuery.of(context).size.width - 40,
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            "1000 CÂU HỎI VÌ SAO",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => {
-                Navigator.push(
-                  context,
-                  createRoute(
-                    () => const BlogCategoriesDetailPage(),
-                  ),
-                )
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                elevation: 5,
-                margin: const EdgeInsets.all(15),
-                child: Column(
-                  children: <Widget>[
-                    Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.all(10.0),
-                          decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular((8.0)))),
-                          child: SvgPicture.asset(
-                            'assets/thumbnails/education_games.svg',
-                            width: MediaQuery.of(context).size.width - 40,
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            "TRÒ CHƠI GIÁO DỤC",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () => {
-                  Navigator.push(
-                    context,
-                    createRoute(
-                      () => const BlogCategoriesDetailPage(),
-                    ),
-                  )
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  elevation: 5,
-                  margin: const EdgeInsets.all(15),
-                  child: Column(
-                    children: <Widget>[
-                      Column(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(10.0),
-                            decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular((8.0)))),
-                            child: SvgPicture.asset(
-                              'assets/thumbnails/education_games.svg',
-                              width: MediaQuery.of(context).size.width - 40,
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 5),
-                            child: Text(
-                              "TRÒ CHƠI GIÁO DỤC",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () => {
-                  Navigator.push(
-                    context,
-                    createRoute(
-                      () => const BlogCategoriesDetailPage(),
-                    ),
-                  )
-                },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  elevation: 5,
-                  margin: const EdgeInsets.all(15),
-                  child: Column(
-                    children: <Widget>[
-                      Column(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(10.0),
-                            decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular((8.0)))),
-                            child: SvgPicture.asset(
-                              'assets/thumbnails/education_games.svg',
-                              width: MediaQuery.of(context).size.width - 40,
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 5),
-                            child: Text(
-                              "TRÒ CHƠI GIÁO DỤC",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ), */

@@ -65,7 +65,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   final currentUser = LocalStorage.instance.getUser();
   @override
   Widget build(BuildContext context) {
-    final family = ref.watch(familyServiceProvider);
+    // final family = ref.watch(familyServiceProvider);
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -104,8 +104,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                 ),
                 Positioned(
+                  bottom: 0.0,
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width - 40,
+                    width: MediaQuery.of(context).size.width,
                     child: Center(
                       child: Indicator(
                         index: _currentBanner,
@@ -113,7 +114,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                     ),
                   ),
-                  bottom: 0,
                 )
               ],
             ),
@@ -174,7 +174,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                   Navigator.push(
                     context,
                     createRoute(
-                      () => GroupChatPage(),
+                      () => GroupChatPage(
+                        channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
+                      ),
                     ),
                   )
                 },

@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -24,25 +25,18 @@ class _BottomMenuState extends State<BottomMenu> {
   UserModel currentAccount = UserModel.fromJson(
     jsonDecode(LocalStorage.instance.preferences.getString('user') ?? "{}"),
   );
-  final double _borderRadius = 40;
+  final double _borderRadius = 8;
   @override
   Widget build(BuildContext context) {
     final menu =
         MenuList(role: currentAccount.role ?? RoleConstant.Child).getMenu();
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
       height: 62,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(_borderRadius),
         boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.08),
-            spreadRadius: 0,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
           BoxShadow(
             color: Theme.of(context).shadowColor.withOpacity(0.08),
             spreadRadius: 0,
@@ -51,36 +45,44 @@ class _BottomMenuState extends State<BottomMenu> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(_borderRadius),
-        child: Center(
-          child: BottomNavigationBar(
-            backgroundColor: Colors.white,
-            type: BottomNavigationBarType.fixed,
-            elevation: 0,
-            currentIndex: widget.currentIndex,
-            onTap: (index) {
-              widget.onTap(index);
+      child: BottomNavigationBarTheme(
+        data: BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          selectedItemColor: primary.shade900,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          selectedLabelStyle:
+              const TextStyle(fontWeight: FontWeight.w700, fontSize: 10),
+          unselectedLabelStyle:
+              const TextStyle(fontWeight: FontWeight.w700, fontSize: 10),
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          elevation: 0,
+          backgroundColor: Colors.white,
+          currentIndex: widget.currentIndex,
+          onTap: (index) {
+            widget.onTap(index);
+          },
+          selectedItemColor: primary.shade900,
+          items: menu.map(
+            (item) {
+              return BottomNavigationBarItem(
+                label: item.title,
+                icon: SvgIcon(
+                    size: 28,
+                    icon: item.route == menu[widget.currentIndex].route
+                        ? item.iconActive
+                        : item.iconDefault
+                    // color: item.route == menu[widget.currentIndex].route
+                    //     ? Theme.of(context).colorScheme.primary
+                    //     : neutral.shade200,
+                    ),
+                backgroundColor: Colors.transparent,
+              );
             },
-            selectedItemColor: Colors.white,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            items: menu.map(
-              (item) {
-                return BottomNavigationBarItem(
-                  label: "",
-                  icon: SvgIcon(
-                    size: 24,
-                    icon: item.icon,
-                    color: item.route == menu[widget.currentIndex].route
-                        ? Theme.of(context).colorScheme.primary
-                        : neutral.shade400,
-                  ),
-                  backgroundColor: Colors.transparent,
-                );
-              },
-            ).toList(),
-          ),
+          ).toList(),
         ),
       ),
     );

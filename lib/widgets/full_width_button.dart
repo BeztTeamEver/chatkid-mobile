@@ -1,5 +1,6 @@
 import 'package:animated_svg/animated_svg.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,7 +10,7 @@ class FullWidthButton extends StatefulWidget {
   final double? width;
   final double? height;
   final int? duration;
-
+  final bool? isDisabled;
   final Function onPressed;
 
   const FullWidthButton({
@@ -19,6 +20,7 @@ class FullWidthButton extends StatefulWidget {
     this.width,
     this.height,
     this.duration,
+    this.isDisabled = false,
   });
 
   @override
@@ -31,12 +33,13 @@ class _FullWidthButtonState extends State<FullWidthButton>
   late final SvgController _svgController;
   int _opacity = 255;
   bool _isPressed = false;
+  final _BaseDuration = 100;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(milliseconds: widget.duration ?? 200),
+      duration: Duration(milliseconds: widget.duration ?? _BaseDuration),
       vsync: this,
     );
     _svgController = AnimatedSvgController();
@@ -74,7 +77,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
     return FittedBox(
       fit: BoxFit.fitWidth,
       child: GestureDetector(
-        onTap: () => widget.onPressed(),
+        onTap: () => {widget.isDisabled! ? null : widget.onPressed()},
         onTapDown: (details) {
           _startAnimation();
         },
@@ -85,7 +88,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
           _endAnimation();
         },
         child: AnimatedContainer(
-          duration: Duration(milliseconds: widget.duration ?? 200),
+          duration: Duration(milliseconds: widget.duration ?? _BaseDuration),
           width: widget.width ?? 350,
           height: widget.height ?? 46,
           child: Stack(
@@ -94,7 +97,8 @@ class _FullWidthButtonState extends State<FullWidthButton>
                 left: 0,
                 top: 0,
                 child: AnimatedContainer(
-                  duration: Duration(milliseconds: widget.duration ?? 200),
+                  duration:
+                      Duration(milliseconds: widget.duration ?? _BaseDuration),
                   width: widget.width ?? 350,
                   height: containerHeight,
                   child: Stack(
@@ -103,8 +107,8 @@ class _FullWidthButtonState extends State<FullWidthButton>
                         left: 0,
                         top: 3,
                         child: AnimatedContainer(
-                          duration:
-                              Duration(milliseconds: widget.duration ?? 200),
+                          duration: Duration(
+                              milliseconds: widget.duration ?? _BaseDuration),
                           width: widget.width ?? 350,
                           height: shadowHeight,
                           decoration: ShapeDecoration(
@@ -119,9 +123,11 @@ class _FullWidthButtonState extends State<FullWidthButton>
                             ),
                             shadows: [
                               BoxShadow(
-                                color: neutral.shade300,
-                                blurRadius: _isPressed ? 0 : 2,
-                                offset: const Offset(0, 5),
+                                color: const Color.fromRGBO(117, 43, 1, 0.16),
+                                // blurRadius: 0,
+                                offset: _isPressed || widget.isDisabled!
+                                    ? const Offset(0, 4)
+                                    : const Offset(0, 7),
                                 spreadRadius: 0,
                               )
                             ],
@@ -129,17 +135,21 @@ class _FullWidthButtonState extends State<FullWidthButton>
                         ),
                       ),
                       AnimatedPositioned(
-                        duration:
-                            Duration(milliseconds: widget.duration ?? 200),
+                        duration: Duration(
+                            milliseconds: widget.duration ?? _BaseDuration),
                         left: 0,
-                        top: _isPressed ? 6 : 0,
+                        top: _isPressed || widget.isDisabled! ? 6 : 0,
                         child: AnimatedContainer(
-                          duration:
-                              Duration(milliseconds: widget.duration ?? 200),
+                          duration: Duration(
+                              milliseconds: widget.duration ?? _BaseDuration),
                           width: widget.width ?? 350,
-                          height: _isPressed ? shadowHeight - 4 : shadowHeight,
+                          height: _isPressed || widget.isDisabled!
+                              ? shadowHeight - 4
+                              : shadowHeight,
                           decoration: ShapeDecoration(
-                            color: primary.shade400,
+                            color: widget.isDisabled!
+                                ? neutral.shade400
+                                : primary.shade400,
                             shape: RoundedRectangleBorder(
                               // side: BorderSide(
                               //   width: 2.40,
@@ -152,37 +162,51 @@ class _FullWidthButtonState extends State<FullWidthButton>
                         ),
                       ),
                       AnimatedPositioned(
-                        duration:
-                            Duration(milliseconds: widget.duration ?? 200),
-                        top: _isPressed ? 2 : 0,
+                        duration: Duration(
+                            milliseconds: widget.duration ?? _BaseDuration),
+                        top: _isPressed || widget.isDisabled! ? 2 : 0,
                         left: 0,
                         child: AnimatedContainer(
-                          duration:
-                              Duration(milliseconds: widget.duration ?? 200),
+                          duration: Duration(
+                              milliseconds: widget.duration ?? _BaseDuration),
                           width: widget.width ?? 350,
                           height: shadowHeight,
                           decoration: BoxDecoration(
-                            color: _isPressed
-                                ? primary.shade600
-                                : primary.shade400,
+                            color: widget.isDisabled!
+                                ? neutral.shade400
+                                : _isPressed
+                                    ? HexColor("FFA013")
+                                    : primary.shade400,
                             borderRadius: BorderRadius.circular(22),
                             border: !_isPressed
                                 ? Border(
-                                    left: BorderSide(color: primary.shade600),
-                                    top: BorderSide(color: primary.shade600),
-                                    right: BorderSide(color: primary.shade600),
+                                    left: BorderSide(
+                                        color: widget.isDisabled!
+                                            ? neutral.shade400
+                                            : primary.shade600),
+                                    top: BorderSide(
+                                        color: widget.isDisabled!
+                                            ? neutral.shade400
+                                            : primary.shade600),
+                                    right: BorderSide(
+                                        color: widget.isDisabled!
+                                            ? neutral.shade400
+                                            : primary.shade600),
                                     bottom: BorderSide(
-                                        width: 4, color: primary.shade600),
+                                        width: 4,
+                                        color: widget.isDisabled!
+                                            ? neutral.shade100
+                                            : primary.shade600),
                                   )
                                 : null,
                           ),
                         ),
                       ),
                       AnimatedPositioned(
-                          duration:
-                              Duration(milliseconds: widget.duration ?? 200),
+                          duration: Duration(
+                              milliseconds: widget.duration ?? _BaseDuration),
                           left: 0,
-                          top: _isPressed ? 2 : 0,
+                          top: _isPressed || widget.isDisabled! ? 2 : 0,
                           child: SizedBox(
                             width: widget.width ?? 350,
                             height: shadowHeight,
@@ -194,9 +218,11 @@ class _FullWidthButtonState extends State<FullWidthButton>
                   ),
                 ),
               ),
-              Positioned(
-                right: 3,
-                top: 30,
+              AnimatedPositioned(
+                right: 10,
+                top: _isPressed || widget.isDisabled! ? 35 : 33,
+                duration:
+                    Duration(milliseconds: widget.duration ?? _BaseDuration),
                 child: Transform(
                   transform: Matrix4.identity()
                     ..translate(0.0, 0.0)
@@ -205,9 +231,73 @@ class _FullWidthButtonState extends State<FullWidthButton>
                     width: 4.54,
                     height: 5.28,
                     decoration: ShapeDecoration(
-                      color: _isPressed ? primary.shade400 : primary.shade600,
+                      color: widget.isDisabled!
+                          ? Colors.transparent
+                          : _isPressed
+                              ? primary.shade400
+                              : primary.shade100,
                       shape: const OvalBorder(),
                     ),
+                  ),
+                ),
+              ),
+              AnimatedPositioned(
+                right: 5,
+                top: _isPressed || widget.isDisabled! ? 20 : 18,
+                duration:
+                    Duration(milliseconds: widget.duration ?? _BaseDuration),
+                child: Transform(
+                  transform: Matrix4.identity()
+                    ..translate(0.0, 0.0)
+                    ..rotateZ(0),
+                  child: SvgIcon(
+                    icon: "shape/eclipse3",
+                    color: widget.isDisabled!
+                        ? Colors.transparent
+                        : _isPressed
+                            ? primary.shade400
+                            : primary.shade100,
+                    size: 12,
+                  ),
+                ),
+              ),
+              AnimatedPositioned(
+                left: 9,
+                top: _isPressed || widget.isDisabled! ? 9 : 7,
+                duration:
+                    Duration(milliseconds: widget.duration ?? _BaseDuration),
+                child: Transform(
+                  transform: Matrix4.identity()
+                    ..translate(0.0, 0.0)
+                    ..rotateZ(0),
+                  child: SvgIcon(
+                    icon: "shape/eclipse1",
+                    color: widget.isDisabled!
+                        ? Colors.transparent
+                        : _isPressed
+                            ? primary.shade400
+                            : primary.shade100,
+                    size: 12,
+                  ),
+                ),
+              ),
+              AnimatedPositioned(
+                left: 5,
+                top: _isPressed || widget.isDisabled! ? 24 : 22,
+                duration:
+                    Duration(milliseconds: widget.duration ?? _BaseDuration),
+                child: Transform(
+                  transform: Matrix4.identity()
+                    ..translate(0.0, 0.0)
+                    ..rotateZ(0),
+                  child: SvgIcon(
+                    icon: "shape/eclipse2",
+                    color: widget.isDisabled!
+                        ? Colors.transparent
+                        : _isPressed
+                            ? primary.shade400
+                            : primary.shade100,
+                    size: 8,
                   ),
                 ),
               ),

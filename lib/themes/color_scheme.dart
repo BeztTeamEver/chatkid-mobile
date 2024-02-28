@@ -103,7 +103,7 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontSize: 24,
       fontWeight: FontWeight.bold,
       color: textDefault,
-      height: 1,
+      height: 1.02,
     ),
     titleSmall: TextStyle(
       fontSize: 24,

@@ -1,6 +1,7 @@
 import 'package:chatkid_mobile/pages/activation_page.dart';
+import 'package:chatkid_mobile/pages/explore/blogs/blog_page.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
-import 'package:chatkid_mobile/pages/history_tracking/user_profile_notification_page.dart';
+import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/init_page.dart';
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
@@ -9,6 +10,7 @@ import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/pages/sign_up/sign_up_page.dart';
 import 'package:flutter/material.dart';
+import 'package:chatkid_mobile/pages/chats/list_group_chat.dart';
 
 enum AppRoutes {
   activities,
@@ -20,7 +22,9 @@ enum AppRoutes {
   initPage,
   signUp,
   login,
-  wallet
+  wallet,
+  blog,
+  chat
 }
 
 final Map<String, String> routesName = <String, String>{
@@ -34,6 +38,8 @@ final Map<String, String> routesName = <String, String>{
   '${AppRoutes.initPage}': '/${AppRoutes.initPage}',
   '${AppRoutes.signUp}': '/${AppRoutes.signUp}',
   '${AppRoutes.login}': '/${AppRoutes.login}',
+  '${AppRoutes.blog}': '/${AppRoutes.blog}',
+  '${AppRoutes.chat}': '/${AppRoutes.chat}',
 };
 
 final Map<String, Widget Function(BuildContext)> routes =
@@ -50,4 +56,6 @@ final Map<String, Widget Function(BuildContext)> routes =
   '/${AppRoutes.initPage}': (BuildContext context) => const InitPage(),
   '/${AppRoutes.login}': (BuildContext context) => const LoginPage(),
   '/${AppRoutes.signUp}': (BuildContext context) => const SignUpPage(),
+  '/${AppRoutes.blog}': (BuildContext context) => const BlogPage(),
+  '/${AppRoutes.chat}': (BuildContext context) => const ListGroupChat(),
 };

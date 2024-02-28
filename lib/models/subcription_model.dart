@@ -1,28 +1,26 @@
 class SubcriptionModel {
-  final String? id;
-  final String? name;
-  final double? price;
-  final double? actualPrice;
-  final int? energy;
-  final int? status;
+  late String id;
+  late String name;
+  late String price;
+  late String actualPrice;
+  late int energy;
+  late int status;
 
-  const SubcriptionModel(
-      {this.id,
-      this.name,
-      this.price,
-      this.actualPrice,
-      this.energy,
-      this.status});
+  SubcriptionModel(
+      {required this.id,
+      required this.name,
+      required this.price,
+      required this.actualPrice,
+      required this.energy,
+      required this.status});
 
-  factory SubcriptionModel.fromJson(Map<String, dynamic> json) {
-    return SubcriptionModel(
-      id: json['id'],
-      name: json['name'],
-      price: (json['price'] as int).toDouble(),
-      actualPrice: (json['actualPrice'] as int).toDouble(),
-      energy: json['energy'],
-      status: json['status'],
-    );
+  SubcriptionModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    price = json['price'];
+    actualPrice = json['actualPrice'];
+    energy = json['energy'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toJson() {

@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 
 class Menu {
   String title;
-  String icon;
+  String iconDefault;
+  String iconActive;
   String route;
   List<String> role;
   Widget widget;
 
   Menu({
     required this.title,
-    required this.icon,
+    required this.iconDefault,
+    required this.iconActive,
     required this.route,
     required this.role,
     required this.widget,

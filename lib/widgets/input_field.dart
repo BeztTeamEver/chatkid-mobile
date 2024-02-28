@@ -45,8 +45,9 @@ class _InputFieldState extends State<InputField> {
         const SizedBox(height: 10),
         FormBuilderTextField(
           name: widget.name,
-          controller: widget.controller,
+          // controller: widget.controller,
           keyboardType: widget.type,
+          key: widget.key,
           autofocus: widget.autoFocus,
           validator: widget.validator,
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -60,6 +61,7 @@ class _InputFieldState extends State<InputField> {
           },
           decoration: InputDecoration(
             hintText: widget.hint,
+            errorMaxLines: 2,
             errorText: widget.errorText,
           ),
         ),

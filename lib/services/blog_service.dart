@@ -13,9 +13,18 @@ class BlogService {
     final response = await BaseHttp.instance.get(
       endpoint: Endpoint.blogTypeEndPoint,
     );
+    Logger().d(response.body);
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       List data = jsonDecode(response.body);
       final types = data.map((res) => BlogTypeModel.fromJson(res)).toList();
+      types.insert(
+          0,
+          BlogTypeModel.fromJson({
+            "id": "secret",
+            "name": "Vũ Trụ",
+            "imageUrl": "/assets/blog/vu_tru.png"
+          }));
+      types.removeAt(types.length - 1);
       return types;
     }
     switch (response.statusCode) {
@@ -37,11 +46,10 @@ class BlogService {
 
   Future<List<BlogModel>> getBlogsByTypeId(String id) async {
     final response = await BaseHttp.instance
-        .get(endpoint: Endpoint.blogEndPoint, param: {'type': id});
+        .get(endpoint: Endpoint.blogTypeEndPointById.replaceFirst("{id}", id));
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      final data = jsonDecode(response.body);
-      final model = PaginationResponseModel.fromJson(data);
-      return model.items.map((res) => BlogModel.fromJson(res)).toList();
+      List data = jsonDecode(response.body);
+      return data.map((res) => BlogModel.fromJson(res)).toList();
     }
     switch (response.statusCode) {
       case 401:

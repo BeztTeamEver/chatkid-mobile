@@ -6,6 +6,8 @@ import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
+const TIME_OUT = 30;
+
 class BaseHttp {
   static BaseHttp? _instance;
   static const String apiVersion = "1.0";
@@ -32,8 +34,10 @@ class BaseHttp {
     return url;
   }
 
-  Future<Map<String, String>> _getHeaders(Map<String, String>? headers) async {
-    String token = await AuthService.getAccessToken();
+  Future<Map<String, String>> _getHeaders(
+      Map<String, String>? headers, bool? isUseFamilyToken) async {
+    String token =
+        await AuthService.getAccessToken(isUseFamilyToken: isUseFamilyToken);
 
     return {
       "Content-Type": "application/json",
@@ -44,82 +48,113 @@ class BaseHttp {
     };
   }
 
-  Future<http.Response> get(
-      {required String endpoint,
-      Map<String, dynamic>? param,
-      Map<String, String>? headers}) async {
+  Future<http.Response> get({
+    required String endpoint,
+    Map<String, dynamic>? param,
+    Map<String, String>? headers,
+    bool? isUseFamilyToken,
+  }) async {
     String url = _combineUrl(endpoint, param);
-    final combineHeaders = await _getHeaders(headers);
+    final combineHeaders = await _getHeaders(headers, isUseFamilyToken);
     return await http.Client()
         .get(
       Uri.parse(url),
       headers: combineHeaders,
     )
         .timeout(
-      const Duration(seconds: 10),
+      const Duration(seconds: TIME_OUT),
       onTimeout: () {
         throw Exception('Connection Timeout!');
       },
     );
   }
 
-  Future<http.Response> post(
-      {required String endpoint,
-      Map<String, dynamic>? param,
-      Map<String, String>? headers,
-      String? body}) async {
+  Future<http.Response> post({
+    required String endpoint,
+    Map<String, dynamic>? param,
+    Map<String, String>? headers,
+    bool? isUseFamilyToken,
+    String? body,
+  }) async {
     String url = _combineUrl(endpoint, param);
+
     return await http
         .post(
       Uri.parse(url),
       body: body,
-      headers: await _getHeaders(headers),
+      headers: await _getHeaders(headers, isUseFamilyToken),
     )
         .catchError((err, s) {
       Logger().e(err, stackTrace: s);
       throw Exception(err);
     }).timeout(
-      const Duration(seconds: 10),
+      const Duration(seconds: TIME_OUT),
       onTimeout: () {
         throw Exception('Connection Timeout!');
       },
     );
   }
 
-  Future<http.Response> put(
-      {required String endpoint,
-      Map<String, dynamic>? param,
-      Map<String, String>? headers,
-      String? body}) async {
+  Future<http.Response> put({
+    required String endpoint,
+    Map<String, dynamic>? param,
+    Map<String, String>? headers,
+    bool? isUseFamilyToken,
+    String? body,
+  }) async {
     String url = _combineUrl(endpoint, param);
     return await http
         .put(
       Uri.parse(url),
       body: body,
-      headers: await _getHeaders(headers),
+      headers: await _getHeaders(headers, isUseFamilyToken),
     )
         .timeout(
-      const Duration(seconds: 10),
+      const Duration(seconds: TIME_OUT),
       onTimeout: () {
         throw Exception('Connection Timeout!');
       },
     );
   }
 
-  Future<http.Response> delete(
-      {required String endpoint,
-      Map<String, dynamic>? param,
-      Map<String, String>? headers,
-      String? body}) async {
+  Future<http.Response> delete({
+    required String endpoint,
+    Map<String, dynamic>? param,
+    Map<String, String>? headers,
+    bool? isUseFamilyToken,
+    String? body,
+  }) async {
     String url = _combineUrl(endpoint, param);
     return await http
         .delete(
       Uri.parse(url),
-      headers: await _getHeaders(headers),
+      headers: await _getHeaders(headers, isUseFamilyToken),
       body: body,
     )
         .timeout(
-      const Duration(seconds: 10),
+      const Duration(seconds: TIME_OUT),
+      onTimeout: () {
+        throw Exception('Connection Timeout!');
+      },
+    );
+  }
+
+  Future<http.Response> patch({
+    required String endpoint,
+    Map<String, dynamic>? param,
+    Map<String, String>? headers,
+    bool? isUseFamilyToken,
+    String? body,
+  }) async {
+    String url = _combineUrl(endpoint, param);
+    return await http
+        .patch(
+      Uri.parse(url),
+      headers: await _getHeaders(headers, isUseFamilyToken),
+      body: body,
+    )
+        .timeout(
+      const Duration(seconds: TIME_OUT),
       onTimeout: () {
         throw Exception('Connection Timeout!');
       },

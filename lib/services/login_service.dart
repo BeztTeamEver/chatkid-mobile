@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/auth_model.dart';
+import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/resgis_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
@@ -18,22 +20,26 @@ class AuthService {
       body: requestAuthModal.toJson(),
     );
 
-    if (response.statusCode == 200) {
-      final authTokens = AuthModel.fromJson(jsonDecode(response.body));
-      Logger().d(authTokens.token);
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      final body = jsonDecode(response.body);
+      final authTokens = AuthModel.fromJson(body);
+      final family = FamilyModel.fromJson(body['family']);
+      Logger().d(family.familyId);
+      _localStorage.setString(LocalStorageKey.FAMILY_ID, family.familyId);
       _saveToken(authTokens);
       return authTokens;
-    } else {
-      FirebaseService.instance.signOut();
-      switch (response.statusCode) {
-        case 404:
-          throw Exception('Tài khoản này chưa được đăng ký');
-        case 403:
-          throw Exception(
-              'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
-        default:
-          throw Exception('Lỗi đăng nhập, vui lòng thử lại sau!');
-      }
+    }
+    FirebaseService.instance.signOut();
+    Logger().d(response.body);
+
+    switch (response.statusCode) {
+      case 404:
+        throw Exception('Tài khoản này chưa được đăng ký');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      default:
+        throw Exception('Lỗi đăng nhập, vui lòng thử lại sau!');
     }
   }
 
@@ -46,15 +52,18 @@ class AuthService {
       body: requestAuthModal.toJson(),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
       final regisToken = RegisModel.fromJson(jsonDecode(response.body));
       _localStorage.preferences
-          .setString('accessToken', regisToken.verifyToken);
-      Logger().d(regisToken.verifyToken);
+          .setString('accessToken', regisToken.accessToken);
+      Logger().d(regisToken.accessToken);
       return RegisModel.fromJson(jsonDecode(response.body));
     } else {
       FirebaseService.instance.signOut();
+      Logger().d(response.body);
       switch (response.statusCode) {
+        case 400:
+          throw Exception('Tài khoản này đã được đăng kí');
         case 401:
           throw Exception('Tài khoản này đã được đăng kí');
         case 403:
@@ -76,6 +85,8 @@ class AuthService {
       _saveToken(authTokens);
       return authTokens;
     } else {
+      Logger().d(response.body);
+
       switch (response.statusCode) {
         case 401:
           throw Exception('Unauthorized');
@@ -91,22 +102,30 @@ class AuthService {
   static Future<bool> signOut() async {
     // TODO: call api sign out here
     await _localStorage.removeToken();
+    await _localStorage.removeUser();
+    await _localStorage.preferences.remove(LocalStorageKey.FAMILY_ID);
+
     return true;
   }
 
   static Future<bool> verifyOtp(String otp) async {
-    final response = await BaseHttp.instance.get(
+    final response = await BaseHttp.instance.post(
       endpoint: Endpoint.verifyOtpEndPoint,
-      param: {'otp': otp},
+      body: RequestOtpModel(otp: otp).toJson(),
     );
-    if (response.statusCode == 200) {
+    Logger().d(response.body);
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
       final authTokens = AuthModel.fromJson(jsonDecode(response.body));
-      Logger().d(authTokens.token);
+      Logger().d(authTokens.accessToken);
 
       _saveToken(authTokens);
       return true;
     } else {
+      Logger().d(response.body);
+
       switch (response.statusCode) {
+        case 400:
+          throw Exception('Mã OTP không đúng');
         case 401:
           throw Exception('Mã OTP không đúng');
         case 403:
@@ -133,28 +152,31 @@ class AuthService {
 
   static void _saveToken(AuthModel authTokens) async {
     await _localStorage.saveToken(
-      authTokens.token,
+      authTokens.accessToken,
       authTokens.refreshToken,
     );
   }
 
-  static Future<String> getAccessToken() async {
-    String accessToken = _localStorage.getToken()?.token ?? "";
+  static Future<String> getAccessToken({bool? isUseFamilyToken}) async {
+    String accessToken = _localStorage
+            .getToken(isUseFamilyToken: isUseFamilyToken)
+            ?.accessToken ??
+        "";
 
     if (accessToken.isEmpty) {
       accessToken = _localStorage.preferences.getString("accessToken") ?? "";
       return accessToken;
     }
-    if (isTokenExpired()) {
-      AuthModel tokens = await refreshToken();
-      _localStorage.saveToken(tokens.token, tokens.refreshToken);
-      return tokens.token;
-    }
+    // if (isTokenExpired()) {
+    //   AuthModel tokens = await refreshToken();
+    //   _localStorage.saveToken(tokens.accessToken, tokens.refreshToken);
+    //   return tokens.accessToken;
+    // }
     return accessToken;
   }
 
   static bool isTokenExpired() {
-    final token = _localStorage.getToken()?.token;
+    final token = _localStorage.getToken()?.accessToken;
     if (token == null) {
       return true;
     }
@@ -162,10 +184,11 @@ class AuthService {
     if (parts.length != 3) {
       return true;
     }
+    return false;
     final payload = parts[1];
-    final decoded =
-        jsonDecode(ascii.decode(base64.decode(base64.normalize(payload))));
-    final exp = decoded['exp'] * 1000;
-    return DateTime.now().isAfter(DateTime.fromMillisecondsSinceEpoch(exp));
+    Logger().d(payload);
+    // final decoded = jsonDecode(base64.decode(base64.normalize(payload)));
+    // final exp = decoded['exp'] * 1000;
+    // return DateTime.now().isAfter(DateTime.fromMillisecondsSinceEpoch(exp));
   }
 }

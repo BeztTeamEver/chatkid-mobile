@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "343387729372",
+    "firebase_url": "https://kidtalkie-979b7-default-rtdb.firebaseio.com",
     "project_id": "kidtalkie-979b7",
     "storage_bucket": "kidtalkie-979b7.appspot.com"
   },
@@ -14,11 +15,35 @@
       },
       "oauth_client": [
         {
+          "client_id": "343387729372-1jfsukpaaree2hv0l3unfdemp5dipk1l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatkid_mobile",
+            "certificate_hash": "a9b39dc711ba6c0e2c91c7148ee13cd8f021ac87"
+          }
+        },
+        {
+          "client_id": "343387729372-32nlrcr0e2vru2dk5ia7rt4ncoir079u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatkid_mobile",
+            "certificate_hash": "64655cd17dd207fc55b4eb15ed2fb38cd7ccc873"
+          }
+        },
+        {
           "client_id": "343387729372-pi947t2hl1e9rt8euhba8gs9g2qjlq3i.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.chatkid_mobile",
             "certificate_hash": "54cadd72bc6c9b41673a4e85c722a043e9c18a04"
+          }
+        },
+        {
+          "client_id": "343387729372-r9p5nk8nls2h4hrg53505ddib46si1me.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatkid_mobile",
+            "certificate_hash": "6e03bf8f42475bc66975b3300069f98609749628"
           }
         },
         {
@@ -63,6 +88,14 @@
           "android_info": {
             "package_name": "com.kidtalkie.notification",
             "certificate_hash": "54cadd72bc6c9b41673a4e85c722a043e9c18a04"
+          }
+        },
+        {
+          "client_id": "343387729372-tn0gmc2osbqr6pfrq1v3k9ll5l49frmn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kidtalkie.notification",
+            "certificate_hash": "64655cd17dd207fc55b4eb15ed2fb38cd7ccc873"
           }
         },
         {

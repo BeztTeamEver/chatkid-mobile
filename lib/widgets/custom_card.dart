@@ -8,6 +8,9 @@ class CustomCard extends StatefulWidget {
   final CrossAxisAlignment crossAxisAlignment;
   final GestureTapCallback? onTap;
   final Color? onTapColor;
+  final double? height;
+  final EdgeInsets? padding;
+
   const CustomCard({
     super.key,
     this.onTap,
@@ -15,6 +18,8 @@ class CustomCard extends StatefulWidget {
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.center,
     required this.children,
+    this.padding,
+    this.height,
   });
 
   @override
@@ -24,24 +29,20 @@ class CustomCard extends StatefulWidget {
 class _CustomCardState extends State<CustomCard> {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        clipBehavior: Clip.hardEdge,
-        child: InkWell(
-          splashColor: widget.onTapColor ?? primary.shade100,
-          overlayColor:
-              MaterialStateProperty.all(widget.onTapColor ?? primary.shade100),
-          onTap: widget.onTap,
-          child: SizedBox(
-            height: 159,
-            child: Column(
-              mainAxisAlignment: widget.mainAxisAlignment,
-              crossAxisAlignment: widget.crossAxisAlignment,
-              children: widget.children,
-            ),
+    return Card(
+      child: InkWell(
+        splashColor: widget.onTapColor ?? primary.shade100,
+        overlayColor:
+            MaterialStateProperty.all(widget.onTapColor ?? primary.shade100),
+        onTap: widget.onTap,
+        child: Container(
+          padding: widget.padding ?? const EdgeInsets.all(10),
+          height: widget.height,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: widget.mainAxisAlignment,
+            crossAxisAlignment: widget.crossAxisAlignment,
+            children: widget.children,
           ),
         ),
       ),

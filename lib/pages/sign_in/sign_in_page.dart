@@ -25,33 +25,34 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const LogoWidget(),
             const SizedBox(height: 20),
-            Text.rich(
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
-              TextSpan(
-                children: <TextSpan>[
-                  const TextSpan(
-                      text:
-                          "Chúng tôi sử dụng tính năng đăng ký bằng tài khoản Google để xác minh rằng người lớn đang thiết lập tài khoản "),
-                  TextSpan(
-                    text: "KidTalkie",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor),
-                  ),
-                  const TextSpan(
-                      text: ", và trẻ của bạn có quyền sử dụng ứng dụng này"),
-                ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text.rich(
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
+                TextSpan(
+                  children: <TextSpan>[
+                    const TextSpan(
+                        text:
+                            "Chúng tôi sử dụng tính năng đăng ký bằng tài khoản Google để xác minh rằng người lớn đang thiết lập tài khoản "),
+                    TextSpan(
+                      text: "KidTalkie",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor),
+                    ),
+                    const TextSpan(
+                        text: ", và trẻ của bạn có quyền sử dụng ứng dụng này"),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 100),
             GoogleButton(isLogin: true),
-            const SizedBox(height: 20),
             const SwitchSignIn(),
             const SizedBox(height: 20),
             SvgPicture.asset(

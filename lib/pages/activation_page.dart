@@ -15,7 +15,7 @@ class _ActivationPageState extends ConsumerState<ActivationPage> {
     return Container(
       padding: const EdgeInsets.all(0),
       child: const Center(
-        child: Text('Activation Page'),
+        child: Text('Thành tựu'),
       ),
     );
   }

@@ -8,14 +8,16 @@ class FamilyRequestModel {
   final String? name;
   final String? id;
   final String? email;
+  final String? avatarUrl;
 
-  const FamilyRequestModel({this.name, this.id, this.email});
+  const FamilyRequestModel({this.name, this.id, this.email, this.avatarUrl});
 
   factory FamilyRequestModel.fromJson(Map<String, dynamic> json) {
     return FamilyRequestModel(
       name: json['name'],
       id: json['id'],
       email: json['email'],
+      avatarUrl: json['avatarUrl'],
     );
   }
 
@@ -23,51 +25,44 @@ class FamilyRequestModel {
     return jsonEncode({
       "name": name,
       "id": id,
+      "avatarUrl": avatarUrl,
       "email": email,
     });
   }
 }
 
 class FamilyModel {
-  final String name;
-  final String id;
-  final String ownerMail;
-  final int status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final List<UserModel> users;
+  final String familyId;
+  final String familyName;
+  final String familyEmail;
+  // final int status;
+  final List<UserModel> members;
 
   const FamilyModel(
-      {required this.id,
-      required this.name,
-      required this.ownerMail,
-      required this.status,
-      required this.createdAt,
-      required this.updatedAt,
-      required this.users});
+      {required this.familyId,
+      required this.familyName,
+      required this.familyEmail,
+      // required this.status,
+      required this.members});
 
   factory FamilyModel.fromJson(Map<String, dynamic> json) {
-    json['users'] = json['users'] != null
-        ? (json['users'] as List).map((e) => UserModel.fromJson(e)).toList()
+    json['members'] = json['members'] != null
+        ? (json['members'] as List).map((e) => UserModel.fromJson(e)).toList()
         : [];
     return FamilyModel(
-      id: json['id'],
-      name: json['name'],
-      ownerMail: json['ownerMail'],
-      status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      users: json['users'] as List<UserModel>,
+      familyId: json['familyId'],
+      familyName: json['familyName'],
+      familyEmail: json['familyEmail'],
+      // status: json['status'],
+      members: json['members'] as List<UserModel>,
     );
   }
   Map<String, dynamic> toMap() => {
-        "id": id,
-        "name": name,
-        "ownerMail": ownerMail,
-        "status": status,
-        "createdAt": createdAt,
-        "updatedAt": updatedAt,
-        "users": users,
+        "familyId": familyId,
+        "familyName": familyName,
+        "familyEmail": familyEmail,
+        // "status": status,
+        "members": members,
       };
 
   String toJson() {
