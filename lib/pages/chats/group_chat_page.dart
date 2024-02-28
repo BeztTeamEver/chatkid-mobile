@@ -114,7 +114,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         pageSize: 10,
         channelId: widget.channelId,
       );
-      _pageNumber++;
 
       await ref.read(getChannelMessagesProvider(request).future).then(
         (value) {

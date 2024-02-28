@@ -19,36 +19,36 @@ class ResponseModel<TData> {
 
 class PagingResponseModel<T extends IBaseModel> {
   List<T> items;
-  int limit;
-  int totalItems;
-  int page;
-  String? search;
+  // int? limit;
+  int totalItem;
+  int pageNumber;
+  int pageSize;
 
   PagingResponseModel({
     required this.items,
-    required this.limit,
-    required this.totalItems,
-    required this.page,
-    this.search,
+    // this.limit,
+    required this.totalItem,
+    required this.pageSize,
+    required this.pageNumber,
   });
 
   factory PagingResponseModel.fromJson(Map<String, dynamic> json) {
     return PagingResponseModel(
       items: json['items'],
-      limit: json['limit'],
-      totalItems: json['totalItems'],
-      page: json['page'],
-      search: json['search'],
+      // limit: json['limit'],
+      totalItem: json['totalItem'],
+      pageNumber: json['pageNumber'],
+      pageSize: json['pageSize'],
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['items'] = this.items;
-    data['limit'] = this.limit;
-    data['totalItems'] = this.totalItems;
-    data['page'] = this.page;
-    data['search'] = this.search;
+    // data['limit'] = this.limit;
+    data['totalItem'] = this.totalItem;
+    data['pageNumber'] = this.pageNumber;
+    data['pageSize'] = this.pageSize;
     return data;
   }
 }
