@@ -13,7 +13,7 @@ class TasksCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
-      height: 230,
+      height: 220,
       mainAxisAlignment: MainAxisAlignment.start,
       padding: const EdgeInsets.all(20),
       children: [
