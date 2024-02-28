@@ -1,12 +1,9 @@
 import 'dart:convert';
 
-import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/paypal_model.dart';
 import 'package:chatkid_mobile/models/subcription_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/pages/profile/payment_page.dart';
 import 'package:chatkid_mobile/pages/profile/payment_success_page.dart';
-import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/providers/paypal_provider.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
@@ -105,8 +102,7 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
                     children: [
                       Text(
                           NumberFormat.formatAmount(widget
-                              .supcription.actualPrice!
-                              .toStringAsFixed(0)),
+                              .supcription.actualPrice!),
                           style: const TextStyle(
                               color: Color.fromRGBO(255, 155, 6, 1),
                               fontSize: 36,
@@ -156,7 +152,7 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  '${NumberFormat.formatAmount(widget.supcription.actualPrice!.toStringAsFixed(0))} vnđ',
+                                  '${NumberFormat.formatAmount(widget.supcription.actualPrice!)} vnđ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -196,7 +192,7 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  '${NumberFormat.formatAmount(widget.supcription.actualPrice!.toStringAsFixed(0))} vnđ',
+                                  '${NumberFormat.formatAmount(widget.supcription.actualPrice!)} vnđ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -352,6 +348,13 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
           ),
         ),
       ),
+      // bottomNavigationBar: BottomMenu(
+      //   currentIndex: 3,
+      //   onTap: (index) {
+      //     Navigator.of(context).push(
+      //         MaterialPageRoute(builder: (context) => MainPage(index: index)));
+      //   },
+      // ),
     );
   }
 }
