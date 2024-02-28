@@ -102,7 +102,9 @@ class AuthService {
   static Future<bool> signOut() async {
     // TODO: call api sign out here
     await _localStorage.removeToken();
-    await _localStorage.clear();
+    await _localStorage.removeUser();
+    await _localStorage.preferences.remove(LocalStorageKey.FAMILY_ID);
+
     return true;
   }
 
@@ -165,11 +167,11 @@ class AuthService {
       accessToken = _localStorage.preferences.getString("accessToken") ?? "";
       return accessToken;
     }
-    if (isTokenExpired()) {
-      AuthModel tokens = await refreshToken();
-      _localStorage.saveToken(tokens.accessToken, tokens.refreshToken);
-      return tokens.accessToken;
-    }
+    // if (isTokenExpired()) {
+    //   AuthModel tokens = await refreshToken();
+    //   _localStorage.saveToken(tokens.accessToken, tokens.refreshToken);
+    //   return tokens.accessToken;
+    // }
     return accessToken;
   }
 

@@ -190,83 +190,87 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
           ),
           Row(
             children: [
-              CustomCard(
-                onTap: () => {
-                  Navigator.push(
-                    context,
-                    createRoute(
-                      () => GroupChatPage(
-                        channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
-                      ),
-                    ),
-                  )
-                },
-                children: [
-                  Container(
-                    width: double.infinity,
-                    child: Center(
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        alignment: WrapAlignment.center,
-                        children: [
-                          Avatar(
-                            icon: iconAnimalList[0],
-                            size: 40,
-                          ),
-                          Avatar(
-                            icon: iconAnimalList[1],
-                            size: 40,
-                          ),
-                          Avatar(
-                            icon: iconAnimalList[2],
-                            size: 40,
-                          ),
-                          Avatar(
-                            icon: iconAnimalList[3],
-                            size: 40,
-                          ),
-                          Avatar(
-                            icon: iconAnimalList[4],
-                            size: 40,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "Gia đình",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.bold,
+              Expanded(
+                child: CustomCard(
+                  onTap: () => {
+                    Navigator.push(
+                      context,
+                      createRoute(
+                        () => const GroupChatPage(
+                          channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
                         ),
-                  )
-                ],
+                      ),
+                    )
+                  },
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      child: Center(
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            Avatar(
+                              icon: iconAnimalList[0],
+                              size: 40,
+                            ),
+                            Avatar(
+                              icon: iconAnimalList[1],
+                              size: 40,
+                            ),
+                            Avatar(
+                              icon: iconAnimalList[2],
+                              size: 40,
+                            ),
+                            Avatar(
+                              icon: iconAnimalList[3],
+                              size: 40,
+                            ),
+                            Avatar(
+                              icon: iconAnimalList[4],
+                              size: 40,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "Gia đình",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    )
+                  ],
+                ),
               ),
               const SizedBox(
                 width: 10,
               ),
-              CustomCard(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    createRoute(() => BotChatPage(botType: BotType.PUMKIN)),
-                  );
-                },
-                children: [
-                  SvgPicture.asset('assets/robot/pumkin.svg'),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    "Bí ngô",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  )
-                ],
+              Expanded(
+                child: CustomCard(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      createRoute(() => BotChatPage(botType: BotType.PUMKIN)),
+                    );
+                  },
+                  children: [
+                    SvgPicture.asset('assets/robot/pumkin.svg'),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "Bí ngô",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    )
+                  ],
+                ),
               ),
             ],
           ),

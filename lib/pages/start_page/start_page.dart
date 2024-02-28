@@ -35,6 +35,8 @@ class _StartPageState extends ConsumerState<StartPage> {
   late final Future<List<UserModel>> familyUsers;
   UserModel? _selectedAccount = null;
   int _selectedIndex = -1;
+  bool _isCreateUser = true;
+
   @override
   void initState() {
     super.initState();
@@ -77,7 +79,7 @@ class _StartPageState extends ConsumerState<StartPage> {
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 21),
-          margin: const EdgeInsets.only(top: 100, bottom: 100),
+          margin: const EdgeInsets.only(top: 60, bottom: 60),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -88,11 +90,11 @@ class _StartPageState extends ConsumerState<StartPage> {
                     Text(
                       "Các thành viên trong gia đình",
                       style:
-                          Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                fontSize: 18,
+                          Theme.of(context).textTheme.headlineSmall!.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black,
                               ),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(
                       height: 10,
@@ -101,7 +103,6 @@ class _StartPageState extends ConsumerState<StartPage> {
                       "Bạn được tạo tối đa 5 tài khoản cho các thành viên trong gia đình của mình ;)",
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                             color: neutral.shade700,
-                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                       textAlign: TextAlign.center,
@@ -118,9 +119,12 @@ class _StartPageState extends ConsumerState<StartPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data as FamilyModel;
+                      if (data.members.length >= 5) {
+                        _isCreateUser = false;
+                      }
                       return ListView.separated(
                         shrinkWrap: true,
-                        itemCount: data.members.length,
+                        itemCount: 5,
                         separatorBuilder: (context, index) => const SizedBox(
                           height: 10,
                         ),
@@ -190,6 +194,7 @@ class _StartPageState extends ConsumerState<StartPage> {
                   )),
               FullWidthButton(
                 height: 50,
+                isDisabled: !_isCreateUser,
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -222,7 +227,16 @@ class _StartPageState extends ConsumerState<StartPage> {
                     ),
                   ],
                 ),
-              )
+              ),
+              !_isCreateUser
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Text(
+                        "Bạn đã tạo đủ số tài khoản cho gia đình",
+                        style: TextStyle(color: neutral.shade500),
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),

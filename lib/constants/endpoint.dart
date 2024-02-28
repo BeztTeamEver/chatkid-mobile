@@ -40,7 +40,7 @@ class Endpoint {
   static const capturePaypalEndPoint = "/api/paypal/capture";
 
   //Notification
-  static const notificationEndPoint = "/api/notifications";
+  static const notificationEndPoint = "/api/history";
 
   //History
   static const historyEndPoint = "/api/history";
