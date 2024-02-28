@@ -28,7 +28,7 @@ class _ActivityCardState extends State<ActivityCard> {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
-      height: 320,
+      height: 340,
       mainAxisAlignment: MainAxisAlignment.start,
       padding: EdgeInsets.all(20),
       children: [
