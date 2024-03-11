@@ -4,10 +4,12 @@ import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_btn/loading_btn.dart';
+import 'package:logger/logger.dart';
 
 class MoMoQRCodePage extends StatefulWidget {
   int index;
-  MoMoQRCodePage({super.key, this.index = 100});
+  String identifier;
+  MoMoQRCodePage({super.key, this.index = 100, this.identifier = ""});
 
   @override
   State<MoMoQRCodePage> createState() => _MoMoQRCodePageState();
@@ -16,6 +18,7 @@ class MoMoQRCodePage extends StatefulWidget {
 class _MoMoQRCodePageState extends State<MoMoQRCodePage> {
   @override
   Widget build(BuildContext context) {
+    Logger().i(widget.identifier);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -25,7 +28,7 @@ class _MoMoQRCodePageState extends State<MoMoQRCodePage> {
               const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.grey),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text("Các gói năng lượng"),
+        title: const Text("Chuyển khoản"),
         titleTextStyle: const TextStyle(
           color: Color(0xFF242837),
           fontSize: 16,
@@ -36,15 +39,42 @@ class _MoMoQRCodePageState extends State<MoMoQRCodePage> {
         centerTitle: true,
       ),
       body: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         child: Column(
           children: [
             Image.asset(
               "assets/payment/qr${widget.index}.jpg",
-              width: MediaQuery.of(context).size.width - 20,
+              width: MediaQuery.of(context).size.width - 50,
             ),
             const SizedBox(
               height: 20,
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40),
+                  color: Colors.white,
+                  border: Border.all(color: Colors.orangeAccent, width: 1.5)),
+              child: Row(children: [
+                const Text(
+                  "Nội dung chuyển khoản:",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 35),
+                  child: Text(
+                    widget.identifier,
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  ),
+                ),
+              ]),
+            ),
+            const SizedBox(
+              height: 15,
             ),
             SizedBox(
               width: double.infinity,
@@ -89,8 +119,8 @@ class _MoMoQRCodePageState extends State<MoMoQRCodePage> {
             ElevatedButton(
               onPressed: () => {Navigator.pop(context)},
               style: ButtonStyle(
-                side: const MaterialStatePropertyAll(BorderSide(
-                    color: Color.fromRGBO(255, 155, 6, 1), width: 1.5)),
+                side: const MaterialStatePropertyAll(
+                    BorderSide(color: Colors.orangeAccent, width: 1.5)),
                 minimumSize: MaterialStateProperty.all(
                     Size(MediaQuery.of(context).size.width, 50)),
                 padding: MaterialStateProperty.all(

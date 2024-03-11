@@ -4,6 +4,7 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/profile/transfer_energy.dart';
 import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
@@ -64,7 +65,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     final currentUser = UserModel.fromJson(jsonDecode(
                         LocalStorage.instance.preferences.getString('user') ??
                             ""));
-                    int totalEnergy = 100;
+                    int totalEnergy = currentUser.energy ?? 100;
                     return Column(
                       children: [
                         SizedBox(
@@ -237,28 +238,47 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               const SizedBox(height: 20),
                               Column(
                                 children: data.members
+                                    .fold(<UserModel>[],
+                                        (previousValue, element) {
+                                      if (element.id != currentUser.id &&
+                                          element.role == RoleConstant.Child) {
+                                        previousValue.add(element);
+                                      }
+                                      return previousValue;
+                                    })
                                     .map(
-                                      (e) => Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 16),
-                                        child: Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 40,
-                                              height: 40,
-                                              child: AvatarPng(
-                                                imageUrl: e.avatarUrl,
+                                      (e) => GestureDetector(
+                                        onTap: () => {
+                                          Navigator.of(context).push(
+                                            createRoute(
+                                              () => TransferEnergyPage(
+                                                  totalEnergy: totalEnergy,
+                                                  user: e),
+                                            ),
+                                          )
+                                        },
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 16),
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 40,
+                                                height: 40,
+                                                child: AvatarPng(
+                                                  imageUrl: e.avatarUrl,
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Text(
-                                              e.name ?? "Bé",
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 17,
-                                                  letterSpacing: 0.5),
-                                            ),
-                                          ],
+                                              const SizedBox(width: 12),
+                                              Text(
+                                                e.name ?? "Bé",
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 17,
+                                                    letterSpacing: 0.5),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     )
@@ -355,8 +375,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     Logger().e(snapshot.error);
                     return Container();
                   } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return Container(
+                      height: MediaQuery.of(context).size.height - 100,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     );
                   }
                 }),

@@ -77,6 +77,23 @@ class _WalletPageState extends State<WalletPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon:
+              const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.grey),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text("Ví KidTalkie"),
+        titleTextStyle: const TextStyle(
+          color: Color(0xFF242837),
+          fontSize: 16,
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.w600,
+          height: 0,
+        ),
+        centerTitle: true,
+      ),
       body: Center(
         child: ListView(children: [
           Padding(

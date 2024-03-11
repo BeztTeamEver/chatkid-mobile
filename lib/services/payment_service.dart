@@ -34,6 +34,19 @@ class PaymentService {
       throw Exception('Failed to capture paypal order');
     }
   }
+
+  Future<bool> createTransaction(
+      String userId, String orderId, int energy) async {
+    final response = await BaseHttp.instance.post(
+      endpoint: Endpoint.createTransactionEndPoint,
+      param: {'id': userId, 'orderId': orderId, 'energy': energy},
+    );
+    if (response.statusCode >= 200 && response.statusCode <= 204) {
+      return true;
+    } else {
+      throw Exception('Failed to capture paypal order');
+    }
+  }
 }
 
 final paypalServiceProvider = Provider<PaymentService>((ref) {
