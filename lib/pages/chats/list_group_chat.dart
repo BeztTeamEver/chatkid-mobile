@@ -277,55 +277,42 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
           const SizedBox(
             height: 8,
           ),
-          Wrap(
-            runSpacing: 8,
-            children: [
-              switch (familyChannel) {
-                AsyncData(:final value) => SelectButton(
-                    label: value.name,
-                    icon:
-                        "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
-                    onPressed: () {
-                      ref.watch(receiveMessage);
-                      Navigator.push(
-                        context,
-                        createRoute(
-                          () => GroupChatPage(
-                            channelId: value.id,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                AsyncError(:final error, :final stackTrace) =>
-                  Builder(builder: (context) {
-                    Logger().e(error, stackTrace: stackTrace);
-                    return Container();
-                  }),
-                AsyncLoading() => CustomCircleProgressIndicator(),
-              },
-              // SelectButton(
-              //   label: "Gia đình",
-              //   icon:
-              //       "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
-              //   onPressed: () =>
-              //       Navigator.push(context, createRoute(() => GroupChatPage())),
-              // ),
-              ElevatedButton(
-                onPressed: () async {
-                  await FirebaseService.instance.signOut().then((value) {
-                    AuthService.signOut();
-                    Navigator.of(context).pushReplacement(
-                      createRoute(
-                        () => const LoginPage(),
-                      ),
-                    );
-                  });
-                },
-                child: const Text("Sign out"),
-              )
-            ],
-          )
+          // Wrap(
+          //   runSpacing: 8,
+          //   children: [
+          //     switch (familyChannel) {
+          //       AsyncData(:final value) => SelectButton(
+          //           label: value.name,
+          //           icon:
+          //               "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
+          //           onPressed: () {
+          //             ref.watch(receiveMessage);
+          //             Navigator.push(
+          //               context,
+          //               createRoute(
+          //                 () => GroupChatPage(
+          //                   channelId: value.id,
+          //                 ),
+          //               ),
+          //             );
+          //           },
+          //         ),
+          //       AsyncError(:final error, :final stackTrace) =>
+          //         Builder(builder: (context) {
+          //           Logger().e(error, stackTrace: stackTrace);
+          //           return Container();
+          //         }),
+          //       AsyncLoading() => CustomCircleProgressIndicator(),
+          //     },
+          //     // SelectButton(
+          //     //   label: "Gia đình",
+          //     //   icon:
+          //     //       "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
+          //     //   onPressed: () =>
+          //     //       Navigator.push(context, createRoute(() => GroupChatPage())),
+          //     // ),
+          //   ],
+          // )
         ],
       ),
     );

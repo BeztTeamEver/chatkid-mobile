@@ -27,7 +27,7 @@ class _NotificationPageState extends State<NotificationPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Center(
-        child: Text('Notification Page'),
+        child: Text('Chưa có thông báo mới!'),
         //   child: ListView(
         //     children: [
         //       Container(
