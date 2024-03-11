@@ -1,12 +1,14 @@
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/paypal_model.dart';
 import 'package:chatkid_mobile/models/subcription_model.dart';
+import 'package:chatkid_mobile/models/transaction_model.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/profile/payment_confirm_page.dart';
 import 'package:chatkid_mobile/pages/profile/payment_momo_qrcode.dart';
 import 'package:chatkid_mobile/pages/profile/subcription_page.dart';
 import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/providers/paypal_provider.dart';
+import 'package:chatkid_mobile/providers/transaction_provider.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/number_format.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -30,10 +32,14 @@ class PaymentPage extends ConsumerStatefulWidget {
 class _PaymentPageState extends ConsumerState<PaymentPage> {
   bool isChecked = true;
   late PaypalRequestModel model;
+  late CreateTransactionModel transaction;
   @override
   void initState() {
     // model = PaypalRequestModel(
     //     amount: widget.subcription.price, returnUrl: "", cancelUrl: "");
+    transaction = CreateTransactionModel(
+      subscriptionId: widget.subcription.id,
+    );
   }
 
   Future<void> onSubmit(callback) async {
@@ -47,6 +53,16 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         Logger().e(err);
         ErrorSnackbar.showError(context: context, err: err);
       });
+    } catch (err) {
+      Logger().e(err);
+    }
+  }
+
+  Future<void> onMomoSubmit(callback) async {
+    try {
+      ref
+          .watch(createTransactionProvider(transaction).future)
+          .then((value) => callback(value.identifier));
     } catch (err) {
       Logger().e(err);
     }
@@ -339,14 +355,17 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                       //     _launchPaypalURL(link, orderId);
                       //   });
                       // }
-                      Navigator.push(
-                        context,
-                        createRoute(
-                          () => MoMoQRCodePage(
-                            index: widget.subcription.energy,
+                      onMomoSubmit((String identifier) {
+                        Navigator.push(
+                          context,
+                          createRoute(
+                            () => MoMoQRCodePage(
+                              index: widget.subcription.energy,
+                              identifier: identifier,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      });
                     },
                     child: Text(
                       "Tiếp tục",
