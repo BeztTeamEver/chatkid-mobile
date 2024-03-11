@@ -1,4 +1,4 @@
- import 'dart:convert';
+import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/info_form.dart';
@@ -73,7 +73,6 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                   Container(
                     width: 64,
                     height: 64,
-                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(100),
@@ -83,11 +82,13 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                       ),
                     ),
                     // TODO: change to use image
-                    child: SvgIcon(
-                      icon: _avatarUrl.isNotEmpty
-                          ? _avatarUrl
-                          : DefaultAvatar.DefaultAvatarList[0],
-                      size: 50,
+                    child: SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: Image.network(
+                        _avatarUrl,
+                        fit: BoxFit.cover,
+                      ),
                     ), //TODO: change icon
                   ),
                   const SizedBox(
@@ -140,6 +141,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                         );
                       },
                       error: (e, s) {
+                        Logger().e(e);
                         return Container();
                       },
                       loading: () {

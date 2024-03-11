@@ -13,6 +13,7 @@ class AvatarPng extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isUrl = imageUrl?.contains("http");
     return AspectRatio(
       aspectRatio: 1,
       child: Container(
@@ -25,13 +26,16 @@ class AvatarPng extends StatelessWidget {
           borderRadius: BorderRadius.circular(40),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
-          child: Image.network(
-            imageUrl ??
-                "https://static.vecteezy.com/system/resources/previews/026/619/142/non_2x/default-avatar-profile-icon-of-social-media-user-photo-image-vector.jpg",
-            fit: BoxFit.fill,
-          ),
-        ),
+            borderRadius: BorderRadius.circular(40),
+            child: isUrl != null || isUrl == true
+                ? Image.network(
+                    imageUrl!,
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset(
+                    imageUrl!,
+                    fit: BoxFit.cover,
+                  )),
       ),
     );
   }
