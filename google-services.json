@@ -83,11 +83,27 @@
           }
         },
         {
+          "client_id": "343387729372-2gnbn3ttuq8vbdmb1nkvo8ab0uc782mf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kidtalkie",
+            "certificate_hash": "e27c5c2fe872f66f7c9582924b2470275218df6f"
+          }
+        },
+        {
           "client_id": "343387729372-4dhao22rson8lk7il7llr465jmk90rke.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.kidtalkie",
             "certificate_hash": "54cadd72bc6c9b41673a4e85c722a043e9c18a04"
+          }
+        },
+        {
+          "client_id": "343387729372-9le19ahd2orledo0j0und551llcihqdv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kidtalkie",
+            "certificate_hash": "86d2a348d99d1236fe7a20a869bc96077a89dd43"
           }
         },
         {
