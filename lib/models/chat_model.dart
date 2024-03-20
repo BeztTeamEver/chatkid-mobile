@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:chatkid_mobile/models/base_model.dart';
 import 'package:chatkid_mobile/models/channel_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

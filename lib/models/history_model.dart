@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/models/base_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 
 class HistoryModel extends BaseModel {
   final String id;
