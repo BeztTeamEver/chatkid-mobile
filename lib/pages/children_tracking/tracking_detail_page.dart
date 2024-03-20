@@ -63,7 +63,6 @@ class _TrackingDetailPageState extends ConsumerState<TrackingDetailPage> {
           'Chi tiết hoạt động của ${widget.user.name}',
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: 18,
               ),
         ),
         leading: Builder(

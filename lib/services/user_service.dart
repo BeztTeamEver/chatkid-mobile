@@ -11,9 +11,9 @@ import 'package:logger/logger.dart';
 
 class UserService {
   final LocalStorage _localStorage = LocalStorage.instance;
-  Future<UserModel> getUser(id, String? password) async {
+  Future<UserModel> getUser(String id) async {
     final response =
-        await BaseHttp.instance.get(endpoint: '${Endpoint.userEndPoint}/$id');
+        await BaseHttp.instance.get(endpoint: '${Endpoint.profileUserEnpoint}/${id}');
     Logger().d(response.body);
 
     if (response.statusCode == 200) {
@@ -100,9 +100,9 @@ class UserServiceNotifier extends StateNotifier<UserModel> {
 
   UserServiceNotifier() : super(UserModel());
 
-  Future<UserModel> getUser(id, String? password) async {
+  Future<UserModel> getUser(String id) async {
     try {
-      UserModel result = await _userService.getUser(id, password);
+      UserModel result = await _userService.getUser(id);
       state = result;
       return result;
     } catch (e) {

@@ -71,10 +71,12 @@ dependencies:
     file_picker: ^6.1.1
     socket_io_client: ^2.0.3+1
     audio_waveforms: ^1.0.4
+    card_swiper: ^3.0.1
     get: ^4.6.6
     scrollable_positioned_list: ^0.3.8
     form_builder_validators: ^9.1.0
     path_provider: ^2.1.2
+    modals: ^1.0.0+1
 
 flutter_launcher_icons:
     android: 'launcher_icon'

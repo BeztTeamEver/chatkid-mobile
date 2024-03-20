@@ -19,6 +19,7 @@ class Endpoint {
   static const refreshTokenEndPoint = "/api/auth/refresh-token";
   // User
   static const userEndPoint = "/api/profiles";
+  static const profileUserEnpoint = "/api/member";
 
   //Blog
   static const blogEndPoint = "/api/blogs";
@@ -29,7 +30,7 @@ class Endpoint {
   static const gptChatEndPoint = "/api/gpt/chat";
 
   //Subcription
-  static const subcriptionEndPoint = "/api/subcriptions";
+  static const subcriptionEndPoint = "/api/subscription";
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";
@@ -38,6 +39,9 @@ class Endpoint {
   // Paypal
   static const paypalEndPoint = "/api/paypal/create-paypal-order";
   static const capturePaypalEndPoint = "/api/paypal/capture";
+
+  // Transaction 
+  static const createTransactionEndPoint = "/api/payment-transaction";
 
   //Notification
   static const notificationEndPoint = "/api/history";

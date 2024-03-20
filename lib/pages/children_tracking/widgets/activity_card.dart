@@ -59,7 +59,7 @@ class _ActivityCardState extends State<ActivityCard> {
                   Text(
                     widget.histories[index].title ?? '',
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w600,
                           color: neutral.shade900,
                         ),
                   ),
@@ -84,7 +84,7 @@ class _ActivityCardState extends State<ActivityCard> {
                     color: neutral.shade200,
                   )
                 : Container(),
-            itemCount: widget.histories.length,
+            itemCount: 3,
           ),
         ),
       ],
