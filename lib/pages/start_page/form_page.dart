@@ -144,7 +144,6 @@ class _FormPageState extends ConsumerState<FormPage> {
           child: FormBuilder(
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            onWillPop: () => Future.value(false),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
