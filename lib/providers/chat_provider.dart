@@ -5,7 +5,7 @@ import 'dart:developer';
 import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

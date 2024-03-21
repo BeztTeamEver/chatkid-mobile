@@ -1,5 +1,5 @@
 import 'package:chatkid_mobile/models/history_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/providers/history_provider.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';

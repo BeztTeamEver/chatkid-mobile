@@ -167,18 +167,18 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
               width: double.infinity,
               child: FullWidthButton(
                 onPressed: () async {
-                  showModal(ModalEntry.positioned(context,
-                      tag: 'containerModal',
-                      left: 0,
-                      top: 0,
-                      child: Container(
-                        color: Colors.red,
-                        width: 500,
-                        height: 700,
-                        child: FullWidthButton(onPressed: () {
-                          removeAllModals();
-                        },child: Text("Close modal")),
-                      )));
+                  // showModal(ModalEntry.positioned(context,
+                  //     tag: 'containerModal',
+                  //     left: 0,
+                  //     top: 0,
+                  //     child: Container(
+                  //       color: Colors.red,
+                  //       width: 500,
+                  //       height: 700,
+                  //       child: FullWidthButton(onPressed: () {
+                  //         removeAllModals();
+                  //       },child: Text("Close modal")),
+                  //     )));
                 },
                 child: Text(
                   "Chuyển năng lượng",

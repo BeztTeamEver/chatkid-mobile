@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/widgets/avatar.dart';
+import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +76,11 @@ class _AvatarChangeState extends State<AvatarChange> {
                   SizedBox(
                     height: 20,
                   ),
-                  Avatar(icon: _avatarUrl),
+                  SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: AvatarPng(imageUrl: _avatarUrl),
+                  )
                 ],
               ),
               ConstrainedBox(
@@ -88,15 +93,15 @@ class _AvatarChangeState extends State<AvatarChange> {
                     runSpacing: 2,
                     spacing: 2,
                     children: [
-                      GestureDetector(
-                        onTap: () async {
-                          _onFileUpload();
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Avatar(icon: "upload"),
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: () async {
+                      //     _onFileUpload();
+                      //   },
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(8.0),
+                      //     child: Avatar(icon: "upload"),
+                      //   ),
+                      // ),
                       ...widget.options.map(
                         (e) => GestureDetector(
                           onTap: () {
@@ -104,7 +109,11 @@ class _AvatarChangeState extends State<AvatarChange> {
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Avatar(icon: e),
+                            child: SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: AvatarPng(imageUrl: e),
+                            ),
                           ),
                         ),
                       ),
