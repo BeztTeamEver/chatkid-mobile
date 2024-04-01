@@ -96,7 +96,8 @@ class _GoogleButtonState extends State<GoogleButton> {
           FullWidthButton(
             onPressed: () async {
               await _signInWithGoogle(
-                () => Navigator.push(context, createRoute(() => _route)),
+                () => Navigator.pushReplacement(
+                    context, createRoute(() => _route)),
               );
             },
             height: 50,

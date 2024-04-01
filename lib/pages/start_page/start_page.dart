@@ -64,7 +64,8 @@ class _StartPageState extends ConsumerState<StartPage> {
     Navigator.push(
       context,
       createRoute(
-        () => PasswordLoginPage(userId: _selectedAccount!.id!),
+        () => PasswordLoginPage(
+            userId: _selectedAccount!.id!, name: _selectedAccount!.name!),
       ),
     );
   }

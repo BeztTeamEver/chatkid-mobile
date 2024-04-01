@@ -13,37 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
-final mockdata = [
-  {
-    'id': '1',
-    "name": "Hồng",
-    "avatarUrl": "assets/images/avatars/1.png",
-    "currentActive": " ở trường",
-    "unRead": 3,
-  },
-  {
-    'id': '2',
-    "name": "Hồng",
-    "avatarUrl": "assets/images/avatars/2.png",
-    "currentActive": null,
-    "unRead": 3,
-  },
-  {
-    'id': '3',
-    "name": "Hồng",
-    "avatarUrl": "assets/images/avatars/3.png",
-    "currentActive": " ở trường",
-    "unRead": 3,
-  },
-  {
-    'id': '4',
-    "name": "Hồng",
-    "avatarUrl": "assets/images/avatars/4.png",
-    "currentActive": " ở trường",
-    "unRead": 3,
-  },
-];
-
 class ChildrenTrackingPage extends ConsumerStatefulWidget {
   final UserModel? user;
   final int? userIndex;

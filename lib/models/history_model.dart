@@ -7,11 +7,14 @@ class HistoryModel extends BaseModel {
   final String id;
   final String title;
   final String? note;
-
+  final String? createdAt;
+  final String? updatedAt;
   HistoryModel({
     required this.id,
     required this.title,
     this.note,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory HistoryModel.fromJson(Map<String, dynamic> json) {
@@ -19,6 +22,8 @@ class HistoryModel extends BaseModel {
       id: json['id'],
       title: json['title'],
       note: json['note'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
 
@@ -27,6 +32,8 @@ class HistoryModel extends BaseModel {
     data['id'] = this.id;
     data['title'] = this.title;
     data['note'] = this.note;
+    data['createdAt'] = this.createdAt;
+    data['updatedAt'] = this.updatedAt;
     return data;
   }
 

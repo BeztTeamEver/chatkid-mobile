@@ -28,6 +28,7 @@ class PasswordPage extends ConsumerStatefulWidget {
 
 class _PasswordPageState extends ConsumerState<PasswordPage> {
   String? _errorText;
+  bool _obscured = true;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +81,22 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
             type: TextInputType.visiblePassword,
             controller: widget.passwordController,
             autoFocus: false,
+            suffixIcon: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _obscured = !_obscured;
+                  });
+                },
+                child: Icon(
+                  _obscured
+                      ? Icons.visibility_rounded
+                      : Icons.visibility_off_rounded,
+                  size: 24,
+                ),
+              ),
+            ),
           ),
           const SizedBox(
             height: 20,

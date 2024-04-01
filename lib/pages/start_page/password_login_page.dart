@@ -24,7 +24,9 @@ import 'package:logger/logger.dart';
 
 class PasswordLoginPage extends ConsumerStatefulWidget {
   final String userId;
-  const PasswordLoginPage({super.key, required this.userId});
+  final String name;
+  const PasswordLoginPage(
+      {super.key, required this.userId, required this.name});
 
   @override
   ConsumerState<PasswordLoginPage> createState() => _PasswordPageState();
@@ -33,7 +35,7 @@ class PasswordLoginPage extends ConsumerStatefulWidget {
 class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
   GlobalKey<FormBuilderState> _formkey = GlobalKey<FormBuilderState>();
   String? _errorText;
-
+  bool _obscured = true;
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
@@ -83,7 +85,7 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
                 Column(
                   children: [
                     Text(
-                      "Mật Khẩu cho tài khoản",
+                      "Mật Khẩu cho tài khoản ${widget.name}",
                       style: Theme.of(context)
                           .textTheme
                           .headlineMedium!
@@ -115,6 +117,23 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
                       .build(),
                   type: TextInputType.visiblePassword,
                   controller: passwordController,
+                  isObscure: _obscured,
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _obscured = !_obscured;
+                        });
+                      },
+                      child: Icon(
+                        _obscured
+                            ? Icons.visibility_rounded
+                            : Icons.visibility_off_rounded,
+                        size: 24,
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(
                   height: 70,
