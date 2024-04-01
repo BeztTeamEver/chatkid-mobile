@@ -46,7 +46,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   final ScrollOffsetListener _scrollOffsetListener =
       ScrollOffsetListener.create();
   final _chatService = SocketService();
-  final _listMessages = [];
+  final _listMessages = <ChatModel>[];
   final user = LocalStorage.instance.getUser();
 
   int _pageNumber = 0;
@@ -204,7 +204,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     // _scrollController.dispose();
   }
 
-  _listMessageBuilder(context, index, value) {
+  _listMessageBuilder(context, index, List<ChatModel> value) {
     if (index == value.length) {
       return const SizedBox(
         height: 80,
@@ -218,7 +218,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         ),
         child: ChatTextBox(
           icon: 'animal/bear',
-          user: value[index].user,
+          user: value[index].sender,
           message: value[index].content,
           isSender: value[index].userId == user.id!,
         ),

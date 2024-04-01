@@ -57,6 +57,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
           color: widget.isSender == true ? primary.shade500 : primary.shade100,
           borderRadius: BorderRadius.circular(20),
         ),
+        padding: EdgeInsets.symmetric(horizontal: 10),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
