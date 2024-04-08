@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/gpt_voice.dart';
 import 'package:chatkid_mobile/constants/service.dart';
@@ -102,13 +104,15 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
 
   Future<void> _hello({bool? test = true}) async {
     UserModel currentUser = LocalStorage.instance.getUser();
+    Logger().i(currentUser.energy);
     // TODO: revert this
     // UserModel user = await ref
     //     .watch(userProvider.notifier)
     //     .getUser(currentUser.id, currentUser.password);
     final user = UserModel(
         id: "13854ecf-796c-4682-b66b-aaf735d85564", role: RoleConstant.Child);
-    final totalEnergy = user.wallets?.first.totalEnergy ?? 1;
+    final totalEnergy = currentUser.energy ?? 1;
+
     String lastWords =
         'Xin chào, tôi là Kidtalkie. Bạn có câu hỏi gì cho tôi không?';
 
@@ -261,6 +265,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                   Container(
                     height: 500,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Container(
                           constraints: BoxConstraints(
@@ -308,7 +313,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                           height: 20,
                         ),
                         Container(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.only(bottom: 20),
                           child: SvgPicture.asset(
                             'assets/robot/${botName}.svg',
                             height: 340,

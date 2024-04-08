@@ -21,25 +21,24 @@ class UserModel {
   String? notSeenActivities;
   String? doing;
   List<KidServiceModel>? kidServices;
-  List<WalletModel>? wallets;
 
-  UserModel(
-      {this.id,
-      this.avatarUrl,
-      this.password,
-      this.name,
-      this.role,
-      this.status,
-      this.energy,
-      this.familyId,
-      this.gender,
-      this.deviceToken,
-      this.kidServices,
-      this.accessToken,
-      this.refreshToken,
-      this.doing,
-      this.notSeenActivities,
-      this.wallets});
+  UserModel({
+    this.id,
+    this.avatarUrl,
+    this.password,
+    this.name,
+    this.role,
+    this.status,
+    this.energy,
+    this.familyId,
+    this.gender,
+    this.deviceToken,
+    this.kidServices,
+    this.accessToken,
+    this.refreshToken,
+    this.doing,
+    this.notSeenActivities,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -62,11 +61,11 @@ class UserModel {
               .map((e) => KidServiceModel.fromJson(e))
               .toList()
           : null,
-      wallets: json['wallets'] != null
-          ? (json['wallets'] as List)
-              .map((e) => WalletModel.fromJson(e))
-              .toList()
-          : null,
+      // wallets: json['wallets'] != null
+      //     ? (json['wallets'] as List)
+      //         .map((e) => WalletModel.fromJson(e))
+      //         .toList()
+      //     : null,
     );
   }
 
@@ -111,9 +110,9 @@ class UserModel {
     if (refreshToken != null) {
       data['refreshToken'] = refreshToken;
     }
-    if (wallets != null) {
-      data['wallets'] = wallets!.map((v) => v.toMap()).toList();
-    }
+    // if (wallets != null) {
+    //   data['wallets'] = wallets!.map((v) => v.toMap()).toList();
+    // }
     return data;
   }
 

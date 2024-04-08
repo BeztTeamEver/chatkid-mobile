@@ -219,7 +219,7 @@ class _WalletPageState extends State<WalletPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Bạn đang có ${widget.currentUser?.wallets?.first.totalEnergy ?? 100}',
+                      'Bạn đang có ${widget.currentUser?.energy ?? 100}',
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                     const Icon(
