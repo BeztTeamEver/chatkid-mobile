@@ -40,6 +40,7 @@ class _StartPageState extends ConsumerState<StartPage> {
   @override
   void initState() {
     super.initState();
+    init();
     // familyUsers = FamilyService().getFamilyAccounts(null);
   }
 
@@ -68,6 +69,16 @@ class _StartPageState extends ConsumerState<StartPage> {
             userId: _selectedAccount!.id!, name: _selectedAccount!.name!),
       ),
     );
+  }
+
+  void init() async {
+    final familyUsers = FamilyService().getFamily();
+    final family = await familyUsers;
+    if (family != null && family.members.length >= 5) {
+      setState(() {
+        _isCreateUser = false;
+      });
+    }
   }
 
   @override
@@ -120,9 +131,11 @@ class _StartPageState extends ConsumerState<StartPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data as FamilyModel;
-                      if (data.members.length >= 5) {
-                        _isCreateUser = false;
-                      }
+                      // if (data.members.length >= 5) {
+                      //   setState(() {
+                      //     _isCreateUser = false;
+                      //   });
+                      // }
                       return ListView.separated(
                         shrinkWrap: true,
                         itemCount: data.members.length,

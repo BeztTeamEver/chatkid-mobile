@@ -29,9 +29,10 @@ final getFamilyProvider = FutureProvider<FamilyModel>(
   },
 );
 
-final getFamilyChannel = FutureProvider<ChannelModel>((ref) {
+final getFamilyChannel = FutureProvider<ChannelModel>((ref) async {
   try {
-    final result = ref.watch(familyServiceProvider).getFamilyChannel();
+    final result = await ref.watch(familyServiceProvider).getFamilyChannel();
+    Logger().i(result);
     return result;
   } catch (e) {
     throw Exception(e);

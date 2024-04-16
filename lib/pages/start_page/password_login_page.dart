@@ -86,6 +86,7 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
                   children: [
                     Text(
                       "Mật Khẩu cho tài khoản ${widget.name}",
+                      textAlign: TextAlign.center,
                       style: Theme.of(context)
                           .textTheme
                           .headlineMedium!

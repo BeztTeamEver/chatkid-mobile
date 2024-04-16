@@ -82,7 +82,7 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
     //         FamilyRequestModel(id: '6b02cfc1-0b92-4ec4-97e3-75f57a8c186b')))
     //     .asData
     //     ?.value;
-    final familyChannel = ref.watch(getFamilyChannel);
+    final familyChannel = ref.watch(getFamilyChannel).asData!.value;
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -196,8 +196,8 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
                     Navigator.push(
                       context,
                       createRoute(
-                        () => const GroupChatPage(
-                          channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
+                        () => GroupChatPage(
+                          channelId: familyChannel.id,
                         ),
                       ),
                     )
