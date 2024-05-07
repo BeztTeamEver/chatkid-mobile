@@ -1,8 +1,13 @@
 import 'dart:convert';
 
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/base_model.dart';
+import 'package:chatkid_mobile/models/channel_model.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:logger/logger.dart';
 
-class ChatModel {
+class ChatModel implements IBaseModel {
   // String? id;
   // String? content;
   // String? sentTime;
@@ -37,22 +42,42 @@ class ChatModel {
   String? content;
   String? channelId;
   String? userId;
+  String? imageUrl;
+  String? voiceUrl;
+  String? sentTime;
+  UserModel? sender;
 
-  ChatModel({this.content, this.channelId, this.userId});
+  ChatModel(
+      {this.content,
+      this.channelId,
+      this.userId,
+      this.sentTime,
+      this.sender,
+      this.imageUrl,
+      this.voiceUrl});
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
       content: json['content'],
-      channelId: json['channelUserId'],
+      channelId: json['channelId'],
       userId: json['userId'],
+      voiceUrl: json['voiceUrl'],
+      imageUrl: json['imageUrl'],
+      sentTime: json['sentTime'],
+      sender: UserModel.fromJson(json['sender']),
     );
   }
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['content'] = content;
-    data['userId'] = userId;
+    data['sender'] = sender;
     data['channelId'] = channelId;
+    data['imageUrl'] = imageUrl;
+    data['voiceUrl'] = voiceUrl;
+    data['sendTime'] = sentTime;
+    data['userId'] = userId;
+
     return data;
   }
 

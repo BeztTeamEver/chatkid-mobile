@@ -10,7 +10,9 @@ class InputField extends StatefulWidget {
   final controller;
   final String? errorText;
   final String name;
+  final Widget? suffixIcon;
   final bool autoFocus;
+  final bool? isObscure;
 
   const InputField({
     super.key,
@@ -21,6 +23,8 @@ class InputField extends StatefulWidget {
     required this.name,
     this.validator,
     this.errorText,
+    this.suffixIcon,
+    this.isObscure,
     required this.controller,
   });
 
@@ -45,12 +49,16 @@ class _InputFieldState extends State<InputField> {
         const SizedBox(height: 10),
         FormBuilderTextField(
           name: widget.name,
-          controller: widget.controller,
+          // controller: widget.controller,
           keyboardType: widget.type,
+          key: widget.key,
           autofocus: widget.autoFocus,
           validator: widget.validator,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          obscureText: widget.type == TextInputType.visiblePassword,
+          obscureText:
+              widget.type == TextInputType.visiblePassword && widget.isObscure!
+                  ? true
+                  : false,
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 fontWeight: FontWeight.bold,
                 color: neutral.shade500,
@@ -60,7 +68,9 @@ class _InputFieldState extends State<InputField> {
           },
           decoration: InputDecoration(
             hintText: widget.hint,
+            errorMaxLines: 2,
             errorText: widget.errorText,
+            suffixIcon: widget.suffixIcon,
           ),
         ),
       ],

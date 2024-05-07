@@ -25,17 +25,17 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
 
+  Future setAudio() async {
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
+
+    final player = AudioCache(prefix: 'assets/audio/');
+    final url = await player.load('animalbattle.mp3');
+    audioPlayer.setSourceUrl(widget.blog.voiceUrl ?? url.path);
+  }
+
   @override
   void initState() {
     super.initState();
-
-    Future setAudio() async {
-      audioPlayer.setReleaseMode(ReleaseMode.loop);
-
-      final player = AudioCache(prefix: 'assets/audio/');
-      final url = await player.load('animalbattle.mp3');
-      audioPlayer.setSourceUrl(widget.blog.voiceUrl ?? url.path);
-    }
 
     setAudio();
 
@@ -132,7 +132,8 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                           borderRadius: BorderRadius.circular(18),
                           boxShadow: [
                             BoxShadow(
-                              color: Color.fromARGB(255, 43, 43, 43).withOpacity(0.1),
+                              color: Color.fromARGB(255, 43, 43, 43)
+                                  .withOpacity(0.1),
                               spreadRadius: 1,
                               blurRadius: 8,
                               offset: const Offset(1, 1),

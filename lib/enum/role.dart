@@ -1,4 +1,4 @@
-enum Role { Children, Parent }
+enum Role { KID, PARENT }
 
 enum Gender { male, female, other }
 

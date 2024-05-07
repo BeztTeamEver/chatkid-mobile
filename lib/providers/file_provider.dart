@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 final getAvatarProvider = FutureProvider((ref) async {
-  final result = await FileService().getAvatars();
-  Logger().i(jsonEncode(result));
+  final response = await FileService().getAvatars();
+  final result = response.map((e) => e.url).toList();
   return result;
 });

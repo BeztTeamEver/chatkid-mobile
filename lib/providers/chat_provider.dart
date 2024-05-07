@@ -5,7 +5,7 @@ import 'dart:developer';
 import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,17 +30,15 @@ import 'package:web_socket_channel/io.dart';
 final getMessagesProvider = FutureProvider<List<ChatModel>>((ref) async {
   final response =
       await ChatService().getMessages(PagingModel(pageSize: 10, pageNumber: 1));
-  return response.data;
+  return response.items;
 });
 
 final getChannelMessagesProvider =
     FutureProvider.family<List<ChatModel>, MessageChannelRequest>(
         (ref, request) async {
-  final response = await ChatService().getChannelMessages(
-    pagingRequest: PagingModel(pageSize: 10, pageNumber: 1),
-    channelId: "60f9b1b0d9b3a1b4e0f0e0b4",
-  );
-  return response.data;
+  final response =
+      await ChatServiceNotifier().getChannelMessages(request: request);
+  return response;
 });
 
 final receiveMessage = StreamProvider<ChatModel>((ref) async* {

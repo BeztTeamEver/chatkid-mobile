@@ -3,26 +3,33 @@ import 'dart:convert';
 import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logging/logging.dart';
-import 'package:signalr_netcore/http_connection_options.dart';
-import 'package:signalr_netcore/hub_connection_builder.dart';
+import 'package:logger/logger.dart';
 
 class ChatService {
-  Future<PagingResponseModel<List<ChatModel>>> getMessages(
+  Future<PagingResponseModel<ChatModel>> getMessages(
       PagingModel pagingModel) async {
     final response = await BaseHttp.instance.get(
       endpoint: Endpoint.messagesEndPoint,
       param: pagingModel.toMap(),
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      final data = PagingResponseModel<List<ChatModel>>.fromJson(
-          jsonDecode(response.body));
-      return data;
+      final data = jsonDecode(response.body);
+      final listChat = data['items']
+          .map((item) => ChatModel.fromJson(item))
+          .toList() as List<ChatModel>;
+      final pagingResponseModel = PagingResponseModel<ChatModel>(
+        // limit: data['limit'],
+        pageSize: data['pageSize'],
+        items: listChat,
+        pageNumber: data['pageNumber'],
+        totalItem: data['totalItem'],
+      );
+      return pagingResponseModel;
     }
     switch (response.statusCode) {
       case 401:
@@ -35,20 +42,25 @@ class ChatService {
     }
   }
 
-  Future<PagingResponseModel<List<ChatModel>>> getChannelMessages(
-      {required PagingModel pagingRequest, required String channelId}) async {
+  Future<List<ChatModel>> getChannelMessages(
+      {required MessageChannelRequest request}) async {
     final response = await BaseHttp.instance.get(
-      endpoint: Endpoint.messagesEndPoint,
-      param: {
-        ...pagingRequest.toMap(),
-        'channelId': channelId,
-      },
+      endpoint: "${Endpoint.channelMessagesEndPoint}/${request.channelId}",
+      param: request.toMap(),
     );
-    if (response.statusCode >= 200 && response.statusCode <= 210) {
-      final data = PagingResponseModel<List<ChatModel>>.fromJson(
-          jsonDecode(response.body));
 
-      return data;
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      try {
+        final data = jsonDecode(response.body);
+        final listChat = data['items'].map<ChatModel>((item) {
+          return ChatModel.fromJson(item);
+        }).toList();
+
+        return listChat;
+      } catch (e) {
+        Logger().e(e);
+        throw Exception('Lỗi lấy tin nhắn, vui lòng thử lại sau!');
+      }
     }
     switch (response.statusCode) {
       case 401:
@@ -69,24 +81,18 @@ class ChatServiceNotifier extends StateNotifier<List<ChatModel>> {
     required PagingModel paging,
   }) async {
     final messages = await ChatService().getMessages(paging);
-    state = messages.data;
-    return messages.data;
+    state = messages.items;
+    return messages.items;
   }
 
   void addMessage(ChatModel message) {
     state.add(message);
   }
 
-  Future<List<ChatModel>> getChannelMessages({
-    required PagingModel pagingRequest,
-    required String channelId,
-  }) async {
-    final messages = await ChatService().getChannelMessages(
-      pagingRequest: pagingRequest,
-      channelId: channelId,
-    );
-    state = messages.data;
-    return messages.data;
+  Future<List<ChatModel>> getChannelMessages({required request}) async {
+    final messages = await ChatService().getChannelMessages(request: request);
+    state = messages;
+    return messages;
   }
 }
 

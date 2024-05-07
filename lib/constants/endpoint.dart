@@ -1,9 +1,13 @@
 class Endpoint {
   // infor
-
+  static const memberEnpoint = "/api/member";
+  static const memberLoginEnpoint = "/api/member/login";
+  static const memberRefreshTokenEnpoint = "/api/member/refresh-token";
   // Family
   static const familyUsersEndPoint = "/api/families/family";
   static const familiesEndPoint = "/api/families";
+  static const familyChannelsEndPoint = "/api/families/{id}/channels";
+  static const ownFamilyEndpoint = "/api/families/own-family";
 
   // Auth
   static const googleEndPoint = "/api/auth/login";
@@ -15,6 +19,7 @@ class Endpoint {
   static const refreshTokenEndPoint = "/api/auth/refresh-token";
   // User
   static const userEndPoint = "/api/profiles";
+  static const profileUserEnpoint = "/api/member";
 
   //Blog
   static const blogEndPoint = "/api/blogs";
@@ -25,18 +30,21 @@ class Endpoint {
   static const gptChatEndPoint = "/api/gpt/chat";
 
   //Subcription
-  static const subcriptionEndPoint = "/api/subcriptions";
+  static const subcriptionEndPoint = "/api/subscription";
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";
-  static const channelMessagesEndPoint = "/api/chat/channel";
+  static const channelMessagesEndPoint = "/api/chat/channels";
 
   // Paypal
   static const paypalEndPoint = "/api/paypal/create-paypal-order";
   static const capturePaypalEndPoint = "/api/paypal/capture";
 
+  // Transaction 
+  static const createTransactionEndPoint = "/api/payment-transaction";
+
   //Notification
-  static const notificationEndPoint = "/api/notifications";
+  static const notificationEndPoint = "/api/history";
 
   //History
   static const historyEndPoint = "/api/history";

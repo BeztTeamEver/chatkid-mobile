@@ -17,6 +17,16 @@ final updateUserProvider =
   }
 }));
 
+final createUserProvider =
+    FutureProvider.autoDispose.family<UserModel, UserModel>(((ref, arg) async {
+  try {
+    final response = await ref.watch(userServiceProvider).createUser(arg);
+    return response;
+  } catch (err) {
+    throw err;
+  }
+}));
+
 final getcurrentUserProvider = Provider((ref) {
   final user = LocalStorage.instance.preferences.getString('user');
   return UserModel.fromJson(jsonDecode(user ?? ""));

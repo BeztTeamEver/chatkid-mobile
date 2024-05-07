@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/auth_model.dart';
+import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/resgis_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
@@ -19,9 +21,11 @@ class AuthService {
     );
 
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      Logger().d(response.body);
-      final authTokens = AuthModel.fromJson(jsonDecode(response.body));
-      Logger().d(authTokens.accessToken);
+      final body = jsonDecode(response.body);
+      final authTokens = AuthModel.fromJson(body);
+      final family = FamilyModel.fromJson(body['family']);
+      Logger().d(family.familyId);
+      _localStorage.setString(LocalStorageKey.FAMILY_ID, family.familyId);
       _saveToken(authTokens);
       return authTokens;
     }
@@ -98,6 +102,9 @@ class AuthService {
   static Future<bool> signOut() async {
     // TODO: call api sign out here
     await _localStorage.removeToken();
+    await _localStorage.removeUser();
+    await _localStorage.preferences.remove(LocalStorageKey.FAMILY_ID);
+
     return true;
   }
 
@@ -150,18 +157,21 @@ class AuthService {
     );
   }
 
-  static Future<String> getAccessToken() async {
-    String accessToken = _localStorage.getToken()?.accessToken ?? "";
+  static Future<String> getAccessToken({bool? isUseFamilyToken}) async {
+    String accessToken = _localStorage
+            .getToken(isUseFamilyToken: isUseFamilyToken)
+            ?.accessToken ??
+        "";
 
     if (accessToken.isEmpty) {
       accessToken = _localStorage.preferences.getString("accessToken") ?? "";
       return accessToken;
     }
-    if (isTokenExpired()) {
-      AuthModel tokens = await refreshToken();
-      _localStorage.saveToken(tokens.accessToken, tokens.refreshToken);
-      return tokens.accessToken;
-    }
+    // if (isTokenExpired()) {
+    //   AuthModel tokens = await refreshToken();
+    //   _localStorage.saveToken(tokens.accessToken, tokens.refreshToken);
+    //   return tokens.accessToken;
+    // }
     return accessToken;
   }
 

@@ -30,13 +30,12 @@ class _VoiceChatState extends State<VoiceChat> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _initSpeech();
   }
 
   void _onSpeechResult(SpeechRecognitionResult result) async {
-    widget._onSpeechResult?.call(result);
+    widget._onSpeechResult?.call(result.recognizedWords);
     setState(() {});
   }
 
@@ -88,10 +87,10 @@ class _VoiceChatState extends State<VoiceChat> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(
-          width: 2,
-          color: primary.shade400,
-        ),
+        // border: Border.all(
+        //   width: 2,
+        //   color: primary.shade400,
+        // ),
         boxShadow: List.generate(
           3,
           (index) => BoxShadow(

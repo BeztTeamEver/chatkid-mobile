@@ -3,9 +3,9 @@ import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/pages/chats/list_group_chat.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
-import 'package:chatkid_mobile/pages/history_tracking/history_tracking_page.dart';
+import 'package:chatkid_mobile/pages/children_tracking/children_tracking_page.dart';
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
-import 'package:chatkid_mobile/pages/history_tracking/user_profile_notification_page.dart';
+import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 
 final List<Menu> menu = [
@@ -39,7 +39,7 @@ final List<Menu> menu = [
     iconActive: 'bottomMenu/kid_active',
     route: routesName['${AppRoutes.activities}']!,
     role: [RoleConstant.Parent],
-    widget: const HistoryTrackingPage(),
+    widget: const ChildrenTrackingPage(),
   ),
   Menu(
     title: 'Thông báo',
@@ -55,6 +55,6 @@ final List<Menu> menu = [
     iconActive: 'bottomMenu/profile_active',
     route: routesName['${AppRoutes.profile}']!,
     role: [RoleConstant.Parent, RoleConstant.Child],
-    widget: ProfilePage(),
+    widget: const ProfilePage(),
   ),
 ];

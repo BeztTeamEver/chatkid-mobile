@@ -49,15 +49,17 @@ class DefaultFirebaseOptions {
     messagingSenderId: '343387729372',
     projectId: 'kidtalkie-979b7',
     authDomain: 'kidtalkie-979b7.firebaseapp.com',
+    databaseURL: 'https://kidtalkie-979b7-default-rtdb.firebaseio.com',
     storageBucket: 'kidtalkie-979b7.appspot.com',
     measurementId: 'G-WRNGW3TDDY',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBPmoK9aQZkSuBScfKh8mEXSGagVt86qf4',
-    appId: '1:343387729372:android:6d55ee2b732fdd5cf6f319',
+    appId: '1:343387729372:android:7e9cb49bd04ea8f3f6f319',
     messagingSenderId: '343387729372',
     projectId: 'kidtalkie-979b7',
+    databaseURL: 'https://kidtalkie-979b7-default-rtdb.firebaseio.com',
     storageBucket: 'kidtalkie-979b7.appspot.com',
   );
 
@@ -66,9 +68,12 @@ class DefaultFirebaseOptions {
     appId: '1:343387729372:ios:d84f970375a352e8f6f319',
     messagingSenderId: '343387729372',
     projectId: 'kidtalkie-979b7',
+    databaseURL: 'https://kidtalkie-979b7-default-rtdb.firebaseio.com',
     storageBucket: 'kidtalkie-979b7.appspot.com',
-    androidClientId: '343387729372-pi947t2hl1e9rt8euhba8gs9g2qjlq3i.apps.googleusercontent.com',
-    iosClientId: '343387729372-qr8bv2mmru4912solp6e43sbc898t2oc.apps.googleusercontent.com',
+    androidClientId:
+        '343387729372-0stfbn846d23h40r5v93eijf1adgsfhq.apps.googleusercontent.com',
+    iosClientId:
+        '343387729372-qr8bv2mmru4912solp6e43sbc898t2oc.apps.googleusercontent.com',
     iosBundleId: 'com.example.chatkidMobile',
   );
 
@@ -77,9 +82,12 @@ class DefaultFirebaseOptions {
     appId: '1:343387729372:ios:3825a9188ab41ce2f6f319',
     messagingSenderId: '343387729372',
     projectId: 'kidtalkie-979b7',
+    databaseURL: 'https://kidtalkie-979b7-default-rtdb.firebaseio.com',
     storageBucket: 'kidtalkie-979b7.appspot.com',
-    androidClientId: '343387729372-pi947t2hl1e9rt8euhba8gs9g2qjlq3i.apps.googleusercontent.com',
-    iosClientId: '343387729372-nb73qt631kiielr499f7l68nah3adl5c.apps.googleusercontent.com',
+    androidClientId:
+        '343387729372-0stfbn846d23h40r5v93eijf1adgsfhq.apps.googleusercontent.com',
+    iosClientId:
+        '343387729372-nb73qt631kiielr499f7l68nah3adl5c.apps.googleusercontent.com',
     iosBundleId: 'com.example.chatkidMobile.RunnerTests',
   );
 }
