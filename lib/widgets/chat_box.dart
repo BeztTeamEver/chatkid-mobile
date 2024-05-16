@@ -37,6 +37,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
 
   @override
   Widget build(BuildContext context) {
+    final color = widget.isSender == true ? neutral.shade100 : primary.shade600;
     final contentWidgets = [
       Container(
         width: 40,
@@ -58,21 +59,26 @@ class ChatTextBoxState extends State<ChatTextBox> {
           borderRadius: BorderRadius.circular(20),
         ),
         padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            widget.message ?? "",
-            textAlign:
-                widget.isSender == true ? TextAlign.end : TextAlign.start,
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: widget.isSender == true
-                      ? neutral.shade100
-                      : primary.shade600,
-                ),
-          ),
+        // child: Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: Text(
+        //     widget.message ?? "",
+        //     textAlign:
+        //         widget.isSender == true ? TextAlign.end : TextAlign.start,
+        //     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+        //           fontWeight: FontWeight.bold,
+        //           color: widget.isSender == true
+        //               ? neutral.shade100
+        //               : primary.shade600,
+        //         ),
+        //   ),
+        // ),
+        child: PlayerWave(
+          path: 'giun.mp3',
+          color: color,
+          fixedWaveColor: color,
+          liveWaveColor: color,
         ),
-        // child: const PlayerWave(path: 'giun.mp3'),
       ),
       SizedBox(
         width: 10,

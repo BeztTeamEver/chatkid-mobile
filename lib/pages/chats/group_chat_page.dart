@@ -1,31 +1,18 @@
-import 'dart:convert';
-
-import 'package:chatkid_mobile/constants/service.dart';
 import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
-import 'package:chatkid_mobile/models/paging_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/providers/chat_provider.dart';
-import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
-import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
-import 'package:chatkid_mobile/utils/utils.dart';
-import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:chatkid_mobile/widgets/chat_box.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/loading_indicator.dart';
-import 'package:chatkid_mobile/widgets/speech_to_text.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
-import 'package:chatkid_mobile/widgets/voice_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:pinput/pinput.dart';
-import 'package:rive/rive.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class GroupChatPage extends ConsumerStatefulWidget {
@@ -54,7 +41,11 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
   bool _loading = true;
   bool _isLoadMore = true;
 
-  Future<void> _sendMessage(String message) async {
+  Future<void> _sendMessage(String? message) async {
+    if (message == null || message.isEmpty) {
+      return;
+    }
+
     Logger().i(user.toJson());
     _chatService.sendMessage(ChatModel(
       content: message,
@@ -63,38 +54,40 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
     ));
     setState(() {
       _listMessages.insert(
-          0,
-          ChatModel(
-              content: message, userId: user.id!, channelId: widget.channelId));
+        0,
+        ChatModel(
+          content: message,
+          sender: UserModel(
+            id: user.id,
+            name: user.name,
+            avatarUrl: user.avatarUrl,
+          ),
+          // TODO: Import media here
+          imageUrl: "",
+          voiceUrl: "",
+          sentTime: DateTime.now().toIso8601String(),
+          channelId: widget.channelId,
+        ),
+      );
     });
-    // Scroll to the new widget when the message is sent.
-
-    // _chatService.sendMessage(message);
-    // if (message.isNotEmpty) {
-    //   Logger().i(message);
-    //   try {
-    //     final user = LocalStorage.instance.getUser();
-    //     final data = await _chatService.sendMessage(
-    //       user.id ?? "",
-    //       message,
-    //     );
-    //   } catch (e) {
-    //     Logger().e(e);
-    //   }
-    // }
   }
 
-  void _receiveMessage(ChatModel data) {
-    Logger().i(data.content);
-    setState(() {
-      _listMessages.add(data);
-    });
-    // if (data.length > 1) {
-    //   final message = ChatModel(content: data[1], id: data[0]);
-    //   setState(() {
-    //     listMessages.add(message);
-    //   });
-    // }
+  void _receiveMessage() {
+    ref.listen(
+      receiveMessage,
+      (previous, next) {
+        next.whenData(
+          (value) => {
+            setState(() {
+              _listMessages.insert(0, value);
+            })
+          },
+        );
+      },
+      onError: (error, stackTrace) {
+        Logger().e(error);
+      },
+    );
   }
 
   void fetchMessage() async {
@@ -132,22 +125,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
           },
         ),
       );
-      // ref.watch(getChannelMessagesProvider(request)).when(data: (listData) {
-      //   _loading = false;
-      //   if (listData.isEmpty) {
-      //     _isLoadMore = false;
-      //     return;
-      //   }
-      //   setState(() {
-      //     _listMessages.addAll(listData);
-      //   });
-      // }, error: (e, s) {
-      //   _isLoadMore = false;
-      //   _loading = false;
-      //   throw e;
-      // }, loading: () {
-      //   _loading = true;
-      // });
     } catch (e) {
       Logger().e(e);
     }
@@ -174,16 +151,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         fetchMessage();
       }
     });
-    // _chatService.joinChannel(
-    //     ChatModel(channelId: "d5b2a3d0-17c5-480e-87e1-b23c12438978"));
-    // await _chatService.startConnection();
-    // final messages = await ChatService().getMessages().then((value) {
-    //   setState(() {
-    //     listMessages = value.data;
-    //   });
-    // });
-
-    // _chatService.ReceiveMessage(_receiveMessage);
   }
 
   @override
@@ -210,6 +177,12 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         height: 80,
       );
     }
+    final sender = value[index].sender ??
+        UserModel(
+          id: "1",
+          name: "Người dùng",
+          avatarUrl: "https://i.pravatar.cc/150?img=1",
+        );
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
@@ -218,9 +191,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
         ),
         child: ChatTextBox(
           icon: 'animal/bear',
-          user: value[index].sender,
+          user: sender,
           message: value[index].content,
-          isSender: value[index].userId == user.id!,
+          isSender: sender.id == user.id!,
         ),
       ),
     );
@@ -228,24 +201,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(
-      receiveMessage,
-      (previous, next) {
-        next.whenData(
-          (value) => {
-            setState(() {
-              _listMessages.insert(0, value);
-            })
-          },
-        );
-      },
-      onError: (error, stackTrace) {
-        Logger().e(error);
-      },
-    );
+    _receiveMessage();
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         actions: [
           IconButton(
@@ -291,57 +249,83 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage> {
           ),
         ),
       ),
-      floatingActionButton: Container(
-        decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.white),
-        child: VoiceChat(color: primary, onResult: _sendMessage),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomSheet: BottomAppBar(
         height: 80,
-        notchMargin: 15,
         color: Colors.white,
         surfaceTintColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {
-                ErrorSnackbar.showError(
-                    err: Exception("Chức năng này đang được phát triển"),
-                    context: context);
-              },
-              icon: const SvgIcon(icon: 'location'),
+            ActionButton(
+              icon: const SvgIcon(icon: 'photo'),
+              onPressed: () {},
             ),
-            IconButton(
+            ActionButton(
+              icon: const SvgIcon(icon: 'sticker'),
               onPressed: () {
                 ErrorSnackbar.showError(
                     err: Exception("Chức năng này đang được phát triển"),
                     context: context);
               },
-              icon: const SvgIcon(icon: 'camera'),
+            ),
+            ActionButton(
+              icon: const SvgIcon(icon: 'microphone_on'),
+              onPressed: () {},
+            ),
+            ActionButton(
+              icon: const SvgIcon(icon: 'location'),
+              onPressed: () {
+                ErrorSnackbar.showError(
+                    err: Exception("Chức năng này đang được phát triển"),
+                    context: context);
+              },
             ),
             const SizedBox(
-              width: 80,
+              width: 10,
             ),
-            IconButton(
-              onPressed: () {
-                ErrorSnackbar.showError(
-                    err: Exception("Chức năng này đang được phát triển"),
-                    context: context);
-              },
-              icon: const SvgIcon(icon: 'sticker'),
+            Expanded(
+              child: SizedBox(
+                child: InputField(
+                  name: 'message',
+                  controller: _messageController,
+                  autoFocus: false,
+                  height: 32,
+                  fontSize: 12,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 0,
+                  ),
+                  onSubmit: _sendMessage,
+                  hint: "Aa",
+                ),
+              ),
             ),
-            IconButton(
-              onPressed: () {
-                ErrorSnackbar.showError(
-                    err: Exception("Chức năng này đang được phát triển"),
-                    context: context);
-              },
-              icon: const SvgIcon(icon: 'photo'),
-            )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ActionButton extends StatelessWidget {
+  final void Function() onPressed;
+  final Widget icon;
+
+  const ActionButton({
+    super.key,
+    required this.onPressed,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 36,
+      height: 36,
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        onPressed: this.onPressed,
+        icon: this.icon,
       ),
     );
   }
