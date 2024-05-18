@@ -78,6 +78,7 @@ dependencies:
     path_provider: ^2.1.2
     modals: ^1.0.0+1
     flutter_drawing_board: ^0.7.0+2
+    flutter_zalopay_sdk: ^0.1.14
 
 flutter_launcher_icons:
     android: 'launcher_icon'
