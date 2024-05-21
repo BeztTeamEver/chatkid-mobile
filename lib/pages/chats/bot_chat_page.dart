@@ -259,7 +259,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 80,
                   ),
                   Container(
@@ -268,7 +268,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Container(
-                          constraints: BoxConstraints(
+                          constraints: const BoxConstraints(
                             maxHeight: 120,
                           ),
                           decoration: BoxDecoration(
@@ -309,7 +309,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         Container(
