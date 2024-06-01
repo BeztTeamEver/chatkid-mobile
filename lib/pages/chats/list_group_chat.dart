@@ -45,6 +45,7 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
   int _currentBanner = 0;
   Timer? _timer;
   final _pageController = PageController(initialPage: 0);
+  final currentUser = LocalStorage.instance.getUser();
 
   @override
   void initState() {
@@ -74,7 +75,6 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
     super.dispose();
   }
 
-  final currentUser = LocalStorage.instance.getUser();
   @override
   Widget build(BuildContext context) {
     // final family = ref

@@ -17,6 +17,7 @@ class InputField extends StatefulWidget {
   final double? height;
   final double? fontSize;
   final EdgeInsetsGeometry? contentPadding;
+  final Function()? onTap;
   final Function(String?)? onSubmit;
 
   const InputField({
@@ -35,6 +36,7 @@ class InputField extends StatefulWidget {
     this.fontSize,
     this.contentPadding,
     this.onSubmit,
+    this.onTap,
   });
 
   @override
@@ -79,6 +81,13 @@ class _InputFieldState extends State<InputField> {
             onTapOutside: (event) {
               FocusScope.of(context).unfocus();
             },
+            onTap: widget.onTap,
+            // onEditingComplete: () {
+            //   Logger().i("Editing complete");
+            //   if (widget.onSubmit != null) {
+            //     widget.onSubmit!();
+            //   }
+            // },
             decoration: InputDecoration(
               hintText: widget.hint,
               errorMaxLines: 2,
@@ -89,6 +98,7 @@ class _InputFieldState extends State<InputField> {
             onSubmitted: (value) {
               if (widget.onSubmit != null) {
                 widget.onSubmit!(value);
+                widget.controller.clear();
               }
             },
           ),

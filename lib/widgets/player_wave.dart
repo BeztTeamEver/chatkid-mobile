@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:chatkid_mobile/services/file_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
@@ -13,6 +15,7 @@ class PlayerWave extends StatefulWidget {
   final Color? fixedWaveColor;
   final Color? liveWaveColor;
   final Color? color;
+
   const PlayerWave({
     super.key,
     required this.path,
@@ -34,14 +37,19 @@ class _PlayerWaveState extends State<PlayerWave> {
   late final StreamSubscription<PlayerState> _playerStateSubscription;
 
   _play() async {
+    // _controller.stopAllPlayers();
     await _controller.startPlayer(
-      finishMode: FinishMode.loop,
+      finishMode: FinishMode.pause,
+      forceRefresh: true,
     ); // Start audio player
-    // await _controller.stopPlayer(); // Stop audio player
   }
 
   _pause() async {
     await _controller.pausePlayer(); // Pause audio player
+  }
+
+  _stop() async {
+    await _controller.stopPlayer(); // Stop audio player
   }
 
   _init() async {
@@ -54,20 +62,25 @@ class _PlayerWaveState extends State<PlayerWave> {
           spacing: 6,
         );
       });
-      // read the file to the app
-      final appDirectory = await getApplicationDocumentsDirectory();
-      file = File("${appDirectory.path}/${widget.path}");
-      if (file?.path == null) {
+
+      File? file;
+      if (widget.path.contains("https")) {
+        Logger().i(widget.path);
+        file = await FileService().saveFileToCache(widget.path).then((value) {
+          return value;
+        }).catchError((e) {
+          Logger().e(e);
+          throw Exception('Lỗi không thể tải dữ liệu, vui lòng thử lại!');
+        });
+      } else {
+        file = File(widget.path);
+      }
+      if (!file!.existsSync()) {
         return;
       }
-
-      final data = await rootBundle.load('assets/audio/${widget.path}');
-      final bytes = data.buffer.asUint8List();
-      await file!.writeAsBytes(bytes);
-
       // prepare the player
       await _controller.preparePlayer(
-        path: file!.path,
+        path: file.path,
         shouldExtractWaveform: true,
         noOfSamples: playerWaveStyle!.getSamplesForWidth(200),
         volume: 1.0,
@@ -125,7 +138,7 @@ class _PlayerWaveState extends State<PlayerWave> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -138,8 +151,9 @@ class _PlayerWaveState extends State<PlayerWave> {
           ),
           Expanded(
             child: AudioFileWaveforms(
-              size: Size(MediaQuery.of(context).size.width / 2, 60.0),
+              size: Size(MediaQuery.of(context).size.width / 2, 40.0),
               playerController: _controller,
+              continuousWaveform: true,
               enableSeekGesture: true,
               waveformType: WaveformType.fitWidth,
               playerWaveStyle: playerWaveStyle!,
