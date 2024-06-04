@@ -27,16 +27,16 @@ final MaterialColor primary = MaterialColor(
 
 final MaterialColor secondary =
     MaterialColor(_secondaryColorValue, <int, Color>{
-  50: HexColor('FFF5F7'),
-  100: HexColor('FFD1DA'),
-  200: HexColor('FF8FA3'),
-  300: HexColor('FF5C7A'),
-  400: HexColor('FF3358'),
-  500: HexColor('FF0634'),
-  600: HexColor('DD042B'),
-  700: HexColor('C20024'),
-  800: HexColor('9D011E'),
-  900: HexColor('6B0014')
+  50: HexColor('F6F9FE'),
+  100: HexColor('DAEDFF'),
+  200: HexColor('93CCFF'),
+  300: HexColor('67B8FF'),
+  400: HexColor('47A8FF'),
+  500: HexColor('2D9AFF'),
+  600: HexColor('2C8BF0'),
+  700: HexColor('2979DD'),
+  800: HexColor('0048B3'),
+  900: HexColor('012B6A')
 });
 
 final MaterialColor neutral = MaterialColor(_neutralColorValue, <int, Color>{

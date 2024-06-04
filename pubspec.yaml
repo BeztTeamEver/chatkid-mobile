@@ -116,6 +116,7 @@ flutter:
         - assets/icons/bottomMenu/
         - assets/icons/animal/
         - assets/icons/shape/
+        - assets/icons/asset/
         - assets/loginPage/
         - assets/initPage/
         - assets/successConfirmPage/

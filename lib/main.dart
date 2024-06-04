@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/pages/bot/bot_asset.dart';
+import 'package:chatkid_mobile/pages/bot/bot_asset_store.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
@@ -146,7 +147,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const BotAsset(),
+      home: const BotAssetStore(),
+      // home: const SplashPages(),
       routes: routes,
     );
   }
