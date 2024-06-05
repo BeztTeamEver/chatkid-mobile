@@ -158,7 +158,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: const SplashPages(),
-      routes: routes,
+      // routes: routes,
     );
   }
 }
