@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/pages/children_tracking/children_tracking_page.da
 import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 import 'package:chatkid_mobile/pages/routes/todo_route.dart';
+import 'package:chatkid_mobile/pages/routes/home_route.dart';
 
 final List<Menu> menu = [
   Menu(
