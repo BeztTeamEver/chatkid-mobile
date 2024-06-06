@@ -1,5 +1,7 @@
 import 'package:chatkid_mobile/pages/home_page/widgets/banner.dart';
+import 'package:chatkid_mobile/pages/home_page/widgets/calendar.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,9 +33,12 @@ class _TodoHomePageState extends State<TodoHomePage> {
               ),
               color: primary.shade100,
             ),
-            height: 100,
-            child: const Center(
-              child: Text('bottom sheet'),
+            padding: EdgeInsets.symmetric(horizontal: 2, vertical: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: Calendar()),
+              ],
             ),
           );
         },
