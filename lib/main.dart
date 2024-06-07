@@ -9,9 +9,12 @@ import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -35,7 +38,11 @@ void main() async {
   await LocalStorage.getInstance();
 
   SocketService();
-
+  PlatformDispatcher.instance.onError = (error, stack) {
+    Logger().e(error);
+    Logger().e(stack);
+    return true;
+  };
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -158,6 +165,21 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: const SplashPages(),
+      builder: (context, widget) {
+        ErrorWidget.builder = (errorDetails) {
+          errorDetails.printError();
+          return Center(
+            child: Text(
+              'Something went wrong',
+              style: textTheme.bodyMedium!.copyWith(
+                color: red.shade800,
+              ),
+            ),
+          );
+        };
+        if (widget != null) return widget;
+        throw StateError('widget is null');
+      },
       // routes: routes,
     );
   }

@@ -15,14 +15,21 @@ class TodoHomePage extends StatefulWidget {
 }
 
 class _TodoHomePageState extends State<TodoHomePage> {
+  final _bottomSheetKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const TodoBanner(),
+      body: TodoBanner(
+        bottomSheetKey: _bottomSheetKey,
+      ),
       bottomSheet: BottomSheet(
+        key: _bottomSheetKey,
         enableDrag: false,
-        constraints:
-            BoxConstraints(minHeight: MediaQuery.of(context).size.height - 280),
+        constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height -
+                MediaQuery.of(context).size.height / 3 -
+                24),
         onClosing: () {},
         builder: (context) {
           return Container(

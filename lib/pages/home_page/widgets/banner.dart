@@ -8,7 +8,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TodoBanner extends StatefulWidget {
-  const TodoBanner({super.key});
+  final GlobalKey? bottomSheetKey;
+  const TodoBanner({super.key, this.bottomSheetKey});
 
   @override
   State<TodoBanner> createState() => _TodoBannerState();
@@ -17,10 +18,12 @@ class TodoBanner extends StatefulWidget {
 class _TodoBannerState extends State<TodoBanner> {
   final UserModel user = LocalStorage.instance.getUser();
 
+  double _height = 0;
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height / 3,
+      height: MediaQuery.of(context).size.height -
+          2 * MediaQuery.of(context).size.height / 3,
       child: Stack(
         fit: StackFit.expand,
         children: [
