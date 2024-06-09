@@ -135,6 +135,7 @@ flutter:
     - assets/blog/universe/
     - assets/todoPage/banner/
     - assets/todoPage/
+    - assets/todoPage/todoItem/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

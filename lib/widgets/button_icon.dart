@@ -26,7 +26,7 @@ class _ButtonIconState extends State<ButtonIcon> {
       padding: EdgeInsets.all(
         widget.padding ?? 0.0,
       ),
-      iconSize: 16,
+      iconSize: widget.iconSize ?? 20,
       onPressed: () {
         widget.onPressed();
       },

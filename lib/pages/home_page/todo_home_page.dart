@@ -1,10 +1,14 @@
+import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/banner.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/calendar.dart';
+import 'package:chatkid_mobile/pages/home_page/widgets/todo_main_sheet.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:modals/modals.dart';
 
 class TodoHomePage extends StatefulWidget {
@@ -15,40 +19,22 @@ class TodoHomePage extends StatefulWidget {
 }
 
 class _TodoHomePageState extends State<TodoHomePage> {
+  final todoHomeController = Get.put(TodoHomeStore());
   final _bottomSheetKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: TodoBanner(
-        bottomSheetKey: _bottomSheetKey,
-      ),
-      bottomSheet: BottomSheet(
-        key: _bottomSheetKey,
-        enableDrag: false,
-        constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height -
-                MediaQuery.of(context).size.height / 3 -
-                24),
-        onClosing: () {},
-        builder: (context) {
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-              color: primary.shade100,
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 2, vertical: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: Calendar()),
-              ],
-            ),
-          );
-        },
+      body: Stack(
+        children: [
+          TodoBanner(
+            bottomSheetKey: _bottomSheetKey,
+          ),
+          TodoMainBottomSheet(
+            bottomSheetKey: _bottomSheetKey,
+            todoHomeController: todoHomeController,
+          ),
+        ],
       ),
     );
   }

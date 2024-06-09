@@ -18,14 +18,6 @@ final List<Menu> menu = [
     role: [RoleConstant.Parent, RoleConstant.Child],
     widget: const TodoRouteWrapper(),
   ),
-  Menu(
-    title: 'Khám phá',
-    iconDefault: 'bottomMenu/discover',
-    iconActive: 'bottomMenu/discover_active',
-    route: routesName['${AppRoutes.blog}']!,
-    role: [RoleConstant.Child],
-    widget: const ExplorePage(),
-  ),
 
   Menu(
     title: "Trò chuyện",
@@ -35,14 +27,14 @@ final List<Menu> menu = [
     role: [RoleConstant.Child, RoleConstant.Parent],
     widget: const ListGroupChat(),
   ),
-  Menu(
-    title: 'Thành tựu',
-    iconDefault: 'bottomMenu/reward',
-    iconActive: 'bottomMenu/reward_active',
-    route: routesName['${AppRoutes.history}']!,
-    role: [RoleConstant.Child],
-    widget: const UserProfileNotificationPage(),
-  ),
+  // Menu(
+  //   title: 'Thành tựu',
+  //   iconDefault: 'bottomMenu/reward',
+  //   iconActive: 'bottomMenu/reward_active',
+  //   route: routesName['${AppRoutes.history}']!,
+  //   role: [RoleConstant.Child],
+  //   widget: const UserProfileNotificationPage(),
+  // ),
   Menu(
     title: 'center',
     iconDefault: 'bottomMenu/plus',
@@ -51,6 +43,15 @@ final List<Menu> menu = [
     role: [RoleConstant.Child, RoleConstant.Parent],
     widget: const ExplorePage(),
   ),
+  Menu(
+    title: 'Khám phá',
+    iconDefault: 'bottomMenu/discover',
+    iconActive: 'bottomMenu/discover_active',
+    route: routesName['${AppRoutes.blog}']!,
+    role: [RoleConstant.Child],
+    widget: const ExplorePage(),
+  ),
+
   Menu(
     title: 'Bé',
     iconDefault: 'bottomMenu/kid',

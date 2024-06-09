@@ -18,12 +18,12 @@ class TodoBanner extends StatefulWidget {
 class _TodoBannerState extends State<TodoBanner> {
   final UserModel user = LocalStorage.instance.getUser();
 
-  double _height = 0;
   @override
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height -
-          2 * MediaQuery.of(context).size.height / 3,
+          2 * MediaQuery.of(context).size.height / 3 -
+          22,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -156,7 +156,7 @@ class _TodoBannerState extends State<TodoBanner> {
             ),
           ),
           Positioned(
-            bottom: MediaQuery.of(context).size.height / 10,
+            top: MediaQuery.of(context).size.height / 4 - 22,
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: const Indicator(
