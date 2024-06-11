@@ -1,25 +1,31 @@
+import 'package:chatkid_mobile/constants/local_storage.dart';
+import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/providers/family_provider.dart';
+import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class TodoBanner extends StatefulWidget {
+class TodoBanner extends ConsumerStatefulWidget {
   final GlobalKey? bottomSheetKey;
   const TodoBanner({super.key, this.bottomSheetKey});
 
   @override
-  State<TodoBanner> createState() => _TodoBannerState();
+  ConsumerState<TodoBanner> createState() => _TodoBannerState();
 }
 
-class _TodoBannerState extends State<TodoBanner> {
+class _TodoBannerState extends ConsumerState<TodoBanner> {
   final UserModel user = LocalStorage.instance.getUser();
 
   @override
   Widget build(BuildContext context) {
+    final familiesAccounts = ref.watch(getFamilyProvider);
     return Container(
       height: MediaQuery.of(context).size.height -
           2 * MediaQuery.of(context).size.height / 3 -

@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class _TaskItemState extends State<TaskItem> {
         padding: EdgeInsets.only(left: 12, top: 6, bottom: 10),
         children: [
           Container(
-            height: 26,
+            height: 24,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -33,10 +34,7 @@ class _TaskItemState extends State<TaskItem> {
                         fontWeight: FontWeight.bold,
                       ),
                 ),
-                ButtonIcon(
-                  onPressed: () {},
-                  icon: "dots",
-                ),
+                TaskActions(),
               ],
             ),
           ),
@@ -62,6 +60,47 @@ class _TaskItemState extends State<TaskItem> {
           ),
           SizedBox(height: 14),
         ],
+      ),
+    );
+  }
+}
+
+class TaskActions extends StatefulWidget {
+  const TaskActions({super.key});
+
+  @override
+  State<TaskActions> createState() => TaskActionsState();
+}
+
+class TaskActionsState extends State<TaskActions> {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton(
+      itemBuilder: (context) {
+        return [
+          PopupMenuItem(
+            child: Text(
+              'Edit',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontSize: 14,
+                  ),
+            ),
+          ),
+          PopupMenuItem(
+            child: Text(
+              'Delete',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontSize: 14,
+                  ),
+            ),
+          ),
+        ];
+      },
+      iconSize: 18,
+      padding: EdgeInsets.zero,
+      icon: const SvgIcon(
+        icon: 'dots',
+        size: 18,
       ),
     );
   }

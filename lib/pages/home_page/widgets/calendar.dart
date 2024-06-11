@@ -140,7 +140,7 @@ class _CalendarState extends State<Calendar> {
                               prevPage(
                                 context,
                                 days: selectedDate
-                                    .sub(Duration(days: 1))
+                                    .add(Duration(days: 1))
                                     .difference(currentDate)
                                     .inDays,
                                 itemWidth: itemWidth,

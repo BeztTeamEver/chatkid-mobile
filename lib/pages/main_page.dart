@@ -4,12 +4,14 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/todo_create_page.dart';
 import 'package:chatkid_mobile/pages/routes/home_route.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -79,9 +81,10 @@ class _MainPageState extends ConsumerState<MainPage> {
           child: FloatingActionButton(
             onPressed: () {
               // TODO: route to create task page
-              setState(() {
-                _currentIndex = 0;
-              });
+              Navigator.push(
+                context,
+                createRoute(() => TodoCreatePage()),
+              );
             },
             elevation: 0,
             shape: const CircleBorder(),

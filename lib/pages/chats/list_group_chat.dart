@@ -277,7 +277,19 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
           const SizedBox(
             height: 8,
           ),
-
+          ElevatedButton(
+            onPressed: () async {
+              await FirebaseService.instance.signOut().then((value) {
+                AuthService.signOut();
+                Navigator.of(context).pushReplacement(
+                  createRoute(
+                    () => const LoginPage(),
+                  ),
+                );
+              });
+            },
+            child: const Text("Đăng xuất"),
+          ),
           // Wrap(
           //   runSpacing: 8,
           //   children: [

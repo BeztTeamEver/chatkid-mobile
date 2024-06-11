@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/pages/home_page/widgets/task_item.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
@@ -96,6 +97,7 @@ class _TodoMainBottomSheetState extends State<TodoMainBottomSheet>
           ),
           child: CustomScrollView(
             controller: scrollController,
+            cacheExtent: 0.5,
             slivers: [
               SliverAppBar(
                 primary: true,
@@ -111,6 +113,9 @@ class _TodoMainBottomSheetState extends State<TodoMainBottomSheet>
                   child: Container(
                     height: 30,
                     width: 1000,
+                    decoration: BoxDecoration(
+                      color: primary.shade100,
+                    ),
                     child: Center(
                       child: Container(
                         decoration: BoxDecoration(
@@ -133,7 +138,7 @@ class _TodoMainBottomSheetState extends State<TodoMainBottomSheet>
                 backgroundColor: primary.shade100,
                 title: Container(
                   decoration: BoxDecoration(
-                    color: Colors.transparent,
+                    color: primary.shade100,
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 2, vertical: 20),
                   child: Calendar(),
@@ -148,67 +153,83 @@ class _TodoMainBottomSheetState extends State<TodoMainBottomSheet>
                   decoration: BoxDecoration(
                     color: primary.shade100,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 18),
                   child: CustomTabbar(
                     onTabChange: (index) {
                       setState(() => _tabController.animateTo(index));
                     },
+                    tabs: const ["Công việc", "Phong trào thi đua"],
                     tabController: _tabController,
                   ),
                 ),
               ),
-              // TODO: current task
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return TaskItem();
-                  },
-                  childCount: 1,
-                ),
-              ),
-              SliverAppBar(
-                primary: false,
-                pinned: true,
-                toolbarHeight: 28,
-                titleSpacing: 0,
-                title: Container(
-                  decoration: BoxDecoration(
-                    color: primary.shade100,
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Đã hoàn thành",
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
+              SliverFillRemaining(
+                hasScrollBody: true,
+                child: TabBarView(
+                  controller: _tabController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    SingleChildScrollView(
+                      padding: EdgeInsets.only(top: 8, bottom: 26),
+                      child: Column(
+                        children: [
+                          SliverList.builder(
+                            itemBuilder: (context, index) {
+                              return TaskItem();
+                            },
+                            itemCount: 2,
+                          ),
+                          // ListView.builder(
+                          //   shrinkWrap: true,
+                          //   physics: NeverScrollableScrollPhysics(),
+                          //   itemCount: 2,
+                          //   itemBuilder: (context, index) {
+                          //     return TaskItem();
+                          //   },
+                          // ),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     color: primary.shade100,
+                          //   ),
+                          //   padding: EdgeInsets.symmetric(
+                          //       horizontal: 12, vertical: 12),
+                          //   child: Row(
+                          //     children: [
+                          //       Text(
+                          //         "Đã hoàn thành",
+                          //         style: Theme.of(context)
+                          //             .textTheme
+                          //             .bodyMedium!
+                          //             .copyWith(
+                          //               fontSize: 16,
+                          //               fontWeight: FontWeight.w500,
+                          //             ),
+                          //       ),
+                          //       SizedBox(width: 8),
+                          //       Expanded(
+                          //         child: Divider(
+                          //           height: 2,
+                          //           indent: 4,
+                          //           endIndent: 10,
+                          //           color: neutral.shade300,
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ), // TODO: completed task
+                          // ListView.builder(
+                          //   shrinkWrap: true,
+                          //   physics: NeverScrollableScrollPhysics(),
+                          //   itemCount: 12,
+                          //   itemBuilder: (context, index) {
+                          //     return TaskItem();
+                          //   },
+                          // ),
+                        ],
                       ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Divider(
-                          height: 2,
-                          indent: 4,
-                          endIndent: 10,
-                          color: neutral.shade300,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // TODO: completed task
-              SliverPadding(
-                padding: EdgeInsets.only(bottom: 28),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return TaskItem();
-                    },
-                    addRepaintBoundaries: true,
-                    childCount: 8,
-                  ),
+                    ),
+                    Container(),
+                  ],
                 ),
               ),
             ],
