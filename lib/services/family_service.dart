@@ -108,10 +108,10 @@ class FamilyService {
       isUseFamilyToken: true,
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      Logger().d(response.body);
+      // Logger().d(response.body);
       final data = jsonDecode(response.body);
 
-      Logger().i(response.body);
+      // Logger().i(response.body);
       final family = FamilyModel.fromJson(data);
 
       return family;
@@ -134,7 +134,6 @@ class FamilyService {
 
   Future<ChannelModel> getFamilyChannel() async {
     final familyId = _localStorage.getUser().familyId ?? '';
-    Logger().i(familyId);
     final response = await BaseHttp.instance.get(
       endpoint: Endpoint.familyChannelsEndPoint.replaceFirst('{id}', familyId),
     );

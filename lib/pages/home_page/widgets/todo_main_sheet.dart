@@ -6,12 +6,9 @@ import 'package:chatkid_mobile/pages/home_page/widgets/custom_tab_bar.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/task_item.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
-import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
 
 class TodoMainBottomSheet extends StatefulWidget {
@@ -37,7 +34,6 @@ class _TodoMainBottomSheetState extends State<TodoMainBottomSheet>
   bool isExpanded = false;
 
   openSheet() {
-    Logger().d(_sheetController.size);
     if (_sheetController.size < 1) {
       _sheetController.animateTo(
         1,
@@ -163,75 +159,75 @@ class _TodoMainBottomSheetState extends State<TodoMainBottomSheet>
                   ),
                 ),
               ),
-              SliverFillRemaining(
-                hasScrollBody: true,
-                child: TabBarView(
-                  controller: _tabController,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    SingleChildScrollView(
-                      padding: EdgeInsets.only(top: 8, bottom: 26),
-                      child: Column(
-                        children: [
-                          SliverList.builder(
-                            itemBuilder: (context, index) {
-                              return TaskItem();
-                            },
-                            itemCount: 2,
-                          ),
-                          // ListView.builder(
-                          //   shrinkWrap: true,
-                          //   physics: NeverScrollableScrollPhysics(),
-                          //   itemCount: 2,
-                          //   itemBuilder: (context, index) {
-                          //     return TaskItem();
-                          //   },
-                          // ),
-                          // Container(
-                          //   decoration: BoxDecoration(
-                          //     color: primary.shade100,
-                          //   ),
-                          //   padding: EdgeInsets.symmetric(
-                          //       horizontal: 12, vertical: 12),
-                          //   child: Row(
-                          //     children: [
-                          //       Text(
-                          //         "Đã hoàn thành",
-                          //         style: Theme.of(context)
-                          //             .textTheme
-                          //             .bodyMedium!
-                          //             .copyWith(
-                          //               fontSize: 16,
-                          //               fontWeight: FontWeight.w500,
-                          //             ),
-                          //       ),
-                          //       SizedBox(width: 8),
-                          //       Expanded(
-                          //         child: Divider(
-                          //           height: 2,
-                          //           indent: 4,
-                          //           endIndent: 10,
-                          //           color: neutral.shade300,
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ), // TODO: completed task
-                          // ListView.builder(
-                          //   shrinkWrap: true,
-                          //   physics: NeverScrollableScrollPhysics(),
-                          //   itemCount: 12,
-                          //   itemBuilder: (context, index) {
-                          //     return TaskItem();
-                          //   },
-                          // ),
-                        ],
-                      ),
-                    ),
-                    Container(),
-                  ],
-                ),
-              ),
+              // SliverFillRemaining(
+              //   hasScrollBody: true,
+              //   child: TabBarView(
+              //     controller: _tabController,
+              //     physics: NeverScrollableScrollPhysics(),
+              //     children: [
+              //       SingleChildScrollView(
+              //         padding: EdgeInsets.only(top: 8, bottom: 26),
+              //         child: Column(
+              //           children: [
+              //             SliverList.builder(
+              //               itemBuilder: (context, index) {
+              //                 return TaskItem();
+              //               },
+              //               itemCount: 2,
+              //             ),
+              // ListView.builder(
+              //   shrinkWrap: true,
+              //   physics: NeverScrollableScrollPhysics(),
+              //   itemCount: 2,
+              //   itemBuilder: (context, index) {
+              //     return TaskItem();
+              //   },
+              // ),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     color: primary.shade100,
+              //   ),
+              //   padding: EdgeInsets.symmetric(
+              //       horizontal: 12, vertical: 12),
+              //   child: Row(
+              //     children: [
+              //       Text(
+              //         "Đã hoàn thành",
+              //         style: Theme.of(context)
+              //             .textTheme
+              //             .bodyMedium!
+              //             .copyWith(
+              //               fontSize: 16,
+              //               fontWeight: FontWeight.w500,
+              //             ),
+              //       ),
+              //       SizedBox(width: 8),
+              //       Expanded(
+              //         child: Divider(
+              //           height: 2,
+              //           indent: 4,
+              //           endIndent: 10,
+              //           color: neutral.shade300,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ), // TODO: completed task
+              // ListView.builder(
+              //   shrinkWrap: true,
+              //   physics: NeverScrollableScrollPhysics(),
+              //   itemCount: 12,
+              //   itemBuilder: (context, index) {
+              //     return TaskItem();
+              //   },
+              // ),
+              //         ],
+              //       ),
+              //     ),
+              //     Container(),
+              //   ],
+              // ),
+              // ),
             ],
           ),
         );

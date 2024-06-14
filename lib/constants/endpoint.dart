@@ -40,7 +40,7 @@ class Endpoint {
   static const paypalEndPoint = "/api/paypal/create-paypal-order";
   static const capturePaypalEndPoint = "/api/paypal/capture";
 
-  // Transaction 
+  // Transaction
   static const createTransactionEndPoint = "/api/payment-transaction";
 
   //Notification
@@ -65,4 +65,7 @@ class Endpoint {
   static const onGroupCreateEndPoint = "onGroupCreate";
   static const onGroupJoinEndPoint = "onGroupJoin";
   static const onGroupLeaveEndPoint = "onGroupLeave";
+
+  // Task category
+  static const taskCategoryEndPoint = "/api/task-categories";
 }

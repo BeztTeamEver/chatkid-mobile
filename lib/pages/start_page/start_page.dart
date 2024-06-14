@@ -65,7 +65,14 @@ class _StartPageState extends ConsumerState<StartPage> {
   @override
   Widget build(BuildContext context) {
     ref.watch(saveStepProvider(1));
-    final familyUsers = FamilyService().getFamily();
+    final familyUsers = FamilyService().getFamily().then((value) {
+      if (value.members.length >= 5) {
+        setState(() {
+          _isCreateUser = false;
+        });
+      }
+      return value;
+    });
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -108,16 +115,7 @@ class _StartPageState extends ConsumerState<StartPage> {
               ),
               Expanded(
                 child: FutureBuilder(
-                  future: familyUsers.then(
-                    (value) {
-                      if (value.members.length >= 5) {
-                        setState(() {
-                          _isCreateUser = false;
-                        });
-                      }
-                      return value;
-                    },
-                  ),
+                  future: familyUsers,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data as FamilyModel;
