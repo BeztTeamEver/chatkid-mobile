@@ -73,6 +73,8 @@ class FirebaseService {
         idToken: googleAuth?.idToken,
       );
 
+      Logger().i(credential);
+
       // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {

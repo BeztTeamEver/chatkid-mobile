@@ -147,8 +147,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const BotAssetStore(),
-      // home: const SplashPages(),
+      // home: const BotAssetStore(),
+      home: const SplashPages(),
       routes: routes,
     );
   }

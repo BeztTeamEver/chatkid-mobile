@@ -25,6 +25,7 @@ class Endpoint {
   static const botAssetEndPoint = "/api/assets";
   static const storeAssetEndPoint = "/api/assets/me?isOwned=false";
   static const botAssetSelectedEndPoint = "/api/assets/skin";
+  static const buyBotAssetEndPoint = "/api/assets/buy/{id}";
   static const selectBotAssetEndPoint = "/api/assets/equip/{id}";
   static const unselectBotAssetEndPoint = "/api/assets/unequip/{id}";
 

@@ -53,10 +53,10 @@ class _BotAssetState extends State<BotAsset>
     super.dispose();
   }
 
-  void _onSelectItem(String id, String status) {
+  void _onSelectItem(BotAssetModel item) {
     setState(() {
-      idLoading = id;
-      currentSkin = BotAssetService().selectAssetItem(id, status);
+      idLoading = item.id;
+      currentSkin = BotAssetService().selectAssetItem(item.id, item.status ?? '');
     });
     Timer(
       const Duration(milliseconds: 300),

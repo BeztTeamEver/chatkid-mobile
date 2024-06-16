@@ -1,17 +1,23 @@
+// ignore_for_file: prefer_is_empty
+
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:chatkid_mobile/models/bot_asset_model.dart';
 import 'package:chatkid_mobile/pages/bot/card_asset_item.dart';
+import 'package:chatkid_mobile/pages/bot/empty_data.dart';
 import 'package:chatkid_mobile/services/asset_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class BotAssetStore extends StatefulWidget {
   const BotAssetStore({super.key});
@@ -25,7 +31,9 @@ class _BotAssetStoreState extends State<BotAssetStore>
   late Future<BotAssetTypeModel> botAssets;
   late Future<List<BotAssetModel>> currentSkin;
   String idLoading = '';
+  late bool isBuying = false;
   late TabController _tabController;
+  late List<BotAssetModel> selectedItem = [];
   int _selectedIndex = 0;
 
   final List<BotAssetModel> DEFAULT_SKIN = [
@@ -49,7 +57,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
             "https://storage.googleapis.com/kid-talkie/BigAsset/Layer5_00.png",
         previewImageUrl:
             "https://storage.googleapis.com/kid-talkie/SmallAsset/Layer7_00.png",
-        position: 6,
+        position: 5,
         price: 100,
         type: "eyes",
         createdAt: "2024-05-21T21:17:15.088Z",
@@ -58,6 +66,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
   ];
 
   final currentUser = LocalStorage.instance.getUser();
+  // TODO: 1. Diamond provider store ----- 2. Check enough diamond to buy ?
 
   @override
   void initState() {
@@ -67,8 +76,6 @@ class _BotAssetStoreState extends State<BotAssetStore>
     botAssets = BotAssetService().getStoreAsset();
 
     currentSkin = BotAssetService().getCurrentSkin();
-
-    Logger().i(currentUser.accessToken);
 
     _tabController.animation?.addListener(() {
       int indexChange = _tabController.offset.round();
@@ -86,23 +93,154 @@ class _BotAssetStoreState extends State<BotAssetStore>
     super.dispose();
   }
 
-  void _onSelectItem(String id, String status) {
-    setState(() {
-      idLoading = id;
-      currentSkin = BotAssetService().selectAssetItem(id, status);
-    });
-    Timer(
-      const Duration(milliseconds: 300),
-      () => setState(() {
-        botAssets = BotAssetService().getBotAssets();
-      }),
-    );
-    Timer(
-      const Duration(milliseconds: 800),
-      () => setState(() {
-        idLoading = '';
-      }),
-    );
+  void _onSelectItem(BotAssetModel item) {
+    if (selectedItem.length > 0 && item.id == selectedItem[0].id) {
+      setState(() {
+        selectedItem = [];
+      });
+    } else {
+      setState(() {
+        idLoading = item.id;
+        selectedItem = [item];
+      });
+      Timer(
+        const Duration(milliseconds: 300),
+        () => setState(() {
+          idLoading = '';
+        }),
+      );
+    }
+  }
+
+  void _handleBuyAsset() {
+    if (selectedItem.length == 0) return;
+    Alert(
+      context: context,
+      image: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Column(
+          children: [
+            Text(
+              "BẠN MUỐN MUA TRANG BỊ",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: neutral.shade900,
+              ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "NÀY VỚI GIÁ ${selectedItem[0].price}",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: neutral.shade900,
+                  ),
+                ),
+                const SizedBox(
+                  width: 3,
+                ),
+                Image.asset(
+                  "assets/icons/diamond_icon.png",
+                  width: 16,
+                ),
+                Text(
+                  " ?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: neutral.shade900,
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+      style: AlertStyle(
+        isCloseButton: false,
+        isOverlayTapDismiss: !isBuying,
+        animationType: AnimationType.grow,
+        backgroundColor: primary.shade50,
+        titlePadding: EdgeInsets.zero,
+        titleStyle: TextStyle(
+          color: neutral.shade900,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+        descStyle: TextStyle(
+          color: neutral.shade900,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      content: Image.network(
+        selectedItem[0].previewImageUrl ?? '',
+        width: (MediaQuery.of(context).size.width - 56) / 2,
+        height: (MediaQuery.of(context).size.width - 56) / 2,
+      ),
+      buttons: [
+        DialogButton(
+          height: 45,
+          border: Border.all(width: 2, color: primary.shade500),
+          radius: const BorderRadius.all(Radius.circular(100)),
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              "Quay lại",
+              style: TextStyle(
+                  color: primary.shade500,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800),
+            ),
+          ),
+          onPressed: () {
+            if (!isBuying) Navigator.of(context, rootNavigator: true).pop();
+          },
+        ),
+        DialogButton(
+          height: 45,
+          border: Border.all(width: 2, color: primary.shade500),
+          radius: const BorderRadius.all(Radius.circular(100)),
+          color: primary.shade500,
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              "Xác nhận",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800),
+            ),
+          ),
+          onPressed: () {
+            setState(() {
+              isBuying = true;
+            });
+            BotAssetService()
+                .buySkin(selectedItem[0].id)
+                .then((value) => botAssets = value as Future<BotAssetTypeModel>)
+                .catchError((e) {
+              Logger().e(e);
+              ErrorSnackbar.showError(err: e, context: context);
+            }).whenComplete(() {
+              setState(() {
+                isBuying = false;
+              });
+            });
+          },
+        ),
+      ],
+    ).show();
   }
 
   @override
@@ -117,150 +255,164 @@ class _BotAssetStoreState extends State<BotAssetStore>
             children: [
               Center(
                 child: FutureBuilder(
-                    future: currentSkin,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final data = snapshot.data as List<BotAssetModel>;
-                        return Stack(
-                          children: <Widget>[
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height / 2 -
-                                  AppBar().preferredSize.height / 2 +
-                                  10,
-                              decoration:
-                                  BoxDecoration(color: secondary.shade50),
-                            ),
-                            Positioned(
-                              left: 0,
-                              bottom: -70,
-                              child: Image.asset(
-                                "assets/bots/floor.png",
-                                width: MediaQuery.of(context).size.width,
-                              ),
-                            ),
-                            ...DEFAULT_SKIN
-                                .map(
-                                  (item) => Positioned(
-                                    left: 0,
-                                    bottom: 60,
-                                    child: Image.network(
-                                      item.imageUrl ?? "",
-                                      width: MediaQuery.of(context).size.width,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.35,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            Positioned(
-                              left: 18,
-                              top: 14,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.chevron_left,
-                                  color: secondary.shade400,
-                                ),
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateColor.resolveWith(
-                                    (states) => secondary.shade100,
-                                  ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                            Positioned(
-                              left: 0,
-                              top: 16,
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: Center(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: primary.shade200),
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(100.0),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                                      child: Wrap(
-                                        spacing: 8,
-                                        direction: Axis.horizontal,
-                                        crossAxisAlignment: WrapCrossAlignment.center,
-                                        children: [
-                                          Image.asset("assets/icons/diamond_icon.png", width: 20,),
-                                          Text('1000')
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              left: 20,
-                              bottom: 9,
-                              child: OutlinedButton(
-                                onPressed: () {},
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor:
-                                      MaterialStateColor.resolveWith(
-                                    (states) => primary.shade50,
-                                  ),
-                                  side: BorderSide(
-                                      width: 2.0, color: primary.shade500),
-                                ),
-                                child: SvgIcon(
-                                  icon: "asset/hanger",
-                                  size: 24,
-                                  color: primary.shade700,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              left: MediaQuery.of(context).size.width / 4,
-                              bottom: 12,
-                              child: FullWidthButton(
-                                onPressed: () {},
-                                width: MediaQuery.of(context).size.width / 2,
-                                child: const Text(
-                                  "Mua trang bị",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
+                  future: currentSkin,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      late List<BotAssetModel> currentSkin = [
+                        ...DEFAULT_SKIN,
+                        ...selectedItem
+                      ];
+                      if (selectedItem.length > 0 &&
+                          selectedItem[0].position == 4) {
+                        currentSkin = [DEFAULT_SKIN[1], selectedItem[0]];
                       }
-                      if (snapshot.hasError) {
-                        Logger().e(snapshot.error);
-                        return Container();
-                      } else {
-                        return SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 2 -
-                              AppBar().preferredSize.height / 2,
-                          child: const Center(
-                            child: CircularProgressIndicator(),
+                      if (selectedItem.length > 0 &&
+                          selectedItem[0].position == 5) {
+                        currentSkin = [DEFAULT_SKIN[0], selectedItem[0]];
+                      }
+                      currentSkin.sort(
+                          (a, b) => (a.position ?? 0) - (b.position ?? 0));
+                      return Stack(
+                        children: <Widget>[
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height / 2 -
+                                AppBar().preferredSize.height / 2 +
+                                10,
+                            decoration: BoxDecoration(color: secondary.shade50),
                           ),
-                        );
-                      }
-                    }),
+                          Positioned(
+                            left: 0,
+                            bottom: -70,
+                            child: Image.asset(
+                              "assets/bots/floor.png",
+                              width: MediaQuery.of(context).size.width,
+                            ),
+                          ),
+                          ...currentSkin.map(
+                            (item) => Positioned(
+                              left: 0,
+                              bottom: 60,
+                              child: Image.network(
+                                item.imageUrl ?? "",
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.35,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: 18,
+                            top: 14,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.chevron_left,
+                                color: secondary.shade400,
+                              ),
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateColor.resolveWith(
+                                  (states) => secondary.shade100,
+                                ),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+                          Positioned(
+                            left: 0,
+                            top: 16,
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: Center(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: primary.shade200),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(100.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 8),
+                                    child: Wrap(
+                                      spacing: 8,
+                                      direction: Axis.horizontal,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/icons/diamond_icon.png",
+                                          width: 20,
+                                        ),
+                                        Text('1000')
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: 20,
+                            bottom: 9,
+                            child: OutlinedButton(
+                              onPressed: () {},
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: MaterialStateColor.resolveWith(
+                                  (states) => primary.shade50,
+                                ),
+                                side: BorderSide(
+                                    width: 2.0, color: primary.shade500),
+                              ),
+                              child: SvgIcon(
+                                icon: "asset/hanger",
+                                size: 24,
+                                color: primary.shade700,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: MediaQuery.of(context).size.width / 4,
+                            bottom: 12,
+                            child: FullWidthButton(
+                              isDisabled: selectedItem.length == 0,
+                              onPressed: () => _handleBuyAsset(),
+                              width: MediaQuery.of(context).size.width / 2,
+                              child: const Text(
+                                "Mua trang bị",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      Logger().e(snapshot.error);
+                      return Container();
+                    } else {
+                      return SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height / 2 -
+                            AppBar().preferredSize.height / 2,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
               Container(
                 decoration: BoxDecoration(
@@ -359,30 +511,43 @@ class _BotAssetStoreState extends State<BotAssetStore>
                                         child: Wrap(
                                             direction: Axis.horizontal,
                                             alignment: WrapAlignment.start,
-                                            runSpacing: 12,
                                             spacing: 12,
                                             children: [
-                                              ...(data.ears ?? []).map(
-                                                (e) => CardAssetItem(
-                                                  idLoading: idLoading,
-                                                  botAsset: e,
-                                                  onClick: _onSelectItem,
-                                                ),
+                                              ...(data.emoji ?? []).map(
+                                                (e) => e.position == -1
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                top: 2,
+                                                                bottom: 8),
+                                                        child: SvgPicture.asset(
+                                                          'assets/icons/asset/shelf.svg',
+                                                          fit: BoxFit.contain,
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                        ),
+                                                      )
+                                                    : CardAssetItem(
+                                                        isSellSelected:
+                                                            selectedItem.length >
+                                                                    0 &&
+                                                                selectedItem[0]
+                                                                        .id ==
+                                                                    e.id,
+                                                        idLoading: idLoading,
+                                                        isSell: true,
+                                                        botAsset: e,
+                                                        onClick: _onSelectItem,
+                                                      ),
                                               ),
                                               Visibility(
                                                 visible:
-                                                    (data.ears?.length ?? 0) >
+                                                    (data.emoji ?? []).length ==
                                                         0,
-                                                child: const SvgIcon(
-                                                  icon: "asset/shelf",
-                                                ),
-                                              ),
-                                              ...(data.emoji ?? []).map(
-                                                (e) => CardAssetItem(
-                                                  idLoading: idLoading,
-                                                  botAsset: e,
-                                                  onClick: _onSelectItem,
-                                                ),
+                                                child: const EmptyAssetData(),
                                               ),
                                             ]),
                                       ),
@@ -393,113 +558,231 @@ class _BotAssetStoreState extends State<BotAssetStore>
                                         child: Wrap(
                                           direction: Axis.horizontal,
                                           alignment: WrapAlignment.start,
-                                          runSpacing: 12,
                                           spacing: 12,
-                                          children: (data.hat ?? [])
-                                              .map(
-                                                (e) => CardAssetItem(
-                                                  idLoading: idLoading,
-                                                  botAsset: e,
-                                                  onClick: _onSelectItem,
-                                                ),
-                                              )
-                                              .toList(),
-                                        ),
-                                      ),
-                                    ),
-                                    SingleChildScrollView(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Wrap(
-                                          direction: Axis.horizontal,
-                                          alignment: WrapAlignment.start,
-                                          runSpacing: 12,
-                                          spacing: 12,
-                                          children: (data.eyes ?? [])
-                                              .map(
-                                                (e) => CardAssetItem(
-                                                  idLoading: idLoading,
-                                                  botAsset: e,
-                                                  onClick: _onSelectItem,
-                                                ),
-                                              )
-                                              .toList(),
-                                        ),
-                                      ),
-                                    ),
-                                    SingleChildScrollView(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Wrap(
-                                          direction: Axis.horizontal,
-                                          alignment: WrapAlignment.start,
-                                          runSpacing: 12,
-                                          spacing: 12,
-                                          children: (data.necklace ?? [])
-                                              .map(
-                                                (e) => CardAssetItem(
-                                                  idLoading: idLoading,
-                                                  botAsset: e,
-                                                  onClick: _onSelectItem,
-                                                ),
-                                              )
-                                              .toList(),
-                                        ),
-                                      ),
-                                    ),
-                                    SingleChildScrollView(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Wrap(
-                                          direction: Axis.horizontal,
-                                          alignment: WrapAlignment.start,
-                                          runSpacing: 12,
-                                          spacing: 12,
-                                          children: (data.cloak ?? [])
-                                              .map(
-                                                (e) => CardAssetItem(
-                                                  idLoading: idLoading,
-                                                  botAsset: e,
-                                                  onClick: _onSelectItem,
-                                                ),
-                                              )
-                                              .toList(),
-                                        ),
-                                      ),
-                                    ),
-                                    SingleChildScrollView(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Wrap(
-                                          direction: Axis.horizontal,
-                                          alignment: WrapAlignment.start,
-                                          runSpacing: 12,
-                                          spacing: 12,
-                                          children: (data.background ?? [])
-                                              .map(
-                                                (e) => e.position == -1
-                                                    ? Container(
-                                                        width: double.infinity,
-                                                        height: 4,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: secondary
-                                                              .shade200,
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .all(
-                                                            Radius.circular(
-                                                                4.0),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : CardAssetItem(
-                                                        idLoading: idLoading,
-                                                        botAsset: e,
-                                                        onClick: _onSelectItem,
+                                          children: [
+                                            ...(data.hat ?? []).map(
+                                              (e) => e.position == -1
+                                                  ? Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 2,
+                                                              bottom: 8),
+                                                      child: SvgPicture.asset(
+                                                        'assets/icons/asset/shelf.svg',
+                                                        fit: BoxFit.contain,
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
                                                       ),
-                                              )
-                                              .toList(),
+                                                    )
+                                                  : CardAssetItem(
+                                                      isSellSelected:
+                                                          selectedItem.length >
+                                                                  0 &&
+                                                              selectedItem[0]
+                                                                      .id ==
+                                                                  e.id,
+                                                      idLoading: idLoading,
+                                                      isSell: true,
+                                                      botAsset: e,
+                                                      onClick: _onSelectItem,
+                                                    ),
+                                            ),
+                                            Visibility(
+                                              maintainSize: false,
+                                              visible:
+                                                  (data.hat ?? []).length == 0,
+                                              child: const EmptyAssetData(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SingleChildScrollView(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Wrap(
+                                          direction: Axis.horizontal,
+                                          alignment: WrapAlignment.start,
+                                          spacing: 12,
+                                          children: [
+                                            ...(data.eyes ?? []).map(
+                                              (e) => e.position == -1
+                                                  ? Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 2,
+                                                              bottom: 8),
+                                                      child: SvgPicture.asset(
+                                                        'assets/icons/asset/shelf.svg',
+                                                        fit: BoxFit.contain,
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                      ),
+                                                    )
+                                                  : CardAssetItem(
+                                                      isSellSelected:
+                                                          selectedItem.length >
+                                                                  0 &&
+                                                              selectedItem[0]
+                                                                      .id ==
+                                                                  e.id,
+                                                      idLoading: idLoading,
+                                                      isSell: true,
+                                                      botAsset: e,
+                                                      onClick: _onSelectItem,
+                                                    ),
+                                            ),
+                                            Visibility(
+                                              visible:
+                                                  (data.eyes ?? []).length == 0,
+                                              child: const EmptyAssetData(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SingleChildScrollView(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Wrap(
+                                          direction: Axis.horizontal,
+                                          alignment: WrapAlignment.start,
+                                          spacing: 12,
+                                          children: [
+                                            ...(data.necklace ?? []).map(
+                                              (e) => e.position == -1
+                                                  ? Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 2,
+                                                              bottom: 8),
+                                                      child: SvgPicture.asset(
+                                                        'assets/icons/asset/shelf.svg',
+                                                        fit: BoxFit.contain,
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                      ),
+                                                    )
+                                                  : CardAssetItem(
+                                                      isSellSelected:
+                                                          selectedItem.length >
+                                                                  0 &&
+                                                              selectedItem[0]
+                                                                      .id ==
+                                                                  e.id,
+                                                      idLoading: idLoading,
+                                                      isSell: true,
+                                                      botAsset: e,
+                                                      onClick: _onSelectItem,
+                                                    ),
+                                            ),
+                                            Visibility(
+                                              visible: (data.necklace ?? [])
+                                                      .length ==
+                                                  0,
+                                              child: const EmptyAssetData(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SingleChildScrollView(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Wrap(
+                                          direction: Axis.horizontal,
+                                          alignment: WrapAlignment.start,
+                                          spacing: 12,
+                                          children: [
+                                            ...(data.cloak ?? []).map(
+                                              (e) => e.position == -1
+                                                  ? Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 2,
+                                                              bottom: 8),
+                                                      child: SvgPicture.asset(
+                                                        'assets/icons/asset/shelf.svg',
+                                                        fit: BoxFit.contain,
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                      ),
+                                                    )
+                                                  : CardAssetItem(
+                                                      isSellSelected:
+                                                          selectedItem.length >
+                                                                  0 &&
+                                                              selectedItem[0]
+                                                                      .id ==
+                                                                  e.id,
+                                                      idLoading: idLoading,
+                                                      isSell: true,
+                                                      botAsset: e,
+                                                      onClick: _onSelectItem,
+                                                    ),
+                                            ),
+                                            Visibility(
+                                              visible:
+                                                  (data.cloak ?? []).length ==
+                                                      0,
+                                              child: const EmptyAssetData(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SingleChildScrollView(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Wrap(
+                                          direction: Axis.horizontal,
+                                          alignment: WrapAlignment.start,
+                                          spacing: 12,
+                                          children: [
+                                            ...(data.background ?? []).map(
+                                              (e) => e.position == -1
+                                                  ? Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 2,
+                                                              bottom: 8),
+                                                      child: SvgPicture.asset(
+                                                        'assets/icons/asset/shelf.svg',
+                                                        fit: BoxFit.contain,
+                                                        width: MediaQuery.of(
+                                                                context)
+                                                            .size
+                                                            .width,
+                                                      ),
+                                                    )
+                                                  : CardAssetItem(
+                                                      isSellSelected:
+                                                          selectedItem.length >
+                                                                  0 &&
+                                                              selectedItem[0]
+                                                                      .id ==
+                                                                  e.id,
+                                                      idLoading: idLoading,
+                                                      isSell: true,
+                                                      botAsset: e,
+                                                      onClick: _onSelectItem,
+                                                    ),
+                                            ),
+                                            Visibility(
+                                              visible: (data.background ?? [])
+                                                      .length ==
+                                                  0,
+                                              child: const EmptyAssetData(),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
