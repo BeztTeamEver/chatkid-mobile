@@ -7,8 +7,17 @@ import 'package:chatkid_mobile/pages/children_tracking/children_tracking_page.da
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
 import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
+import 'package:chatkid_mobile/pages/routes/home_route.dart';
 
 final List<Menu> menu = [
+  Menu(
+    title: 'Trang chủ',
+    iconDefault: 'bottomMenu/list_detail',
+    iconActive: 'bottomMenu/list_detail_active',
+    route: routesName['${AppRoutes.home}']!,
+    role: [RoleConstant.Parent, RoleConstant.Child],
+    widget: const HomeRouteWrapper(),
+  ),
   Menu(
     title: 'Khám phá',
     iconDefault: 'bottomMenu/discover',
@@ -17,6 +26,7 @@ final List<Menu> menu = [
     role: [RoleConstant.Child],
     widget: const ExplorePage(),
   ),
+
   Menu(
     title: "Trò chuyện",
     iconDefault: 'bottomMenu/chat',
@@ -34,6 +44,14 @@ final List<Menu> menu = [
     widget: const UserProfileNotificationPage(),
   ),
   Menu(
+    title: 'center',
+    iconDefault: 'bottomMenu/plus',
+    iconActive: 'bottomMenu/plus_active',
+    route: routesName['${AppRoutes.blog}']!,
+    role: [RoleConstant.Child, RoleConstant.Parent],
+    widget: const ExplorePage(),
+  ),
+  Menu(
     title: 'Bé',
     iconDefault: 'bottomMenu/kid',
     iconActive: 'bottomMenu/kid_active',
@@ -41,14 +59,14 @@ final List<Menu> menu = [
     role: [RoleConstant.Parent],
     widget: const ChildrenTrackingPage(),
   ),
-  Menu(
-    title: 'Thông báo',
-    iconDefault: 'bottomMenu/notification',
-    iconActive: 'bottomMenu/notification_active',
-    route: routesName['${AppRoutes.notification}']!,
-    role: [RoleConstant.Parent],
-    widget: const NotificationPage(),
-  ),
+  // Menu(
+  //   title: 'Thông báo',
+  //   iconDefault: 'bottomMenu/notification',
+  //   iconActive: 'bottomMenu/notification_active',
+  //   route: routesName['${AppRoutes.notification}']!,
+  //   role: [RoleConstant.Parent],
+  //   widget: const NotificationPage(),
+  // ),
   Menu(
     title: 'Tài khoản',
     iconDefault: 'bottomMenu/profile',
