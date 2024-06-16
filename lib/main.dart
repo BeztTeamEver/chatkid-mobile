@@ -89,6 +89,18 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          height: 80,
+          indicatorColor: Colors.white,
+          labelTextStyle: MaterialStateProperty.all(
+            textTheme.bodySmall!.copyWith(
+              color: neutral.shade800,
+              fontSize: 10,
+            ),
+          ),
+        ),
         cardTheme: CardTheme(
           surfaceTintColor: Colors.transparent,
           shape: RoundedRectangleBorder(
