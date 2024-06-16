@@ -23,6 +23,9 @@ class _TabButtonState extends State<TabButton> {
     return Expanded(
       child: Container(
         height: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+        ),
         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
         child: ElevatedButton(
           onPressed: () => widget.onTap(),

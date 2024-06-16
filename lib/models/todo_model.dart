@@ -2,7 +2,19 @@ import 'dart:convert';
 
 import 'package:chatkid_mobile/models/base_model.dart';
 
-class TaskModel {}
+class TaskModel implements IBaseModel {
+  @override
+  String toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    // TODO: implement toMap
+    throw UnimplementedError();
+  }
+}
 
 class TaskTypeModel {
   String id;
@@ -53,8 +65,8 @@ class TaskCategoryModel implements IBaseModel {
     return TaskCategoryModel(
       id: json['id'],
       name: json['name'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
       taskTypes: json['taskTypes']
           .map<TaskTypeModel>((taskType) => TaskTypeModel.fromJson(taskType))
           .toList(),
@@ -65,8 +77,8 @@ class TaskCategoryModel implements IBaseModel {
     return {
       'id': id,
       'name': name,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
       'taskTypes': taskTypes.map((taskType) => taskType.toJson()).toList(),
     };
   }

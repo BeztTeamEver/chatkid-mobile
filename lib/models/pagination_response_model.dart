@@ -1,8 +1,8 @@
-class PaginationResponseModel {
+class PaginationResponseModel<T> {
   final int? pageNumber;
   final int? pageSize;
   final int? totalItem;
-  final List<dynamic> items;
+  final List<T> items;
 
   PaginationResponseModel(
       {this.pageNumber, this.pageSize, this.totalItem, required this.items});

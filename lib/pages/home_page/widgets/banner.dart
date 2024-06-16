@@ -1,16 +1,22 @@
+import 'dart:convert';
+
+import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
+import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class TodoBanner extends ConsumerStatefulWidget {
   final GlobalKey? bottomSheetKey;
@@ -23,15 +29,29 @@ class TodoBanner extends ConsumerStatefulWidget {
 class _TodoBannerState extends ConsumerState<TodoBanner> {
   final UserModel user = LocalStorage.instance.getUser();
 
+  TodoHomeStore todoStore = Get.put<TodoHomeStore>(TodoHomeStore());
+
   @override
   Widget build(BuildContext context) {
-    final familiesAccounts = ref.watch(getFamilyProvider);
+    final familiesAccounts = ref.watch(getFamilyProvider.future).then((value) {
+      final children =
+          value.members.fold(<UserModel>[], (previousValue, element) {
+        if (element.role == RoleConstant.Child) {
+          previousValue.add(element);
+        }
+        return previousValue;
+      });
+      todoStore.setMembers(children);
+      return children;
+    });
+
     return Container(
       height: MediaQuery.of(context).size.height -
           2 * MediaQuery.of(context).size.height / 3 -
           22,
       child: Stack(
         fit: StackFit.expand,
+        alignment: Alignment.center,
         children: [
           Positioned(
             child: Container(
@@ -70,107 +90,195 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
               width: MediaQuery.of(context).size.width + 100,
             ),
           ),
-          Stack(
-            fit: StackFit.expand,
-            children: [
-              BannerAvatar(user: user),
-              Positioned(
-                width: 90,
-                height: 94,
-                top: 90,
-                left: 140,
-                child: SvgPicture.asset(
-                  "assets/todoPage/banner/flower2.svg",
-                  fit: BoxFit.fill,
+          FutureBuilder(
+            future: familiesAccounts,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                Logger().i("Error: ${snapshot.error}");
+                return Container();
+                // return Text("Error: ${snapshot.error}");
+              }
+
+              if (snapshot.hasData) {
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    BannerAvatar(),
+                    Positioned(
+                      width: 90,
+                      height: 94,
+                      top: 90,
+                      left: 140,
+                      child: SvgPicture.asset(
+                        "assets/todoPage/banner/flower2.svg",
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    Positioned(
+                      width: 140,
+                      top: 50,
+                      right: 55,
+                      child: GestureDetector(
+                        onTap: () => {},
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.horizontal(
+                                  left: Radius.circular(40),
+                                  right: Radius.circular(40),
+                                ),
+                              ),
+                              child: const Text(
+                                "Cửa hàng phần thưởng",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            SvgPicture.asset(
+                              "assets/todoPage/banner/store.svg",
+                              fit: BoxFit.fill,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      width: 90,
+                      height: 94,
+                      top: 90,
+                      right: 0,
+                      child: SvgPicture.asset(
+                        "assets/todoPage/banner/flower4.svg",
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return Positioned(
+                width: 48,
+                height: 48,
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  child: const CustomCircleProgressIndicator(),
                 ),
-              ),
-              Positioned(
-                width: 90,
-                height: 94,
-                top: 70,
-                right: 50,
-                child: SvgPicture.asset(
-                  "assets/todoPage/banner/flower3.svg",
-                  fit: BoxFit.fill,
-                ),
-              ),
-              Positioned(
-                width: 90,
-                height: 94,
-                top: 90,
-                right: 0,
-                child: SvgPicture.asset(
-                  "assets/todoPage/banner/flower4.svg",
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ],
+              );
+            },
           ),
-          Positioned(
-            top: 0,
-            width: MediaQuery.of(context).size.width,
-            child: Padding(
-              padding: EdgeInsets.all(20),
+          FutureBuilder(
+            future: familiesAccounts,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                Logger().i("Error: ${snapshot.error}");
+                return Container();
+                // return Text("Error: ${snapshot.error}");
+              }
+
+              return Positioned(
+                top: 0,
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          child: Obx(
+                            () => Text(
+                              todoStore.members[todoStore.currentUser.value]
+                                      .name ??
+                                  "Người dùng",
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 32,
+                        height: 32,
+                        child: SvgPicture.asset(
+                          "assets/todoPage/banner/bell.svg",
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          GetBuilder<TodoHomeStore>(builder: (todoStore) {
+            return Positioned(
+              left: -12,
+              top: MediaQuery.of(context).size.height / 12,
+              width: MediaQuery.of(context).size.width + 24,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
+                  GestureDetector(
+                    onTap: () {
+                      final currentIndex = todoStore.currentUser.value;
+                      if (currentIndex == 0) {
+                        todoStore.setCurrentUser(todoStore.members.length - 1);
+                      } else {
+                        todoStore.setCurrentUser(currentIndex - 1);
+                      }
+                    },
                     child: Container(
-                      child: Text(
-                        user?.name ?? "Người dùng",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold),
+                      width: 64,
+                      height: 64,
+                      child: SvgPicture.asset(
+                        "assets/todoPage/banner/chevron-left.svg",
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),
-                  Container(
-                    width: 32,
-                    height: 32,
-                    child: SvgPicture.asset(
-                      "assets/todoPage/banner/bell.svg",
+                  GestureDetector(
+                    onTap: () {
+                      final currentIndex = todoStore.currentUser.value;
+                      if (currentIndex == todoStore.members.length - 1) {
+                        todoStore.setCurrentUser(0);
+                      } else {
+                        todoStore.setCurrentUser(currentIndex + 1);
+                      }
+                    },
+                    child: Container(
+                      width: 64,
+                      height: 64,
+                      child: SvgPicture.asset(
+                        "assets/todoPage/banner/chevron-right.svg",
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-          Positioned(
-            left: -12,
-            top: MediaQuery.of(context).size.height / 12,
-            width: MediaQuery.of(context).size.width + 24,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  child: SvgPicture.asset(
-                    "assets/todoPage/banner/chevron-left.svg",
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                Container(
-                  width: 64,
-                  height: 64,
-                  child: SvgPicture.asset(
-                    "assets/todoPage/banner/chevron-right.svg",
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ],
-            ),
-          ),
+            );
+          }),
           Positioned(
             top: MediaQuery.of(context).size.height / 4 - 22,
             child: Container(
               width: MediaQuery.of(context).size.width,
-              child: const Indicator(
-                index: 0,
-                dotSize: 12,
-                height: 12,
-                selectedColor: Colors.white,
-                unselectedColor: Colors.white60,
+              child: Obx(
+                () => Indicator(
+                  index: todoStore.currentUser.value,
+                  dotSize: 12,
+                  height: 12,
+                  lenght: todoStore.members.length,
+                  selectedColor: Colors.white,
+                  unselectedColor: Colors.white60,
+                ),
               ),
             ),
           ),
@@ -181,13 +289,6 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
 }
 
 class BannerAvatar extends StatelessWidget {
-  const BannerAvatar({
-    super.key,
-    required this.user,
-  });
-
-  final UserModel user;
-
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -214,9 +315,12 @@ class BannerAvatar extends StatelessWidget {
             child: Container(
               width: 20,
               height: 20,
-              child: AvatarPng(
-                borderColor: Colors.transparent,
-                imageUrl: user.avatarUrl,
+              child: GetX<TodoHomeStore>(
+                builder: (todoStore) => AvatarPng(
+                  borderColor: Colors.transparent,
+                  imageUrl:
+                      todoStore.members[todoStore.currentUser.value].avatarUrl,
+                ),
               ),
             ),
           ),

@@ -9,6 +9,7 @@ import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class TodoMainBottomSheet extends StatefulWidget {
@@ -30,6 +31,8 @@ class _TodoMainBottomSheetState extends State<TodoMainBottomSheet>
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
   late final TabController _tabController;
+
+  final TodoHomeStore todoHomeController = Get.find();
 
   bool isExpanded = false;
 
@@ -67,8 +70,8 @@ class _TodoMainBottomSheetState extends State<TodoMainBottomSheet>
     return DraggableScrollableSheet(
       key: widget.bottomSheetKey,
       maxChildSize: 1,
-      initialChildSize: 0.7,
-      minChildSize: 0.7,
+      initialChildSize: 0.72,
+      minChildSize: 0.72,
       shouldCloseOnMinExtent: false,
       // enableDrag: false,
       // constraints: BoxConstraints(
@@ -159,80 +162,88 @@ class _TodoMainBottomSheetState extends State<TodoMainBottomSheet>
                   ),
                 ),
               ),
-              // SliverFillRemaining(
-              //   hasScrollBody: true,
-              //   child: TabBarView(
-              //     controller: _tabController,
-              //     physics: NeverScrollableScrollPhysics(),
-              //     children: [
-              //       SingleChildScrollView(
-              //         padding: EdgeInsets.only(top: 8, bottom: 26),
-              //         child: Column(
-              //           children: [
-              //             SliverList.builder(
-              //               itemBuilder: (context, index) {
-              //                 return TaskItem();
-              //               },
-              //               itemCount: 2,
-              //             ),
-              // ListView.builder(
-              //   shrinkWrap: true,
-              //   physics: NeverScrollableScrollPhysics(),
-              //   itemCount: 2,
+              // SliverList.builder(
               //   itemBuilder: (context, index) {
               //     return TaskItem();
-              //   },
+              //   },r
+              //   itemCount: 20,
               // ),
-              // Container(
-              //   decoration: BoxDecoration(
-              //     color: primary.shade100,
-              //   ),
-              //   padding: EdgeInsets.symmetric(
-              //       horizontal: 12, vertical: 12),
-              //   child: Row(
-              //     children: [
-              //       Text(
-              //         "Đã hoàn thành",
-              //         style: Theme.of(context)
-              //             .textTheme
-              //             .bodyMedium!
-              //             .copyWith(
-              //               fontSize: 16,
-              //               fontWeight: FontWeight.w500,
-              //             ),
-              //       ),
-              //       SizedBox(width: 8),
-              //       Expanded(
-              //         child: Divider(
-              //           height: 2,
-              //           indent: 4,
-              //           endIndent: 10,
-              //           color: neutral.shade300,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ), // TODO: completed task
-              // ListView.builder(
-              //   shrinkWrap: true,
-              //   physics: NeverScrollableScrollPhysics(),
-              //   itemCount: 12,
-              //   itemBuilder: (context, index) {
-              //     return TaskItem();
-              //   },
-              // ),
-              //         ],
-              //       ),
-              //     ),
-              //     Container(),
-              //   ],
-              // ),
-              // ),
+
+              SliverFillRemaining(
+                child: TabBarView(
+                  controller: _tabController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    SingleChildScrollView(
+                      controller: scrollController,
+                      padding: EdgeInsets.only(top: 8, bottom: 26),
+                      child: Column(
+                        children: [
+                          ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: 3,
+                            itemBuilder: (context, index) {
+                              return TaskItem();
+                            },
+                          ),
+                          StatusDivider(), // TODO: completed task
+                          ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: 12,
+                            itemBuilder: (context, index) {
+                              return TaskItem();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(),
+                  ],
+                ),
+              ),
             ],
           ),
         );
         // bottomSheet:,
       },
+    );
+  }
+}
+
+class StatusDivider extends StatelessWidget {
+  const StatusDivider({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: primary.shade100,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      child: Row(
+        children: [
+          Text(
+            "Đã hoàn thành",
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+          SizedBox(width: 8),
+          Expanded(
+            child: Divider(
+              height: 2,
+              indent: 4,
+              endIndent: 10,
+              color: neutral.shade300,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,22 +1,28 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 class TaskCategoryService {
   final http = BaseHttp.instance;
-  static Future<PagingResponseModel<TaskCategoryModel>>
-      getTaskCategories() async {
+  Future<List<TaskCategoryModel>> getTaskCategories(PagingModel params) async {
     final response = await BaseHttp.instance
         .get(endpoint: Endpoint.taskCategoryEndPoint, param: {
-      'page-name': 1,
-      'limit': 10,
+      'page-number': params.pageNumber,
+      'page-size': params.pageSize,
+      'search': params.search ?? " ",
     });
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      return PagingResponseModel<TaskCategoryModel>.fromJson(
-          jsonDecode(response.body));
+      final result = jsonDecode(response.body);
+      final listTaskCategory = result['items']
+          .map<TaskCategoryModel>((item) => TaskCategoryModel.fromJson(item))
+          .toList();
+      return listTaskCategory;
     }
     switch (response.statusCode) {
       case 401:
@@ -29,3 +35,6 @@ class TaskCategoryService {
     }
   }
 }
+
+final taskCategoryServiceProvider =
+    Provider<TaskCategoryService>((ref) => TaskCategoryService());

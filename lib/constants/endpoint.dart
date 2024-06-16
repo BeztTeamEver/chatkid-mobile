@@ -68,4 +68,5 @@ class Endpoint {
 
   // Task category
   static const taskCategoryEndPoint = "/api/task-categories";
+  static const taskMemberEndpoint = "/api/tasks/member";
 }
