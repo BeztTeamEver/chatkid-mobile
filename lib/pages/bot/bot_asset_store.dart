@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:chatkid_mobile/models/bot_asset_model.dart';
 import 'package:chatkid_mobile/pages/bot/card_asset_item.dart';
