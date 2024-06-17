@@ -169,7 +169,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
         isCloseButton: false,
         isOverlayTapDismiss: !isBuying,
         animationType: AnimationType.grow,
-        backgroundColor: primary.shade50,
+        backgroundColor: Colors.white,
         titlePadding: EdgeInsets.zero,
         titleStyle: TextStyle(
           color: neutral.shade900,
@@ -226,10 +226,10 @@ class _BotAssetStoreState extends State<BotAssetStore>
             setState(() {
               isBuying = true;
             });
-            BotAssetService()
-                .buySkin(selectedItem[0].id)
-                .then((value) => botAssets = value as Future<BotAssetTypeModel>)
-                .catchError((e) {
+            BotAssetService().buySkin(selectedItem[0].id).then((value) {
+              botAssets = value as Future<BotAssetTypeModel>;
+              Navigator.of(context, rootNavigator: true).pop();
+            }).catchError((e) {
               Logger().e(e);
               ErrorSnackbar.showError(err: e, context: context);
             }).whenComplete(() {

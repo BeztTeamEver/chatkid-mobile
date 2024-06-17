@@ -56,33 +56,6 @@ class BotAssetService {
     }
   }
 
-  Future<List<BotAssetModel>> buyAsset(String id) async {
-    Logger().i(id);
-    final response = await BaseHttp.instance.patch(
-      endpoint: Endpoint.buyBotAssetEndPoint.replaceFirst("{id}", "123123123"),
-    );
-    if (response.statusCode >= 200 && response.statusCode <= 210) {
-      List data = jsonDecode(response.body);
-      final result = data.map((res) => BotAssetModel.fromJson(res)).toList();
-      return result;
-    }
-    switch (response.statusCode) {
-      case 401:
-        LocalStorage.instance.clear();
-        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
-      case 403:
-        LocalStorage.instance.clear();
-        throw Exception(
-            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
-      case 404:
-        LocalStorage.instance.clear();
-        throw Exception('Không tìm thấy trang phục, vui lòng thử lại!');
-      default:
-        throw Exception(
-            'Không thể lấy thông tin trang phục, vui lòng thử lại!');
-    }
-  }
-
   Future<List<BotAssetModel>> getCurrentSkin() async {
     final response = await BaseHttp.instance.get(
       endpoint: Endpoint.botAssetSelectedEndPoint,
@@ -247,7 +220,7 @@ class BotAssetService {
 
   Future<List<BotAssetModel>> buySkin(String id) async {
     final response = await BaseHttp.instance.patch(
-      endpoint: Endpoint.buyBotAssetEndPoint.replaceFirst("{id}", '07d9ad1e-1f33-4c7e-9e6e-0b888b8b8b8b'),
+      endpoint: Endpoint.buyBotAssetEndPoint.replaceFirst("{id}", id),
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       List data = jsonDecode(response.body);
