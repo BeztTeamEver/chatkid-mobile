@@ -90,17 +90,17 @@ class BotAssetService {
       dynamic data = jsonDecode(response.body);
       BotAssetTypeModel result = BotAssetTypeModel.fromJson(data);
       BotAssetModel dividerElement = BotAssetModel(
-            id: '',
-            createdAt: '',
-            updatedAt: '',
-            position: -1,
-            imageUrl: '',
-            previewImageUrl: '',
-            name: '',
-            type: '',
-            status: '',
-            price: 0,
-          );
+        id: '',
+        createdAt: '',
+        updatedAt: '',
+        position: -1,
+        imageUrl: '',
+        previewImageUrl: '',
+        name: '',
+        type: '',
+        status: '',
+        price: 0,
+      );
       List<BotAssetModel> newAssetList = [];
 
       // emoji
@@ -109,7 +109,7 @@ class BotAssetService {
       result.emoji?.forEach((element) {
         newAssetList.add(element);
         final int index = (result.emoji?.indexOf(element) ?? 1) + 1;
-        if ( index % 3 == 0 || index == result.emoji?.length) {
+        if (index % 3 == 0 || index == result.emoji?.length) {
           newAssetList.add(dividerElement);
         }
       });
@@ -120,7 +120,7 @@ class BotAssetService {
       result.cloak?.forEach((element) {
         newAssetList.add(element);
         final int index = (result.cloak?.indexOf(element) ?? 1) + 1;
-        if ( index % 3 == 0 || index == result.cloak?.length) {
+        if (index % 3 == 0 || index == result.cloak?.length) {
           newAssetList.add(dividerElement);
         }
       });
@@ -131,7 +131,7 @@ class BotAssetService {
       result.eyes?.forEach((element) {
         newAssetList.add(element);
         final int index = (result.eyes?.indexOf(element) ?? 1) + 1;
-        if ( index % 3 == 0 || index == result.eyes?.length) {
+        if (index % 3 == 0 || index == result.eyes?.length) {
           newAssetList.add(dividerElement);
         }
       });
@@ -142,7 +142,7 @@ class BotAssetService {
       result.hat?.forEach((element) {
         newAssetList.add(element);
         final int index = (result.hat?.indexOf(element) ?? 1) + 1;
-        if ( index % 3 == 0 || index == result.hat?.length) {
+        if (index % 3 == 0 || index == result.hat?.length) {
           newAssetList.add(dividerElement);
         }
       });
@@ -153,7 +153,7 @@ class BotAssetService {
       result.necklace?.forEach((element) {
         newAssetList.add(element);
         final int index = (result.necklace?.indexOf(element) ?? 1) + 1;
-        if ( index % 3 == 0 || index == result.necklace?.length) {
+        if (index % 3 == 0 || index == result.necklace?.length) {
           newAssetList.add(dividerElement);
         }
       });
@@ -164,7 +164,7 @@ class BotAssetService {
       result.background?.forEach((element) {
         newAssetList.add(element);
         final int index = (result.background?.indexOf(element) ?? 1) + 1;
-        if ( index % 3 == 0 || index == result.background?.length) {
+        if (index % 3 == 0 || index == result.background?.length) {
           newAssetList.add(dividerElement);
         }
       });
@@ -218,13 +218,94 @@ class BotAssetService {
     }
   }
 
-  Future<List<BotAssetModel>> buySkin(String id) async {
+  Future<BotAssetTypeModel> buySkin(String id) async {
     final response = await BaseHttp.instance.patch(
       endpoint: Endpoint.buyBotAssetEndPoint.replaceFirst("{id}", id),
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      List data = jsonDecode(response.body);
-      final result = data.map((res) => BotAssetModel.fromJson(res)).toList();
+      dynamic data = jsonDecode(response.body);
+      BotAssetTypeModel result = BotAssetTypeModel.fromJson(data);
+      BotAssetModel dividerElement = BotAssetModel(
+        id: '',
+        createdAt: '',
+        updatedAt: '',
+        position: -1,
+        imageUrl: '',
+        previewImageUrl: '',
+        name: '',
+        type: '',
+        status: '',
+        price: 0,
+      );
+      List<BotAssetModel> newAssetList = [];
+
+      // emoji
+      result.emoji = [...(result.ears ?? []), ...(result.emoji ?? [])];
+      newAssetList = [];
+      result.emoji?.forEach((element) {
+        newAssetList.add(element);
+        final int index = (result.emoji?.indexOf(element) ?? 1) + 1;
+        if (index % 3 == 0 || index == result.emoji?.length) {
+          newAssetList.add(dividerElement);
+        }
+      });
+      result.emoji = newAssetList;
+
+      // cloak
+      newAssetList = [];
+      result.cloak?.forEach((element) {
+        newAssetList.add(element);
+        final int index = (result.cloak?.indexOf(element) ?? 1) + 1;
+        if (index % 3 == 0 || index == result.cloak?.length) {
+          newAssetList.add(dividerElement);
+        }
+      });
+      result.cloak = newAssetList;
+
+      // eyes
+      newAssetList = [];
+      result.eyes?.forEach((element) {
+        newAssetList.add(element);
+        final int index = (result.eyes?.indexOf(element) ?? 1) + 1;
+        if (index % 3 == 0 || index == result.eyes?.length) {
+          newAssetList.add(dividerElement);
+        }
+      });
+      result.eyes = newAssetList;
+
+      // hat
+      newAssetList = [];
+      result.hat?.forEach((element) {
+        newAssetList.add(element);
+        final int index = (result.hat?.indexOf(element) ?? 1) + 1;
+        if (index % 3 == 0 || index == result.hat?.length) {
+          newAssetList.add(dividerElement);
+        }
+      });
+      result.hat = newAssetList;
+
+      // necklace
+      newAssetList = [];
+      result.necklace?.forEach((element) {
+        newAssetList.add(element);
+        final int index = (result.necklace?.indexOf(element) ?? 1) + 1;
+        if (index % 3 == 0 || index == result.necklace?.length) {
+          newAssetList.add(dividerElement);
+        }
+      });
+      result.necklace = newAssetList;
+
+      // background
+      newAssetList = [];
+      result.background?.forEach((element) {
+        newAssetList.add(element);
+        final int index = (result.background?.indexOf(element) ?? 1) + 1;
+        if (index % 3 == 0 || index == result.background?.length) {
+          newAssetList.add(dividerElement);
+        }
+      });
+      result.background = newAssetList;
+
       return result;
     }
     switch (response.statusCode) {

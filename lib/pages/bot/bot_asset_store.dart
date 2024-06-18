@@ -226,13 +226,16 @@ class _BotAssetStoreState extends State<BotAssetStore>
             setState(() {
               isBuying = true;
             });
-            BotAssetService().buySkin(selectedItem[0].id).then((value) {
-              botAssets = value as Future<BotAssetTypeModel>;
-              Navigator.of(context, rootNavigator: true).pop();
+            botAssets = BotAssetService().buySkin(selectedItem[0].id).then((value) {
+              setState(() {
+                selectedItem = [];
+              });
+              return value;
             }).catchError((e) {
               Logger().e(e);
               ErrorSnackbar.showError(err: e, context: context);
             }).whenComplete(() {
+              Navigator.of(context).pop();
               setState(() {
                 isBuying = false;
               });
