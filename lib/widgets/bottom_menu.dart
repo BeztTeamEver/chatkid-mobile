@@ -8,6 +8,7 @@ import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
 
 class BottomMenu extends StatefulWidget {
@@ -32,7 +33,7 @@ class _BottomMenuState extends State<BottomMenu> {
         MenuList(role: currentAccount.role ?? RoleConstant.Child).getMenu();
 
     return Container(
-      height: 62,
+      height: 64,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(_borderRadius),
@@ -40,7 +41,7 @@ class _BottomMenuState extends State<BottomMenu> {
           BoxShadow(
             color: Theme.of(context).shadowColor.withOpacity(0.08),
             spreadRadius: 0,
-            blurRadius: 2,
+            blurRadius: 1,
             offset: const Offset(0, -1),
           ),
         ],
@@ -57,34 +58,90 @@ class _BottomMenuState extends State<BottomMenu> {
           unselectedLabelStyle:
               const TextStyle(fontWeight: FontWeight.w700, fontSize: 10),
         ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
+        child: NavigationBar(
+          // type: BottomNavigationBarType.fixed,
           elevation: 0,
-          backgroundColor: Colors.white,
-          currentIndex: widget.currentIndex,
-          onTap: (index) {
-            widget.onTap(index);
-          },
-          selectedItemColor: primary.shade900,
-          items: menu.map(
-            (item) {
-              return BottomNavigationBarItem(
-                label: item.title,
-                icon: SvgIcon(
-                    size: 28,
-                    icon: item.route == menu[widget.currentIndex].route
-                        ? item.iconActive
-                        : item.iconDefault
-                    // color: item.route == menu[widget.currentIndex].route
-                    //     ? Theme.of(context).colorScheme.primary
-                    //     : neutral.shade200,
-                    ),
-                backgroundColor: Colors.transparent,
-              );
-            },
-          ).toList(),
+          onDestinationSelected: (value) => widget.onTap(value),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          selectedIndex: widget.currentIndex,
+          destinations: menu.map((item) {
+            if (item.title == 'center') return Container();
+            return NavigationDestination(
+              icon: SvgIcon(
+                size: 28,
+                icon: item.route == menu[widget.currentIndex].route
+                    ? item.iconActive
+                    : item.iconDefault,
+              ),
+              label: item.title.contains("center") ? "" : item.title,
+            );
+          }).toList(),
+
+          // currentIndex: widget.currentIndex,
+          // onTap: (index) {
+          //   widget.onTap(index);
+          // },
+          // selectedItemColor: primary.shade900,
+          // items: menu.map(
+          //   (item) {
+          //     return BottomNavigationBarItem(
+          //       label: item.title,
+          //       icon: SvgIcon(
+          //           size: 28,
+          //           icon: item.route == menu[widget.currentIndex].route
+          //               ? item.iconActive
+          //               : item.iconDefault
+          //           // color: item.route == menu[widget.currentIndex].route
+          //           //     ? Theme.of(context).colorScheme.primary
+          //           //     : neutral.shade200,
+          //           ),
+          //       backgroundColor: Colors.transparent,
+          //     );
+          //   },
+          // ).toList(),
         ),
       ),
+    );
+  }
+}
+
+class CenterNotch extends StatefulWidget {
+  const CenterNotch({super.key});
+
+  @override
+  State<CenterNotch> createState() => _CenterNotchState();
+}
+
+class _CenterNotchState extends State<CenterNotch> {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned(
+          top: -10,
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).shadowColor.withOpacity(0.08),
+                  spreadRadius: 0,
+                  blurRadius: 2,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            // child: SvgIcon(
+            //   size: 28,
+            //   icon: 'bottomMenu/list_detail_active',
+            //   color: Colors.white,
+            // ),
+          ),
+        ),
+      ],
     );
   }
 }
