@@ -10,6 +10,7 @@ import 'package:chatkid_mobile/services/asset_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
@@ -223,6 +224,8 @@ class _BotAssetStoreState extends State<BotAssetStore>
             ),
           ),
           onPressed: () {
+            if (isBuying) return;
+            
             setState(() {
               isBuying = true;
             });
@@ -230,10 +233,16 @@ class _BotAssetStoreState extends State<BotAssetStore>
               setState(() {
                 selectedItem = [];
               });
+              ShowToast.success(msg: "Mua trang phục thành công 🎉");
               return value;
             }).catchError((e) {
               Logger().e(e);
-              ErrorSnackbar.showError(err: e, context: context);
+              final errorMessage = e
+                  .toString()
+                  .split(":")[e.toString().split(":").length - 1]
+                  .trim();
+              ShowToast.error(msg: errorMessage);
+              return botAssets;
             }).whenComplete(() {
               Navigator.of(context).pop();
               setState(() {

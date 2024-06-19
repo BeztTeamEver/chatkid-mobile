@@ -61,11 +61,16 @@ final MaterialColor red = MaterialColor(_redColorValue, <int, Color>{
 });
 
 final MaterialColor green = MaterialColor(_greenColorValue, <int, Color>{
-  50: HexColor('E3F6FF'),
-  100: HexColor('CCEAFF'),
-  500: HexColor('0B2FE5'),
-  800: HexColor('031677'),
-  900: HexColor('020E4B'),
+  50: HexColor('EBFCE9'),
+  100: HexColor('CDF6C8'),
+  200: HexColor('AAF0A3'),
+  300: HexColor('81E97B'),
+  400: HexColor('5BE35A'),
+  500: HexColor('25DC37'),
+  600: HexColor('00CB2F'),
+  700: HexColor('00B624'),
+  800: HexColor('00A119'),
+  900: HexColor('016A01'),
 });
 
 final Color textDefault = Color(_textDefaultColorValue);
