@@ -4,9 +4,9 @@ import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/pages/chats/list_group_chat.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/children_tracking/children_tracking_page.dart';
-import 'package:chatkid_mobile/pages/notification/notification_page.dart';
 import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
+import 'package:chatkid_mobile/pages/routes/todo_route.dart';
 import 'package:chatkid_mobile/pages/routes/home_route.dart';
 
 final List<Menu> menu = [
@@ -16,15 +16,7 @@ final List<Menu> menu = [
     iconActive: 'bottomMenu/list_detail_active',
     route: routesName['${AppRoutes.home}']!,
     role: [RoleConstant.Parent, RoleConstant.Child],
-    widget: const HomeRouteWrapper(),
-  ),
-  Menu(
-    title: 'Khám phá',
-    iconDefault: 'bottomMenu/discover',
-    iconActive: 'bottomMenu/discover_active',
-    route: routesName['${AppRoutes.blog}']!,
-    role: [RoleConstant.Child],
-    widget: const ExplorePage(),
+    widget: const TodoRouteWrapper(),
   ),
 
   Menu(
@@ -35,14 +27,14 @@ final List<Menu> menu = [
     role: [RoleConstant.Child, RoleConstant.Parent],
     widget: const ListGroupChat(),
   ),
-  Menu(
-    title: 'Thành tựu',
-    iconDefault: 'bottomMenu/reward',
-    iconActive: 'bottomMenu/reward_active',
-    route: routesName['${AppRoutes.history}']!,
-    role: [RoleConstant.Child],
-    widget: const UserProfileNotificationPage(),
-  ),
+  // Menu(
+  //   title: 'Thành tựu',
+  //   iconDefault: 'bottomMenu/reward',
+  //   iconActive: 'bottomMenu/reward_active',
+  //   route: routesName['${AppRoutes.history}']!,
+  //   role: [RoleConstant.Child],
+  //   widget: const UserProfileNotificationPage(),
+  // ),
   Menu(
     title: 'center',
     iconDefault: 'bottomMenu/plus',
@@ -51,6 +43,15 @@ final List<Menu> menu = [
     role: [RoleConstant.Child, RoleConstant.Parent],
     widget: const ExplorePage(),
   ),
+  Menu(
+    title: 'Khám phá',
+    iconDefault: 'bottomMenu/discover',
+    iconActive: 'bottomMenu/discover_active',
+    route: routesName['${AppRoutes.blog}']!,
+    role: [RoleConstant.Child],
+    widget: const ExplorePage(),
+  ),
+
   Menu(
     title: 'Bé',
     iconDefault: 'bottomMenu/kid',

@@ -7,13 +7,16 @@ class ButtonIcon extends StatefulWidget {
   final String icon;
   final double? iconSize;
   final double? padding;
+  final Color? color;
 
-  const ButtonIcon(
-      {super.key,
-      required this.onPressed,
-      required this.icon,
-      this.padding,
-      this.iconSize});
+  const ButtonIcon({
+    super.key,
+    required this.onPressed,
+    required this.icon,
+    this.padding,
+    this.iconSize,
+    this.color,
+  });
 
   @override
   State<ButtonIcon> createState() => _ButtonIconState();
@@ -26,7 +29,7 @@ class _ButtonIconState extends State<ButtonIcon> {
       padding: EdgeInsets.all(
         widget.padding ?? 0.0,
       ),
-      iconSize: 16,
+      iconSize: widget.iconSize ?? 20,
       onPressed: () {
         widget.onPressed();
       },
@@ -38,6 +41,7 @@ class _ButtonIconState extends State<ButtonIcon> {
       icon: SvgIcon(
         icon: widget.icon,
         size: widget.iconSize ?? 20,
+        color: widget.color,
       ),
     );
   }

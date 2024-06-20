@@ -10,13 +10,14 @@ class CustomCard extends StatefulWidget {
   final Color? onTapColor;
   final double? height;
   final EdgeInsets? padding;
-
+  final String? backgroundImage;
   const CustomCard({
     super.key,
     this.onTap,
     this.onTapColor,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.backgroundImage,
     required this.children,
     this.padding,
     this.height,
@@ -35,15 +36,29 @@ class _CustomCardState extends State<CustomCard> {
         overlayColor:
             MaterialStateProperty.all(widget.onTapColor ?? primary.shade100),
         onTap: widget.onTap,
-        child: Container(
-          padding: widget.padding ?? const EdgeInsets.all(10),
-          height: widget.height,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: widget.mainAxisAlignment,
-            crossAxisAlignment: widget.crossAxisAlignment,
-            children: widget.children,
-          ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+              right: 0,
+              child: widget.backgroundImage != null
+                  ? SvgPicture.asset(
+                      widget.backgroundImage!,
+                      fit: BoxFit.fitHeight,
+                    )
+                  : Container(),
+            ),
+            Container(
+              padding: widget.padding ?? const EdgeInsets.all(10),
+              height: widget.height,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: widget.mainAxisAlignment,
+                crossAxisAlignment: widget.crossAxisAlignment,
+                children: widget.children,
+              ),
+            ),
+          ],
         ),
       ),
     );

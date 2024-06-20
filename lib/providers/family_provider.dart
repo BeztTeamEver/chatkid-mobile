@@ -6,8 +6,8 @@ import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
-final createFamilyProvider =
-    FutureProvider.family<ResponseModel<dynamic>, String>((ref, name) async {
+final createFamilyProvider = FutureProvider.autoDispose
+    .family<ResponseModel<dynamic>, String>((ref, name) async {
   try {
     final result =
         await ref.watch(familyServiceProvider).createFamily(name: name);
@@ -18,7 +18,7 @@ final createFamilyProvider =
   }
 });
 
-final getFamilyProvider = FutureProvider<FamilyModel>(
+final getFamilyProvider = FutureProvider.autoDispose<FamilyModel>(
   (ref) async {
     try {
       final result = await ref.watch(familyServiceProvider).getFamily();
@@ -29,9 +29,18 @@ final getFamilyProvider = FutureProvider<FamilyModel>(
   },
 );
 
-final getFamilyChannel = FutureProvider<ChannelModel>((ref) {
+final getFamilyChannel = FutureProvider.autoDispose<ChannelModel>((ref) {
   try {
     final result = ref.watch(familyServiceProvider).getFamilyChannel();
+    return result;
+  } catch (e) {
+    throw Exception(e);
+  }
+});
+
+final getOwnFamily = FutureProvider.autoDispose<FamilyModel>((ref) {
+  try {
+    final result = ref.watch(familyServiceProvider).getFamily();
     return result;
   } catch (e) {
     throw Exception(e);

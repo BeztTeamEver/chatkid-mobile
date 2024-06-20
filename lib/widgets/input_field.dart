@@ -24,7 +24,7 @@ class InputField extends StatefulWidget {
     this.validator,
     this.errorText,
     this.suffixIcon,
-    this.isObscure,
+    this.isObscure = false,
     required this.controller,
   });
 

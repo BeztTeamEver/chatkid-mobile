@@ -193,14 +193,14 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
               Expanded(
                 child: CustomCard(
                   onTap: () => {
-                    Navigator.push(
-                      context,
+                    Navigator.of(context).pushAndRemoveUntil(
                       createRoute(
-                        () => const GroupChatPage(
-                          channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
+                        () => GroupChatPage(
+                          channelId: '6b02cfc1-0b92-4ec4-97e3-75f57a8c186b',
                         ),
                       ),
-                    )
+                      (route) => false,
+                    ),
                   },
                   children: [
                     Container(
@@ -276,6 +276,19 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
           ),
           const SizedBox(
             height: 8,
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await FirebaseService.instance.signOut().then((value) {
+                AuthService.signOut();
+                Navigator.of(context).pushReplacement(
+                  createRoute(
+                    () => const LoginPage(),
+                  ),
+                );
+              });
+            },
+            child: const Text("Đăng xuất"),
           ),
           // Wrap(
           //   runSpacing: 8,

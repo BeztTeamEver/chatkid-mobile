@@ -1,19 +1,19 @@
-import 'dart:convert';
-
 import 'package:chatkid_mobile/constants/account_list.dart';
-import 'package:chatkid_mobile/constants/local_storage.dart';
+import 'package:chatkid_mobile/enum/todo.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/pages/routes/home_route.dart';
-import 'package:chatkid_mobile/providers/user_provider.dart';
+import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/todo_create_page.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
-import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
-import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
+import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logger/logger.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   final int index;
@@ -79,9 +79,12 @@ class _MainPageState extends ConsumerState<MainPage> {
           child: FloatingActionButton(
             onPressed: () {
               // TODO: route to create task page
-              setState(() {
-                _currentIndex = 0;
-              });
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return CreateTaskModal();
+                },
+              );
             },
             elevation: 0,
             shape: const CircleBorder(),
@@ -96,9 +99,160 @@ class _MainPageState extends ConsumerState<MainPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      bottomNavigationBar: BottomMenu(
-        currentIndex: _currentIndex,
-        onTap: onTap,
+      bottomNavigationBar: SafeArea(
+        maintainBottomViewPadding: false,
+        child: BottomMenu(
+          currentIndex: _currentIndex,
+          onTap: onTap,
+        ),
+      ),
+    );
+  }
+}
+
+class CreateTaskModal extends StatefulWidget {
+  const CreateTaskModal({super.key});
+
+  @override
+  State<CreateTaskModal> createState() => _CreateTaskModalState();
+}
+
+class _CreateTaskModalState extends State<CreateTaskModal> {
+  final TodoFormCreateController todoFormCreateStore =
+      Get.put(TodoFormCreateController());
+
+  void onSelectedCreateType(TodoCreateType type) {
+    todoFormCreateStore.setTaskType(type);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TodoCreatePage(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      insetPadding: EdgeInsets.all(12),
+      contentPadding: EdgeInsets.all(12),
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).shadowColor,
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            padding: EdgeInsets.all(12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomCard(
+                  padding: EdgeInsets.all(8),
+                  onTap: () => onSelectedCreateType(TodoCreateType.TASK),
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: primary.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 145,
+                        child: SvgPicture.asset(
+                          'assets/todoPage/createCard1.svg',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tạo công việc',
+                      style:
+                          Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                fontSize: 16,
+                              ),
+                    ),
+                  ],
+                ),
+                CustomCard(
+                  padding: EdgeInsets.all(8),
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: primary.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 145,
+                        child: SvgPicture.asset(
+                          'assets/todoPage/createCard2.svg',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tạo phong trào thi đua',
+                      style:
+                          Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                fontSize: 16,
+                              ),
+                    ),
+                  ],
+                  onTap: () {
+                    onSelectedCreateType(TodoCreateType.CAMPAIGN);
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 40),
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).shadowColor,
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              padding: EdgeInsets.all(8),
+              icon: Container(
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: primary.shade500,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.close_rounded,
+                  color: Colors.white,
+                  size: 32,
+                  weight: 700,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

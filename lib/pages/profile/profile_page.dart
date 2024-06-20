@@ -338,10 +338,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     .signOut()
                                     .then((value) {
                                   AuthService.signOut();
-                                  Navigator.of(context).pushReplacement(
+                                  Navigator.of(context).pushAndRemoveUntil(
                                     createRoute(
                                       () => const LoginPage(),
                                     ),
+                                    (route) => false,
                                   );
                                 });
                               },

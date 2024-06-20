@@ -110,6 +110,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                                       setState(() {
                                         _avatarUrl = avatarUrl;
                                       });
+                                      widget.avatarController.text = avatarUrl;
                                     },
                                   )),
                             );
