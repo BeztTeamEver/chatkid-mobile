@@ -108,7 +108,7 @@ class FamilyService {
       isUseFamilyToken: true,
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      Logger().d(response.body);
+      // Logger().d(response.body);
       final data = jsonDecode(response.body);
 
       // Logger().i(response.body);

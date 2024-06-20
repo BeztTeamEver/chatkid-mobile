@@ -134,7 +134,7 @@ class _CalendarState extends State<Calendar> {
                                         .difference(selectedDate)
                                         .inDays,
                                     itemWidth: itemWidth);
-                                      
+
                                 return;
                               }
 

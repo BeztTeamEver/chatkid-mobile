@@ -119,7 +119,7 @@ class CreateTaskModal extends StatefulWidget {
 
 class _CreateTaskModalState extends State<CreateTaskModal> {
   final TodoFormCreateController todoFormCreateStore =
-      Get.put(TodoFormCreateController());
+      TodoFormCreateController();
 
   void onSelectedCreateType(TodoCreateType type) {
     todoFormCreateStore.setTaskType(type);
