@@ -1,22 +1,12 @@
-import 'dart:convert';
-import 'dart:ffi';
-
-import 'package:chatkid_mobile/models/paging_model.dart';
-import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/calendar.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/custom_tab_bar.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/task_item.dart';
-import 'package:chatkid_mobile/providers/todo_provider.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 
 class TodoMainBottomSheet extends ConsumerStatefulWidget {
   final GlobalKey<State<StatefulWidget>> bottomSheetKey;
@@ -64,33 +54,17 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
     }
   }
 
-  init() {}
+  init() {
+    if (todoHomeController.members.isNotEmpty) {
+      todoHomeController.fetchData();
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-  }
-
-  fetchData() {
-    final tasks = ref
-        .watch(getTaskByMember(TodoRequestModel(
-      memberId:
-          todoHomeController.members[todoHomeController.currentUser.value].id ??
-              "",
-      paging: PagingModelWithFilter(
-        pageNumber: 0,
-        pageSize: 10,
-        filter: TodoFilter(date: todoHomeController.selectedDate.value),
-      ),
-    )).future)
-        .then((value) {
-      Logger().i("Get family : ${jsonEncode(value)}");
-      return value;
-    });
-
-    return tasks;
   }
 
   @override
@@ -113,20 +87,6 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
       // onClosing: () {},
       controller: _sheetController,
       builder: (context, scrollController) {
-        scrollController.addListener(() {
-          if (todoHomeController.members.isEmpty) {
-            return;
-          }
-          if (scrollController.positions.isEmpty) {
-            return;
-          }
-          if (scrollController.position.pixels !=
-              scrollController.position.maxScrollExtent) {
-            return;
-          }
-          fetchData();
-        });
-
         return Container(
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
@@ -180,8 +140,9 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
                   decoration: BoxDecoration(
                     color: primary.shade100,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 2, vertical: 20),
-                  child: Calendar(),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 2, vertical: 20),
+                  child: const Calendar(),
                 ),
               ),
               SliverAppBar(
@@ -193,7 +154,8 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
                   decoration: BoxDecoration(
                     color: primary.shade100,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 18),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 18),
                   child: CustomTabbar(
                     onTabChange: (index) {
                       setState(() => _tabController.animateTo(index));
@@ -213,41 +175,88 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
               SliverFillRemaining(
                 child: TabBarView(
                   controller: _tabController,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    SingleChildScrollView(
-                      controller: scrollController,
-                      padding: EdgeInsets.only(top: 8, bottom: 26),
-                      child: Column(
-                        children: [
-                          StatusDivider(
-                            status: 'Chờ xác nhận',
-                          ), // TODO: pending task
-                          ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: todoHomeController
-                                .tasks.value.pendingTasks.length,
-                            itemBuilder: (context, index) {
-                              return Obx(() => TaskItem(
-                                    task: todoHomeController
-                                        .tasks.value.pendingTasks[index],
-                                  ));
-                            },
+                    GetX<TodoHomeStore>(
+                      builder: (controller) {
+                        final isEmpty =
+                            controller.tasks.value.pendingTasks.isEmpty &&
+                                controller.tasks.value.completedTasks.isEmpty &&
+                                controller.tasks.value.expiredTasks.isEmpty;
+                        if (controller.isTaskLoading.value) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (isEmpty) {
+                          return const Center(
+                            child: Text("Không có công việc nào"),
+                          );
+                        }
+                        return SingleChildScrollView(
+                          controller: scrollController,
+                          padding: const EdgeInsets.only(top: 8, bottom: 26),
+                          child: Column(
+                            children: [
+                              controller.tasks.value.pendingTasks.isNotEmpty
+                                  ? StatusDivider(
+                                      status: 'Chưa thực hiện',
+                                      color: primary.shade400,
+                                    )
+                                  : Container(), // TODO: pending task
+                              ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount:
+                                    controller.tasks.value.pendingTasks.length,
+                                itemBuilder: (context, index) {
+                                  return Obx(() => TaskItem(
+                                        task: controller
+                                            .tasks.value.pendingTasks[index],
+                                      ));
+                                },
+                              ),
+                              controller.tasks.value.completedTasks.isNotEmpty
+                                  ? StatusDivider(
+                                      status: "Đã hoàn thành",
+                                      color: green.shade500,
+                                    )
+                                  : Container(), // TODO: completed task
+                              ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: controller
+                                    .tasks.value.completedTasks.length,
+                                itemBuilder: (context, index) {
+                                  return Obx(() => TaskItem(
+                                        task: controller
+                                            .tasks.value.completedTasks[index],
+                                      ));
+                                },
+                              ),
+                              controller.tasks.value.expiredTasks.isNotEmpty
+                                  ? StatusDivider(
+                                      status: "Đã quá hạn",
+                                      color: neutral.shade800,
+                                    )
+                                  : Container(), // TODO: completed task
+                              ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount:
+                                    controller.tasks.value.expiredTasks.length,
+                                itemBuilder: (context, index) {
+                                  return Obx(() => TaskItem(
+                                        task: controller
+                                            .tasks.value.expiredTasks[index],
+                                      ));
+                                },
+                              ),
+                            ],
                           ),
-                          StatusDivider(
-                            status: "Chưa thực hiện",
-                          ), // TODO: completed task
-                          // ListView.builder(
-                          //   physics: NeverScrollableScrollPhysics(),
-                          //   shrinkWrap: true,
-                          //   itemCount: 12,
-                          //   itemBuilder: (context, index) {
-                          //     return TaskItem();
-                          //   },
-                          // ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                     Container(),
                   ],
@@ -262,36 +271,44 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
   }
 }
 
-class StatusDivider extends StatelessWidget {
+class StatusDivider extends StatefulWidget {
   final String status;
+  final Color color;
   const StatusDivider({
     super.key,
     required this.status,
+    required this.color,
   });
 
+  @override
+  State<StatusDivider> createState() => _StatusDividerState();
+}
+
+class _StatusDividerState extends State<StatusDivider> {
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: primary.shade100,
       ),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Row(
         children: [
           Text(
-            status,
+            widget.status,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
+                  color: widget.color,
                 ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
             child: Divider(
               height: 2,
               indent: 4,
               endIndent: 10,
-              color: neutral.shade300,
+              color: widget.color,
             ),
           ),
         ],

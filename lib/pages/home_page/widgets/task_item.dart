@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:chatkid_mobile/widgets/secondary_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:logger/logger.dart';
 
 class TaskItem extends StatefulWidget {
   final TaskModel task;
@@ -22,7 +26,18 @@ class _TaskItemState extends State<TaskItem> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomCard(
-        backgroundImage: 'assets/todoPage/todoItem/taskBackground.svg',
+        onLongPressed: () {
+          showModalBottomSheet(
+            context: context,
+            enableDrag: true,
+            showDragHandle: true,
+            builder: (context) {
+              return TaskActions();
+            },
+          );
+        },
+        backgroundImage: widget.task.taskType.imageHomeUrl ??
+            "https://picsum.photos/200/200",
         padding: EdgeInsets.only(left: 12, top: 6, bottom: 10),
         children: [
           Container(
@@ -46,7 +61,6 @@ class _TaskItemState extends State<TaskItem> {
                     )
                   ],
                 ),
-                TaskActions(),
               ],
             ),
           ),
@@ -89,35 +103,35 @@ class TaskActions extends StatefulWidget {
   State<TaskActions> createState() => TaskActionsState();
 }
 
-class TaskActionsState extends State<TaskActions> {
+class TaskActionsState extends State<TaskActions>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  double _height = 100;
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton(
-      itemBuilder: (context) {
-        return [
-          PopupMenuItem(
-            child: Text(
-              'Edit',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    fontSize: 14,
-                  ),
-            ),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.2,
+      child: Column(
+        children: [
+          ListTile(
+            title: Text("Chỉnh sửa"),
+            leading: Icon(Icons.edit),
           ),
-          PopupMenuItem(
-            child: Text(
-              'Delete',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    fontSize: 14,
-                  ),
-            ),
-          ),
-        ];
-      },
-      iconSize: 18,
-      padding: EdgeInsets.zero,
-      icon: const SvgIcon(
-        icon: 'dots',
-        size: 18,
+        ],
       ),
     );
   }

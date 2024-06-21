@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:chatkid_mobile/constants/calendar.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
+import 'package:chatkid_mobile/providers/todo_provider.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:dart_date/dart_date.dart';
@@ -35,7 +36,7 @@ class _CalendarState extends State<Calendar> {
     _conroller.jumpTo(
       _conroller.offset + itemWidth * days,
     );
-    todoHomeController.nextDate(days: days);
+    await todoHomeController.nextDate(days: days);
   }
 
 //TODO jump to a day

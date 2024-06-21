@@ -26,7 +26,8 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
-  final TodoFormCreateController todoFormCreateController = Get.find();
+  final TodoFormCreateController todoFormCreateController =
+      Get.put(TodoFormCreateController());
 
   int pageNumber = 0;
   int pageSize = 10;

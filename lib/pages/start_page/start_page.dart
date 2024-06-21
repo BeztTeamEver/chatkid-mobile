@@ -3,6 +3,7 @@ import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/start_page/password_login_page.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
+import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/providers/step_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';

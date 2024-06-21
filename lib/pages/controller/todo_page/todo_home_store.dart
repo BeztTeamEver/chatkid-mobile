@@ -1,8 +1,10 @@
+import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/enum/todo.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
+import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -16,43 +18,79 @@ class TodoHomeStore extends GetxController {
   Rx<int> listContainerWidth = 0.obs;
   RxList<UserModel> members = <UserModel>[].obs;
   Rx<int> currentUser = 0.obs;
+  Rx<bool> isTaskLoading = false.obs;
 
   Rx<DateTime> selectedDate = DateTime.now().obs;
 
   Rx<PagingModelWithFilter<TodoFilter>> pagingRequest =
       PagingModelWithFilter<TodoFilter>(
     pageNumber: 0,
-    pageSize: 10,
+    pageSize: 100,
     filter: TodoFilter(
       date: DateTime.now(),
     ),
   ).obs;
 
-  Rx<TaskListModel> tasks = TaskListModel(pendingTasks: [
-    TaskModel(
-        id: "1",
-        taskTypeId: "1",
-        memberId: "1",
-        startTime: DateTime.now(),
-        note: "Note 1",
-        status: "PENDING",
-        taskType: TaskTypeModel(id: "1", name: "Task 1"))
-  ], completedTasks: []).obs;
+  Rx<TaskListModel> tasks = TaskListModel(
+      pendingTasks: [],
+      completedTasks: [],
+      canceledTasks: [],
+      expiredTasks: []).obs;
+
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    await fetchData();
+  }
+
+  fetchData() async {
+    isTaskLoading.value = true;
+    try {
+      tasks.value.pendingTasks.clear();
+      tasks.value.completedTasks.clear();
+      pagingRequest.value.pageNumber = 0;
+      pagingRequest.value.pageSize = 100;
+      if (members.isEmpty) {
+        return;
+      }
+      final data = await TodoService()
+          .getMemberTasks(members[currentUser.value].id!, pagingRequest.value);
+
+      if (data.items.isNotEmpty) {
+        setTasks(data.items);
+      }
+    } catch (e) {
+      Logger().e(e);
+    } finally {
+      isTaskLoading.value = false;
+    }
+  }
 
   nextDate({
     int days = 1,
-  }) {
+  }) async {
     selectedDate.value = selectedDate.value.add(Duration(days: days));
+    if (members.isEmpty) {
+      return;
+    }
+    pagingRequest.value.filter?.date = selectedDate.value;
+    await fetchData();
   }
 
   prevDate({
     int days = 1,
-  }) {
+  }) async {
     selectedDate.value = selectedDate.value.sub(Duration(days: days));
+    if (members.isEmpty) {
+      return;
+    }
+    pagingRequest.value.filter?.date = selectedDate.value;
+    await fetchData();
   }
 
   setCurrentUser(int index) {
     currentUser.value = index;
+    fetchData();
   }
 
   setMembers(List<UserModel> members) {
@@ -66,12 +104,17 @@ class TodoHomeStore extends GetxController {
   setTasks(List<TaskModel> tasks) {
     tasks.forEach((element) {
       switch (element.status) {
-        case "PENDING":
+        case TodoStatus.pending:
           this.tasks.value.pendingTasks.add(element);
           break;
-        case "COMPLETED":
+        case TodoStatus.completed:
           this.tasks.value.completedTasks.add(element);
+        case TodoStatus.expired:
+          this.tasks.value.expiredTasks.add(element);
           break;
+
+        default:
+          this.tasks.value.canceledTasks.add(element);
       }
     });
   }

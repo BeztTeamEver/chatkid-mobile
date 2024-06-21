@@ -5,8 +5,8 @@ import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
-final getTaskByMember =
-    FutureProvider.family<PagingResponseModel<TaskModel>, TodoRequestModel>(
+final getTaskByMember = FutureProvider.autoDispose
+    .family<PagingResponseModel<TaskModel>, TodoRequestModel>(
   (ref, params) async {
     try {
       final result = await ref

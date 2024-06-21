@@ -11,6 +11,7 @@ class CustomCard extends StatefulWidget {
   final double? height;
   final EdgeInsets? padding;
   final String? backgroundImage;
+  final Function? onLongPressed;
   const CustomCard({
     super.key,
     this.onTap,
@@ -21,6 +22,7 @@ class CustomCard extends StatefulWidget {
     required this.children,
     this.padding,
     this.height,
+    this.onLongPressed,
   });
 
   @override
@@ -32,6 +34,7 @@ class _CustomCardState extends State<CustomCard> {
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
+        onLongPress: widget.onLongPressed as void Function()?,
         splashColor: widget.onTapColor ?? primary.shade100,
         overlayColor:
             MaterialStateProperty.all(widget.onTapColor ?? primary.shade100),
@@ -42,11 +45,12 @@ class _CustomCardState extends State<CustomCard> {
             Positioned(
               right: 0,
               child: widget.backgroundImage != null
-                  ? SvgPicture.asset(
+                  ? Image.network(
                       widget.backgroundImage!,
-                      fit: BoxFit.fitHeight,
+                      fit: BoxFit.contain,
                     )
                   : Container(),
+              width: 200,
             ),
             Container(
               padding: widget.padding ?? const EdgeInsets.all(10),

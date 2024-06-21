@@ -32,6 +32,10 @@ class TaskModel implements IBaseModel {
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
+    final frequency = json['frequency'].map<TodoFrequency>((freq) {
+      return TodoFrequency();
+    }).toList();
+
     // TODO: handle frequency list
     return TaskModel(
       id: json['id'],
@@ -43,7 +47,7 @@ class TaskModel implements IBaseModel {
           : null,
       evidence: json['evidence'],
       note: json['note'],
-      frequency: json['frequency'],
+      frequency: frequency,
       status: json['status'],
       taskType: TaskTypeModel.fromJson(json['taskType']),
     );
@@ -162,9 +166,13 @@ class TodoRequestModel {
 class TaskListModel {
   List<TaskModel> pendingTasks = [];
   List<TaskModel> completedTasks = [];
+  List<TaskModel> expiredTasks = [];
+  List<TaskModel> canceledTasks = [];
 
   TaskListModel({
     required this.pendingTasks,
     required this.completedTasks,
+    required this.expiredTasks,
+    required this.canceledTasks,
   });
 }

@@ -42,7 +42,8 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
         }
         return previousValue;
       });
-      // todoStore.setMembers(children);
+      todoStore.setMembers(children);
+      todoStore.fetchData();
       return children;
     });
     ;
@@ -105,7 +106,6 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                 ],
                 future: familiesAccounts,
                 builder: (context, snapshot) {
-                  Logger().i("Snapshot: ${snapshot.data}");
                   if (snapshot.hasError) {
                     Logger().i("Error: ${snapshot.error}");
                     return Container();
@@ -215,11 +215,13 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                       Expanded(
                         child: Container(
                           child: GetX<TodoHomeStore>(builder: (controller) {
-                            if (controller.members.isEmpty) {
+                            if (controller.members.isEmpty ||
+                                todoStore.currentUser.value >=
+                                    controller.members.length) {
                               return Center();
                             }
                             return Text(
-                              controller.members[todoStore.currentUser.value]
+                              controller.members[controller.currentUser.value]
                                       .name ??
                                   "Người dùng",
                               style: const TextStyle(
@@ -254,7 +256,7 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                   GestureDetector(
                     onTap: () {
                       final currentIndex = todoStore.currentUser.value;
-                      if (currentIndex == 0) {
+                      if (currentIndex <= 0) {
                         todoStore.setCurrentUser(todoStore.members.length - 1);
                       } else {
                         todoStore.setCurrentUser(currentIndex - 1);
@@ -345,13 +347,19 @@ class BannerAvatar extends StatelessWidget {
                   child: Container(
                     width: 20,
                     height: 20,
-                    child: GetX<TodoHomeStore>(
-                      builder: (todoStore) => AvatarPng(
+                    child: GetX<TodoHomeStore>(builder: (todoStore) {
+                      if (todoStore.members.isEmpty) {
+                        return AvatarPng(
+                          borderColor: Colors.transparent,
+                          imageUrl: "https://i.pravatar.cc/150?img=1",
+                        );
+                      }
+                      return AvatarPng(
                         borderColor: Colors.transparent,
                         imageUrl: todoStore
                             .members[todoStore.currentUser.value].avatarUrl,
-                      ),
-                    ),
+                      );
+                    }),
                   ),
                 )
               : Positioned(
