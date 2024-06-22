@@ -37,6 +37,8 @@ class TodoHomeStore extends GetxController {
       canceledTasks: [],
       expiredTasks: []).obs;
 
+  RxList<String> favoritedTaskTypes = <String>[].obs;
+
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -120,12 +122,84 @@ class TodoHomeStore extends GetxController {
   }
 }
 
-class TodoFormCreateController extends GetxController {
+class TodoFormCreateController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormBuilderState>();
+
+  final Rxn<AnimationController> stepController = Rxn<AnimationController>();
+  RxList<TaskCategoryModel> taskCategories = <TaskCategoryModel>[].obs;
+
+  Rx<bool> isEdit = false.obs;
+  RxInt step = 1.obs;
 
   Rx<TodoCreateType> todoCreateType = TodoCreateType.TASK.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    // stepController.value = AnimationController(
+    //   duration: const Duration(milliseconds: 600),
+    //   vsync: this,
+    // );
+  }
+
+  @override
+  onClose() {
+    stepController.value?.dispose();
+    isEdit.close();
+    step.close();
+    todoCreateType.close();
+    stepController.close();
+    taskCategories.close();
+    super.onClose();
+  }
+
+  updateProgress(step) {
+    Logger().i(step);
+    stepController.value?.animateTo(step / 4);
+  }
+
   setTaskType(TodoCreateType type) {
     todoCreateType.value = type;
+  }
+
+  setTaskCategories(List<TaskCategoryModel> taskCategories) {
+    this.taskCategories.assignAll(taskCategories);
+  }
+
+  toggleEdit() {
+    isEdit.value = !isEdit.value;
+  }
+
+  toggleFavoriteTaskType(int taskCategorisIndex, TaskTypeModel taskType) {
+    // taskCategories[taskCategorisIndex].taskTypes[taskTypeIndex].isFavorited =
+    //     !taskCategories[taskCategorisIndex]
+    //         .taskTypes[taskTypeIndex]
+    //         .isFavorited!;
+    // taskCategories[taskCategorisIndex].taskTypes
+    //     .firstWhere((element) => element.id == taskType.id)
+    //     .isFavorited = !taskCategories[taskCategorisIndex]
+    //         .taskTypes
+    //         .firstWhere((element) => element.id == taskType.id)
+    //         .isFavorited!;
+    Logger().i(taskType.id);
+    taskCategories[taskCategorisIndex]
+            .taskTypes
+            .firstWhere(
+              (element) => element.id == taskType.id,
+            )
+            .isFavorited =
+        !taskCategories[taskCategorisIndex]
+            .taskTypes
+            .firstWhere((element) => element.id == taskType.id)
+            .isFavorited!;
+  }
+
+  increaseStep() {
+    step.value++;
+  }
+
+  decreaseStep() {
+    step.value--;
   }
 }

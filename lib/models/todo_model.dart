@@ -80,12 +80,13 @@ class TaskTypeModel {
   String name;
   String? imageUrl;
   String? imageHomeUrl;
-
+  bool? isFavorited;
   TaskTypeModel({
     required this.id,
     required this.name,
     this.imageUrl,
     this.imageHomeUrl,
+    this.isFavorited,
   });
 
   factory TaskTypeModel.fromJson(Map<String, dynamic> json) {
@@ -94,6 +95,7 @@ class TaskTypeModel {
       name: json['name'],
       imageUrl: json['imageUrl'],
       imageHomeUrl: json['imageHomeUrl'],
+      isFavorited: json['isFavorited'],
     );
   }
 
@@ -103,6 +105,7 @@ class TaskTypeModel {
       'name': name,
       'imageUrl': imageUrl,
       'imageHomeUrl': imageHomeUrl,
+      'isFavorited': isFavorited,
     };
   }
 

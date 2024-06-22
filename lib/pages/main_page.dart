@@ -4,6 +4,7 @@ import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/todo_create_page.dart';
+import 'package:chatkid_mobile/pages/routes/todo_create_route.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
@@ -126,7 +127,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TodoCreatePage(),
+        builder: (context) => TodoCreateRoute(),
       ),
     );
   }
