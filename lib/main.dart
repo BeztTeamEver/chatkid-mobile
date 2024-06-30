@@ -1,4 +1,6 @@
 import 'package:chatkid_mobile/constants/routes.dart';
+import 'package:chatkid_mobile/pages/bot/bot_asset.dart';
+import 'package:chatkid_mobile/pages/bot/bot_asset_store.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
@@ -83,6 +85,18 @@ class MyApp extends StatelessWidget {
             ),
             backgroundColor: MaterialStateColor.resolveWith(
               (states) => primary.shade400,
+            ),
+          ),
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          height: 80,
+          indicatorColor: Colors.white,
+          labelTextStyle: MaterialStateProperty.all(
+            textTheme.bodySmall!.copyWith(
+              color: neutral.shade800,
+              fontSize: 10,
             ),
           ),
         ),

@@ -13,7 +13,8 @@ class UserModel {
   String? gender;
   String? role;
   int? status;
-  int? energy;
+  int? diamond;
+  int? coin;
   String? familyId;
   String? deviceToken;
   String? accessToken;
@@ -29,7 +30,8 @@ class UserModel {
     this.name,
     this.role,
     this.status,
-    this.energy,
+    this.diamond,
+    this.coin,
     this.familyId,
     this.gender,
     this.deviceToken,
@@ -48,7 +50,8 @@ class UserModel {
       name: json['name'],
       role: json['role'],
       status: json['status'],
-      energy: json['energy'],
+      diamond: json['diamond'],
+      coin: json['coin'],
       familyId: json['familyId'],
       gender: json['gender'],
       accessToken: json['accessToken'],
@@ -89,8 +92,11 @@ class UserModel {
     if (status != null) {
       data['status'] = status;
     }
-    if (energy != null) {
-      data['energy'] = energy;
+    if (diamond != null) {
+      data['diamond'] = diamond;
+    }
+    if (coin != null) {
+      data['coin'] = coin;
     }
     if (familyId != null) {
       data['familyId'] = familyId;

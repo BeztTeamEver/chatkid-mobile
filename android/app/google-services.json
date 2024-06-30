@@ -64,10 +64,10 @@
 							"client_type": 3
 						},
 						{
-							"client_id": "343387729372-nb73qt631kiielr499f7l68nah3adl5c.apps.googleusercontent.com",
+							"client_id": "343387729372-hq1dklb4cpo7cdufmep0fqsbj97ef016.apps.googleusercontent.com",
 							"client_type": 2,
 							"ios_info": {
-								"bundle_id": "com.example.chatkidMobile.RunnerTests"
+								"bundle_id": "com.kidtalkie"
 							}
 						}
 					]
@@ -172,10 +172,10 @@
 							"client_type": 3
 						},
 						{
-							"client_id": "343387729372-nb73qt631kiielr499f7l68nah3adl5c.apps.googleusercontent.com",
+							"client_id": "343387729372-hq1dklb4cpo7cdufmep0fqsbj97ef016.apps.googleusercontent.com",
 							"client_type": 2,
 							"ios_info": {
-								"bundle_id": "com.example.chatkidMobile.RunnerTests"
+								"bundle_id": "com.kidtalkie"
 							}
 						}
 					]
@@ -224,10 +224,10 @@
 							"client_type": 3
 						},
 						{
-							"client_id": "343387729372-nb73qt631kiielr499f7l68nah3adl5c.apps.googleusercontent.com",
+							"client_id": "343387729372-hq1dklb4cpo7cdufmep0fqsbj97ef016.apps.googleusercontent.com",
 							"client_type": 2,
 							"ios_info": {
-								"bundle_id": "com.example.chatkidMobile.RunnerTests"
+								"bundle_id": "com.kidtalkie"
 							}
 						}
 					]

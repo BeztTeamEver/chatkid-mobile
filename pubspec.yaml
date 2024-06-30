@@ -40,7 +40,7 @@ dependencies:
     flutter_svg: ^2.0.7
     material_color_utilities: 0.8.0
     google_fonts: ^6.0.0
-    firebase_core: ^2.24.2
+    firebase_core: ^2.27.2
     firebase_messaging: ^14.6.8
     firebase_in_app_messaging: ^0.7.3+6
     google_sign_in: ^6.1.5
@@ -80,6 +80,8 @@ dependencies:
     flutter_drawing_board: ^0.7.0+2
     flutter_cache_manager: ^3.3.2
     expandable_bottom_sheet: ^1.1.1+1
+    rflutter_alert: ^2.0.7
+    fluttertoast: ^8.2.6
 
 flutter_launcher_icons:
     android: 'launcher_icon'
@@ -118,6 +120,7 @@ flutter:
         - assets/icons/bottomMenu/
         - assets/icons/animal/
         - assets/icons/shape/
+        - assets/icons/asset/
         - assets/loginPage/
         - assets/initPage/
         - assets/successConfirmPage/

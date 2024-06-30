@@ -67,7 +67,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     final currentUser = UserModel.fromJson(jsonDecode(
                         LocalStorage.instance.preferences.getString('user') ??
                             ""));
-                    int totalEnergy = currentUser.energy ?? 100;
+                    int totalEnergy = currentUser.diamond ?? 100;
                     return Column(
                       children: [
                         SizedBox(
@@ -299,89 +299,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     .toList(),
                               )
                             ]),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Khác',
-                              style: TextStyle(
-                                  color: Color.fromRGBO(165, 168, 187, 1),
-                                  fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(height: 16),
-                            GestureDetector(
-                              onTap: () async {
-                                await FirebaseService.instance
-                                    .signOut()
-                                    .then((value) {
-                                  // AuthService.signOut();
-                                  LocalStorage.instance.preferences
-                                      .remove(LocalStorageKey.USER);
-                                  Navigator.of(context).pushReplacement(
-                                    createRoute(
-                                      () => const StartPage(),
-                                    ),
-                                  );
-                                });
-                              },
-                              child: const Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor:
-                                        Color.fromRGBO(255, 155, 6, 1),
-                                    child: Icon(
-                                      Icons.sync_alt_outlined,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  SizedBox(width: 12),
-                                  Text(
-                                    'Chuyển tài khoản',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 17,
-                                        letterSpacing: 0.5),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            GestureDetector(
-                              onTap: () async {
-                                await FirebaseService.instance
-                                    .signOut()
-                                    .then((value) {
-                                  AuthService.signOut();
-                                  Navigator.of(context).pushReplacement(
-                                    createRoute(
-                                      () => const LoginPage(),
-                                    ),
-                                  );
-                                });
-                              },
-                              child: const Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor:
-                                        Color.fromRGBO(255, 155, 6, 1),
-                                    child: Icon(
-                                      Icons.logout,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  SizedBox(width: 12),
-                                  Text(
-                                    'Đăng xuất',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 17,
-                                        letterSpacing: 0.5),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
                       ],
                     );
                   }
@@ -400,6 +317,83 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               ),
               const SizedBox(
                 height: 20,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Khác',
+                    style: TextStyle(
+                        color: Color.fromRGBO(165, 168, 187, 1),
+                        fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: () async {
+                      await FirebaseService.instance.signOut().then((value) {
+                        // AuthService.signOut();
+                        LocalStorage.instance.preferences
+                            .remove(LocalStorageKey.USER);
+                        Navigator.of(context).pushReplacement(
+                          createRoute(
+                            () => const StartPage(),
+                          ),
+                        );
+                      });
+                    },
+                    child: const Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Color.fromRGBO(255, 155, 6, 1),
+                          child: Icon(
+                            Icons.sync_alt_outlined,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          'Chuyển tài khoản',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 17,
+                              letterSpacing: 0.5),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: () async {
+                      await FirebaseService.instance.signOut().then((value) {
+                        AuthService.signOut();
+                        Navigator.of(context).pushReplacement(
+                          createRoute(
+                            () => const LoginPage(),
+                          ),
+                        );
+                      });
+                    },
+                    child: const Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Color.fromRGBO(255, 155, 6, 1),
+                          child: Icon(
+                            Icons.logout,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          'Đăng xuất',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 17,
+                              letterSpacing: 0.5),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ),
             ],
           ),
