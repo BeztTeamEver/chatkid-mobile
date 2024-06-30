@@ -219,7 +219,7 @@ class _WalletPageState extends State<WalletPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Bạn đang có ${widget.currentUser?.energy ?? 100}',
+                      'Bạn đang có ${widget.currentUser?.diamond ?? 100}',
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                     const Icon(
@@ -291,7 +291,7 @@ class _WalletPageState extends State<WalletPage> {
                                     width: 2,
                                   ),
                                   Text(
-                                    user.energy?.toString() ?? '0',
+                                    user.diamond?.toString() ?? '0',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12,

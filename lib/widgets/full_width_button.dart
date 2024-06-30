@@ -11,6 +11,7 @@ class FullWidthButton extends StatefulWidget {
   final double? height;
   final int? duration;
   final bool? isDisabled;
+  final bool? isLoading;
   final Function onPressed;
 
   const FullWidthButton({
@@ -20,6 +21,7 @@ class FullWidthButton extends StatefulWidget {
     this.width,
     this.height,
     this.duration,
+    this.isLoading = false,
     this.isDisabled = false,
   });
 
@@ -74,10 +76,11 @@ class _FullWidthButtonState extends State<FullWidthButton>
   Widget build(BuildContext context) {
     final double shadowHeight = widget.height != null ? widget.height! - 4 : 42;
     final double containerHeight = widget.height != null ? widget.height! : 46;
+    bool? isDisabled = widget.isDisabled == true || widget.isLoading == true;
     return FittedBox(
       fit: BoxFit.fitWidth,
       child: GestureDetector(
-        onTap: () => {widget.isDisabled! ? null : widget.onPressed()},
+        onTap: () => {isDisabled ? null : widget.onPressed()},
         onTapDown: (details) {
           _startAnimation();
         },
@@ -125,7 +128,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
                               BoxShadow(
                                 color: const Color.fromRGBO(117, 43, 1, 0.16),
                                 // blurRadius: 0,
-                                offset: _isPressed || widget.isDisabled!
+                                offset: _isPressed || isDisabled
                                     ? const Offset(0, 4)
                                     : const Offset(0, 7),
                                 spreadRadius: 0,
@@ -138,16 +141,16 @@ class _FullWidthButtonState extends State<FullWidthButton>
                         duration: Duration(
                             milliseconds: widget.duration ?? _BaseDuration),
                         left: 0,
-                        top: _isPressed || widget.isDisabled! ? 6 : 0,
+                        top: _isPressed || isDisabled ? 6 : 0,
                         child: AnimatedContainer(
                           duration: Duration(
                               milliseconds: widget.duration ?? _BaseDuration),
                           width: widget.width ?? 350,
-                          height: _isPressed || widget.isDisabled!
+                          height: _isPressed || isDisabled
                               ? shadowHeight - 4
                               : shadowHeight,
                           decoration: ShapeDecoration(
-                            color: widget.isDisabled!
+                            color: isDisabled
                                 ? neutral.shade400
                                 : primary.shade400,
                             shape: RoundedRectangleBorder(
@@ -164,7 +167,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
                       AnimatedPositioned(
                         duration: Duration(
                             milliseconds: widget.duration ?? _BaseDuration),
-                        top: _isPressed || widget.isDisabled! ? 2 : 0,
+                        top: _isPressed || isDisabled ? 2 : 0,
                         left: 0,
                         child: AnimatedContainer(
                           duration: Duration(
@@ -172,7 +175,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
                           width: widget.width ?? 350,
                           height: shadowHeight,
                           decoration: BoxDecoration(
-                            color: widget.isDisabled!
+                            color: isDisabled
                                 ? neutral.shade400
                                 : _isPressed
                                     ? HexColor("FFA013")
@@ -181,20 +184,20 @@ class _FullWidthButtonState extends State<FullWidthButton>
                             border: !_isPressed
                                 ? Border(
                                     left: BorderSide(
-                                        color: widget.isDisabled!
+                                        color: isDisabled
                                             ? neutral.shade400
                                             : primary.shade600),
                                     top: BorderSide(
-                                        color: widget.isDisabled!
+                                        color: isDisabled
                                             ? neutral.shade400
                                             : primary.shade600),
                                     right: BorderSide(
-                                        color: widget.isDisabled!
+                                        color: isDisabled
                                             ? neutral.shade400
                                             : primary.shade600),
                                     bottom: BorderSide(
                                         width: 4,
-                                        color: widget.isDisabled!
+                                        color: isDisabled
                                             ? neutral.shade100
                                             : primary.shade600),
                                   )
@@ -206,7 +209,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
                           duration: Duration(
                               milliseconds: widget.duration ?? _BaseDuration),
                           left: 0,
-                          top: _isPressed || widget.isDisabled! ? 2 : 0,
+                          top: _isPressed || isDisabled ? 2 : 0,
                           child: SizedBox(
                             width: widget.width ?? 350,
                             height: shadowHeight,
@@ -220,7 +223,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
               ),
               AnimatedPositioned(
                 right: 10,
-                top: _isPressed || widget.isDisabled! ? 35 : 33,
+                top: _isPressed || isDisabled ? 35 : 33,
                 duration:
                     Duration(milliseconds: widget.duration ?? _BaseDuration),
                 child: Transform(
@@ -231,7 +234,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
                     width: 4.54,
                     height: 5.28,
                     decoration: ShapeDecoration(
-                      color: widget.isDisabled!
+                      color: isDisabled
                           ? Colors.transparent
                           : _isPressed
                               ? primary.shade400
@@ -243,7 +246,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
               ),
               AnimatedPositioned(
                 right: 5,
-                top: _isPressed || widget.isDisabled! ? 20 : 18,
+                top: _isPressed || isDisabled ? 20 : 18,
                 duration:
                     Duration(milliseconds: widget.duration ?? _BaseDuration),
                 child: Transform(
@@ -252,7 +255,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
                     ..rotateZ(0),
                   child: SvgIcon(
                     icon: "shape/eclipse3",
-                    color: widget.isDisabled!
+                    color: isDisabled
                         ? Colors.transparent
                         : _isPressed
                             ? primary.shade400
@@ -263,7 +266,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
               ),
               AnimatedPositioned(
                 left: 9,
-                top: _isPressed || widget.isDisabled! ? 9 : 7,
+                top: _isPressed || isDisabled ? 9 : 7,
                 duration:
                     Duration(milliseconds: widget.duration ?? _BaseDuration),
                 child: Transform(
@@ -272,7 +275,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
                     ..rotateZ(0),
                   child: SvgIcon(
                     icon: "shape/eclipse1",
-                    color: widget.isDisabled!
+                    color: isDisabled
                         ? Colors.transparent
                         : _isPressed
                             ? primary.shade400
@@ -283,7 +286,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
               ),
               AnimatedPositioned(
                 left: 5,
-                top: _isPressed || widget.isDisabled! ? 24 : 22,
+                top: _isPressed || isDisabled ? 24 : 22,
                 duration:
                     Duration(milliseconds: widget.duration ?? _BaseDuration),
                 child: Transform(
@@ -292,7 +295,7 @@ class _FullWidthButtonState extends State<FullWidthButton>
                     ..rotateZ(0),
                   child: SvgIcon(
                     icon: "shape/eclipse2",
-                    color: widget.isDisabled!
+                    color: isDisabled
                         ? Colors.transparent
                         : _isPressed
                             ? primary.shade400

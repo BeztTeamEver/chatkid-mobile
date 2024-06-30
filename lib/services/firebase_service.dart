@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -76,7 +78,7 @@ class FirebaseService {
       // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
-      Logger().e(e.toString());
+      Logger().e(e);
       throw Exception("Lỗi đăng nhập tới Google, vui lòng thử lại sau");
     }
   }

@@ -45,8 +45,6 @@ final receiveMessage = StreamProvider<ChatModel>((ref) async* {
   StreamController<ChatModel> stream = StreamController();
   final socket = SocketService();
 
-  List<ChatModel> listMessages = const <ChatModel>[];
-
   socket.onMessage((data) {
     stream.add(data);
   });

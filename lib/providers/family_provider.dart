@@ -32,6 +32,7 @@ final getFamilyProvider = FutureProvider<FamilyModel>(
 final getFamilyChannel = FutureProvider<ChannelModel>((ref) {
   try {
     final result = ref.watch(familyServiceProvider).getFamilyChannel();
+    Logger().d(result);
     return result;
   } catch (e) {
     throw Exception(e);
