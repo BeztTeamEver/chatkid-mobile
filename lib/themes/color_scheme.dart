@@ -12,7 +12,7 @@ final _greenColorValue = HexColor('0B2FE5').value;
 final MaterialColor primary = MaterialColor(
   _primaryColorValue,
   <int, Color>{
-    50: HexColor('FFFBF5'),
+    50: HexColor('FFF8ED'),
     100: HexColor('FFEDD1'),
     200: HexColor('FFD38F'),
     300: HexColor('FFBE5C'),

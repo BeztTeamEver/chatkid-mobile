@@ -133,7 +133,7 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                                 width: 2,
                               ),
                               Text(
-                                widget.user.energy?.toString() ?? '0',
+                                widget.user.diamond?.toString() ?? '0',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 12,

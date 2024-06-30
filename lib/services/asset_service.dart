@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/bot_asset_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
+import 'package:chatkid_mobile/services/wallet_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:logger/logger.dart';
 

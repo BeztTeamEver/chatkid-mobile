@@ -2,11 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:chatkid_mobile/models/bot_asset_model.dart';
+import 'package:chatkid_mobile/pages/bot/bot_asset_store.dart';
 import 'package:chatkid_mobile/pages/bot/card_asset_item.dart';
 import 'package:chatkid_mobile/services/asset_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
@@ -56,7 +60,15 @@ class _BotAssetState extends State<BotAsset>
   void _onSelectItem(BotAssetModel item) {
     setState(() {
       idLoading = item.id;
-      currentSkin = BotAssetService().selectAssetItem(item.id, item.status ?? '');
+      BotAssetService()
+          .selectAssetItem(item.id, item.status ?? '')
+          .then((value) => {currentSkin = value as Future<List<BotAssetModel>>})
+          // ignore: body_might_complete_normally_catch_error
+          .catchError((err) {
+            ShowToast.error(
+                msg: "Gặp vấn đề trong việc thay đồ, vui lòng thử lại sau.");
+          });
+      return;
     });
     Timer(
       const Duration(milliseconds: 300),
@@ -105,34 +117,58 @@ class _BotAssetState extends State<BotAsset>
                                           MediaQuery.of(context).size.height /
                                                   2 -
                                               AppBar().preferredSize.height / 2,
-                                      fit: BoxFit.contain,
+                                      fit: BoxFit.cover,
                                     ),
                                   ))
                               .toList(),
                           Positioned(
-                              left: 18,
-                              top: 14,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.chevron_left,
-                                  color: primary.shade400,
+                            left: 18,
+                            top: 14,
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.chevron_left,
+                                color: primary.shade400,
+                              ),
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateColor.resolveWith(
+                                  (states) => primary.shade100,
                                 ),
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateColor.resolveWith(
-                                    (states) => primary.shade100,
-                                  ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
                                 ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ))
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+                          Positioned(
+                            left: 18,
+                            bottom: 0,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  createRoute(() => const BotAssetStore()),
+                                );
+                              },
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: MaterialStateColor.resolveWith(
+                                  (states) => primary.shade50,
+                                ),
+                                side: BorderSide(
+                                    width: 2.0, color: primary.shade500),
+                              ),
+                              child: SvgIcon(
+                                icon: 'asset/store',
+                                size: 18,
+                                color: primary.shade500,
+                              ),
+                            ),
+                          ),
                         ],
                       );
                     }

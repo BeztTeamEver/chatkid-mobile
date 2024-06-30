@@ -65,7 +65,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     final currentUser = UserModel.fromJson(jsonDecode(
                         LocalStorage.instance.preferences.getString('user') ??
                             ""));
-                    int totalEnergy = currentUser.energy ?? 100;
+                    int totalEnergy = currentUser.diamond ?? 100;
                     return Column(
                       children: [
                         SizedBox(

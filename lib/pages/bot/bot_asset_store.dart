@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/models/bot_asset_model.dart';
 import 'package:chatkid_mobile/pages/bot/card_asset_item.dart';
 import 'package:chatkid_mobile/pages/bot/empty_data.dart';
 import 'package:chatkid_mobile/services/asset_service.dart';
+import 'package:chatkid_mobile/services/wallet_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
@@ -36,6 +38,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
   late TabController _tabController;
   late List<BotAssetModel> selectedItem = [];
   int _selectedIndex = 0;
+  final WalletController wallet = Get.put(WalletController());
 
   final List<BotAssetModel> DEFAULT_SKIN = [
     BotAssetModel(
@@ -65,9 +68,6 @@ class _BotAssetStoreState extends State<BotAssetStore>
         updatedAt: "2024-05-28T22:07:09.818Z",
         status: "Equipped"),
   ];
-
-  final currentUser = LocalStorage.instance.getUser();
-  // TODO: 1. Diamond provider store ----- 2. Check enough diamond to buy ?
 
   @override
   void initState() {
@@ -229,7 +229,8 @@ class _BotAssetStoreState extends State<BotAssetStore>
             setState(() {
               isBuying = true;
             });
-            botAssets = BotAssetService().buySkin(selectedItem[0].id).then((value) {
+            botAssets = BotAssetService().buySkin(selectedItem[0].id).then((value) async {
+              await wallet.refetchWallet();
               setState(() {
                 selectedItem = [];
               });
@@ -363,7 +364,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
                                           "assets/icons/diamond_icon.png",
                                           width: 20,
                                         ),
-                                        Text('1000')
+                                        Obx(() => Text("${wallet.diamond}"))
                                       ],
                                     ),
                                   ),
@@ -375,7 +376,9 @@ class _BotAssetStoreState extends State<BotAssetStore>
                             left: 20,
                             bottom: 9,
                             child: OutlinedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: MaterialStateColor.resolveWith(
                                   (states) => primary.shade50,
@@ -386,7 +389,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
                               child: SvgIcon(
                                 icon: "asset/hanger",
                                 size: 24,
-                                color: primary.shade700,
+                                color: primary.shade500,
                               ),
                             ),
                           ),
