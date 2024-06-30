@@ -2,8 +2,6 @@ import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/pages/bot/bot_asset.dart';
 import 'package:chatkid_mobile/pages/bot/bot_asset_store.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
-import 'package:chatkid_mobile/pages/main_page.dart';
-import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
@@ -12,6 +10,7 @@ import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase_options.dart';
@@ -37,7 +36,7 @@ void main() async {
   await LocalStorage.getInstance();
 
   SocketService();
-
+  CacheManager.logLevel = CacheManagerLogLevel.verbose;
   runApp(
     const ProviderScope(
       child: MyApp(),

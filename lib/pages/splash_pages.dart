@@ -28,10 +28,13 @@ class _SplashPagesState extends State<SplashPages>
   void checkIsFirstScreen(BuildContext context) {
     SharedPreferences prefs = LocalStorage.instance.preferences;
 
+    // USE FOR DEVELOP ONLY
     // Navigator.pushReplacement(
     //   context,
     //   createRoute(
-    //     () => MainPage(),
+    //     () => GroupChatPage(
+    //       channelId: "",
+    //     ),
     //   ),
     // );
     // return;
