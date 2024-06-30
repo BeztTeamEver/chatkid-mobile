@@ -54,9 +54,18 @@ class _MainPageState extends ConsumerState<MainPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: IndexedStack(
-          index: _currentIndex,
-          children: menu,
+        child: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (!didPop) {
+              return;
+            }
+            Navigator.of(context).pop();
+          },
+          child: IndexedStack(
+            index: _currentIndex,
+            children: menu,
+          ),
         ),
       ),
       floatingActionButton: Padding(

@@ -1,17 +1,12 @@
 import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/widgets/category_create_item.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/widgets/category_item.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/custom_tab_bar.dart';
 import 'package:chatkid_mobile/providers/task_categories_provider.dart';
-import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
-import 'package:chatkid_mobile/widgets/secondary_button.dart';
-import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/diagnostics.dart';
-import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -27,9 +22,11 @@ class TodoCreatePage extends ConsumerStatefulWidget {
 class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
     with TickerProviderStateMixin {
   late final TabController _tabController;
-  final TodoFormCreateController todoFormCreateController =
-      Get.put(TodoFormCreateController());
+  final TodoFormCreateController todoFormCreateController = Get.find();
+  late final AnimationController _controller;
+  late final Animation<Offset> _offsetFloat;
 
+  bool _isSaving = false;
   int pageNumber = 0;
   int pageSize = 100;
 
@@ -37,11 +34,27 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _offsetFloat = Tween(begin: Offset(0.0, -0.03), end: Offset.zero).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+
+    _offsetFloat.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _controller.dispose();
+    _offsetFloat.removeListener(() {});
     super.dispose();
   }
 
@@ -147,8 +160,6 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                                         todoFormCreateController.updateProgress(
                                           todoFormCreateController.step.value,
                                         );
-                                        // _stepController.animateTo(
-                                        //     todoFormCreateController.step / 4);
                                       }
                                     },
                                     taskCategoriesIndex: index,
@@ -164,6 +175,10 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                           );
                           if (taskTypes.isEmpty) {
                             return const SizedBox();
+                          }
+                          if (index == 0 && _tabController.index == 0) {
+                            taskTypes.insert(
+                                0, CategoryCreateItem(onTap: (id) {}));
                           }
                           return Padding(
                             padding: const EdgeInsets.symmetric(
@@ -207,20 +222,41 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: AnimatedContainer(
-          width: todoFormCreateController.isEdit.value ? 220 : 0,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.fastEaseInToSlowEaseOut,
-          child: FullWidthButton(
-            width: 220,
-            onPressed: () {},
-            child: Text(
-              'Lưu',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+        floatingActionButton: SlideTransition(
+          position: todoFormCreateController.isEdit.value
+              ? _offsetFloat
+              : _offsetFloat,
+          child: AnimatedContainer(
+            width: todoFormCreateController.isEdit.value ? 220 : 0,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastEaseInToSlowEaseOut,
+            child: FullWidthButton(
+              width: 220,
+              onPressed: () async {
+                setState(() {
+                  _isSaving = true;
+                });
+                await todoFormCreateController.saveTask().whenComplete(() {
+                  setState(() {
+                    _isSaving = false;
+                  });
+                });
+              },
+              isDisabled: _isSaving,
+              child: !_isSaving
+                  ? Text(
+                      'Lưu',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                    )
+                  : Container(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(),
+                    ),
             ),
           ),
         ),

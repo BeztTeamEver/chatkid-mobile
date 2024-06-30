@@ -49,6 +49,50 @@ class TodoService {
         throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
     }
   }
+
+  Future<bool> pinTask(String id) async {
+    final body = {
+      'taskTypeId': id,
+    };
+    final response = await httpService.post(
+      endpoint: Endpoint.favoriteTaskTypeEndPoint,
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
+
+  Future<bool> unpinTask(String id) async {
+    final response = await httpService.delete(
+      endpoint: Endpoint.favoriteTaskTypeEndPoint + "/$id",
+    );
+    if (response.statusCode == 200) {
+      return true;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
 }
 
 final todoServiceProvider = Provider<TodoService>((ref) {

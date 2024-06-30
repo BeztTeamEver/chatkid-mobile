@@ -9,9 +9,11 @@ import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:infinite_listview/infinite_listview.dart';
 import 'package:logger/logger.dart';
+import 'package:material_color_utilities/material_color_utilities.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
@@ -20,9 +22,11 @@ class Calendar extends StatefulWidget {
   State<Calendar> createState() => _CalendarState();
 }
 
-class _CalendarState extends State<Calendar> {
+class _CalendarState extends State<Calendar>
+    with SingleTickerProviderStateMixin {
   final _listContainerKey = GlobalKey();
-  final _conroller = InfiniteScrollController();
+  final _conroller =
+      InfiniteScrollController(keepScrollOffset: true, initialScrollOffset: 48);
   final todoHomeController = Get.find<TodoHomeStore>();
   // DateTime _selectedDate = DateTime.now();
   double _itemWidth = 0;
@@ -33,8 +37,14 @@ class _CalendarState extends State<Calendar> {
     int days = 1,
     double itemWidth = 0,
   }) async {
-    _conroller.jumpTo(
+    if (_conroller.position.isScrollingNotifier.value) {
+      return;
+    }
+
+    await _conroller.animateTo(
       _conroller.offset + itemWidth * days,
+      duration: Duration(milliseconds: 200),
+      curve: Curves.easeIn,
     );
     await todoHomeController.nextDate(days: days);
   }
@@ -46,16 +56,22 @@ class _CalendarState extends State<Calendar> {
     double itemWidth = 0,
     int days = 1,
   }) async {
-    Logger().i(itemWidth);
-    _conroller.jumpTo(
+    if (_conroller.position.isScrollingNotifier.value) {
+      return;
+    }
+
+    await _conroller.animateTo(
       _conroller.offset - itemWidth * days,
+      duration: Duration(milliseconds: 200),
+      curve: Curves.easeIn,
     );
-    todoHomeController.prevDate(days: days);
+    await todoHomeController.prevDate(days: days);
   }
 
   @override
   void dispose() {
     _conroller.dispose();
+
     super.dispose();
   }
 
@@ -63,6 +79,7 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (_listContainerKey.currentContext != null) {
         setState(
@@ -113,8 +130,20 @@ class _CalendarState extends State<Calendar> {
                 return Stack(
                   fit: StackFit.expand,
                   children: [
+                    Positioned(
+                      width: itemWidth,
+                      left: constraints.maxWidth / 2 - itemWidth / 2 - 2,
+                      top: 2,
+                      height: 48,
+                      child: Container(
+                        width: 10,
+                        height: 48,
+                        decoration: BoxDecoration(
+                            color: primary.shade500,
+                            borderRadius: BorderRadius.circular(4)),
+                      ),
+                    ),
                     // GetBuilder<TodoHomeStore>(builder: (state) {
-
                     InfiniteListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       scrollDirection: Axis.horizontal,
@@ -122,7 +151,7 @@ class _CalendarState extends State<Calendar> {
                       controller: _conroller,
                       itemBuilder: (context, index) {
                         final currentDate = DateTime.now()
-                            .sub(Duration(days: 3))
+                            .sub(Duration(days: 4))
                             .add(Duration(days: index));
                         return Obx(() {
                           final selectedDate =
@@ -153,24 +182,28 @@ class _CalendarState extends State<Calendar> {
                               width: itemWidth,
                               decoration: BoxDecoration(
                                 color: selectedDate.isSameDate(currentDate)
-                                    ? primary.shade500
+                                    ? Colors.transparent
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(4),
-                                boxShadow: selectedDate.isSameDate(currentDate)
-                                    ? [
-                                        BoxShadow(
-                                          color: Theme.of(context).shadowColor,
-                                          blurRadius: 2,
-                                          offset: Offset(0, 2),
-                                        )
-                                      ]
-                                    : [],
+                                // boxShadow: selectedDate.isSameDate(currentDate)
+                                //     ? [
+                                //         BoxShadow(
+                                //           color: Theme.of(context).shadowColor,
+                                //           blurRadius: 2,
+                                //           offset: Offset(0, 2),
+                                //         )
+                                //       ]
+                                //     : [],
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    "${weekDayShort[currentDate.weekday - 1]}",
+                                  AnimatedDefaultTextStyle(
+                                    curve: Curves.easeIn,
+                                    duration: Duration(milliseconds: 100),
+                                    child: Text(
+                                      "${weekDayShort[currentDate.weekday - 1]}",
+                                    ),
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -182,8 +215,11 @@ class _CalendarState extends State<Calendar> {
                                               : neutral.shade700,
                                     ),
                                   ),
-                                  Text(
-                                    currentDate.format('dd'),
+                                  AnimatedDefaultTextStyle(
+                                    duration: Duration(milliseconds: 100),
+                                    child: Text(
+                                      currentDate.format('dd'),
+                                    ),
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,

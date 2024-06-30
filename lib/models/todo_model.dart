@@ -1,8 +1,9 @@
 import 'dart:convert';
 
-import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/models/base_model.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
+import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 
 class TodoFrequency {}
 
@@ -167,10 +168,10 @@ class TodoRequestModel {
 }
 
 class TaskListModel {
-  List<TaskModel> pendingTasks = [];
-  List<TaskModel> completedTasks = [];
-  List<TaskModel> expiredTasks = [];
-  List<TaskModel> canceledTasks = [];
+  RxList<TaskModel> pendingTasks;
+  RxList<TaskModel> completedTasks;
+  RxList<TaskModel> expiredTasks;
+  RxList<TaskModel> canceledTasks;
 
   TaskListModel({
     required this.pendingTasks,

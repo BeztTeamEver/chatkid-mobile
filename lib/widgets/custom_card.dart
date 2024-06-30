@@ -12,6 +12,7 @@ class CustomCard extends StatefulWidget {
   final EdgeInsets? padding;
   final String? backgroundImage;
   final Function? onLongPressed;
+  final String? heroTag;
   const CustomCard({
     super.key,
     this.onTap,
@@ -23,6 +24,7 @@ class CustomCard extends StatefulWidget {
     this.padding,
     this.height,
     this.onLongPressed,
+    this.heroTag,
   });
 
   @override
@@ -44,13 +46,16 @@ class _CustomCardState extends State<CustomCard> {
           children: [
             Positioned(
               right: 0,
+              width: 200,
               child: widget.backgroundImage != null
-                  ? Image.network(
-                      widget.backgroundImage!,
-                      fit: BoxFit.contain,
+                  ? Hero(
+                      tag: widget.heroTag ?? "",
+                      child: Image.network(
+                        widget.backgroundImage!,
+                        fit: BoxFit.contain,
+                      ),
                     )
                   : Container(),
-              width: 200,
             ),
             Container(
               padding: widget.padding ?? const EdgeInsets.all(10),

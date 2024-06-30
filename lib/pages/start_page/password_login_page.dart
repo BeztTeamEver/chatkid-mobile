@@ -64,6 +64,7 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
       }
     } catch (e) {
       Logger().e(e);
+      ErrorSnackbar.showError(err: e, context: context);
       _formkey.currentState!.fields['password']!
           .invalidate(e.toString().split(":")[1], shouldFocus: false);
     }

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:logger/logger.dart';
 
 class TodoHomeStore extends GetxController {
@@ -17,7 +18,7 @@ class TodoHomeStore extends GetxController {
   Rx<double> itemWidth = 0.0.obs;
   Rx<int> listContainerWidth = 0.obs;
   RxList<UserModel> members = <UserModel>[].obs;
-  Rx<int> currentUser = 0.obs;
+  Rx<int> currentUserIndex = 0.obs;
   Rx<bool> isTaskLoading = false.obs;
 
   Rx<DateTime> selectedDate = DateTime.now().obs;
@@ -32,13 +33,14 @@ class TodoHomeStore extends GetxController {
   ).obs;
 
   Rx<TaskListModel> tasks = TaskListModel(
-      pendingTasks: [],
-      completedTasks: [],
-      canceledTasks: [],
-      expiredTasks: []).obs;
+          pendingTasks: <TaskModel>[].obs,
+          completedTasks: <TaskModel>[].obs,
+          canceledTasks: <TaskModel>[].obs,
+          expiredTasks: <TaskModel>[].obs)
+      .obs;
 
   RxList<String> favoritedTaskTypes = <String>[].obs;
-
+  Rx<UserModel> get currentUser => members[currentUserIndex.value].obs;
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -55,8 +57,8 @@ class TodoHomeStore extends GetxController {
       if (members.isEmpty) {
         return;
       }
-      final data = await TodoService()
-          .getMemberTasks(members[currentUser.value].id!, pagingRequest.value);
+      final data = await TodoService().getMemberTasks(
+          members[currentUserIndex.value].id!, pagingRequest.value);
 
       if (data.items.isNotEmpty) {
         setTasks(data.items);
@@ -91,7 +93,7 @@ class TodoHomeStore extends GetxController {
   }
 
   setCurrentUser(int index) {
-    currentUser.value = index;
+    currentUserIndex.value = index;
     fetchData();
   }
 
@@ -120,6 +122,17 @@ class TodoHomeStore extends GetxController {
       }
     });
   }
+
+  deleteTask(String id) async {
+    try {
+      tasks.value.pendingTasks.removeWhere((element) => element.id == id);
+      tasks.value.completedTasks.removeWhere((element) => element.id == id);
+      tasks.value.expiredTasks.removeWhere((element) => element.id == id);
+      tasks.value.canceledTasks.removeWhere((element) => element.id == id);
+    } catch (e) {
+      Logger().e(e);
+    }
+  }
 }
 
 class TodoFormCreateController extends GetxController
@@ -134,6 +147,8 @@ class TodoFormCreateController extends GetxController
 
   Rx<TodoCreateType> todoCreateType = TodoCreateType.TASK.obs;
 
+  RxList<String> pinnedList = <String>[].obs;
+  RxList<String> unpinnedList = <String>[].obs;
   @override
   void onInit() {
     super.onInit();
@@ -151,11 +166,12 @@ class TodoFormCreateController extends GetxController
     todoCreateType.close();
     stepController.close();
     taskCategories.close();
+    pinnedList.close();
+    unpinnedList.close();
     super.onClose();
   }
 
   updateProgress(step) {
-    Logger().i(step);
     stepController.value?.animateTo(step / 4);
   }
 
@@ -182,17 +198,40 @@ class TodoFormCreateController extends GetxController
     //         .taskTypes
     //         .firstWhere((element) => element.id == taskType.id)
     //         .isFavorited!;
-    Logger().i(taskType.id);
-    taskCategories[taskCategorisIndex]
-            .taskTypes
-            .firstWhere(
-              (element) => element.id == taskType.id,
-            )
-            .isFavorited =
-        !taskCategories[taskCategorisIndex]
-            .taskTypes
-            .firstWhere((element) => element.id == taskType.id)
-            .isFavorited!;
+
+    final task = taskCategories[taskCategorisIndex].taskTypes.obs.firstWhere(
+          (element) => element.id == taskType.id,
+        );
+    if (task.isFavorited == false) {
+      pinnedList.add(taskType.id);
+      if (unpinnedList.contains(taskType.id)) {
+        unpinnedList.remove(taskType.id);
+      }
+    } else {
+      unpinnedList.add(taskType.id);
+      if (pinnedList.contains(taskType.id)) {
+        pinnedList.remove(taskType.id);
+      }
+    }
+    task.isFavorited = !task.isFavorited!;
+    taskCategories.refresh();
+  }
+
+  Future<bool> saveTask() async {
+    final pinnedPromise =
+        pinnedList.map((e) => TodoService().pinTask(e)).toList();
+    final unpinnedPromise =
+        unpinnedList.map((e) => TodoService().unpinTask(e)).toList();
+
+    return await Future.wait([
+      // ...pinnedPromise,
+      ...unpinnedPromise,
+    ]).then((value) {
+      pinnedList.clear();
+      unpinnedList.clear();
+      isEdit.value = false;
+      return value.every((element) => element);
+    });
   }
 
   increaseStep() {
@@ -201,5 +240,9 @@ class TodoFormCreateController extends GetxController
 
   decreaseStep() {
     step.value--;
+  }
+
+  resetStep() {
+    step.value = 1;
   }
 }

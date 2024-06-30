@@ -71,23 +71,8 @@ class _CategoryItemState extends State<CategoryItem>
           .timeout(Duration(milliseconds: 100), onTimeout: () {
         _controller.reverse(from: 1);
       }),
-      // onLongPressEnd: (details) => _controller.reverse(from: 1),
-      // onForcePressStart: (details) => _controller.forward(from: 0).timeout(
-      //   Duration(milliseconds: 100),
-      //   onTimeout: () {
-      //     _controller.reverse(from: 1);
-      //   },
-      // ),
-      // onForcePressEnd: (details) => _controller.reverse(from: 1),
-      // onSecondaryLongPressMoveUpdate: (details) {},
-      // onLongPressUp: () => _controller.reverse(from: 1),
       onTap: () {
         widget.onTap(widget.id);
-        // Logger().i('CategoryItem onTap');
-        // if (todoFormCreateController.isEdit.value) {
-        //   todoFormCreateController.toggleFavoriteTaskType(
-        //       widget.taskCategoriesIndex, widget.taskType);
-        // }
       },
       child: SizedBox(
         width: 72,
@@ -137,15 +122,17 @@ class _CategoryItemState extends State<CategoryItem>
                         ? Positioned(
                             top: 6,
                             left: 8,
-                            child: SvgIcon(
-                              icon: todoFormCreateController
-                                      .taskCategories[
-                                          widget.taskCategoriesIndex]
-                                      .taskTypes[widget.taskTypeIndex]
-                                      .isFavorited!
-                                  ? 'pin_on'
-                                  : 'pin_off',
-                              size: 18,
+                            child: Obx(
+                              () => SvgIcon(
+                                icon: todoFormCreateController
+                                        .taskCategories[
+                                            widget.taskCategoriesIndex]
+                                        .taskTypes[widget.taskTypeIndex]
+                                        .isFavorited!
+                                    ? 'pin_on'
+                                    : 'pin_off',
+                                size: 18,
+                              ),
                             ),
                           )
                         : Container(),

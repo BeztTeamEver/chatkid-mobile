@@ -15,16 +15,16 @@ class TodoRouteWrapper extends StatefulWidget {
 class _TodoRouteWrapperState extends State<TodoRouteWrapper> {
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      onGenerateRoute: (settings) {
-        return MaterialPageRoute(
-          settings: settings,
-          builder: (context) {
-            Logger().i(settings.name);
-            return const TodoHomePage();
-          },
-        );
-      },
-    );
+    // return Navigator(
+    //   onGenerateRoute: (settings) {
+    //     return MaterialPageRoute(
+    //       settings: settings,
+    //       builder: (context) {
+    //         return const TodoHomePage();
+    //       },
+    //     );
+    //   },
+    // );
+    return const TodoHomePage();
   }
 }

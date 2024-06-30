@@ -1,7 +1,7 @@
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/calendar.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/custom_tab_bar.dart';
-import 'package:chatkid_mobile/pages/home_page/widgets/task_item.dart';
+import 'package:chatkid_mobile/pages/home_page/widgets/task_list.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -172,147 +172,15 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
               //   itemCount: 20,
               // ),
 
-              SliverFillRemaining(
-                child: TabBarView(
-                  controller: _tabController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    GetX<TodoHomeStore>(
-                      builder: (controller) {
-                        final isEmpty =
-                            controller.tasks.value.pendingTasks.isEmpty &&
-                                controller.tasks.value.completedTasks.isEmpty &&
-                                controller.tasks.value.expiredTasks.isEmpty;
-                        if (controller.isTaskLoading.value) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-
-                        if (isEmpty) {
-                          return const Center(
-                            child: Text("Không có công việc nào"),
-                          );
-                        }
-                        return SingleChildScrollView(
-                          controller: scrollController,
-                          padding: const EdgeInsets.only(top: 8, bottom: 26),
-                          child: Column(
-                            children: [
-                              controller.tasks.value.pendingTasks.isNotEmpty
-                                  ? StatusDivider(
-                                      status: 'Chưa thực hiện',
-                                      color: primary.shade400,
-                                    )
-                                  : Container(), // TODO: pending task
-                              ListView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount:
-                                    controller.tasks.value.pendingTasks.length,
-                                itemBuilder: (context, index) {
-                                  return Obx(() => TaskItem(
-                                        task: controller
-                                            .tasks.value.pendingTasks[index],
-                                      ));
-                                },
-                              ),
-                              controller.tasks.value.completedTasks.isNotEmpty
-                                  ? StatusDivider(
-                                      status: "Đã hoàn thành",
-                                      color: green.shade500,
-                                    )
-                                  : Container(), // TODO: completed task
-                              ListView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: controller
-                                    .tasks.value.completedTasks.length,
-                                itemBuilder: (context, index) {
-                                  return Obx(() => TaskItem(
-                                        task: controller
-                                            .tasks.value.completedTasks[index],
-                                      ));
-                                },
-                              ),
-                              controller.tasks.value.expiredTasks.isNotEmpty
-                                  ? StatusDivider(
-                                      status: "Đã quá hạn",
-                                      color: neutral.shade800,
-                                    )
-                                  : Container(), // TODO: completed task
-                              ListView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount:
-                                    controller.tasks.value.expiredTasks.length,
-                                itemBuilder: (context, index) {
-                                  return Obx(() => TaskItem(
-                                        task: controller
-                                            .tasks.value.expiredTasks[index],
-                                      ));
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    Container(),
-                  ],
-                ),
+              TaskList(
+                tabController: _tabController,
+                scrollController: scrollController,
               ),
             ],
           ),
         );
         // bottomSheet:,
       },
-    );
-  }
-}
-
-class StatusDivider extends StatefulWidget {
-  final String status;
-  final Color color;
-  const StatusDivider({
-    super.key,
-    required this.status,
-    required this.color,
-  });
-
-  @override
-  State<StatusDivider> createState() => _StatusDividerState();
-}
-
-class _StatusDividerState extends State<StatusDivider> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: primary.shade100,
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      child: Row(
-        children: [
-          Text(
-            widget.status,
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: widget.color,
-                ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Divider(
-              height: 2,
-              indent: 4,
-              endIndent: 10,
-              color: widget.color,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -216,12 +216,14 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                         child: Container(
                           child: GetX<TodoHomeStore>(builder: (controller) {
                             if (controller.members.isEmpty ||
-                                todoStore.currentUser.value >=
+                                todoStore.currentUserIndex.value >=
                                     controller.members.length) {
                               return Center();
                             }
                             return Text(
-                              controller.members[controller.currentUser.value]
+                              controller
+                                      .members[
+                                          controller.currentUserIndex.value]
                                       .name ??
                                   "Người dùng",
                               style: const TextStyle(
@@ -255,7 +257,7 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      final currentIndex = todoStore.currentUser.value;
+                      final currentIndex = todoStore.currentUserIndex.value;
                       if (currentIndex <= 0) {
                         todoStore.setCurrentUser(todoStore.members.length - 1);
                       } else {
@@ -273,7 +275,7 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      final currentIndex = todoStore.currentUser.value;
+                      final currentIndex = todoStore.currentUserIndex.value;
                       if (currentIndex == todoStore.members.length - 1) {
                         todoStore.setCurrentUser(0);
                       } else {
@@ -299,7 +301,7 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
               width: MediaQuery.of(context).size.width,
               child: Obx(
                 () => Indicator(
-                  index: todoStore.currentUser.value,
+                  index: todoStore.currentUserIndex.value,
                   dotSize: 12,
                   height: 12,
                   lenght: todoStore.members.length,
@@ -349,15 +351,22 @@ class BannerAvatar extends StatelessWidget {
                     height: 20,
                     child: GetX<TodoHomeStore>(builder: (todoStore) {
                       if (todoStore.members.isEmpty) {
-                        return AvatarPng(
-                          borderColor: Colors.transparent,
-                          imageUrl: "https://i.pravatar.cc/150?img=1",
+                        return Hero(
+                          tag: "avatar-0",
+                          child: AvatarPng(
+                            borderColor: Colors.transparent,
+                            imageUrl: "https://i.pravatar.cc/150?img=1",
+                          ),
                         );
                       }
-                      return AvatarPng(
-                        borderColor: Colors.transparent,
-                        imageUrl: todoStore
-                            .members[todoStore.currentUser.value].avatarUrl,
+                      return Hero(
+                        tag: "avatar-${todoStore.currentUserIndex.value}",
+                        child: AvatarPng(
+                          borderColor: Colors.transparent,
+                          imageUrl: todoStore
+                              .members[todoStore.currentUserIndex.value]
+                              .avatarUrl,
+                        ),
                       );
                     }),
                   ),

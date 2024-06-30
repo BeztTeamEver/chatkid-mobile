@@ -11,6 +11,7 @@ import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/widgets/loading_indicator.dart';
 import 'package:chatkid_mobile/widgets/speech_to_text.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 
 class BotChatPage extends ConsumerStatefulWidget {
-  final BotType botType;
-  const BotChatPage({super.key, required this.botType});
+  final BotType? botType;
+  final String? content;
+  const BotChatPage({super.key, this.botType = BotType.PUMKIN, this.content});
 
   @override
   ConsumerState<BotChatPage> createState() => _BotChatPageState();
@@ -137,19 +139,22 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   }
 
   void initTts() async {
+    ttsService.stop();
     if (widget.botType == BotType.PUMKIN) {
       await ttsService.setVoice(GptVoice.PumkinVoice);
     } else {
       await ttsService.setVoice(GptVoice.CherryVoice);
     }
     await _hello();
+    if (widget.content != null) {
+      _onResult(widget.content!);
+    }
   }
 
   @override
   void initState() {
     super.initState();
     initTts();
-    ttsService.stop();
   }
 
   @override
@@ -292,7 +297,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                                   ScaleTransition(
                                       scale: animation, child: child),
                               child: _loading
-                                  ? const CircularProgressIndicator()
+                                  ? const Loading()
                                   : Text(
                                       _lastWords ??
                                           "Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?",
