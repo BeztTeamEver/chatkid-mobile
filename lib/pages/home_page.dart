@@ -11,6 +11,7 @@ import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:chatkid_mobile/widgets/avatar.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
@@ -124,7 +125,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    createRoute(() => BotChatPage(botType: BotType.PUMKIN)),
+                    createRoute(() => const BotChatPage(botType: BotType.PUMKIN)),
                   );
                 },
                 children: [
@@ -151,7 +152,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         () => const BotChatPage(botType: BotType.STRAWBERRY)),
                   );
                 },
-                onTapColor: secondary.shade100,
+                onTapColor: HexColor('4EFFD1DA'),
                 children: [
                   SvgPicture.asset('assets/robot/cherry.svg'),
                   const SizedBox(

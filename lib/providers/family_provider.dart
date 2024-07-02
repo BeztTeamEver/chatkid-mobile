@@ -32,6 +32,7 @@ final getFamilyProvider = FutureProvider.autoDispose<FamilyModel>(
 final getFamilyChannel = FutureProvider.autoDispose<ChannelModel>((ref) {
   try {
     final result = ref.watch(familyServiceProvider).getFamilyChannel();
+    Logger().d(result);
     return result;
   } catch (e) {
     throw Exception(e);

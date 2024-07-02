@@ -30,6 +30,8 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
   String? _errorText;
   bool _obscured = true;
   bool _confirmObscured = true;
+  bool _obscuredConfirm = true;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -113,10 +115,26 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
               }
               return null;
             },
-            isObscure: _confirmObscured,
+            isObscure: _obscuredConfirm,
             autoFocus: false,
             name: "confirmPassword",
             type: TextInputType.visiblePassword,
+            suffixIcon: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _obscuredConfirm = !_obscuredConfirm;
+                  });
+                },
+                child: Icon(
+                  _obscuredConfirm
+                      ? Icons.visibility_rounded
+                      : Icons.visibility_off_rounded,
+                  size: 24,
+                ),
+              ),
+            ),
             controller: widget.confirmPasswordController,
             suffixIcon: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),

@@ -28,13 +28,16 @@ class _SplashPagesState extends State<SplashPages>
   void checkIsFirstScreen(BuildContext context) {
     SharedPreferences prefs = LocalStorage.instance.preferences;
 
-    Navigator.pushReplacement(
-      context,
-      createRoute(
-        () => MainPage(),
-      ),
-    );
-    return;
+    // USE FOR DEVELOP ONLY
+    // Navigator.pushReplacement(
+    //   context,
+    //   createRoute(
+    //     () => GroupChatPage(
+    //       channelId: "",
+    //     ),
+    //   ),
+    // );
+    // return;
     bool isFirstScreen = prefs.getBool('isFirstScreen') ?? false;
     String? accessToken = prefs.getString('accessToken');
     int? currentStep = prefs.getInt('step');

@@ -70,13 +70,13 @@ class ChatModel implements IBaseModel {
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['content'] = content;
-    data['sender'] = sender;
-    data['channelId'] = channelId;
-    data['imageUrl'] = imageUrl;
-    data['voiceUrl'] = voiceUrl;
-    data['sendTime'] = sentTime;
-    data['userId'] = userId;
+    if (content != null) data['content'] = content;
+    if (channelId != null) data['channelId'] = channelId;
+    if (userId != null) data['userId'] = userId;
+    if (voiceUrl != null) data['voiceUrl'] = voiceUrl;
+    if (imageUrl != null) data['imageUrl'] = imageUrl;
+    if (sentTime != null) data['sentTime'] = sentTime;
+    if (sender != null) data['sender'] = sender!.toMap();
 
     return data;
   }

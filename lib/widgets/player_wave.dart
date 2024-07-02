@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:chatkid_mobile/services/file_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/cache_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
@@ -9,30 +12,36 @@ import 'package:path_provider/path_provider.dart';
 
 class PlayerWave extends StatefulWidget {
   final String path;
-  const PlayerWave({super.key, required this.path});
+  final Color? fixedWaveColor;
+  final Color? liveWaveColor;
+  final Color? color;
+
+  const PlayerWave({
+    super.key,
+    required this.path,
+    this.fixedWaveColor,
+    this.liveWaveColor,
+    this.color,
+  });
 
   @override
   State<PlayerWave> createState() => _PlayerWaveState();
 }
 
 class _PlayerWaveState extends State<PlayerWave> {
-  final PlayerController _controller = PlayerController(); // Initialise
+  final PlayerController _controller = PlayerController();
   int _duration = 0;
   File? file;
+  PlayerWaveStyle? playerWaveStyle;
 
-  late final _playerStateSubcription;
-
-  final playerWaveStyle = PlayerWaveStyle(
-    fixedWaveColor: Colors.white54,
-    liveWaveColor: Colors.white,
-    spacing: 6,
-  );
+  late final StreamSubscription<PlayerState> _playerStateSubscription;
 
   _play() async {
+    // _controller.stopAllPlayers();
     await _controller.startPlayer(
-      finishMode: FinishMode.loop,
+      finishMode: FinishMode.pause,
+      forceRefresh: true,
     ); // Start audio player
-    // await _controller.stopPlayer(); // Stop audio player
   }
 
   _pause() async {
@@ -45,22 +54,35 @@ class _PlayerWaveState extends State<PlayerWave> {
 
   _init() async {
     try {
-      // read the file to the app
-      final appDirectory = await getApplicationDocumentsDirectory();
-      file = File("${appDirectory.path}/${widget.path}");
-      if (file?.path == null) {
+      setState(() {
+        playerWaveStyle = PlayerWaveStyle(
+          fixedWaveColor: widget.fixedWaveColor ?? primary.shade200,
+          liveWaveColor: widget.liveWaveColor ?? primary.shade500,
+          seekLineColor: widget.fixedWaveColor ?? primary.shade600,
+          spacing: 6,
+        );
+      });
+
+      File? file;
+      if (widget.path.contains("https")) {
+        Logger().i(widget.path);
+        file = await FileService().saveFileToCache(widget.path).then((value) {
+          return value;
+        }).catchError((e) {
+          Logger().e(e);
+          throw Exception('Lỗi không thể tải dữ liệu, vui lòng thử lại!');
+        });
+      } else {
+        file = File(widget.path);
+      }
+      if (!file!.existsSync()) {
         return;
       }
-
-      final data = await rootBundle.load('assets/audio/${widget.path}');
-      final bytes = data.buffer.asUint8List();
-      await file!.writeAsBytes(bytes);
-
       // prepare the player
       await _controller.preparePlayer(
-        path: file!.path,
+        path: file.path,
         shouldExtractWaveform: true,
-        noOfSamples: playerWaveStyle.getSamplesForWidth(200),
+        noOfSamples: playerWaveStyle!.getSamplesForWidth(200),
         volume: 1.0,
       );
 
@@ -87,18 +109,16 @@ class _PlayerWaveState extends State<PlayerWave> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    _playerStateSubcription.cancel();
+    _playerStateSubscription.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _init();
-    _playerStateSubcription =
+    _playerStateSubscription =
         _controller.onPlayerStateChanged.listen((event) async {
       switch (event) {
         case PlayerState.initialized:
@@ -118,7 +138,7 @@ class _PlayerWaveState extends State<PlayerWave> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -126,25 +146,26 @@ class _PlayerWaveState extends State<PlayerWave> {
             onPressed: _controller.playerState.isPlaying ? _pause : _play,
             icon: Icon(
               _controller.playerState.isPlaying ? Icons.stop : Icons.play_arrow,
-              color: Colors.white,
+              color: widget.color ?? primary.shade500,
             ),
           ),
           Expanded(
             child: AudioFileWaveforms(
-              size: Size(MediaQuery.of(context).size.width / 2, 60.0),
+              size: Size(MediaQuery.of(context).size.width / 2, 40.0),
               playerController: _controller,
+              continuousWaveform: true,
               enableSeekGesture: true,
-              waveformType: WaveformType.long,
-              playerWaveStyle: playerWaveStyle,
+              waveformType: WaveformType.fitWidth,
+              playerWaveStyle: playerWaveStyle!,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           Text(
             "${_duration ~/ 1000}s",
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Colors.white,
+                  color: widget.color ?? primary.shade500,
                 ),
           ),
         ],

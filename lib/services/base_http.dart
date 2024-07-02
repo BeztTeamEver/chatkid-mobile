@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
@@ -34,7 +35,7 @@ class BaseHttp {
     return url;
   }
 
-  Future<Map<String, String>> _getHeaders(
+  Future<Map<String, String>> getHeaders(
       Map<String, String>? headers, bool? isUseFamilyToken) async {
     String token =
         await AuthService.getAccessToken(isUseFamilyToken: isUseFamilyToken);
@@ -55,7 +56,7 @@ class BaseHttp {
     bool? isUseFamilyToken,
   }) async {
     String url = _combineUrl(endpoint, param);
-    final combineHeaders = await _getHeaders(headers, isUseFamilyToken);
+    final combineHeaders = await getHeaders(headers, isUseFamilyToken);
     return await http.Client()
         .get(
       Uri.parse(url),
@@ -82,7 +83,7 @@ class BaseHttp {
         .post(
       Uri.parse(url),
       body: body,
-      headers: await _getHeaders(headers, isUseFamilyToken),
+      headers: await getHeaders(headers, isUseFamilyToken),
     )
         .catchError((err, s) {
       Logger().e(err, stackTrace: s);
@@ -107,7 +108,7 @@ class BaseHttp {
         .put(
       Uri.parse(url),
       body: body,
-      headers: await _getHeaders(headers, isUseFamilyToken),
+      headers: await getHeaders(headers, isUseFamilyToken),
     )
         .timeout(
       const Duration(seconds: TIME_OUT),
@@ -128,7 +129,7 @@ class BaseHttp {
     return await http
         .delete(
       Uri.parse(url),
-      headers: await _getHeaders(headers, isUseFamilyToken),
+      headers: await getHeaders(headers, isUseFamilyToken),
       body: body,
     )
         .timeout(
@@ -150,7 +151,7 @@ class BaseHttp {
     return await http
         .patch(
       Uri.parse(url),
-      headers: await _getHeaders(headers, isUseFamilyToken),
+      headers: await getHeaders(headers, isUseFamilyToken),
       body: body,
     )
         .timeout(
@@ -159,5 +160,25 @@ class BaseHttp {
         throw Exception('Connection Timeout!');
       },
     );
+  }
+
+  Future<http.Response> postFile({
+    required File file,
+    required String endpoint,
+  }) async {
+    final headers = await getHeaders(null, false);
+    final request =
+        http.MultipartRequest('POST', Uri.parse(Env.apiUrl + endpoint))
+          ..files.add(
+            await http.MultipartFile.fromPath(
+              'file',
+              file.path,
+            ),
+          );
+    request.headers.addAll(headers);
+    return await request.send().then((response) async {
+      final res = await http.Response.fromStream(response);
+      return res;
+    });
   }
 }
