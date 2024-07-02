@@ -29,7 +29,6 @@ class PasswordPage extends ConsumerStatefulWidget {
 class _PasswordPageState extends ConsumerState<PasswordPage> {
   String? _errorText;
   bool _obscured = true;
-  bool _confirmObscured = true;
   bool _obscuredConfirm = true;
 
   @override
@@ -136,22 +135,6 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
               ),
             ),
             controller: widget.confirmPasswordController,
-            suffixIcon: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _confirmObscured = !_confirmObscured;
-                  });
-                },
-                child: Icon(
-                  _confirmObscured
-                      ? Icons.visibility_rounded
-                      : Icons.visibility_off_rounded,
-                  size: 24,
-                ),
-              ),
-            ),
           ),
         ],
       ),
