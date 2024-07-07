@@ -63,7 +63,7 @@ class _InputFieldState extends State<InputField> {
           height: widget.height,
           child: FormBuilderTextField(
             name: widget.name,
-            // controller: widget.controller,
+            controller: widget.controller,
             keyboardType: widget.type,
             key: widget.key,
             autofocus: widget.autoFocus,

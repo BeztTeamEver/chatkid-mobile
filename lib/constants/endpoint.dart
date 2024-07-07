@@ -11,6 +11,7 @@ class Endpoint {
 
   // Store
   static const listProductEndPoint = "/api/products";
+  static const productEndPoint = "/api/products/{id}";
 
   // Auth
   static const googleEndPoint = "/api/auth/login";

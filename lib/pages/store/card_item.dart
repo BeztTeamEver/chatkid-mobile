@@ -1,14 +1,19 @@
 import 'package:chatkid_mobile/models/gift_model.dart';
+import 'package:chatkid_mobile/pages/store/form_item.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 class CardItem extends StatefulWidget {
   final GiftModel gift;
-  const CardItem({super.key, required this.gift});
+  final Function(String id) handleDelete;
+
+  const CardItem({super.key, required this.gift, required this.handleDelete});
 
   @override
   State<CardItem> createState() => _CardItemState();
@@ -123,20 +128,31 @@ class _CardItemState extends State<CardItem> {
         return Container(
           height: 200,
           decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
-            )
-          ),
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              )),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(context,
+                        createRoute(() => FormItem(gift: widget.gift)));
+                  },
+                  style: ButtonStyle(
+                    padding: const MaterialStatePropertyAll(EdgeInsets.all(0)),
+                    shape: MaterialStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  icon: Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
@@ -169,9 +185,20 @@ class _CardItemState extends State<CardItem> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    widget.handleDelete(widget.gift.id ?? '');
+                  },
+                  style: ButtonStyle(
+                    padding: const MaterialStatePropertyAll(EdgeInsets.all(0)),
+                    shape: MaterialStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  icon: Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class GiftModel {
   String? id;
   String? title;
@@ -10,6 +12,14 @@ class GiftModel {
       this.title,
       this.numberOfCoin,
       this.imageUrl});
+
+  String toJson() {
+    return jsonEncode({
+      "title": title,
+      "numberOfCoin": numberOfCoin,
+      "imageUrl": imageUrl,
+    });
+  }    
 
   GiftModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
