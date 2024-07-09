@@ -32,11 +32,4 @@ jobs:
             # - name: Build apk
             #   id: buildApp
             #   run: flutter build apk
-            - name: Discord Reporter
-              # You may pin to the exact commit or the version.
-              # uses: TeamGalacticraft/discord-reporter@a9c55d6f9fc2245aca27367c95e9d36c6aa36359
-              uses: TeamGalacticraft/discord-reporter@1.0.0
-              with:
-                  webhook: https://discord.com/api/webhooks/1156466843742117969/5qUPj6_92XYZq768ZdAgtDEOaCNUztY8cfU490FNpB4JyCxG81jBEzzodZh3Jz0CqF2p
-                  outcome: ${{ steps.buildApp.outcome }}
-                  token: ${{ secrets.GITHUB_TOKEN }}
+      
