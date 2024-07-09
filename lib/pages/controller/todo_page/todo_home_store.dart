@@ -3,8 +3,8 @@ import 'package:chatkid_mobile/enum/todo.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/services/todo_service.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -138,6 +138,7 @@ class TodoHomeStore extends GetxController {
 class TodoFormCreateController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormBuilderState>();
+  final navigatorKey = GlobalKey<NavigatorState>();
 
   final Rxn<AnimationController> stepController = Rxn<AnimationController>();
   RxList<TaskCategoryModel> taskCategories = <TaskCategoryModel>[].obs;
@@ -147,6 +148,7 @@ class TodoFormCreateController extends GetxController
 
   Rx<TodoCreateType> todoCreateType = TodoCreateType.TASK.obs;
 
+  Rx<String> selectedTaskType = "".obs;
   RxList<String> pinnedList = <String>[].obs;
   RxList<String> unpinnedList = <String>[].obs;
   @override
@@ -171,8 +173,12 @@ class TodoFormCreateController extends GetxController
     super.onClose();
   }
 
-  updateProgress(step) {
+  updateProgress() {
     stepController.value?.animateTo(step / 4);
+  }
+
+  setSelectedTaskType(String taskType) {
+    selectedTaskType.value = taskType;
   }
 
   setTaskType(TodoCreateType type) {
@@ -185,6 +191,29 @@ class TodoFormCreateController extends GetxController
 
   toggleEdit() {
     isEdit.value = !isEdit.value;
+
+    if (isEdit.value == false) {
+      taskCategories.forEach((category) {
+        category.taskTypes.forEach((taskType) {
+          if (taskType.isFavorited == true) {
+            if (pinnedList.firstWhereOrNull(
+                    (element) => element.contains(taskType.id)) !=
+                null) {
+              taskType.isFavorited = false;
+            }
+          } else {
+            if (unpinnedList.firstWhereOrNull(
+                    (element) => element.contains(taskType.id)) !=
+                null) {
+              taskType.isFavorited = true;
+            }
+          }
+        });
+      });
+      pinnedList.clear();
+      unpinnedList.clear();
+      taskCategories.refresh();
+    }
   }
 
   toggleFavoriteTaskType(int taskCategorisIndex, TaskTypeModel taskType) {
@@ -218,20 +247,30 @@ class TodoFormCreateController extends GetxController
   }
 
   Future<bool> saveTask() async {
-    final pinnedPromise =
-        pinnedList.map((e) => TodoService().pinTask(e)).toList();
+    final pinnedPromise = TodoService().pinTask(pinnedList);
     final unpinnedPromise =
         unpinnedList.map((e) => TodoService().unpinTask(e)).toList();
 
     return await Future.wait([
-      // ...pinnedPromise,
+      pinnedPromise,
       ...unpinnedPromise,
     ]).then((value) {
+      return value.every((element) => element);
+    }).catchError((e) {
+      throw e;
+    }).whenComplete(() {
       pinnedList.clear();
       unpinnedList.clear();
       isEdit.value = false;
-      return value.every((element) => element);
     });
+  }
+
+  void NavigateTo(BuildContext context, Widget page) {
+    navigatorKey.currentState!.push(createRoute(() => page));
+  }
+
+  void NavigatePop() {
+    navigatorKey.currentState!.pop();
   }
 
   increaseStep() {

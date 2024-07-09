@@ -5,6 +5,7 @@ import 'package:chatkid_mobile/pages/chats/list_group_chat.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/children_tracking/children_tracking_page.dart';
 import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';
+import 'package:chatkid_mobile/pages/notification/notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 import 'package:chatkid_mobile/pages/routes/todo_route.dart';
 import 'package:chatkid_mobile/pages/routes/home_route.dart';
@@ -24,9 +25,10 @@ final List<Menu> menu = [
     iconDefault: 'bottomMenu/chat',
     iconActive: 'bottomMenu/chat_active',
     route: routesName['${AppRoutes.chat}']!,
-    role: [RoleConstant.Child, RoleConstant.Parent],
+    role: [RoleConstant.Child],
     widget: const ListGroupChat(),
   ),
+
   // Menu(
   //   title: 'Thành tựu',
   //   iconDefault: 'bottomMenu/reward',
@@ -36,11 +38,19 @@ final List<Menu> menu = [
   //   widget: const UserProfileNotificationPage(),
   // ),
   Menu(
+    title: 'Bé',
+    iconDefault: 'bottomMenu/kid',
+    iconActive: 'bottomMenu/kid_active',
+    route: routesName['${AppRoutes.activities}']!,
+    role: [RoleConstant.Parent],
+    widget: const ChildrenTrackingPage(),
+  ),
+  Menu(
     title: 'center',
     iconDefault: 'bottomMenu/plus',
     iconActive: 'bottomMenu/plus_active',
     route: routesName['${AppRoutes.blog}']!,
-    role: [RoleConstant.Child, RoleConstant.Parent],
+    role: [RoleConstant.Parent],
     widget: const ExplorePage(),
   ),
   Menu(
@@ -51,15 +61,6 @@ final List<Menu> menu = [
     role: [RoleConstant.Child],
     widget: const ExplorePage(),
   ),
-
-  Menu(
-    title: 'Bé',
-    iconDefault: 'bottomMenu/kid',
-    iconActive: 'bottomMenu/kid_active',
-    route: routesName['${AppRoutes.activities}']!,
-    role: [RoleConstant.Parent],
-    widget: const ChildrenTrackingPage(),
-  ),
   // Menu(
   //   title: 'Thông báo',
   //   iconDefault: 'bottomMenu/notification',
@@ -68,6 +69,14 @@ final List<Menu> menu = [
   //   role: [RoleConstant.Parent],
   //   widget: const NotificationPage(),
   // ),
+  Menu(
+    title: "Thông báo",
+    iconDefault: 'bottomMenu/bell',
+    iconActive: 'bottomMenu/bell_active',
+    route: routesName['${AppRoutes.notification}']!,
+    role: [RoleConstant.Child, RoleConstant.Parent],
+    widget: NotificationPage(),
+  ),
   Menu(
     title: 'Tài khoản',
     iconDefault: 'bottomMenu/profile',

@@ -40,7 +40,7 @@ class _ButtonIconState extends State<ButtonIcon> {
       },
       style: ButtonStyle(
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-          EdgeInsets.all(0),
+          EdgeInsets.all(widget.padding ?? 0.0),
         ),
         backgroundColor: MaterialStateProperty.all<Color>(
           widget.backgroundColor ?? Colors.transparent,

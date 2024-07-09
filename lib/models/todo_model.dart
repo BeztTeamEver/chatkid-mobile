@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:chatkid_mobile/models/base_model.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
+import 'package:dart_date/dart_date.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 
@@ -165,6 +166,52 @@ class TodoRequestModel {
   PagingModelWithFilter<TodoFilter> paging;
 
   TodoRequestModel({required this.memberId, required this.paging});
+}
+
+class TodoCreateModel {
+  String memberId;
+  String taskTypeId;
+  DateTime startTime;
+  DateTime endTime;
+  int giftTicket;
+  List<String>? frequency;
+  String note;
+
+  TodoCreateModel({
+    required this.memberId,
+    required this.taskTypeId,
+    required this.startTime,
+    required this.endTime,
+    this.frequency,
+    required this.giftTicket,
+    required this.note,
+  });
+
+  factory TodoCreateModel.fromJson(Map<String, dynamic> json) {
+    return TodoCreateModel(
+      memberId: json['memberId'],
+      taskTypeId: json['taskTypeId'],
+      startTime: json['startTime'],
+      endTime: json['endTime'],
+      frequency: json['frequency'],
+      giftTicket: int.parse(json['giftTicket'] ?? "0"),
+      note: json['note'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'memberId': memberId,
+      'taskTypeId': taskTypeId,
+      'startTime': "${startTime.toIso8601String()}Z",
+      'endTime': "${endTime.toIso8601String()}Z",
+      'frequency': frequency,
+      'giftTicket': giftTicket,
+      'note': note,
+    };
+  }
+
+  String toJson() => jsonEncode(toMap());
 }
 
 class TaskListModel {

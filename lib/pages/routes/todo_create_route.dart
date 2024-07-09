@@ -1,4 +1,5 @@
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/todo_create_form_wrapper.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/todo_create_page.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
@@ -27,7 +28,7 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
     // TODO: implement initState
     super.initState();
     todoFormCreateController.stepController.value = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this, value: 0.1)
+        duration: const Duration(milliseconds: 600), vsync: this, value: 0.25)
       ..addListener(() {
         setState(() {});
       });
@@ -41,78 +42,107 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
   @override
   Widget build(BuildContext context) {
     return PopScope(
+      canPop: todoFormCreateController.step.value == 1,
       onPopInvoked: (didPop) {
         if (didPop) {
           todoFormCreateController.isEdit.value = false;
           todoFormCreateController.stepController.value!.dispose();
+          todoFormCreateController.resetStep();
           return;
         }
-        todoFormCreateController.resetStep();
+        todoFormCreateController.decreaseStep();
+        todoFormCreateController.updateProgress();
+        todoFormCreateController.NavigatePop();
       },
       child: Scaffold(
         body: SafeArea(
-          child: Column(
-            children: [
-              Container(
-                child: Obx(
-                  () => LinearProgressIndicator(
-                    value: todoFormCreateController.stepController.value!.value,
+          child: Obx(
+            () => Column(
+              children: [
+                Container(
+                  child: Obx(
+                    () => LinearProgressIndicator(
+                      value:
+                          todoFormCreateController.stepController.value!.value,
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Scaffold(
-                  appBar: AppBar(
-                    backgroundColor: Theme.of(context).colorScheme.background,
-                    // bottom: PreferredSize(
-                    //   preferredSize: const Size.fromHeight(16),
-                    //   child: Obx(
-                    //     () => LinearProgressIndicator(
-                    //       value: todoFormCreateController.stepController.value!.value,
-                    //     ),
-                    //   ),
-                    // ),
-                    actions: [
-                      ButtonIcon(
-                        onPressed: () {},
-                        icon: 'trash',
-                        iconSize: 24,
-                        color: primary.shade500,
-                      )
-                    ],
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      child: SecondaryButton(
-                        child: SvgIcon(
-                          icon: 'chevron-left',
-                          color: primary.shade500,
+                Expanded(
+                  child: Scaffold(
+                    appBar: AppBar(
+                      backgroundColor: Theme.of(context).colorScheme.background,
+                      // bottom: PreferredSize(
+                      //   preferredSize: const Size.fromHeight(16),
+                      //   child: Obx(
+                      //     () => LinearProgressIndicator(
+                      //       value: todoFormCreateController.stepController.value!.value,
+                      //     ),
+                      //   ),
+                      // ),
+                      actions: [
+                        !todoFormCreateController.isEdit.value &&
+                                todoFormCreateController.step.value == 1
+                            ? ButtonIcon(
+                                onPressed: () {},
+                                icon: 'trash',
+                                iconSize: 24,
+                                color: primary.shade500,
+                              )
+                            : Container(),
+                      ],
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: SecondaryButton(
+                          child: SvgIcon(
+                            icon: 'chevron-left',
+                            color: primary.shade500,
+                          ),
+                          onTap: () {
+                            if (todoFormCreateController.step.value == 1) {
+                              Navigator.pop(context);
+                            } else {
+                              todoFormCreateController.decreaseStep();
+                              todoFormCreateController.updateProgress();
+                              todoFormCreateController.NavigatePop();
+                            }
+                          },
                         ),
-                        onTap: () {
-                          Navigator.pop(context);
+                      ),
+                      centerTitle: true,
+                      title: Text(
+                        todoFormCreateController.isEdit.value
+                            ? "Ghim công việc"
+                            : 'Tạo công việc',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ),
+                    body: TodoCreateFormWrapper(
+                      child: Navigator(
+                        key: todoFormCreateController.navigatorKey,
+                        onPopPage: (route, result) {
+                          if (!route.didPop(result)) {
+                            return false;
+                          }
+                          todoFormCreateController.decreaseStep();
+                          todoFormCreateController.updateProgress();
+                          return true;
+                        },
+                        onGenerateRoute: (setting) {
+                          return MaterialPageRoute(
+                            builder: (context) {
+                              return const TodoCreatePage();
+                            },
+                          );
                         },
                       ),
                     ),
-                    centerTitle: true,
-                    title: Text(
-                      'Tạo công việc',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  body: Navigator(
-                    onGenerateRoute: (setting) {
-                      return MaterialPageRoute(
-                        builder: (context) {
-                          return const TodoCreatePage();
-                        },
-                      );
-                    },
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

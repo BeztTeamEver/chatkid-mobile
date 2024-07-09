@@ -22,6 +22,8 @@ class CategoryItem extends StatefulWidget {
   final TaskTypeModel taskType;
   final int taskCategoriesIndex;
   final int taskTypeIndex;
+  final Function() onLongPress;
+
   const CategoryItem({
     super.key,
     required this.imageUrl,
@@ -33,6 +35,7 @@ class CategoryItem extends StatefulWidget {
     required this.taskCategoriesIndex,
     required this.taskTypeIndex,
     this.isSelected = false,
+    required this.onLongPress,
   });
   @override
   State<CategoryItem> createState() => _CategoryItemState();
@@ -63,9 +66,7 @@ class _CategoryItemState extends State<CategoryItem>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: () {
-        todoFormCreateController.toggleEdit();
-      },
+      onLongPress: widget.onLongPress,
       onLongPressDown: (details) => _controller
           .forward(from: 0)
           .timeout(Duration(milliseconds: 100), onTimeout: () {

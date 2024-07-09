@@ -46,7 +46,6 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
       todoStore.fetchData();
       return children;
     });
-    ;
 
     return Container(
       height: MediaQuery.of(context).size.height -
@@ -238,7 +237,7 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                         width: 32,
                         height: 32,
                         child: SvgPicture.asset(
-                          "assets/todoPage/banner/bell.svg",
+                          "assets/icons/hipchat.svg",
                         ),
                       ),
                     ],

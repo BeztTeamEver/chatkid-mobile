@@ -68,45 +68,46 @@ class _MainPageState extends ConsumerState<MainPage> {
           ),
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(top: 24),
-        child: Container(
-          height: 80,
-          width: 80,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).shadowColor.withOpacity(0.08),
-                spreadRadius: 0,
-                blurRadius: 0.5,
-                offset: const Offset(0, -1),
+      floatingActionButton: _currentAccount.role == RoleConstant.Parent
+          ? Padding(
+              padding: const EdgeInsets.only(top: 24),
+              child: Container(
+                height: 80,
+                width: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withOpacity(0.08),
+                      spreadRadius: 0,
+                      blurRadius: 0.5,
+                      offset: const Offset(0, -1),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(10),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return CreateTaskModal();
+                      },
+                    );
+                  },
+                  elevation: 0,
+                  shape: const CircleBorder(),
+                  child: const Icon(
+                    Icons.add_sharp,
+                    size: 42,
+                    color: Colors.white,
+                  ),
+                  backgroundColor: primary.shade500,
+                ),
               ),
-            ],
-          ),
-          padding: const EdgeInsets.all(10),
-          child: FloatingActionButton(
-            onPressed: () {
-              // TODO: route to create task page
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return CreateTaskModal();
-                },
-              );
-            },
-            elevation: 0,
-            shape: const CircleBorder(),
-            child: const Icon(
-              Icons.add_sharp,
-              size: 42,
-              color: Colors.white,
-            ),
-            backgroundColor: primary.shade500,
-          ),
-        ),
-      ),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       bottomNavigationBar: SafeArea(
@@ -133,12 +134,13 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
   void onSelectedCreateType(TodoCreateType type) {
     todoFormCreateStore.setTaskType(type);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TodoCreateRoute(),
-      ),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => TodoCreateRoute(),
+    //   ),
+    // );
+    Get.to(() => TodoCreateRoute());
   }
 
   @override
