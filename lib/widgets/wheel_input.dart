@@ -29,7 +29,7 @@ class WheelInput extends StatefulWidget {
   final double? optionHeight;
   final double? listHeight;
 
-  final List<Options> options;
+  final List<Option> options;
 
   const WheelInput({
     super.key,
@@ -147,7 +147,7 @@ class _WheelInputState extends State<WheelInput> {
     );
   }
 
-  showMenu(List<Options> options, Function onSelect) {
+  showMenu(List<Option> options, Function onSelect) {
     double defaultItemSize = 64;
     String innerValue = "";
     int innerIndex = 0;

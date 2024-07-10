@@ -8,7 +8,7 @@ class InputField extends StatefulWidget {
   final String hint;
   final TextInputType type;
   final String? Function(String?)? validator;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? errorText;
   final String name;
   final Widget? suffixIcon;
@@ -30,8 +30,8 @@ class InputField extends StatefulWidget {
     this.validator,
     this.errorText,
     this.suffixIcon,
-    this.isObscure,
-    required this.controller,
+    this.isObscure = false,
+    this.controller,
     this.height,
     this.fontSize,
     this.contentPadding,
@@ -63,7 +63,7 @@ class _InputFieldState extends State<InputField> {
           height: widget.height,
           child: FormBuilderTextField(
             name: widget.name,
-            // controller: widget.controller,
+            controller: widget.controller,
             keyboardType: widget.type,
             key: widget.key,
             autofocus: widget.autoFocus,
@@ -98,7 +98,7 @@ class _InputFieldState extends State<InputField> {
             onSubmitted: (value) {
               if (widget.onSubmit != null) {
                 widget.onSubmit!(value);
-                widget.controller.clear();
+                widget.controller?.clear();
               }
             },
           ),

@@ -16,3 +16,9 @@ class HexColor extends Color {
 final factories = <Type, Function>{
   BaseModel: (json) => BaseModel.fromJson(json),
 };
+
+extension DateOnlyCompare on DateTime {
+  bool isSameDate(DateTime other) {
+    return year == other.year && month == other.month && day == other.day;
+  }
+}

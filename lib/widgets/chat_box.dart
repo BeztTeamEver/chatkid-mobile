@@ -5,6 +5,7 @@ import 'package:chatkid_mobile/widgets/avatar.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/player_wave.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:logger/logger.dart';
@@ -15,13 +16,16 @@ class ChatTextBox extends StatefulWidget {
   final bool? isSender;
   final String? voiceUrl;
   final UserModel? user;
-
+  final bool useVoice;
+  final bool useTextfullWidth;
   const ChatTextBox(
       {super.key,
       this.message,
       this.icon,
+      this.useTextfullWidth = false,
       this.isSender,
       this.user,
+      this.useVoice = true,
       this.voiceUrl});
 
   @override
@@ -62,7 +66,8 @@ class ChatTextBoxState extends State<ChatTextBox> {
         width: 10,
       ),
       Container(
-        width: MediaQuery.of(context).size.width * 0.5,
+        width: MediaQuery.of(context).size.width *
+            (widget.useTextfullWidth ? 0.65 : 0.5),
         // padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: widget.isSender == true ? primary.shade500 : primary.shade100,
@@ -109,21 +114,23 @@ class ChatTextBoxState extends State<ChatTextBox> {
           ? MainAxisAlignment.end
           : MainAxisAlignment.start,
       children: [
-        Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.85,
-          ),
-          width: MediaQuery.of(context).size.width * 0.85,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisAlignment: widget.isSender == true
-                ? MainAxisAlignment.end
-                : MainAxisAlignment.start,
-            children: widget.isSender == true
-                ? contentWidgets.reversed.toList()
-                : contentWidgets,
+        Expanded(
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.85,
+            ),
+            width: MediaQuery.of(context).size.width * 0.85,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisAlignment: widget.isSender == true
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
+              children: widget.isSender == true
+                  ? contentWidgets.reversed.toList()
+                  : contentWidgets,
+            ),
           ),
         ),
       ],

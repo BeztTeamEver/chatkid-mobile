@@ -13,6 +13,7 @@ import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/services/wallet_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/loading_indicator.dart';
 import 'package:chatkid_mobile/widgets/speech_to_text.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,9 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class BotChatPage extends ConsumerStatefulWidget {
-  final BotType botType;
-  const BotChatPage({super.key, required this.botType});
+  final BotType? botType;
+  final String? content;
+  const BotChatPage({super.key, this.botType = BotType.PUMKIN, this.content});
 
   @override
   ConsumerState<BotChatPage> createState() => _BotChatPageState();
@@ -53,43 +55,43 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
       setState(() {
         _loading = true;
       });
-      final kidService = _user?.kidServices ??
-          // TODO: remove
-          [
-            KidServiceModel(
-              id: '2f1b057b-67ac-4d8d-9c23-b0dd3d8b87b2',
-              serviceType: 'Chat bot',
-              status: 1,
-            )
-          ];
-      if (kidService == null) {
-        throw Exception("Kid service is null");
-      }
+      // final kidService = _user?.kidServices ??
+      //     // TODO: remove
+      //     [
+      //       KidServiceModel(
+      //         id: '2f1b057b-67ac-4d8d-9c23-b0dd3d8b87b2',
+      //         serviceType: 'Chat bot',
+      //         status: 1,
+      //       )
+      //     ];
+      // if (kidService == null) {
+      //   throw Exception("Kid service is null");
+      // }
 
-      String kidServiceId = kidService
-              .firstWhere((element) => element.serviceType == _botServiceName)
-              .id ??
-          '';
+      // String kidServiceId = kidService
+      //         .firstWhere((element) => element.serviceType == _botServiceName)
+      //         .id ??
+      //     '';
 
-      if (kidServiceId.isEmpty) {
-        throw Exception('Kid service id is empty');
-      }
+      // if (kidServiceId.isEmpty) {
+      //   throw Exception('Kid service id is empty');
+      // }
 
       if (wallet.diamond.value == 0) {
         await ttsService.speak(
-            "Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!");
+            'Tôi đã hết kim cương rồi, bạn hãy giúp tôi nạp kim cương nhé!');
         return;
       }
       final gptNotifier = ref.watch(gptProvider.notifier);
-      await gptNotifier.chat(result, kidServiceId).then((value) async {
-        wallet.refetchWallet();
-        await ttsService.speak(value);
-        setState(() {
-          _lastWords = value;
-        });
-      }).whenComplete(() => setState(() {
-            _loading = false;
-          }));
+      // await gptNotifier.chat(result, kidServiceId).then((value) async {
+      //   wallet.refetchWallet();
+      //   await ttsService.speak(value);
+      //   setState(() {
+      //     _lastWords = value;
+      //   });
+      // }).whenComplete(() => setState(() {
+      //       _loading = false;
+      //     }));
     } catch (e, s) {
       Logger().e(e, stackTrace: s);
       ttsService.speak(
@@ -136,12 +138,16 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   }
 
   void initTts() async {
+    ttsService.stop();
     if (widget.botType == BotType.PUMKIN) {
       await ttsService.setVoice(GptVoice.PumkinVoice);
     } else {
       await ttsService.setVoice(GptVoice.CherryVoice);
     }
     await _hello();
+    if (widget.content != null) {
+      _onResult(widget.content!);
+    }
   }
 
   @override
@@ -235,7 +241,9 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                           "assets/icons/diamond_icon.png",
                           height: 20,
                         ),
-                        const SizedBox(width: 8,),
+                        const SizedBox(
+                          width: 8,
+                        ),
                         Obx(
                           () => Text(
                             "${wallet.diamond}",
@@ -280,7 +288,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                                     ScaleTransition(
                                         scale: animation, child: child),
                                 child: _loading
-                                    ? const CircularProgressIndicator()
+                                    ? const Loading()
                                     : Text(
                                         _lastWords ??
                                             "Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?",
@@ -303,63 +311,76 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                         ),
                         Center(
                           child: FutureBuilder(
-                              future: currentSkin,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  final data =
-                                      snapshot.data as List<BotAssetModel>;
-                                  return Stack(
-                                    children: <Widget>[
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                2 -
-                                            AppBar().preferredSize.height / 2,
-                                        decoration: BoxDecoration(
-                                            color: primary.shade50),
-                                      ),
-                                      ...data
-                                          .map((item) => Positioned(
-                                                left: 0,
-                                                top: 0,
-                                                child: Image.network(
-                                                  item.imageUrl ?? "",
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  height: MediaQuery.of(context)
-                                                              .size
-                                                              .height /
-                                                          2 -
-                                                      AppBar()
-                                                              .preferredSize
-                                                              .height /
-                                                          2,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ))
-                                          .toList(),
-                                    ],
-                                  );
-                                }
-                                if (snapshot.hasError) {
-                                  Logger().e(snapshot.error);
-                                  return Container();
-                                } else {
-                                  return SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    height:
-                                        MediaQuery.of(context).size.height / 2 -
-                                            AppBar().preferredSize.height / 2,
-                                    child: const Center(
-                                      child: CircularProgressIndicator(),
+                            future: currentSkin,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final data =
+                                    snapshot.data as List<BotAssetModel>;
+                                return Stack(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                                  2 -
+                                              AppBar().preferredSize.height / 2,
+                                      decoration:
+                                          BoxDecoration(color: primary.shade50),
                                     ),
-                                  );
-                                }
-                              }),
+                                    ...data
+                                        .map((item) => Positioned(
+                                              left: 0,
+                                              top: 0,
+                                              child: Image.network(
+                                                item.imageUrl ?? "",
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                height: MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        2 -
+                                                    AppBar()
+                                                            .preferredSize
+                                                            .height /
+                                                        2,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ))
+                                        .toList(),
+                                  ],
+                                );
+                              }
+                              if (snapshot.hasError) {
+                                Logger().e(snapshot.error);
+                                // return SvgPicture.asset('robot/full_pumkin.svg',
+                                //     width: MediaQuery.of(context).size.width,
+                                //     height:
+                                //         MediaQuery.of(context).size.height / 2 -
+                                //             AppBar().preferredSize.height / 2,
+                                //     fit: BoxFit.cover);
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.height / 2 -
+                                          AppBar().preferredSize.height / 2,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              return SvgPicture.asset(
+                                'assets/robot/full_pumkin.svg',
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height / 2 -
+                                    AppBar().preferredSize.height / 2,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
                         ),
                       ],
                     ),

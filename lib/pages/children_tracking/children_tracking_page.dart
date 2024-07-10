@@ -31,7 +31,7 @@ class _ChildrenTrackingPageState extends ConsumerState<ChildrenTrackingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final family = FamilyService().getFamily();
+    final family = ref.watch(getFamilyProvider.future);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -56,7 +56,7 @@ class _ChildrenTrackingPageState extends ConsumerState<ChildrenTrackingPage> {
 
               final data =
                   snapshot.data!.members.fold(<UserModel>[], (value, element) {
-                if (element.role == RoleConstant.Parent) {
+                if (element.role == RoleConstant.Child) {
                   return value;
                 }
                 value.add(element);
@@ -64,7 +64,7 @@ class _ChildrenTrackingPageState extends ConsumerState<ChildrenTrackingPage> {
               });
 
               return ListView.builder(
-                itemCount: data.length < 3 ? data.length : 3,
+                itemCount: data.length,
                 itemBuilder: (context, index) {
                   final user = data[index];
 

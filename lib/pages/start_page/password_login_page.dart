@@ -3,6 +3,7 @@ import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
@@ -32,8 +33,12 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  bool _isLoading = false;
 
   _submit(Function callback) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final isValid = _formkey.currentState!.saveAndValidate();
       if (isValid) {
@@ -47,10 +52,13 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
             .then((value) async {
           await LocalStorage.instance.preferences.setInt('step', 2);
           callback();
-        });
+        }).whenComplete(() => setState(() {
+                  _isLoading = false;
+                }));
       }
     } catch (e) {
       Logger().e(e);
+      ErrorSnackbar.showError(err: e, context: context);
       _formkey.currentState!.fields['password']!
           .invalidate(e.toString().split(":")[1], shouldFocus: false);
     }
@@ -135,20 +143,39 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
                 FullWidthButton(
                   onPressed: () {
                     _submit(
-                      () => Navigator.pushReplacement(
+                      () => Navigator.pushAndRemoveUntil(
                         context,
                         createRoute(
                           () => MainPage(),
                         ),
+                        (route) => false,
                       ),
                     );
                   },
-                  child: Text(
-                    "Tiếp tục",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .copyWith(color: Colors.white),
+                  isDisabled: _isLoading,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          : Container(),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Tiếp tục",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .copyWith(color: Colors.white),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(
