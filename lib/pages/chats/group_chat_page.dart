@@ -356,6 +356,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
 
   Scaffold body(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         actions: [
           IconButton(

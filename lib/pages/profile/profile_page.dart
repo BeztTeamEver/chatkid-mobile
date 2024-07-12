@@ -49,7 +49,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return SingleChildScrollView(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.background,
           borderRadius: BorderRadius.circular(12),
@@ -188,52 +188,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 ],
                               ),
                             ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            const Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Color.fromRGBO(255, 155, 6, 1),
-                                  child: Icon(
-                                    Icons.brush,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(width: 12),
-                                Text(
-                                  'Thay đổi theme',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 17,
-                                      letterSpacing: 0.5),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            const Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor:
-                                      Color.fromRGBO(255, 155, 6, 1),
-                                  child: Icon(
-                                    Icons.person_add_alt,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(width: 12),
-                                Text(
-                                  'Yêu cầu kết bạn',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 17,
-                                      letterSpacing: 0.5),
-                                ),
-                              ],
-                            )
                           ],
                         ),
                         const SizedBox(

@@ -4,15 +4,18 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
+import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -34,6 +37,8 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
 
   @override
   Widget build(BuildContext context) {
+    final familyChannel = ref.watch(getFamilyChannel);
+
     final familiesAccounts = ref.watch(getFamilyProvider.future).then((value) {
       final children =
           value.members.fold(<UserModel>[], (previousValue, element) {
@@ -233,12 +238,30 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                           }),
                         ),
                       ),
-                      Container(
-                        width: 32,
-                        height: 32,
-                        child: SvgPicture.asset(
-                          "assets/icons/hipchat.svg",
+                      familyChannel.when(
+                        data: (value) => Badge(
+                          // TODO: update badge
+                          label: Text("1"),
+                          backgroundColor: red.shade500,
+                          textColor: Colors.white,
+                          alignment: Alignment.topRight,
+                          largeSize: 16,
+                          offset: Offset(-4, 4),
+                          child: ButtonIcon(
+                              onPressed: () {
+                                Get.to(
+                                  () => GroupChatPage(channelId: value.id),
+                                );
+                              },
+                              iconSize: 32,
+                              padding: 0,
+                              icon: "hipchat"),
                         ),
+                        error: (error, stackTrace) {
+                          Logger().i("Error: $error");
+                          return Container();
+                        },
+                        loading: () => const CustomCircleProgressIndicator(),
                       ),
                     ],
                   ),

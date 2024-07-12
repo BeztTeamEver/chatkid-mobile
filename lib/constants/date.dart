@@ -3,5 +3,5 @@ class DateConstants {
   static const String dateSlashFormat = 'dd/MM/yyyy';
   static const String dateTimeFormat = 'dd/MM/yyyy HH:mm:ss';
   static const String timeFormat = 'HH:mm:ss';
-  static const String timeFormatWithoutSecond = 'H:m';
+  static const String timeFormatWithoutSecond = 'HH:mm';
 }

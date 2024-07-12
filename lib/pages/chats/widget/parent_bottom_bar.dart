@@ -50,14 +50,9 @@ class _ParentBottomBarState extends State<ParentBottomBar> {
           children: [
             ActionButton(
               icon: const SvgIcon(icon: 'photo'),
-              onPressed: () {},
-            ),
-            ActionButton(
-              icon: SvgIcon(
-                icon: 'sticker',
-                color: widget.isExpanded == true ? primary.shade500 : null,
-              ),
-              onPressed: widget.onOpenSticker,
+              onPressed: () {
+                widget.onOpenSticker();
+              },
             ),
             Hero(
               tag: 'voiceChat/mic',
@@ -79,14 +74,6 @@ class _ParentBottomBarState extends State<ParentBottomBar> {
                   width: 20.0,
                   child: CircularProgressIndicator(),
                 );
-              },
-            ),
-            ActionButton(
-              icon: const SvgIcon(icon: 'location'),
-              onPressed: () {
-                ErrorSnackbar.showError(
-                    err: Exception("Chức năng này đang được phát triển"),
-                    context: context);
               },
             ),
             const SizedBox(
