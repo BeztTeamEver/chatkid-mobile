@@ -295,7 +295,7 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
             );
           }),
           Positioned(
-            top: MediaQuery.of(context).size.height / 4 - 22,
+            top: MediaQuery.of(context).size.height / 4 - 28,
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: Obx(

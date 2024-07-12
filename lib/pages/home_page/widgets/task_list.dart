@@ -1,5 +1,5 @@
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
-import 'package:chatkid_mobile/pages/home_page/widgets/campaign_item.dart';
+import 'package:chatkid_mobile/pages/home_page/widgets/target_item.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/status_divider.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/task_item.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
@@ -105,14 +105,11 @@ class TaskList extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8, bottom: 26),
             child: Column(
               children: [
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
+                TargetItem(),
+                TargetItem(),
+                TargetItem(),
+                TargetItem(),
+                TargetItem(),
               ],
             ),
           ),

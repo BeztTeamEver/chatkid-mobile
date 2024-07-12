@@ -27,7 +27,8 @@ class TodoFormPage extends StatefulWidget {
 class _TodoFormPageState extends State<TodoFormPage> {
   TodoFormCreateController todoFormCreateController = Get.find();
 
-  String? errorText;
+  String? startTimeErrorText;
+  String? endTimeErrorText;
   bool isStartTimeError = false;
   bool isEndTimeError = false;
 
@@ -70,7 +71,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
         todoFormCreateController.formKey.currentState?.fields['startTime']
             ?.invalidate("Thời gian không hợp lệ");
         setState(() {
-          errorText = "Thời gian không hợp lệ";
+          startTimeErrorText = "Thời gian không hợp lệ";
         });
         return;
       }
@@ -80,7 +81,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
         todoFormCreateController.formKey.currentState?.fields['endTime']
             ?.save();
         setState(() {
-          errorText = "Thời gian không hợp lệ";
+          startTimeErrorText = "Thời gian không hợp lệ";
         });
         return;
       }
@@ -90,12 +91,14 @@ class _TodoFormPageState extends State<TodoFormPage> {
         todoFormCreateController.formKey.currentState?.fields['startTime']
             ?.invalidate("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc");
         setState(() {
-          errorText = "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc";
+          endTimeErrorText =
+              "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc";
         });
         return;
       }
       setState(() {
-        errorText = "";
+        startTimeErrorText = "";
+        endTimeErrorText = "";
       });
       final startTime = DateTime(
         DateTime.now().year,
@@ -208,7 +211,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
                   name: "startTime",
                   label: "Thời gian bắt đầu",
                   isError: isStartTimeError,
-                  errorText: errorText,
+                  errorText: startTimeErrorText,
                 ),
               ),
               const SizedBox(height: 14),
@@ -217,6 +220,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
                   isError: isStartTimeError,
                   name: "endTime",
                   label: "Thời gian kết thúc",
+                  errorText: endTimeErrorText,
                 ),
               ),
               SizedBox(height: 14),
