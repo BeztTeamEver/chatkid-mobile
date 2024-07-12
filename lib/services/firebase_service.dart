@@ -62,6 +62,7 @@ class FirebaseService {
 
   Future<UserCredential> signInWithGoogle() async {
     try {
+      await GoogleSignIn().signOut();
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 

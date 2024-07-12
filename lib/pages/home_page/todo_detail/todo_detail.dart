@@ -1,12 +1,15 @@
 import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
+import 'package:chatkid_mobile/pages/home_page/todo_detail/pages/finish_task_page/finish_task_route.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/widgets/feedback_card.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/widgets/head_card.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/widgets/help_card.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
+import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 class TodoDetail extends StatefulWidget {
   final String id;
@@ -48,6 +51,21 @@ class _TodoDetailState extends State<TodoDetail> {
                 ...contentWidgets,
               ],
             ),
+          ),
+        ),
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: FullWidthButton(
+          onPressed: () {
+            Get.to(() => FinishTaskRoute());
+          },
+          child: Text(
+            'Hoàn thành công việc',
+            style: Theme.of(context)
+                .textTheme
+                .headlineMedium!
+                .copyWith(color: Colors.white, fontSize: 18),
           ),
         ),
       ),
