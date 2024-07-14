@@ -136,6 +136,7 @@ flutter:
         - assets/thumbnails/
         - assets/blog/
         - assets/blog/universe/
+        - assets/profile/
         - .env
 
     # An image asset can refer to one or more resolution-specific "variants", see
