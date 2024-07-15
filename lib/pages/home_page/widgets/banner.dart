@@ -4,11 +4,13 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
+import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,6 +37,7 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
   @override
   Widget build(BuildContext context) {
     final familiesAccounts = ref.watch(getFamilyProvider.future).then((value) {
+      Logger().i("Families: ${jsonEncode(value.members)}");
       final children =
           value.members.fold(<UserModel>[], (previousValue, element) {
         if (element.role == RoleConstant.Child) {
@@ -46,6 +49,7 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
       todoStore.fetchData();
       return children;
     });
+    final familyChannel = ref.watch(getFamilyChannel);
 
     return Container(
       height: MediaQuery.of(context).size.height -
@@ -233,13 +237,24 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                           }),
                         ),
                       ),
-                      Container(
-                        width: 32,
-                        height: 32,
-                        child: SvgPicture.asset(
-                          "assets/icons/hipchat.svg",
-                        ),
-                      ),
+                      familyChannel.when(data: (data) {
+                        return ButtonIcon(
+                          icon: "hipchat",
+                          onPressed: () {
+                            Get.to(GroupChatPage(channelId: data.id));
+                          },
+                          iconSize: 24,
+                        );
+                      }, error: (error, stackTrace) {
+                        Logger().i("Error: $error");
+                        return Container();
+                      }, loading: () {
+                        return Container(
+                          width: 24,
+                          height: 24,
+                          child: const CustomCircleProgressIndicator(),
+                        );
+                      })
                     ],
                   ),
                 ),

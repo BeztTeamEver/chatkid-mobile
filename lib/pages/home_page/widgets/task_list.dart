@@ -1,5 +1,5 @@
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
-import 'package:chatkid_mobile/pages/home_page/widgets/campaign_item.dart';
+import 'package:chatkid_mobile/pages/home_page/widgets/target_item.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/status_divider.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/task_item.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
@@ -41,80 +41,136 @@ class TaskList extends StatelessWidget {
                   child: Text("Không có công việc nào"),
                 );
               }
-              return SingleChildScrollView(
-                controller: scrollController,
-                padding: const EdgeInsets.only(top: 8, bottom: 26),
-                child: Column(
-                  children: [
-                    controller.tasks.value.pendingTasks.isNotEmpty
-                        ? StatusDivider(
-                            status: 'Chưa thực hiện',
-                            color: primary.shade400,
-                          )
-                        : Container(), // TODO: pending task
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: controller.tasks.value.pendingTasks.length,
-                      itemBuilder: (context, index) {
-                        return Obx(() => TaskItem(
-                              task: controller.tasks.value.pendingTasks[index],
-                            ));
-                      },
-                    ),
-                    controller.tasks.value.completedTasks.isNotEmpty
-                        ? StatusDivider(
-                            status: "Đã hoàn thành",
-                            color: green.shade500,
-                          )
-                        : Container(), // TODO: completed task
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: controller.tasks.value.completedTasks.length,
-                      itemBuilder: (context, index) {
-                        return Obx(() => TaskItem(
-                              task:
-                                  controller.tasks.value.completedTasks[index],
-                            ));
-                      },
-                    ),
-                    controller.tasks.value.expiredTasks.isNotEmpty
-                        ? StatusDivider(
-                            status: "Đã quá hạn",
-                            color: neutral.shade800,
-                          )
-                        : Container(), // TODO: completed task
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: controller.tasks.value.expiredTasks.length,
-                      itemBuilder: (context, index) {
-                        return Obx(() => TaskItem(
-                              task: controller.tasks.value.expiredTasks[index],
-                            ));
-                      },
-                    ),
-                  ],
+              return TodoList(scrollController: scrollController);
+            },
+          ),
+          GetX<TodoHomeStore>(
+            builder: (controller) {
+              final isEmpty = controller.targets.value.isEmpty;
+              if (controller.isTargetLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (isEmpty) {
+                return const Center(
+                  child: Text("Không có chiến dịch nào"),
+                );
+              }
+              return TargetList(scrollController: scrollController);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TodoList extends StatefulWidget {
+  const TodoList({
+    super.key,
+    required this.scrollController,
+  });
+
+  final ScrollController scrollController;
+
+  @override
+  State<TodoList> createState() => _TodoListState();
+}
+
+class _TodoListState extends State<TodoList> {
+  TodoHomeStore controller = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: widget.scrollController,
+      padding: const EdgeInsets.only(top: 8, bottom: 26),
+      child: Column(
+        children: [
+          controller.tasks.value.pendingTasks.isNotEmpty
+              ? StatusDivider(
+                  status: 'Chưa thực hiện',
+                  color: primary.shade400,
+                )
+              : Container(), // TODO: pending task
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: controller.tasks.value.pendingTasks.length,
+            itemBuilder: (context, index) {
+              return Obx(() => TaskItem(
+                    task: controller.tasks.value.pendingTasks[index],
+                  ));
+            },
+          ),
+          controller.tasks.value.completedTasks.isNotEmpty
+              ? StatusDivider(
+                  status: "Đã hoàn thành",
+                  color: green.shade500,
+                )
+              : Container(), // TODO: completed task
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: controller.tasks.value.completedTasks.length,
+            itemBuilder: (context, index) {
+              return Obx(() => TaskItem(
+                    task: controller.tasks.value.completedTasks[index],
+                  ));
+            },
+          ),
+          controller.tasks.value.expiredTasks.isNotEmpty
+              ? StatusDivider(
+                  status: "Đã quá hạn",
+                  color: neutral.shade800,
+                )
+              : Container(), // TODO: completed task
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: controller.tasks.value.expiredTasks.length,
+            itemBuilder: (context, index) {
+              return Obx(() => TaskItem(
+                    task: controller.tasks.value.expiredTasks[index],
+                  ));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TargetList extends StatefulWidget {
+  final ScrollController scrollController;
+  const TargetList({super.key, required this.scrollController});
+
+  @override
+  State<TargetList> createState() => _TargetListState();
+}
+
+class _TargetListState extends State<TargetList> {
+  TodoHomeStore controller = Get.find();
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: widget.scrollController,
+      padding: const EdgeInsets.only(top: 8, bottom: 26),
+      child: Column(
+        children: [
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: controller.targets.value.length,
+            itemBuilder: (context, index) {
+              return Obx(
+                () => TargetItem(
+                  target: controller.targets.value[index],
                 ),
               );
             },
-          ),
-          SingleChildScrollView(
-            controller: scrollController,
-            padding: const EdgeInsets.only(top: 8, bottom: 26),
-            child: Column(
-              children: [
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-                CampaignItem(),
-              ],
-            ),
           ),
         ],
       ),

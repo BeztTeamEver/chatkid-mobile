@@ -1,8 +1,10 @@
 import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/enum/todo.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
+import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/services/target_service.dart';
 import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:dart_date/dart_date.dart';
@@ -20,6 +22,7 @@ class TodoHomeStore extends GetxController {
   RxList<UserModel> members = <UserModel>[].obs;
   Rx<int> currentUserIndex = 0.obs;
   Rx<bool> isTaskLoading = false.obs;
+  Rx<bool> isTargetLoading = false.obs;
 
   Rx<DateTime> selectedDate = DateTime.now().obs;
 
@@ -38,6 +41,7 @@ class TodoHomeStore extends GetxController {
           canceledTasks: <TaskModel>[].obs,
           expiredTasks: <TaskModel>[].obs)
       .obs;
+  RxList<TargetModel> targets = <TargetModel>[].obs;
 
   RxList<String> favoritedTaskTypes = <String>[].obs;
   Rx<UserModel> get currentUser => members[currentUserIndex.value].obs;
@@ -49,6 +53,7 @@ class TodoHomeStore extends GetxController {
 
   fetchData() async {
     isTaskLoading.value = true;
+    isTargetLoading.value = true;
     try {
       tasks.value.pendingTasks.clear();
       tasks.value.completedTasks.clear();
@@ -57,16 +62,23 @@ class TodoHomeStore extends GetxController {
       if (members.isEmpty) {
         return;
       }
-      final data = await TodoService().getMemberTasks(
+      final tasksData = await TodoService().getMemberTasks(
           members[currentUserIndex.value].id!, pagingRequest.value);
+      final targetsData = await TargetService()
+          .getTargetByMember(members[currentUserIndex.value].id!);
 
-      if (data.items.isNotEmpty) {
-        setTasks(data.items);
+      if (targetsData.isNotEmpty) {
+        setTargets(targetsData);
+      }
+
+      if (tasksData.items.isNotEmpty) {
+        setTasks(tasksData.items);
       }
     } catch (e) {
       Logger().e(e);
     } finally {
       isTaskLoading.value = false;
+      isTargetLoading.value = false;
     }
   }
 
@@ -132,6 +144,10 @@ class TodoHomeStore extends GetxController {
     } catch (e) {
       Logger().e(e);
     }
+  }
+
+  setTargets(List<TargetModel> targets) {
+    this.targets.assignAll(targets);
   }
 }
 

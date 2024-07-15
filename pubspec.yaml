@@ -40,11 +40,10 @@ dependencies:
   flutter_svg: ^2.0.7
   material_color_utilities: 0.8.0
   google_fonts: ^6.0.0
-  firebase_core: ^2.27.2
+  firebase_core: '2.27.2'
   firebase_messaging: ^14.6.8
   firebase_in_app_messaging: ^0.7.3+6
-  firebase_core_platform_interface: ^5.0.0
-  google_sign_in: ^6.1.5
+  google_sign_in: '6.1.5'
   loading_btn: ^1.0.3
   url_launcher: ^6.1.14
   shared_preferences: ^2.2.1

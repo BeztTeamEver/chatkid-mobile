@@ -1,4 +1,5 @@
 import 'package:chatkid_mobile/constants/date.dart';
+import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/progress_bar.dart';
@@ -9,14 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
 
-class CampaignItem extends StatefulWidget {
-  const CampaignItem({super.key});
+class TargetItem extends StatefulWidget {
+  final TargetModel target;
+  const TargetItem({super.key, required this.target});
 
   @override
-  State<CampaignItem> createState() => _CampaignItemState();
+  State<TargetItem> createState() => _TargetItemState();
 }
 
-class _CampaignItemState extends State<CampaignItem> {
+class _TargetItemState extends State<TargetItem> {
+  // TODO: implement data
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -81,4 +81,9 @@ class Endpoint {
 
   // Tasks
   static const taskEndPoint = "/api/tasks";
+
+  // Target
+  static const targetEndpoint = "/api/campaign";
+  static const myTargetEndpoint = "/api/campaign/me";
+  static const memberTargetEndpoint = "/api/campaign/member";
 }
