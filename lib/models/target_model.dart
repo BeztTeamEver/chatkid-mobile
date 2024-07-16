@@ -6,7 +6,7 @@ class TargetModel {
   DateTime endTime;
   String message;
   String memberId;
-  MissionModel missions;
+  List<MissionModel> missions;
 
   TargetModel({
     required this.id,
@@ -89,6 +89,36 @@ class TargetRequestModal {
     return {
       'startTime': startTime,
       'endTime': endTime,
+      'message': message,
+      'memberId': memberId,
+      'missions': missions.map((v) => v.toMap()).toList(),
+    };
+  }
+
+  String toJson() {
+    return jsonEncode(toMap());
+  }
+}
+
+class TargetFormModel {
+  DateTime startTime;
+  DateTime endTime;
+  String message;
+  String memberId;
+  List<MissionModel> missions;
+
+  TargetFormModel({
+    required this.startTime,
+    required this.endTime,
+    required this.message,
+    required this.memberId,
+    required this.missions,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'startTime': startTime.toIso8601String(),
+      'endTime': endTime.toIso8601String(),
       'message': message,
       'memberId': memberId,
       'missions': missions.map((v) => v.toMap()).toList(),

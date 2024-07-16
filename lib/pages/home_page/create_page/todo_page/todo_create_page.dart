@@ -1,9 +1,12 @@
+import 'package:chatkid_mobile/enum/todo.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/widgets/category_create_item.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/widgets/category_item.dart';
-import 'package:chatkid_mobile/pages/home_page/create_page/widgets/todo_form_page.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_form_page.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/todo_page/todo_form_page.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/custom_tab_bar.dart';
+import 'package:chatkid_mobile/pages/routes/target_create_route.dart';
 import 'package:chatkid_mobile/providers/task_categories_provider.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
@@ -172,7 +175,14 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                                         todoFormCreateController
                                             .updateProgress();
                                         Navigator.of(context).push(
-                                            createRoute(() => TodoFormPage()));
+                                          createRoute(
+                                            () => todoFormCreateController
+                                                        .todoCreateType ==
+                                                    TodoCreateType.CAMPAIGN
+                                                ? TodoFormPage()
+                                                : TargetCreateRoute(),
+                                          ),
+                                        );
                                       }
                                     },
                                     taskCategoriesIndex: index,

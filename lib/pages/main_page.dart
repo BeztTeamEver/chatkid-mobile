@@ -3,7 +3,9 @@ import 'package:chatkid_mobile/enum/todo.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
-import 'package:chatkid_mobile/pages/home_page/create_page/todo_create_page.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/todo_page/todo_create_page.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_template_page.dart';
+import 'package:chatkid_mobile/pages/routes/target_create_route.dart';
 import 'package:chatkid_mobile/pages/routes/todo_create_route.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
@@ -134,13 +136,15 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
 
   void onSelectedCreateType(TodoCreateType type) {
     todoFormCreateStore.setTaskType(type);
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => TodoCreateRoute(),
-    //   ),
-    // );
-    Get.to(() => TodoCreateRoute());
+    switch (type) {
+      case TodoCreateType.TASK:
+        Get.to(() => TodoCreateRoute());
+        break;
+      case TodoCreateType.CAMPAIGN:
+        Get.to(() => TargetCreateRoute());
+        break;
+      default:
+    }
   }
 
   @override
