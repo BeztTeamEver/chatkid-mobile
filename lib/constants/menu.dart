@@ -4,11 +4,9 @@ import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/pages/chats/list_group_chat.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/children_tracking/children_tracking_page.dart';
-import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 import 'package:chatkid_mobile/pages/routes/todo_route.dart';
-import 'package:chatkid_mobile/pages/routes/home_route.dart';
 
 final List<Menu> menu = [
   Menu(

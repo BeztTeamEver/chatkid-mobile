@@ -148,7 +148,6 @@ class _TodoFormPageState extends State<TodoFormPage> {
   @override
   void dispose() {
     // TODO: implement dispose
-    todoFormCreateController.formKey.currentState?.reset();
     super.dispose();
   }
 
@@ -288,8 +287,6 @@ class _ClockInputState extends State<ClockInput> {
 
   @override
   Widget build(BuildContext context) {
-    Logger().i(todoFormCreateController
-        .formKey.currentState?.fields['${widget.name}']?.errorText);
     final validation =
         ValidationBuilder().required().minLength(1).maxLength(1).build();
     return FocusScope(

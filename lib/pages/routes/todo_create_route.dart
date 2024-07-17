@@ -52,7 +52,7 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
         }
         todoFormCreateController.decreaseStep();
         todoFormCreateController.updateProgress();
-        todoFormCreateController.NavigatePop();
+        // todoFormCreateController.NavigatePop();
       },
       child: Scaffold(
         body: SafeArea(

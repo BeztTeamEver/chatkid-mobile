@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:logger/logger.dart';
 
-class InputNumber extends StatefulWidget {
+class InputNumberWithoutKey extends StatefulWidget {
   final String name;
   final double? height;
   final double? width;
@@ -17,44 +17,26 @@ class InputNumber extends StatefulWidget {
   final String? label;
   final String? rightLableIcon;
   final int? initValue;
-  final Color? backgroundColor;
-  final GlobalKey<FormBuilderState> formKey;
-  const InputNumber({
+  const InputNumberWithoutKey({
     super.key,
     required this.name,
-    required this.formKey,
     this.height = 34,
     this.width,
     this.initValue = 1,
     this.errorText,
     this.buttonWidth = 34,
     this.label,
-    this.backgroundColor,
     this.rightLableIcon,
   });
 
   @override
-  State<InputNumber> createState() => _InputNumberState();
+  State<InputNumberWithoutKey> createState() => _InputNumberWithoutKeyState();
 }
 
-class _InputNumberState extends State<InputNumber> {
-  increase() {
-    final form = widget.formKey.currentState as FormBuilderState;
-    final field = form.fields[widget.name];
-    field!.didChange(
-      (int.parse(field.value ?? "0") + 1).toString(),
-    );
-  }
+class _InputNumberWithoutKeyState extends State<InputNumberWithoutKey> {
+  increase() {}
 
-  decrease() {
-    final form = widget.formKey.currentState as FormBuilderState;
-    final field = form.fields[widget.name];
-
-    if (field?.value == "0") return;
-    field!.didChange(
-      (int.parse(field.value ?? "0") - 1).toString(),
-    );
-  }
+  decrease() {}
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +90,7 @@ class _InputNumberState extends State<InputNumber> {
               Container(
                 width: 64,
                 height: widget.height,
-                color: widget.backgroundColor ?? Colors.transparent,
+                color: Colors.transparent,
                 child: TextAreaInput(
                   name: widget.name,
                   textAlign: TextAlign.center,

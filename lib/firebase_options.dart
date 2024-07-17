@@ -70,24 +70,20 @@ class DefaultFirebaseOptions {
     projectId: 'kidtalkie-979b7',
     databaseURL: 'https://kidtalkie-979b7-default-rtdb.firebaseio.com',
     storageBucket: 'kidtalkie-979b7.appspot.com',
-    androidClientId:
-        '343387729372-0stfbn846d23h40r5v93eijf1adgsfhq.apps.googleusercontent.com',
-    iosClientId:
-        '343387729372-qr8bv2mmru4912solp6e43sbc898t2oc.apps.googleusercontent.com',
-    iosBundleId: 'com.example.chatkidMobile',
+    androidClientId: '343387729372-0stfbn846d23h40r5v93eijf1adgsfhq.apps.googleusercontent.com',
+    iosClientId: '343387729372-hq1dklb4cpo7cdufmep0fqsbj97ef016.apps.googleusercontent.com',
+    iosBundleId: 'com.kidtalkie',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyC4mS-ti-4R6QNV6XuJGqSgVYADmkRNTIQ',
-    appId: '1:343387729372:ios:3825a9188ab41ce2f6f319',
+    appId: '1:343387729372:ios:d84f970375a352e8f6f319',
     messagingSenderId: '343387729372',
     projectId: 'kidtalkie-979b7',
     databaseURL: 'https://kidtalkie-979b7-default-rtdb.firebaseio.com',
     storageBucket: 'kidtalkie-979b7.appspot.com',
-    androidClientId:
-        '343387729372-0stfbn846d23h40r5v93eijf1adgsfhq.apps.googleusercontent.com',
-    iosClientId:
-        '343387729372-qr8bv2mmru4912solp6e43sbc898t2oc.apps.googleusercontent.com',
+    androidClientId: '343387729372-0stfbn846d23h40r5v93eijf1adgsfhq.apps.googleusercontent.com',
+    iosClientId: '343387729372-qr8bv2mmru4912solp6e43sbc898t2oc.apps.googleusercontent.com',
     iosBundleId: 'com.example.chatkidMobile',
   );
 
@@ -101,4 +97,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'kidtalkie-979b7.appspot.com',
     measurementId: 'G-13QP8C7QZG',
   );
+
 }

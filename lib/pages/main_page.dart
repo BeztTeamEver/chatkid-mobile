@@ -2,6 +2,7 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/enum/todo.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/controller/todo_page/target_store.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/todo_page/todo_create_page.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_template_page.dart';
@@ -9,6 +10,7 @@ import 'package:chatkid_mobile/pages/routes/target_create_route.dart';
 import 'package:chatkid_mobile/pages/routes/todo_create_route.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -131,17 +133,13 @@ class CreateTaskModal extends StatefulWidget {
 }
 
 class _CreateTaskModalState extends State<CreateTaskModal> {
-  final TodoFormCreateController todoFormCreateStore =
-      TodoFormCreateController();
-
   void onSelectedCreateType(TodoCreateType type) {
-    todoFormCreateStore.setTaskType(type);
     switch (type) {
       case TodoCreateType.TASK:
-        Get.to(() => TodoCreateRoute());
+        Navigator.of(context).push(createRoute(() => TodoCreateRoute()));
         break;
       case TodoCreateType.CAMPAIGN:
-        Get.to(() => TargetCreateRoute());
+        Navigator.of(context).push(createRoute(() => TargetCreateRoute()));
         break;
       default:
     }

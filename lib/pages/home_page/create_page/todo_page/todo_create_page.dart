@@ -175,13 +175,7 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                                         todoFormCreateController
                                             .updateProgress();
                                         Navigator.of(context).push(
-                                          createRoute(
-                                            () => todoFormCreateController
-                                                        .todoCreateType ==
-                                                    TodoCreateType.CAMPAIGN
-                                                ? TodoFormPage()
-                                                : TargetCreateRoute(),
-                                          ),
+                                          createRoute(() => TodoFormPage()),
                                         );
                                       }
                                     },

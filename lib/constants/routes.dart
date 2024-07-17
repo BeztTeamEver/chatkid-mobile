@@ -1,4 +1,3 @@
-import 'package:chatkid_mobile/pages/activation_page.dart';
 import 'package:chatkid_mobile/pages/explore/blogs/blog_page.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';
@@ -6,7 +5,6 @@ import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/init_page.dart';
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
-import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/pages/sign_up/sign_up_page.dart';
 import 'package:flutter/material.dart';

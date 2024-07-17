@@ -117,8 +117,8 @@ class TargetFormModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'startTime': startTime.toIso8601String(),
-      'endTime': endTime.toIso8601String(),
+      'startTime': startTime,
+      'endTime': endTime,
       'message': message,
       'memberId': memberId,
       'missions': missions.map((v) => v.toMap()).toList(),

@@ -2,6 +2,7 @@ import 'package:chatkid_mobile/pages/controller/todo_page/target_store.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_create_form_wrapper.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_template_page.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/secondary_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class TargetCreateRoute extends StatefulWidget {
 
 class _TargetCreateRouteState extends State<TargetCreateRoute>
     with TickerProviderStateMixin {
-  TargetFormStore targetFormStore = Get.put(TargetFormStore());
+  final TargetFormStore targetFormStore = Get.put(TargetFormStore());
 
   @override
   void initState() {
@@ -26,6 +27,11 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
       ..addListener(() {
         setState(() {});
       });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -40,7 +46,7 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
         }
         targetFormStore.decreaseStep();
         targetFormStore.updateProgress();
-        targetFormStore.NavigatePop();
+        targetFormStore.navigatePop();
       },
       child: Scaffold(
         body: SafeArea(
@@ -80,14 +86,14 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
                             } else {
                               targetFormStore.decreaseStep();
                               targetFormStore.updateProgress();
-                              targetFormStore.NavigatePop();
+                              targetFormStore.navigatePop();
                             }
                           },
                         ),
                       ),
                       centerTitle: true,
                       title: Text(
-                        'Tạo công vaiệc',
+                        'Tạo công việc',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -103,7 +109,6 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
                             }
                             targetFormStore.decreaseStep();
                             targetFormStore.updateProgress();
-                            targetFormStore.NavigatePop();
                             return true;
                           },
                           onGenerateRoute: (settings) {
