@@ -20,9 +20,15 @@ class TransferEnergyPage extends StatefulWidget {
 }
 
 class _TransferEnergyPageState extends State<TransferEnergyPage> {
-  late final String userId = LocalStorage.instance.getUser().id!;
+  final String userId = LocalStorage.instance.getUser().id!;
   final WalletController wallet = Get.put(WalletController());
-  final Future<FamilyModel> family = FamilyService().getFamily();
+  Future<FamilyModel> family = FamilyService().getFamily();
+
+  void refetchFamily() {
+    setState(() {
+      family = FamilyService().getFamily();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +115,7 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                   }).map(
                     (user) => GestureDetector(
                       onTap: () {
-                        Navigator.push(context, createRoute(() => TransferDetailPage(user: user,)));
+                        Navigator.push(context, createRoute(() => TransferDetailPage(user: user, refetchFamily: refetchFamily)));
                       },
                       child: Container(
                         width: double.infinity,

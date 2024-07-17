@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:logger/logger.dart';
 
@@ -18,7 +19,9 @@ class InputField extends StatefulWidget {
   final double? fontSize;
   final EdgeInsetsGeometry? contentPadding;
   final Function()? onTap;
+  final Function(String?)? onChange;
   final Function(String?)? onSubmit;
+  final List<TextInputFormatter>? inputFormatters;
 
   const InputField({
     super.key,
@@ -37,6 +40,8 @@ class InputField extends StatefulWidget {
     this.contentPadding,
     this.onSubmit,
     this.onTap,
+    this.inputFormatters,
+    this.onChange,
   });
 
   @override
@@ -63,12 +68,14 @@ class _InputFieldState extends State<InputField> {
           height: widget.height,
           child: FormBuilderTextField(
             name: widget.name,
-            // controller: widget.controller,
+            controller: widget.controller,
             keyboardType: widget.type,
             key: widget.key,
             autofocus: widget.autoFocus,
             validator: widget.validator,
+            inputFormatters: widget.inputFormatters,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            onChanged: widget.onChange,
             obscureText: widget.type == TextInputType.visiblePassword &&
                     widget.isObscure!
                 ? true

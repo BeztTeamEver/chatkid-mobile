@@ -7,13 +7,14 @@ import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class UserService {
   final LocalStorage _localStorage = LocalStorage.instance;
   Future<UserModel> getUser(String id) async {
     final response =
-        await BaseHttp.instance.get(endpoint: '${Endpoint.profileUserEnpoint}/${id}');
+        await BaseHttp.instance.get(endpoint: '${Endpoint.profileUserEndpoint}/${id}');
     Logger().d(response.body);
 
     if (response.statusCode == 200) {
@@ -114,6 +115,7 @@ class UserServiceNotifier extends StateNotifier<UserModel> {
   Future<UserModel> updateUser(UserModel user) async {
     try {
       UserModel result = await _userService.updateUser(user);
+      MeController().refetch();
       state = result;
       return result;
     } catch (e) {
@@ -131,3 +133,21 @@ class UserServiceNotifier extends StateNotifier<UserModel> {
 final userServiceProvider = Provider<UserService>((ref) {
   return UserService();
 });
+
+class MeController extends GetxController {
+  UserModel profile = LocalStorage.instance.getUser();
+
+  Rx<String> memberId = (LocalStorage.instance.getUser().id ?? '').obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    refetch();
+  }
+
+  refetch() {
+    UserService().getUser(memberId.value).then((value) {
+      profile = value;
+    });
+  }
+}

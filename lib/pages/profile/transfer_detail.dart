@@ -1,31 +1,37 @@
+import 'dart:ffi';
+
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/models/wallet_model.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/wallet_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:flutter/services.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:get/get.dart';
-import 'package:loading_btn/loading_btn.dart';
-import 'package:logger/logger.dart';
 import 'package:modals/modals.dart';
 
 class TransferDetailPage extends StatefulWidget {
   final UserModel user;
-  const TransferDetailPage({super.key, required this.user});
+  final Function() refetchFamily;
+
+  const TransferDetailPage(
+      {super.key, required this.user, required this.refetchFamily});
 
   @override
   State<TransferDetailPage> createState() => _TransferDetailPageState();
 }
 
 class _TransferDetailPageState extends State<TransferDetailPage> {
+  final String userId = LocalStorage.instance.getUser().id!;
   final WalletController wallet = Get.put(WalletController());
   final TextEditingController _numberController = TextEditingController();
+  int tempCount = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +43,7 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
               const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.grey),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text("Chuyển năng lượng"),
+        title: const Text("Chuyển kim cương"),
         titleTextStyle: const TextStyle(
           color: Color(0xFF242837),
           fontSize: 16,
@@ -146,7 +152,8 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
                                 width: 2,
                               ),
                               Text(
-                                widget.user.diamond?.toString() ?? '0',
+                                ((widget.user.diamond ?? 0) + tempCount)
+                                    .toString(),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 12,
@@ -186,101 +193,128 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
                       tag: 'containerModal',
                       left: 0,
                       top: 0,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                        child: Center(
-                          child: Container(
-                            height: 251,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 24, horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            width: MediaQuery.of(context).size.width - 40,
-                            child: Column(
-                              children: [
-                                Text(
-                                  "Chuyển kim cương",
-                                  style: TextStyle(
-                                    color: neutral.shade900,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    decoration: TextDecoration.none,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                          ),
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 24, horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              width: MediaQuery.of(context).size.width - 40,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Chuyển kim cương",
+                                    style: TextStyle(
+                                      color: neutral.shade900,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      decoration: TextDecoration.none,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 24),
-                                FormBuilder(
-                                  child: InputField(
+                                  const SizedBox(height: 24),
+                                  InputField(
                                     controller: _numberController,
                                     name: "amount diamond",
                                     label: "Số kim cương",
-                                    // type: TextInputType.number,
+                                    hint: "Nhập số kim cương",
+                                    type: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp("[0-9]"))
+                                    ],
                                     validator: ValidationBuilder(
                                       requiredMessage:
                                           'Vui lòng nhập số lượng kim cương',
                                     ).build(),
                                   ),
-                                ),
-                                const SizedBox(height: 24),
-                                Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        removeAllModals();
-                                      },
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                    2 -
-                                                44,
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(32),
-                                          border: Border.all(
-                                            width: 2,
-                                            color: primary.shade500,
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Quay lại",
-                                            style: TextStyle(
+                                  const SizedBox(height: 24),
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          _numberController.clear();
+                                          removeAllModals();
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2 -
+                                              44,
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(32),
+                                            border: Border.all(
+                                              width: 2,
                                               color: primary.shade500,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                              decoration: TextDecoration.none,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Quay lại",
+                                              style: TextStyle(
+                                                color: primary.shade500,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w600,
+                                                decoration: TextDecoration.none,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 16,
-                                    ),
-                                    FullWidthButton(
-                                      width: MediaQuery.of(context).size.width /
-                                              2 -
-                                          44,
-                                      onPressed: () {},
-                                      child: const Text(
-                                        "Chuyển",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w800,
-                                          decoration: TextDecoration.none,
+                                      const SizedBox(
+                                        width: 16,
+                                      ),
+                                      FullWidthButton(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                    2 -
+                                                44,
+                                        onPressed: () {
+                                          wallet.transferDiamond(
+                                            TransferDiamondPayloadModel(
+                                              ownerId: userId,
+                                              receiverId: widget.user.id ?? '',
+                                              diamond: int.parse(
+                                                  _numberController.text),
+                                            ),
+                                            () async {
+                                              await widget.refetchFamily();
+                                              setState(() {
+                                                tempCount += int.parse(
+                                                    _numberController.text);
+                                              });
+                                              _numberController.clear();
+                                              removeAllModals();
+                                            },
+                                          );
+                                        },
+                                        child: const Text(
+                                          "Chuyển",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w800,
+                                            decoration: TextDecoration.none,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -289,7 +323,7 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
                   );
                 },
                 child: Text(
-                  "Chuyển năng lượng",
+                  "Chuyển kim cương",
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: Colors.white,
                       ),
