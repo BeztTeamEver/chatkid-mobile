@@ -77,14 +77,15 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     if (message != null && message.isEmpty) {
       return;
     }
-    _chatService.sendMessage(ChatModel(
-      content: message,
-      imageUrl: imageUrl,
-      voiceUrl: voiceUrl,
-      userId: user.id!,
-      channelId: widget.channelId,
-    ));
-    Logger().i(voiceUrl);
+    _chatService.sendMessage(
+      ChatModel(
+        content: message,
+        imageUrl: imageUrl,
+        voiceUrl: voiceUrl,
+        userId: user.id!,
+        channelId: widget.channelId,
+      ),
+    );
     setState(() {
       _listMessages.insert(
         0,
@@ -245,6 +246,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         child: ChatTextBox(
           icon: 'animal/bear',
           user: sender,
+          imageUrl: value[index].imageUrl,
           voiceUrl: value[index].voiceUrl,
           message: value[index].content,
           isSender: sender.id == user.id!,
@@ -285,6 +287,12 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
       setState(() {
         isActionActive = false;
       });
+    }
+  }
+
+  void onSendImage(String? url) {
+    if (url != null) {
+      _sendMessage(imageUrl: url);
     }
   }
 
@@ -453,6 +461,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
           ? ParentBottomBar(
               onOpenSticker: onOpenSticker,
               onRecorded: onRecorded,
+              onSendImage: onSendImage,
               isExpanded: isExpanded,
               messageController: _messageController,
               onChangeBottomSheet: onChangeBottomSheet,

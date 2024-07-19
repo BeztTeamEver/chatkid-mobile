@@ -5,24 +5,21 @@ import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/target_store.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/target_page/add_mission_page.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_add_gift_page.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/widgets/mission_create_item.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/widgets/mission_item.dart';
-import 'package:chatkid_mobile/pages/home_page/create_page/target_page/widgets/mission_list.dart';
-import 'package:chatkid_mobile/pages/home_page/create_page/todo_page/todo_form_page.dart';
 import 'package:chatkid_mobile/providers/task_categories_provider.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/textarea_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:form_validator/form_validator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 
 class TargetFormPage extends ConsumerStatefulWidget {
   const TargetFormPage({super.key});
@@ -45,6 +42,10 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
         'Thời gian kết thúc không thể trước thời gian bắt đầu',
         shouldFocus: false,
       );
+      return;
+    }
+    if (targetFormStore.missions.isEmpty) {
+      ShowToast.error(msg: "Vui lòng chọn công việc");
       return;
     }
     if (targetFormStore.formKey.currentState!.saveAndValidate()) {
@@ -188,7 +189,12 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
                 },
               ),
               const SizedBox(height: 12),
-              AddMissionCard(),
+              CreateItemCard(
+                onAdd: () {
+                  Navigator.of(context)
+                      .push(createRoute(() => AddMissionPage()));
+                },
+              ),
             ],
           ),
         ),

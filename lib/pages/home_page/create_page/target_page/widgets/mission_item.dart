@@ -46,7 +46,7 @@ class _MissionItemState extends State<MissionItem> {
         child: CustomCard(
           height: 120,
           padding: EdgeInsets.all(16),
-          backgroundImage: widget.taskType.imageUrl,
+          backgroundImage: widget.taskType.imageHomeUrl,
           children: [
             FormBuilderField(
               name: widget.taskType.id,

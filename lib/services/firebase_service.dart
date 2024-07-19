@@ -36,7 +36,8 @@ class FirebaseService {
 
   Future<void> init() async {
     // await _firebaseAuth.useAuthEmulator('localhost', 9099);
-    await _firebaseMessaging.requestPermission();
+
+    await _firebaseMessaging.requestPermission(provisional: true);
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       _firebaseMessaging.setForegroundNotificationPresentationOptions(
         alert: true,

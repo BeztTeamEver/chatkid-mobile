@@ -31,6 +31,7 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
 
   @override
   void dispose() {
+    Get.delete<TargetFormStore>();
     super.dispose();
   }
 
@@ -93,7 +94,9 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
                       ),
                       centerTitle: true,
                       title: Text(
-                        'Tạo công việc',
+                        targetFormStore.step.value != 2
+                            ? 'Tạo công việc'
+                            : 'Thêm quà',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

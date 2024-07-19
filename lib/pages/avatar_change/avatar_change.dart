@@ -93,15 +93,15 @@ class _AvatarChangeState extends State<AvatarChange> {
                     runSpacing: 2,
                     spacing: 2,
                     children: [
-                      // GestureDetector(
-                      //   onTap: () async {
-                      //     _onFileUpload();
-                      //   },
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(8.0),
-                      //     child: Avatar(icon: "upload"),
-                      //   ),
-                      // ),
+                      GestureDetector(
+                        onTap: () async {
+                          _onFileUpload();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Avatar(icon: "upload"),
+                        ),
+                      ),
                       ...widget.options.map(
                         (e) => GestureDetector(
                           onTap: () {

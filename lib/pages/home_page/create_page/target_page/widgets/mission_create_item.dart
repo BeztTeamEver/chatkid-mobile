@@ -5,30 +5,14 @@ import 'package:chatkid_mobile/pages/home_page/create_page/target_page/add_missi
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 
-class MissionsCreateItem extends StatefulWidget {
-  const MissionsCreateItem({super.key});
-
-  @override
-  State<MissionsCreateItem> createState() => _MissionsCreateItemState();
-}
-
-class _MissionsCreateItemState extends State<MissionsCreateItem> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class AddMissionCard extends StatelessWidget {
-  const AddMissionCard({super.key});
+class CreateItemCard extends StatelessWidget {
+  final Function() onAdd;
+  const CreateItemCard({super.key, required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // Get.to(() => MissionCreatePage());
-        Navigator.push(context, createRoute(() => AddMissionPage()));
-      },
+      onTap: onAdd,
       child: Container(
         height: 82,
         width: MediaQuery.of(context).size.width,

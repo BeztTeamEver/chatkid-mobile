@@ -15,6 +15,7 @@ class ChatTextBox extends StatefulWidget {
   final String? icon;
   final bool? isSender;
   final String? voiceUrl;
+  final String? imageUrl;
   final UserModel? user;
   final bool useVoice;
   final bool useTextfullWidth;
@@ -26,6 +27,7 @@ class ChatTextBox extends StatefulWidget {
       this.isSender,
       this.user,
       this.useVoice = true,
+      this.imageUrl,
       this.voiceUrl});
 
   @override
@@ -66,14 +68,18 @@ class ChatTextBoxState extends State<ChatTextBox> {
         width: 10,
       ),
       Container(
-        width: MediaQuery.of(context).size.width *
-            (widget.useTextfullWidth ? 0.65 : 0.5),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.65,
+        ),
+        width: widget.message == null || widget.message?.isEmpty == true
+            ? null
+            : MediaQuery.of(context).size.width *
+                (widget.useTextfullWidth ? 0.65 : 0.5),
         // padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: widget.isSender == true ? primary.shade500 : primary.shade100,
           borderRadius: BorderRadius.circular(20),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 2),
         child: widget.voiceUrl != null && widget.voiceUrl != ""
             ? PlayerWave(
                 path: widget.voiceUrl ?? "",
@@ -83,7 +89,39 @@ class ChatTextBoxState extends State<ChatTextBox> {
                     : primary.shade200,
                 liveWaveColor: color,
               )
-            : TextBox(widget: widget),
+            : widget.imageUrl != null && widget.imageUrl != ""
+                ? GestureDetector(
+                    onTap: () {
+                      // TODO: Open full image
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Image.network(
+                        widget.imageUrl ?? "",
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) =>
+                            loadingProgress == null
+                                ? child
+                                : Container(
+                                    width: 36,
+                                    height: 36,
+                                    padding: EdgeInsets.all(4),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: widget.isSender == true
+                                            ? primary.shade100
+                                            : primary.shade500,
+                                      ),
+                                    ),
+                                  ),
+                      ),
+                    ),
+                  )
+                : TextBox(
+                    widget: widget,
+                  ),
         // child: PlayerWave(
         //   path: widget.message ?? "",
         //   color: color,
@@ -95,7 +133,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
       const SizedBox(
         width: 10,
       ),
-      widget.voiceUrl == null || widget.voiceUrl == ""
+      widget.message != null && widget.message!.isNotEmpty
           ? IconButton(
               onPressed: () {
                 _speak(widget.message ?? "");

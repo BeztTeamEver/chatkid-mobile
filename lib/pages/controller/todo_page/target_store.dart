@@ -13,9 +13,8 @@ class TargetFormStore extends GetxController {
   Rx<int> step = 0.obs;
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
   final RxList<TaskCategoryModel> categories = <TaskCategoryModel>[].obs;
-  final RxList<String> missions = <String>[
-    'Mission 1',
-  ].obs;
+  final RxList<String> missions = <String>[].obs;
+  final RxList<String> giftImages = <String>[].obs;
 
   @override
   void onInit() {
@@ -28,6 +27,7 @@ class TargetFormStore extends GetxController {
     template.clear();
     step.close();
     missions.clear();
+    giftImages.clear();
     super.onClose();
   }
 
@@ -70,5 +70,13 @@ class TargetFormStore extends GetxController {
   void setCategory(List<TaskCategoryModel> category) {
     categories.clear();
     categories.addAll(category);
+  }
+
+  void addGiftImage(String image) {
+    giftImages.add(image);
+  }
+
+  void removeGiftImage(String image) {
+    giftImages.remove(image);
   }
 }

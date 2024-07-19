@@ -1,6 +1,7 @@
 import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/enum/todo.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
+import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
@@ -57,25 +58,32 @@ class TodoHomeStore extends GetxController {
     try {
       tasks.value.pendingTasks.clear();
       tasks.value.completedTasks.clear();
+      targets.clear();
       pagingRequest.value.pageNumber = 0;
       pagingRequest.value.pageSize = 100;
       if (members.isEmpty) {
         return;
       }
-      final tasksData = await TodoService().getMemberTasks(
+      final tasksData = TodoService().getMemberTasks(
           members[currentUserIndex.value].id!, pagingRequest.value);
-      final targetsData = await TargetService()
+      final targetsData = TargetService()
           .getTargetByMember(members[currentUserIndex.value].id!);
 
-      if (targetsData.isNotEmpty) {
-        setTargets(targetsData);
+      final [
+        taskList as PagingResponseModel<TaskModel>,
+        targetList as List<TargetModel>
+      ] = await Future.wait([tasksData, targetsData]);
+
+      if (targetList.isNotEmpty) {
+        setTargets(targetList);
       }
 
-      if (tasksData.items.isNotEmpty) {
-        setTasks(tasksData.items);
+      if (taskList.items.isNotEmpty) {
+        setTasks(taskList.items);
       }
-    } catch (e) {
+    } catch (e, stack) {
       Logger().e(e);
+      Logger().e(stack);
     } finally {
       isTaskLoading.value = false;
       isTargetLoading.value = false;

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/info_form.dart';
@@ -8,6 +9,7 @@ import 'package:chatkid_mobile/providers/file_provider.dart';
 import 'package:chatkid_mobile/services/file_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:chatkid_mobile/widgets/wheel_input.dart';
@@ -40,11 +42,25 @@ class InfoPage extends ConsumerStatefulWidget {
 
 class _InfoPageState extends ConsumerState<InfoPage> {
   String _avatarUrl = "animal/bear";
+  bool isLoadingAvatar = false;
   List<String> _avatarList = [];
 
   @override
   void initState() {
     super.initState();
+  }
+
+  onUploadAvatar(avatarUrl) async {
+    setState(() {
+      isLoadingAvatar = true;
+    });
+    File avatarFile = File(avatarUrl);
+    final uploadedFile = await FileService().sendfile(avatarFile);
+    setState(() {
+      _avatarUrl = uploadedFile.url;
+      isLoadingAvatar = false;
+    });
+    widget.avatarController.text = uploadedFile.url;
   }
 
   @override
@@ -85,10 +101,11 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                     child: SizedBox(
                       width: 60,
                       height: 60,
-                      child: Image.network(
-                        _avatarUrl,
-                        fit: BoxFit.cover,
-                      ),
+                      child: isLoadingAvatar
+                          ? const CircularProgressIndicator()
+                          : AvatarPng(
+                              imageUrl: _avatarUrl,
+                            ),
                     ), //TODO: change icon
                   ),
                   const SizedBox(
@@ -106,12 +123,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                               createRoute(() => AvatarChange(
                                     options: data,
                                     value: _avatarUrl,
-                                    onAccept: (avatarUrl) {
-                                      setState(() {
-                                        _avatarUrl = avatarUrl;
-                                      });
-                                      widget.avatarController.text = avatarUrl;
-                                    },
+                                    onAccept: onUploadAvatar,
                                   )),
                             );
                           },

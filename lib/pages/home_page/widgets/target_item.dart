@@ -34,7 +34,7 @@ class _TargetItemState extends State<TargetItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Campaign',
+                        widget.target.message,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -44,7 +44,7 @@ class _TargetItemState extends State<TargetItem> {
                         height: 5,
                       ),
                       Text(
-                        '${DateTime.now().format(DateConstants.dateSlashFormat)} - ${DateTime.now().addDays(7).format(DateConstants.dateSlashFormat)}',
+                        '${widget.target.startTime.format(DateConstants.dateSlashFormat)} - ${widget.target.endTime.format(DateConstants.dateSlashFormat)}',
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               fontSize: 14,
                             ),
@@ -56,7 +56,10 @@ class _TargetItemState extends State<TargetItem> {
                         return Container(
                           width: constraints.maxWidth,
                           child: ProgressBar(
-                            value: 0.7,
+                            value: widget.target.currentProgress /
+                                (widget.target.totalProgress == 0
+                                    ? 1
+                                    : widget.target.totalProgress),
                           ),
                         );
                       }),
