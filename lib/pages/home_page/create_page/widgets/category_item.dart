@@ -2,15 +2,11 @@ import 'dart:ui';
 
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
-import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:logger/logger.dart';
 
 class CategoryItem extends StatefulWidget {
   final String imageUrl;

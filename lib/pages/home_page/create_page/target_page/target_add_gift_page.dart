@@ -47,12 +47,13 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
 
   void onSubmit() {
     final form = targetFormStore.formKey.currentState;
-    if (targetFormStore.giftImages.isEmpty) {
-      ShowToast.error(msg: "Vui lòng chọn hình ảnh minh họa");
-      return;
-    }
 
     if (form?.saveAndValidate() ?? false) {
+      if (targetFormStore.giftImages.isEmpty) {
+        ShowToast.error(msg: "Vui lòng chọn hình ảnh minh họa");
+        return;
+      }
+
       targetFormStore.increaseStep();
       targetFormStore.updateProgress();
       Navigator.of(context).push(createRoute(() => TargetAssignPage()));
@@ -87,7 +88,7 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
                   hint: "Nhập tên quà",
                   validator: FormBuilderValidators.compose([
                     (val) {
-                      if (targetFormStore.step != 2) {
+                      if (targetFormStore.step.value != 2) {
                         return null;
                       }
                       if (val == null || val.isEmpty) {

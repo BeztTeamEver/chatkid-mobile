@@ -8,6 +8,7 @@ class ErrorSnackbar {
     final errorMessage =
         err.toString().split(":")[err.toString().split(":").length - 1].trim();
     SnackBar snackBar = SnackBar(
+      behavior: SnackBarBehavior.floating,
       content: Text(
         errorMessage,
       ),

@@ -15,6 +15,7 @@ import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -36,6 +37,8 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
 
   @override
   Widget build(BuildContext context) {
+    final familyChannel = ref.watch(getFamilyChannel);
+
     final familiesAccounts = ref.watch(getFamilyProvider.future).then((value) {
       Logger().i("Families: ${jsonEncode(value.members)}");
       final children =
@@ -49,7 +52,6 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
       todoStore.fetchData();
       return children;
     });
-    final familyChannel = ref.watch(getFamilyChannel);
 
     return Container(
       height: MediaQuery.of(context).size.height -
@@ -237,24 +239,31 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                           }),
                         ),
                       ),
-                      familyChannel.when(data: (data) {
-                        return ButtonIcon(
-                          icon: "hipchat",
-                          onPressed: () {
-                            Get.to(GroupChatPage(channelId: data.id));
-                          },
-                          iconSize: 24,
-                        );
-                      }, error: (error, stackTrace) {
-                        Logger().i("Error: $error");
-                        return Container();
-                      }, loading: () {
-                        return Container(
-                          width: 24,
-                          height: 24,
-                          child: const CustomCircleProgressIndicator(),
-                        );
-                      })
+                      familyChannel.when(
+                        data: (value) => Badge(
+                          // TODO: update badge
+                          label: Text("1"),
+                          backgroundColor: red.shade500,
+                          textColor: Colors.white,
+                          alignment: Alignment.topRight,
+                          largeSize: 16,
+                          offset: Offset(-4, 4),
+                          child: ButtonIcon(
+                              onPressed: () {
+                                Get.to(
+                                  () => GroupChatPage(channelId: value.id),
+                                );
+                              },
+                              iconSize: 32,
+                              padding: 0,
+                              icon: "hipchat"),
+                        ),
+                        error: (error, stackTrace) {
+                          Logger().i("Error: $error");
+                          return Container();
+                        },
+                        loading: () => const CustomCircleProgressIndicator(),
+                      ),
                     ],
                   ),
                 ),
@@ -310,7 +319,7 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
             );
           }),
           Positioned(
-            top: MediaQuery.of(context).size.height / 4 - 22,
+            top: MediaQuery.of(context).size.height / 4 - 28,
             child: Container(
               width: MediaQuery.of(context).size.width,
               child: Obx(
