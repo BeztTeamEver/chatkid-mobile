@@ -37,7 +37,7 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
     var userId = UserModel.fromJson(jsonDecode(json ?? "")).id;
     Logger().d(UserModel.fromJson(jsonDecode(json ?? "")).id);
     final OrderCaptureModel model = OrderCaptureModel(
-        orderId: orderId, userId: userId, energy: widget.supcription.energy);
+        orderId: orderId, userId: userId, energy: widget.supcription.diamond);
     try {
       ref
           .watch(
@@ -101,8 +101,8 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                          NumberFormat.formatAmount(widget
-                              .supcription.actualPrice!),
+                          NumberFormat.formatAmount(
+                              widget.supcription.actualPrice.toString()),
                           style: const TextStyle(
                               color: Color.fromRGBO(255, 155, 6, 1),
                               fontSize: 36,
@@ -152,7 +152,7 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  '${NumberFormat.formatAmount(widget.supcription.actualPrice!)} vnđ',
+                                  '${NumberFormat.formatAmount(widget.supcription.actualPrice.toString())} vnđ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -192,7 +192,7 @@ class _PaymentConfirmPageState extends ConsumerState<PaymentConfirmPage> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Text(
-                                  '${NumberFormat.formatAmount(widget.supcription.actualPrice!)} vnđ',
+                                  '${NumberFormat.formatAmount(widget.supcription.actualPrice.toString())} vnđ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!

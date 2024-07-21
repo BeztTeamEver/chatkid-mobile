@@ -13,8 +13,8 @@ import 'package:logger/logger.dart';
 class UserService {
   final LocalStorage _localStorage = LocalStorage.instance;
   Future<UserModel> getUser(String id) async {
-    final response =
-        await BaseHttp.instance.get(endpoint: '${Endpoint.profileUserEndpoint}/${id}');
+    final response = await BaseHttp.instance
+        .get(endpoint: '${Endpoint.profileUserEndpoint}/${id}');
     Logger().d(response.body);
 
     if (response.statusCode == 200) {
@@ -30,7 +30,7 @@ class UserService {
       body: jsonEncode(user.toMap()),
     );
     Logger().d(user.toJson());
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       return UserModel.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to update user');
@@ -115,7 +115,7 @@ class UserServiceNotifier extends StateNotifier<UserModel> {
   Future<UserModel> updateUser(UserModel user) async {
     try {
       UserModel result = await _userService.updateUser(user);
-      MeController().refetch();
+      await MeController().refetch();
       state = result;
       return result;
     } catch (e) {
@@ -135,7 +135,7 @@ final userServiceProvider = Provider<UserService>((ref) {
 });
 
 class MeController extends GetxController {
-  UserModel profile = LocalStorage.instance.getUser();
+  Rx<UserModel> profile = LocalStorage.instance.getUser().obs;
 
   Rx<String> memberId = (LocalStorage.instance.getUser().id ?? '').obs;
 
@@ -145,9 +145,14 @@ class MeController extends GetxController {
     refetch();
   }
 
-  refetch() {
-    UserService().getUser(memberId.value).then((value) {
-      profile = value;
+  refetch() async {
+    await UserService().getUser(memberId.value).then((value) {
+      Logger().d(value.toJson());
+      profile.value = value;
     });
+  }
+
+  void updateProfile(UserModel newProfile) {
+    profile.value = newProfile;
   }
 }

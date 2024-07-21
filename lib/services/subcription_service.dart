@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
-import 'package:chatkid_mobile/models/pagination_response_model.dart';
 import 'package:chatkid_mobile/models/subcription_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
@@ -16,7 +15,7 @@ class SubcriptionService {
       List data = jsonDecode(response.body);
       Logger().i(data);
       final result = data.map((res) => SubcriptionModel.fromJson(res)).toList();
-      result.sort((a, b) => a.energy - b.energy);
+      result.sort((a, b) => a.diamond - b.diamond);
       Logger().i(result);
       return result;
     }

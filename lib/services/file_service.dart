@@ -15,10 +15,8 @@ class FileService {
 
   Future<List<FileModel>> getAvatars() async {
     final response = await _http.get(endpoint: Endpoint.avatarEndpoint);
-    Logger().i(response.body);
+    
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      // final data = jsonDecode(response.body)
-      //     .map((e) => FileModel.fromJson(jsonDecode(e)));
       final list = jsonDecode(response.body) as List;
       final List<FileModel> data = list.map((e) {
         return FileModel.fromJson(e);

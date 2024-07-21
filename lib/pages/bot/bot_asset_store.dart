@@ -38,7 +38,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
   late TabController _tabController;
   late List<BotAssetModel> selectedItem = [];
   int _selectedIndex = 0;
-  final WalletController wallet = Get.put(WalletController());
+  final WalletController wallet = Get.find();
 
   final List<BotAssetModel> DEFAULT_SKIN = [
     BotAssetModel(
@@ -225,11 +225,13 @@ class _BotAssetStoreState extends State<BotAssetStore>
           ),
           onPressed: () {
             if (isBuying) return;
-            
+
             setState(() {
               isBuying = true;
             });
-            botAssets = BotAssetService().buySkin(selectedItem[0].id).then((value) async {
+            botAssets = BotAssetService()
+                .buySkin(selectedItem[0].id)
+                .then((value) async {
               await wallet.refetchWallet();
               setState(() {
                 selectedItem = [];
@@ -347,7 +349,10 @@ class _BotAssetStoreState extends State<BotAssetStore>
                               child: Center(
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: primary.shade200),
+                                    border: Border.all(
+                                      width: 2,
+                                      color: primary.shade200,
+                                    ),
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(100.0),
                                   ),

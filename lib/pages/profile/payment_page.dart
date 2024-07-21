@@ -9,10 +9,13 @@ import 'package:chatkid_mobile/pages/profile/subcription_page.dart';
 import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/providers/paypal_provider.dart';
 import 'package:chatkid_mobile/providers/transaction_provider.dart';
+import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/number_format.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
+import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,8 +34,10 @@ class PaymentPage extends ConsumerStatefulWidget {
 
 class _PaymentPageState extends ConsumerState<PaymentPage> {
   bool isChecked = true;
+  bool isLoading = false;
   late PaypalRequestModel model;
   late CreateTransactionModel transaction;
+
   @override
   void initState() {
     // model = PaypalRequestModel(
@@ -123,15 +128,22 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Thông tin gói nạp',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
+                      'Thông tin gói kim cương',
+                      style: TextStyle(
+                        color: HexColor('#2D2D2D'),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 24,
+                      ),
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
@@ -144,26 +156,27 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                widget.subcription.energy.toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 24),
+                              Image.asset(
+                                "assets/icons/diamond_icon.png",
+                                width: 20,
                               ),
-                              const Icon(
-                                Icons.bolt_outlined,
-                                color: Color.fromRGBO(255, 155, 6, 1),
-                              )
+                              const SizedBox(width: 8),
+                              Text(
+                                widget.subcription.diamond.toString(),
+                                style: TextStyle(
+                                  color: neutral.shade800,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 24,
+                                ),
+                              ),
                             ],
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 5),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: const Color.fromRGBO(255, 155, 6, 1)),
-                            child: Text(
-                              '${NumberFormat.formatAmount(widget.subcription.actualPrice!)} vnđ',
-                              style: const TextStyle(color: Colors.white),
+                          Text(
+                            '${NumberFormat.formatAmount(widget.subcription.actualPrice.toString())} vnđ',
+                            style: TextStyle(
+                              color: neutral.shade900,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
                             ),
                           )
                         ],
@@ -181,7 +194,11 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                   children: [
                     Text(
                       'Thông tin thanh toán',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
+                      style: TextStyle(
+                        color: HexColor('#2D2D2D'),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Container(
@@ -201,18 +218,20 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Giá trị gói',
                                   style: TextStyle(
-                                      color: Color.fromRGBO(165, 168, 187, 1),
-                                      fontWeight: FontWeight.w700),
+                                    fontSize: 14,
+                                    color: HexColor('#717171'),
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                                 Text(
-                                  '${NumberFormat.formatAmount(widget.subcription.actualPrice!)} vnđ',
+                                  '${NumberFormat.formatAmount(widget.subcription.actualPrice.toString())} vnđ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
-                                      .copyWith(fontWeight: FontWeight.w500),
+                                      .copyWith(color: HexColor('#2D2D2D')),
                                 ),
                               ],
                             ),
@@ -220,11 +239,13 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Giảm giá',
                                   style: TextStyle(
-                                      color: Color.fromRGBO(165, 168, 187, 1),
-                                      fontWeight: FontWeight.w700),
+                                    fontSize: 14,
+                                    color: HexColor('#717171'),
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                                 Text(
                                   '0 vnđ',
@@ -235,20 +256,22 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                                 ),
                               ],
                             ),
-                            const Divider(
-                              color: Colors.black,
+                            Divider(
+                              color: HexColor('#D7D9E4'),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Tổng thanh toán',
                                   style: TextStyle(
-                                      color: Color.fromRGBO(165, 168, 187, 1),
-                                      fontWeight: FontWeight.w700),
+                                    fontSize: 14,
+                                    color: HexColor('#717171'),
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                                 Text(
-                                  '${NumberFormat.formatAmount(widget.subcription.actualPrice!)} vnđ',
+                                  '${NumberFormat.formatAmount(widget.subcription.actualPrice.toString())} vnđ',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium!
@@ -270,7 +293,11 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                   children: [
                     Text(
                       'Phương thức thanh toán',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
+                      style: TextStyle(
+                        color: HexColor('#2D2D2D'),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Container(
@@ -293,12 +320,12 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                               Row(
                                 children: [
                                   Image.asset(
-                                    'assets/payment/momo.png',
+                                    'assets/payment/zalopay.png',
                                     width: 42,
                                   ),
                                   const SizedBox(width: 10),
                                   Text(
-                                    'MoMo',
+                                    'ZaloPay',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium!
@@ -335,19 +362,9 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SizedBox(
                   width: double.infinity,
-                  child: LoadingBtn(
-                    height: 50,
-                    borderRadius: 40,
-                    width: double.infinity,
-                    loader: Container(
-                      padding: const EdgeInsets.all(10),
-                      width: 45,
-                      height: 45,
-                      child: const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                    onTap: (startLoading, stopLoading, btnState) async {
+                  child: FullWidthButton(
+                    isDisabled: !isChecked || isLoading,
+                    onPressed: () async {
                       // if (btnState == ButtonState.idle) {
                       //   startLoading();
                       //   onSubmit((orderId, link) {
@@ -360,19 +377,31 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                           context,
                           createRoute(
                             () => MoMoQRCodePage(
-                              index: widget.subcription.energy,
+                              index: widget.subcription.diamond,
                               identifier: identifier,
                             ),
                           ),
                         );
                       });
                     },
-                    child: Text(
-                      "Tiếp tục",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: Colors.white,
+                    child: isLoading
+                        ? Container(
+                            padding: const EdgeInsets.all(10),
+                            width: 45,
+                            height: 45,
+                            child: const CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Text(
+                            "Tiếp tục",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
                           ),
-                    ),
                   ),
                 ),
               ),
@@ -396,11 +425,13 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                       Colors.white,
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Quay lại',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Colors.orangeAccent,
-                        ),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.orangeAccent,
+                    ),
                   ),
                 ),
               )
@@ -412,7 +443,8 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
         currentIndex: 3,
         onTap: (index) {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => MainPage(index: index)));
+            MaterialPageRoute(builder: (context) => MainPage(index: index)),
+          );
         },
       ),
     );

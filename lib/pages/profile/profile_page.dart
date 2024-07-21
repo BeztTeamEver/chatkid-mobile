@@ -5,10 +5,12 @@ import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/profile/information_detail.dart';
+import 'package:chatkid_mobile/pages/profile/subcription_page.dart';
 import 'package:chatkid_mobile/pages/profile/transfer_energy.dart';
 import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/pages/start_page/info_page.dart';
+import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
@@ -35,7 +37,7 @@ class ProfilePage extends ConsumerStatefulWidget {
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
-  final MeController currentUser = MeController();
+  final MeController currentUser = Get.put(MeController());
   final WalletController wallet = Get.put(WalletController());
 
   @override
@@ -90,14 +92,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     width: 80,
                                     height: 80,
                                     child: AvatarPng(
-                                      imageUrl: currentUser.profile.avatarUrl,
+                                      imageUrl: currentUser.profile.value.avatarUrl,
                                     ),
                                   ),
                                   const SizedBox(
                                     height: 8,
                                   ),
                                   Text(
-                                    currentUser.profile.name ?? "Ẩn danh",
+                                    currentUser.profile.value.name ?? "Ẩn danh",
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 16,
@@ -108,8 +110,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   ),
                                 ],
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Wrap(
+                                alignment: WrapAlignment.start,
+                                runSpacing: 16,
                                 children: [
                                   const Text(
                                     'Tài khoản cá nhân',
@@ -118,12 +121,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
                                   GestureDetector(
                                     onTap: () => {
                                       Navigator.of(context).push(
                                         createRoute(
-                                          () => InformationDetail(user: currentUser.profile),
+                                          () => const InformationDetail(),
                                         ),
                                       )
                                     },
@@ -149,17 +151,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 16,
-                                  ),
                                   GestureDetector(
                                     onTap: () => {
                                       Navigator.of(context).push(
                                         createRoute(
-                                          () => WalletPage(
-                                            family: data,
-                                            currentUser: currentUser.profile,
-                                          ),
+                                          () => SubcriptionPage(),
                                         ),
                                       )
                                     },
@@ -204,12 +200,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                               ],
                                             ),
                                           ],
-                                        )
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 16,
                                   ),
                                   GestureDetector(
                                     onTap: () async {
@@ -238,6 +231,38 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                               letterSpacing: 0.5),
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: data.members.length < 5,
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        Navigator.of(context).push(
+                                          createRoute(
+                                            () => RolePage(),
+                                          ),
+                                        );
+                                      },
+                                      child: const Row(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundColor:
+                                                Color.fromRGBO(255, 155, 6, 1),
+                                            child: Icon(
+                                              Icons.add_circle_outline_rounded,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          SizedBox(width: 12),
+                                          Text(
+                                            'Tạo tài khoản',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 17,
+                                                letterSpacing: 0.5),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -343,14 +368,3 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 }
-
-// InfoPage(
-// nameController: TextEditingController(text: currentUser.name),
-// genderController: TextEditingController(text: currentUser.gender),
-// roleController: TextEditingController(text: currentUser.role),
-// avatarController: TextEditingController(text: currentUser.avatarUrl),
-// yearBirthDayController:
-//   TextEditingController(text: currentUser.name),
-// isParent: currentUser.role ==
-//   RoleConstant.Parent,
-// ),

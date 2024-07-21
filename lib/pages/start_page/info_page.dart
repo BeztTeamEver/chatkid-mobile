@@ -11,6 +11,7 @@ import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:chatkid_mobile/widgets/wheel_input.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_validator/form_validator.dart';
@@ -24,6 +25,7 @@ class InfoPage extends ConsumerStatefulWidget {
   final TextEditingController genderController;
   final TextEditingController yearBirthDayController;
   final TextEditingController avatarController;
+  final bool isEdit;
 
   const InfoPage(
       {super.key,
@@ -32,25 +34,41 @@ class InfoPage extends ConsumerStatefulWidget {
       required this.avatarController,
       this.isParent = true,
       required this.roleController,
-      required this.yearBirthDayController});
+      required this.yearBirthDayController,
+      this.isEdit = false});
 
   @override
   ConsumerState<InfoPage> createState() => _InfoPageState();
 }
 
 class _InfoPageState extends ConsumerState<InfoPage> {
-  String _avatarUrl = "animal/bear";
-  List<String> _avatarList = [];
+  String newAvatar = '';
 
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      newAvatar = widget.avatarController.text;
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.nameController.dispose();
+    widget.roleController.dispose();
+    widget.genderController.dispose();
+    widget.yearBirthDayController.dispose();
+    widget.avatarController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     widget.roleController.text = widget.isParent ? "phụ huynh" : "bé";
     final userRole = widget.isParent ? "phụ huynh" : "bé";
+    int selectedYearIndex = InfoForm.YEAR_BIRTHDAY_OPTIONS.indexWhere(
+        (element) => element.value == widget.yearBirthDayController.text);
 
     final avatars = ref.watch(getAvatarProvider);
     return Padding(
@@ -59,11 +77,14 @@ class _InfoPageState extends ConsumerState<InfoPage> {
         child: Form(
           child: Column(
             children: [
-              Text(
-                "Thiết lập tài khoản $userRole",
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      fontSize: 20,
-                    ),
+              Visibility(
+                visible: widget.isEdit,
+                child: Text(
+                  "Thiết lập tài khoản $userRole",
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                        fontSize: 20,
+                      ),
+                ),
               ),
               const SizedBox(
                 height: 10,
@@ -81,20 +102,19 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                         color: primary.shade400,
                       ),
                     ),
-                    // TODO: change to use image
                     child: SizedBox(
                       width: 60,
                       height: 60,
                       child: Image.network(
-                        _avatarUrl,
+                        newAvatar,
                         fit: BoxFit.cover,
                       ),
-                    ), //TODO: change icon
+                    ),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
-                  Container(
+                  SizedBox(
                     width: 173,
                     height: 28,
                     child: avatars.when(
@@ -103,15 +123,18 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              createRoute(() => AvatarChange(
-                                    options: data,
-                                    value: _avatarUrl,
-                                    onAccept: (avatarUrl) {
-                                      setState(() {
-                                        _avatarUrl = avatarUrl;
-                                      });
-                                    },
-                                  )),
+                              createRoute(
+                                () => AvatarChange(
+                                  options: data,
+                                  value: widget.avatarController.text,
+                                  onAccept: (avatarUrl) {
+                                    widget.avatarController.setText(avatarUrl);
+                                    setState(() {
+                                      newAvatar = avatarUrl;
+                                    });
+                                  },
+                                ),
+                              ),
                             );
                           },
                           style: ButtonStyle(
@@ -197,14 +220,13 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                                     fontWeight: FontWeight.bold,
                                   ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
                         WheelInput(
                           name: 'gender',
                           controller: widget.genderController,
                           options: InfoForm.GENDER_OPTIONS,
-                          defaultValue: InfoForm.GENDER_OPTIONS[0].value,
+                          defaultValue: widget.genderController.text.isEmpty
+                              ? InfoForm.GENDER_OPTIONS[0].value
+                              : widget.genderController.text,
                           listHeight: 400,
                           description: "Chọn giới tính của bạn",
                           hintText: "Chọn giới tính của bạn",
@@ -221,8 +243,11 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                       name: "yearOfBirth",
                       controller: widget.yearBirthDayController,
                       options: InfoForm.YEAR_BIRTHDAY_OPTIONS,
-                      defaultSelectionIndex: 2,
-                      defaultValue: InfoForm.YEAR_BIRTHDAY_OPTIONS[2].value,
+                      defaultSelectionIndex:
+                          selectedYearIndex == -1 ? 2 : selectedYearIndex,
+                      defaultValue: widget.yearBirthDayController.text.isEmpty
+                          ? InfoForm.YEAR_BIRTHDAY_OPTIONS[2].value
+                          : widget.yearBirthDayController.text,
                       listHeight: 400,
                       label: "Năm sinh",
                       description: "Chọn năm sinh của bạn",

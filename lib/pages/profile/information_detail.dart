@@ -2,29 +2,31 @@ import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/profile/information_update.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class InformationDetail extends ConsumerStatefulWidget {
-  final UserModel user;
-
-  const InformationDetail({super.key, required this.user});
+  const InformationDetail({super.key});
 
   @override
   ConsumerState<InformationDetail> createState() => _InformationDetailState();
 }
 
 class _InformationDetailState extends ConsumerState<InformationDetail> {
+  final MeController currentUser = Get.find();
+
   @override
   void initState() {
     super.initState();
-
-    Logger().d(jsonEncode(widget.user));
   }
 
   @override
@@ -47,10 +49,10 @@ class _InformationDetailState extends ConsumerState<InformationDetail> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
-          child: Wrap(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
+        child: Obx(
+          () => Wrap(
             runSpacing: 16,
             children: [
               Row(
@@ -68,7 +70,7 @@ class _InformationDetailState extends ConsumerState<InformationDetail> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    widget.user.role == RoleConstant.Parent
+                    currentUser.profile.value.role == RoleConstant.Parent
                         ? 'Phụ huynh'
                         : 'Bé',
                     style: TextStyle(
@@ -94,7 +96,7 @@ class _InformationDetailState extends ConsumerState<InformationDetail> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    widget.user.name ?? '',
+                    currentUser.profile.value.name ?? '',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -118,7 +120,11 @@ class _InformationDetailState extends ConsumerState<InformationDetail> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    widget.user.gender == "male" ? 'Nam' : 'Nữ',
+                    currentUser.profile.value.gender == "male"
+                        ? 'Nam'
+                        : currentUser.profile.value.gender == "female"
+                            ? 'Nữ'
+                            : 'Khác',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -142,9 +148,7 @@ class _InformationDetailState extends ConsumerState<InformationDetail> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    widget.user.role == RoleConstant.Parent
-                        ? 'Phụ huynh'
-                        : 'Bé',
+                    currentUser.profile.value.yearOfBirth?.toString() ?? 'Chưa xác định',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -156,7 +160,14 @@ class _InformationDetailState extends ConsumerState<InformationDetail> {
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: FullWidthButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      createRoute(
+                        () => const InformationUpdate(),
+                      ),
+                    );
+                  },
                   width: MediaQuery.of(context).size.width,
                   child: const Text(
                     'Thay đổi thông tin',

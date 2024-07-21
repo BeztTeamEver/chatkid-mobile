@@ -21,7 +21,7 @@ class TransferEnergyPage extends StatefulWidget {
 
 class _TransferEnergyPageState extends State<TransferEnergyPage> {
   final String userId = LocalStorage.instance.getUser().id!;
-  final WalletController wallet = Get.put(WalletController());
+  final WalletController wallet = Get.find();
   Future<FamilyModel> family = FamilyService().getFamily();
 
   void refetchFamily() {
@@ -40,7 +40,7 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
               const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.grey),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text("Chuyển năng lượng"),
+        title: const Text("Chuyển kim cương"),
         titleTextStyle: const TextStyle(
           color: Color(0xFF242837),
           fontSize: 16,
@@ -80,7 +80,7 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'THÔNG TIN NĂNG LƯỢNG',
+                          'THÔNG TIN KIM CƯƠNG',
                           style: TextStyle(
                               color: Color.fromRGBO(197, 92, 2, 1),
                               fontWeight: FontWeight.w700,
@@ -98,10 +98,13 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                                 ),
                               ),
                             ),
-                            const Icon(
-                              Icons.bolt_outlined,
-                              color: Color.fromRGBO(255, 155, 6, 1),
-                            )
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            Image.asset(
+                              "assets/icons/diamond_icon.png",
+                              width: 20,
+                            ),
                           ],
                         ),
                       ],
@@ -115,7 +118,10 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                   }).map(
                     (user) => GestureDetector(
                       onTap: () {
-                        Navigator.push(context, createRoute(() => TransferDetailPage(user: user, refetchFamily: refetchFamily)));
+                        Navigator.push(
+                            context,
+                            createRoute(() => TransferDetailPage(
+                                user: user, refetchFamily: refetchFamily)));
                       },
                       child: Container(
                         width: double.infinity,
@@ -142,11 +148,13 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                                 Container(
                                   height: 50,
                                   width: 50,
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 10),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 10),
                                   decoration: BoxDecoration(
                                       border: Border.all(
-                                          width: 2, color: Colors.green),
+                                        width: 2,
+                                        color: Colors.green,
+                                      ),
                                       borderRadius: BorderRadius.circular(50)),
                                   child: Container(
                                     width: 40,
@@ -162,7 +170,8 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                                   right: 0,
                                   child: Container(
                                       decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(30),
+                                          borderRadius:
+                                              BorderRadius.circular(30),
                                           color: const Color.fromRGBO(
                                               255, 155, 6, 1)),
                                       child: Row(
@@ -180,11 +189,13 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                                               color: Colors.white,
                                             ),
                                           ),
-                                          const Icon(
-                                            Icons.bolt_outlined,
-                                            size: 14,
-                                            color: Colors.white,
-                                          )
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                          Image.asset(
+                                            "assets/icons/diamond_icon.png",
+                                            width: 12,
+                                          ),
                                         ],
                                       )),
                                 ),
@@ -193,12 +204,16 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                             const SizedBox(height: 10),
                             Text(
                               user.name ?? "Ẩn danh",
-                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ],
                         ),
                       ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                 ],
               ),

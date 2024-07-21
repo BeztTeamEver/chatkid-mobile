@@ -29,7 +29,7 @@ class TransferDetailPage extends StatefulWidget {
 
 class _TransferDetailPageState extends State<TransferDetailPage> {
   final String userId = LocalStorage.instance.getUser().id!;
-  final WalletController wallet = Get.put(WalletController());
+  final WalletController wallet = Get.find();
   final TextEditingController _numberController = TextEditingController();
   int tempCount = 0;
 
@@ -75,7 +75,7 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'THÔNG TIN NĂNG LƯỢNG',
+                  'THÔNG TIN KIM CƯƠNG',
                   style: TextStyle(
                       color: Color.fromRGBO(197, 92, 2, 1),
                       fontWeight: FontWeight.w700,
@@ -93,10 +93,13 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
                         ),
                       ),
                     ),
-                    const Icon(
-                      Icons.bolt_outlined,
-                      color: Color.fromRGBO(255, 155, 6, 1),
-                    )
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Image.asset(
+                      "assets/icons/diamond_icon.png",
+                      width: 20,
+                    ),
                   ],
                 ),
               ],
@@ -160,11 +163,13 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
                                   color: Colors.white,
                                 ),
                               ),
-                              const Icon(
-                                Icons.bolt_outlined,
-                                size: 14,
-                                color: Colors.white,
-                              )
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              Image.asset(
+                                "assets/icons/diamond_icon.png",
+                                width: 12,
+                              ),
                             ],
                           )),
                     ),
@@ -337,7 +342,8 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
         currentIndex: 3,
         onTap: (index) {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => MainPage(index: index)));
+            MaterialPageRoute(builder: (context) => MainPage(index: index)),
+          );
         },
       ),
     );
