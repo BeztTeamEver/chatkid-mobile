@@ -30,8 +30,8 @@ class _TodoDetailState extends State<TodoDetail> {
   @override
   Widget build(BuildContext context) {
     final contentWidgets = [
-      widget.task.status != TodoStatus.submitted ? HelpCard() : Container(),
-      widget.task.status == TodoStatus.submitted ||
+      widget.task.status != TodoStatus.pending ? HelpCard() : Container(),
+      widget.task.status == TodoStatus.pending ||
               widget.task.status == TodoStatus.completed
           ? FeedBackCard()
           : Container(),

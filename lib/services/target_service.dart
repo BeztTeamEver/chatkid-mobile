@@ -8,16 +8,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TargetService {
   final baseHttp = BaseHttp.instance;
 
-  Future<List<TargetModel>> getTargetByMember(String memberId) async {
-    final response = await baseHttp
-        .get(endpoint: Endpoint.memberTargetEndpoint + "/$memberId", param: {
-      'page-umber': 0,
-      'page-size': 1000,
-    });
+  Future<List<TargetModel>> getTargetByMember(
+      TargetListRequestModel request) async {
+    final response = await baseHttp.get(
+        endpoint: Endpoint.memberTargetEndpoint + "/${request.memberId}",
+        param: {
+          'page-umber': 0,
+          'page-size': 1000,
+          'date': '${request.date.toIso8601String()}Z'
+        });
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final data = jsonDecode(response.body);
-      final List<TargetModel> targets =
-          data["items"].map<TargetModel>((target) {
+      final List<TargetModel> targets = data.map<TargetModel>((target) {
         return TargetModel.fromJson(target);
       }).toList();
       return targets;
@@ -38,8 +40,8 @@ class TargetService {
     final response = await baseHttp.post(
         endpoint: Endpoint.targetEndpoint, body: target.toJson());
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final data = TargetModel.fromJson(jsonDecode(response.body));
-      return data;
+      // final data = TargetModel.fromJson(jsonDecode(response.body));
+      return true;
     }
     if (response.statusCode == 401) {
       throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');

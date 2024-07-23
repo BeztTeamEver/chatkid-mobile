@@ -6,6 +6,8 @@ class TargetModel {
   String id;
   DateTime startTime;
   DateTime endTime;
+  String? reward;
+  String? rewardImageUrl;
   String message;
   String memberId;
   List<MissionModel> missions;
@@ -15,6 +17,8 @@ class TargetModel {
   TargetModel({
     required this.id,
     required this.startTime,
+    this.reward,
+    this.rewardImageUrl,
     required this.endTime,
     required this.message,
     required this.memberId,
@@ -39,6 +43,8 @@ class TargetModel {
       endTime: DateTime.parse(json['endTime']),
       message: json['message'],
       memberId: json['memberId'],
+      reward: json['reward'],
+      rewardImageUrl: json['rewardImageUrl'],
       missions: missions,
       totalProgress: totalProgress,
       currentProgress: currentProgress,
@@ -50,6 +56,8 @@ class TargetModel {
       'startTime': startTime.toIso8601String(),
       'endTime': endTime.toIso8601String(),
       'message': message,
+      'reward': reward,
+      'rewardImageUrl': rewardImageUrl,
       'memberId': memberId,
       'missions': missions,
     };
@@ -64,6 +72,7 @@ class MissionModel {
   String? id;
   String? name;
   String? imageUrl;
+  String? imageHomeUrl;
   int? quantity;
   int? progress;
   String? taskTypeId;
@@ -76,6 +85,7 @@ class MissionModel {
     this.name,
     this.imageUrl,
     this.quantity,
+    this.imageHomeUrl,
     this.progress,
   });
 
@@ -86,6 +96,7 @@ class MissionModel {
       id: json['id'],
       name: json['name'],
       imageUrl: json['imageUrl'],
+      imageHomeUrl: json['imageHomeUrl'],
       quantity: json['quantity'],
     );
   }
@@ -98,6 +109,7 @@ class MissionModel {
       'name': name,
       'imageUrl': imageUrl,
       'quantity': quantity,
+      'imageHomeUrl': imageHomeUrl,
       'progress': progress,
     };
   }
@@ -111,14 +123,18 @@ class TargetRequestModal {
   DateTime startTime;
   DateTime endTime;
   String message;
-  String? memberId;
+  String reward;
+  String rewardImageUrl;
+  List<String>? memberIds;
   List<MissionModel> missions;
 
   TargetRequestModal({
     required this.startTime,
     required this.endTime,
     required this.message,
-    required this.memberId,
+    required this.reward,
+    required this.rewardImageUrl,
+    required this.memberIds,
     required this.missions,
   });
 
@@ -127,10 +143,12 @@ class TargetRequestModal {
       return MissionModel.fromJson(mission);
     }).toList();
     return TargetRequestModal(
+      reward: json['reward'],
+      rewardImageUrl: json['rewardImageUrl'],
       startTime: json['startTime'],
       endTime: json['endTime'],
       message: json['message'],
-      memberId: json['memberId'],
+      memberIds: json['memberIds'],
       missions: missions,
     );
   }
@@ -139,8 +157,10 @@ class TargetRequestModal {
     return {
       'startTime': '${startTime.toIso8601String()}Z',
       'endTime': '${endTime.toIso8601String()}Z',
+      'reward': reward,
+      'rewardImageUrl': rewardImageUrl,
       'message': message,
-      'memberId': memberId,
+      'memberIds': memberIds,
       'missions': missions.map((v) => v.toMap()).toList(),
     };
   }
@@ -155,11 +175,15 @@ class TargetFormModel {
   DateTime endTime;
   String message;
   String memberId;
+  String reward;
+  String rewardImageUrl;
   List<MissionModel> missions;
 
   TargetFormModel({
     required this.startTime,
     required this.endTime,
+    required this.reward,
+    required this.rewardImageUrl,
     required this.message,
     required this.memberId,
     required this.missions,
@@ -171,7 +195,30 @@ class TargetFormModel {
       'endTime': endTime,
       'message': message,
       'memberId': memberId,
+      'reward': reward,
+      'rewardImageUrl': rewardImageUrl,
       'missions': missions.map((v) => v.toMap()).toList(),
+    };
+  }
+
+  String toJson() {
+    return jsonEncode(toMap());
+  }
+}
+
+class TargetListRequestModel {
+  String memberId;
+  DateTime date;
+
+  TargetListRequestModel({
+    required this.memberId,
+    required this.date,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'memberId': memberId,
+      'date': date,
     };
   }
 

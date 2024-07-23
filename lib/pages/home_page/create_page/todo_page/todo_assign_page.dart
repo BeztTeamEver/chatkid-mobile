@@ -31,16 +31,19 @@ class TodoAssignPage extends ConsumerStatefulWidget {
 
 class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
   TodoFormCreateController todoFormCreateController = Get.find();
-  List<int> _selectedIndex = [];
+  List<String> _selectedIndex = [];
 
   onSubmit() async {
     try {
       if (todoFormCreateController.formKey.currentState!.saveAndValidate()) {
         final formState = todoFormCreateController.formKey.currentState!;
-        // Assign for a member
 
-        final value = TodoCreateModel.fromJson(formState.value);
-        Logger().i(value.toJson());
+        // Assign for a member
+        final value = TodoCreateModel.fromJson({
+          ...formState.value,
+          "memberIds": _selectedIndex,
+        });
+
         await TodoService().createTask(value);
         Get.offAll(MainPage());
         return;
@@ -60,7 +63,7 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
       body: Container(
         padding: EdgeInsets.all(14),
         child: FormBuilderField(
-            name: "memberId",
+            name: "memberIds",
             builder: (field) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +90,7 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
                             child: CircularProgressIndicator(),
                           );
                         }
-                        final data = snapshot.data?.members.fold([],
+                        final data = snapshot.data?.members.fold(<UserModel>[],
                             (previousValue, element) {
                           if (element.role == RoleConstant.Child)
                             previousValue.add(element);
@@ -112,22 +115,24 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
                             return SizedBox(
                               width: double.infinity,
                               child: SelectButton(
-                                isSelected: _selectedIndex.contains(index),
+                                isSelected:
+                                    _selectedIndex.contains(data[index].id),
                                 borderColor: primary.shade100,
                                 hasBackground: true,
                                 icon: icon,
                                 label: data[index].name ?? "No name",
                                 onPressed: () {
                                   // Multiple select
-                                  // setState(() {
-                                  //   if (_selectedIndex.contains(index)) {
-                                  //     _selectedIndex.remove(index);
-                                  //   } else {
-                                  //     _selectedIndex.add(index);
-                                  //   }
-                                  // });
-                                  _selectedIndex = [index];
-                                  field.didChange(data[index].id);
+                                  setState(() {
+                                    if (_selectedIndex
+                                        .contains(data[index].id)) {
+                                      _selectedIndex.remove(data[index].id!);
+                                    } else {
+                                      _selectedIndex.add(data[index].id!);
+                                    }
+                                  });
+                                  // _selectedIndex = [index];
+                                  // field.didChange(data[index].id);
                                 },
                               ),
                             );

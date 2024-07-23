@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/constants/date.dart';
 import 'package:chatkid_mobile/constants/todo_form.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/todo_page/todo_assign_page.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
 class TodoFormPage extends StatefulWidget {
@@ -27,7 +29,7 @@ class TodoFormPage extends StatefulWidget {
 class _TodoFormPageState extends State<TodoFormPage> {
   TodoFormCreateController todoFormCreateController = Get.find();
 
-  String? startTimeErrorText;
+  String? durationErrorText;
   String? endTimeErrorText;
   bool isStartTimeError = false;
   bool isEndTimeError = false;
@@ -57,72 +59,67 @@ class _TodoFormPageState extends State<TodoFormPage> {
       final formState = todoFormCreateController.formKey.currentState!;
       final formValue = formState.value;
 
-      final startHour = int.parse(formValue['startTime.hour1']!) * 10 +
-          int.parse(formValue['startTime.hour2']!);
-      final startMinute = int.parse(formValue['startTime.minute1']!) * 10 +
-          int.parse(formValue['startTime.minute2']!);
+      // final startHour =
+      //     formValue['startTime.hour1']! * 10 + formValue['startTime.hour2']!;
+      // final startMinute = formValue['startTime.minute1']! * 10 +
+      //     formValue['startTime.minute2']!;
+      final startTime = formValue['startTime'] as DateTime;
+      final durationHour =
+          formValue['duration.hour1']! * 10 + formValue['duration.hour2']!;
+      final durationMinute =
+          formValue['duration.minute1']! * 10 + formValue['duration.minute2']!;
 
-      final endHour = int.parse(formValue['endTime.hour1']!) * 10 +
-          int.parse(formValue['endTime.hour2']!);
-      final endMinute = int.parse(formValue['endTime.minute1']!) * 10 +
-          int.parse(formValue['endTime.minute2']!);
-
-      if (startHour >= 24 || startMinute >= 60) {
-        todoFormCreateController.formKey.currentState?.fields['startTime']
+      if (durationHour >= 24 || durationMinute >= 60) {
+        todoFormCreateController.formKey.currentState?.fields['duration']
             ?.invalidate("Thời gian không hợp lệ");
         setState(() {
-          startTimeErrorText = "Thời gian không hợp lệ";
+          durationErrorText = "Thời gian không hợp lệ";
         });
         return;
       }
-      if (endHour >= 24 || endMinute >= 60) {
-        todoFormCreateController.formKey.currentState?.fields['endTime']
+
+      final endTime =
+          startTime.clone.addHours(durationHour).addMinutes(durationMinute);
+
+      if (endTime.day > startTime.day) {
+        todoFormCreateController.formKey.currentState?.fields['duration']
             ?.invalidate("Thời gian không hợp lệ");
-        todoFormCreateController.formKey.currentState?.fields['endTime']
-            ?.save();
         setState(() {
-          startTimeErrorText = "Thời gian không hợp lệ";
+          durationErrorText = "Thời gian không hợp lệ";
         });
         return;
       }
 
-      if (startHour > endHour ||
-          (startHour == endHour && startMinute >= endMinute)) {
-        todoFormCreateController.formKey.currentState?.fields['startTime']
-            ?.invalidate("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc");
-        setState(() {
-          endTimeErrorText =
-              "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc";
-        });
-        return;
-      }
-      setState(() {
-        startTimeErrorText = "";
-        endTimeErrorText = "";
-      });
-      final startTime = DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
-        startHour,
-        startMinute,
-      );
-      formState.fields['startTime']?.didChange(
-        startTime,
-      );
-
-      final endTime = DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
-        endHour,
-        endMinute,
-      );
       formState.fields['endTime']?.didChange(endTime);
 
-      // if (formValue['frequency'].isEmpty) {
-      //   formValue['frequency'] = [''];
-      // }
+      setState(() {
+        durationErrorText = "";
+      });
+
+      // final startTime = DateTime(
+      //   DateTime.now().year,
+      //   DateTime.now().month,
+      //   DateTime.now().day,
+      //   startHour,
+      //   startMinute,
+      // );
+      // formState.fields['startTime']?.didChange(
+      //   startTime,
+      // );
+
+      // final endTime = DateTime(
+      //   DateTime.now().year,
+      //   DateTime.now().month,
+      //   DateTime.now().day,
+      //   endHour,
+      //   endMinute,
+      // );
+      // formState.fields['endTime']?.didChange(endTime);
+
+      if (formValue['frequency'].isEmpty) {
+        formState.fields['frequency']?.didChange(['']);
+      }
+
       todoFormCreateController.increaseStep();
       todoFormCreateController.updateProgress();
       Navigator.push(context, createRoute(() => TodoAssignPage()));
@@ -173,14 +170,14 @@ class _TodoFormPageState extends State<TodoFormPage> {
                 builder: (field) {
                   return Container();
                 },
-                name: "startTime",
+                name: "endTime",
               ),
               FormBuilderField(
                 initialValue: DateTime.now(),
                 builder: (field) {
                   return Container();
                 },
-                name: "endTime",
+                name: "duration",
               ),
               FormBuilderField(
                 initialValue: "",
@@ -205,23 +202,46 @@ class _TodoFormPageState extends State<TodoFormPage> {
                 maxLines: 6,
               ),
               const SizedBox(height: 14),
+              Text(
+                'Thời gian bắt đầu',
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: 4),
+              FormBuilderDateTimePicker(
+                name: 'startTime',
+                autofocus: false,
+                autocorrect: false,
+                inputType: InputType.both,
+                style: Theme.of(context).textTheme.bodyMedium,
+                format: DateFormat(DateConstants.dateTimeFormat),
+                decoration: InputDecoration(
+                  errorMaxLines: 2,
+                ),
+                maxLines: 1,
+              ),
+              const SizedBox(height: 16),
               Container(
                 child: ClockInput(
-                  name: "startTime",
-                  label: "Thời gian bắt đầu",
+                  name: "duration",
+                  label: "Thời gian thực hiện công việc",
                   isError: isStartTimeError,
-                  errorText: startTimeErrorText,
+                  errorText: durationErrorText,
                 ),
               ),
-              const SizedBox(height: 14),
-              Container(
-                child: ClockInput(
-                  isError: isStartTimeError,
-                  name: "endTime",
-                  label: "Thời gian kết thúc",
-                  errorText: endTimeErrorText,
-                ),
-              ),
+              // const SizedBox(height: 14),
+              // Container(
+              //   child: ClockInput(
+              //     isError: isStartTimeError,
+              //     name: "endTime",
+              //     label: "Thời gian kết thúc",
+              //     errorText: endTimeErrorText,
+              //   ),
+              // ),
+
               SizedBox(height: 14),
               SelectButtonList<String>(
                 name: "frequency",
@@ -232,7 +252,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
               ),
               SizedBox(height: 14),
               InputNumber(
-                name: "giftTicket",
+                name: "numberOfCoin",
                 label: "Thưởng coin",
                 rightLableIcon: "coin",
                 formKey: todoFormCreateController.formKey,

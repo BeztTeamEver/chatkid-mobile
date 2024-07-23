@@ -1,14 +1,18 @@
+import 'package:chatkid_mobile/constants/date.dart';
+import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/pages/home_page/target_detail/widgets/edit_modal.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/progress_bar.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
+import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HeadCard extends StatefulWidget {
-  const HeadCard({super.key});
+  final TargetModel target;
+  const HeadCard({super.key, required this.target});
 
   @override
   State<HeadCard> createState() => _HeadCardState();
@@ -25,21 +29,21 @@ class _HeadCardState extends State<HeadCard> {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
                 child: Column(
                   children: [
                     Text(
-                      "Hoàn thành tốt việc học",
+                      widget.target.message ?? "Mục tiêu",
                       style:
                           Theme.of(context).textTheme.headlineMedium!.copyWith(
                                 fontSize: 18,
                               ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 4,
                     ),
                     Text(
-                      "01/05 - 31/05",
+                      '${widget.target.startTime.format(DateConstants.dateSlashFormat)} - ${widget.target.endTime.format(DateConstants.dateSlashFormat)}',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontSize: 14,
                           ),
@@ -49,15 +53,18 @@ class _HeadCardState extends State<HeadCard> {
                         children: [
                           Expanded(
                             child: ProgressBar(
-                              value: 0.5,
+                              value: widget.target.currentProgress /
+                                  widget.target.totalProgress,
                             ),
                           ),
                           SizedBox(
                             width: 20,
                           ),
-                          SvgIcon(
-                            icon: 'coin',
-                            size: 42,
+                          Image.network(
+                            widget.target.rewardImageUrl ??
+                                "https://via.placeholder.com/150",
+                            width: 80,
+                            height: 62,
                           ),
                         ],
                       ),

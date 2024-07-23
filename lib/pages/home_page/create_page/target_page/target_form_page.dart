@@ -14,10 +14,12 @@ import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/textarea_input.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -92,12 +94,19 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
                 builder: (field) => Container(),
                 name: 'missions',
               ),
-              const TextAreaInput(
+              TextAreaInput(
                 name: 'message',
                 label: 'Lời nhắn',
                 minLines: 4,
                 maxLines: 4,
+                maxLength: 100,
                 hint: "Nhập lời nhắn",
+                validation: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(
+                      errorText: "Vui lòng nhập lời nhắn"),
+                  FormBuilderValidators.maxLength(100,
+                      errorText: "Không nhập quá 100 ký tự"),
+                ]),
               ),
               const SizedBox(height: 16),
               Text(

@@ -24,7 +24,7 @@ class TargetAssignPage extends ConsumerStatefulWidget {
 class _TargetAssignPageState extends ConsumerState<TargetAssignPage> {
   TargetFormStore targetFormStore = Get.find();
   bool isSubmitting = false;
-  List<String> _selectedIndex = [];
+  List<String> _selectedMember = [];
 
   toggleSubmit(bool isSubmitting) {
     setState(() {
@@ -38,23 +38,17 @@ class _TargetAssignPageState extends ConsumerState<TargetAssignPage> {
       if (targetFormStore.formKey.currentState!.saveAndValidate()) {
         final formState = targetFormStore.formKey.currentState!;
         // Assign for a member
-        if (_selectedIndex.isEmpty) {
+        if (_selectedMember.isEmpty) {
           ShowToast.error(msg: "Vui lòng chọn thành viên");
         }
 
         final value = formState.value;
-        List<Future> targeRequests = [];
-        _selectedIndex.forEach((element) {
-          final target =
-              TargetService().createTarget(TargetRequestModal.fromJson({
-            ...value,
-            "memberId": element,
-          }));
-          targeRequests.add(target);
-        });
-        await Future.wait(targeRequests).whenComplete(() {
-          toggleSubmit(true);
-        });
+
+        await TargetService().createTarget(TargetRequestModal.fromJson({
+          ...value,
+          "memberIds": _selectedMember,
+        }));
+
         Get.offAll(() => const MainPage());
         return;
       }
@@ -63,6 +57,8 @@ class _TargetAssignPageState extends ConsumerState<TargetAssignPage> {
       final errorMessage =
           e.toString().split(":")[e.toString().split(":").length - 1].trim();
       ShowToast.error(msg: errorMessage);
+    } finally {
+      toggleSubmit(false);
     }
   }
 
@@ -129,7 +125,7 @@ class _TargetAssignPageState extends ConsumerState<TargetAssignPage> {
                               width: double.infinity,
                               child: SelectButton(
                                 isSelected:
-                                    _selectedIndex.contains(data[index].id),
+                                    _selectedMember.contains(data[index].id),
                                 borderColor: primary.shade100,
                                 hasBackground: true,
                                 icon: icon,
@@ -137,11 +133,11 @@ class _TargetAssignPageState extends ConsumerState<TargetAssignPage> {
                                 onPressed: () {
                                   // Multiple select
                                   setState(() {
-                                    if (_selectedIndex
+                                    if (_selectedMember
                                         .contains(data[index].id)) {
-                                      _selectedIndex.remove(data[index].id);
+                                      _selectedMember.remove(data[index].id);
                                     } else {
-                                      _selectedIndex.add(data[index].id);
+                                      _selectedMember.add(data[index].id);
                                     }
                                   });
                                   // _selectedIndex = [index];

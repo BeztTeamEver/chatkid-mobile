@@ -179,10 +179,10 @@ class _TextAreaInputState extends State<TextAreaInput> {
               counterText: "",
               // errorText: widget.disableErrorText == true ? "" : null,
               errorStyle: widget.disableErrorText == true
-                  ? TextStyle(height: 0, fontSize: 0)
+                  ? TextStyle(height: 0, fontSize: 0, color: Colors.transparent)
                   : TextStyle(
-                      fontSize: 12,
-                      color: red.shade100,
+                      fontSize: 14,
+                      color: red.shade500,
                     ),
             ),
           ),

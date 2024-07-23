@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/constants/date.dart';
+import 'package:chatkid_mobile/constants/local_storage.dart';
+import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/todo_detail.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
@@ -110,7 +115,7 @@ class _TaskItemState extends State<TaskItem> {
           Row(
             children: [
               Text(
-                "Thưởng 1000",
+                "Thưởng ${widget.task.numberOfCoin ?? 0}",
                 style: TextStyle(
                   fontSize: 14,
                   color: neutral.shade600,

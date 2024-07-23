@@ -19,6 +19,8 @@ class _TargetCreateFormWrapperState extends State<TargetCreateFormWrapper> {
     endTime: DateTime.now(),
     startTime: DateTime.now(),
     memberId: '',
+    reward: '',
+    rewardImageUrl: '',
     message: '',
     missions: [],
   );

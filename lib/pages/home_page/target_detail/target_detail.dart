@@ -1,15 +1,14 @@
-import 'package:chatkid_mobile/pages/home_page/target_detail/widgets/edit_modal.dart';
+import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/pages/home_page/target_detail/widgets/head_card.dart';
 import 'package:chatkid_mobile/pages/home_page/target_detail/widgets/main_card.dart';
-import 'package:chatkid_mobile/widgets/button_icon.dart';
-import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TargetDetail extends StatefulWidget {
-  const TargetDetail({super.key});
+  final TargetModel target;
+  const TargetDetail({super.key, required this.target});
 
   @override
   State<TargetDetail> createState() => _TargetDetailState();
@@ -22,33 +21,52 @@ class _TargetDetailState extends State<TargetDetail> {
       body: Stack(
         alignment: Alignment.topCenter,
         children: [
-          Container(
-            height: MediaQuery.of(context).size.height / 4 + 20,
-            width: MediaQuery.of(context).size.width,
-            child: SvgPicture.asset(
-              "assets/todoPage/shining_background.svg",
-              fit: BoxFit.cover,
-            ),
-          ),
           SafeArea(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  Container(
-                    height: 160,
-                    child: HeadCard(),
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height / 5 + 20,
+                      width: MediaQuery.of(context).size.width,
+                      child: SvgPicture.asset(
+                        "assets/todoPage/shining_background.svg",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      height: 200,
+                      child: HeadCard(
+                        target: widget.target,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                      child: Column(
+                        children: [
+                          ...widget.target.missions
+                              .map((e) => MainCard(
+                                  mission: e,
+                                  label: e.name!,
+                                  count: e.quantity!,
+                                  sticker: 'coin',
+                                  progress: e.progress ?? 0))
+                              .toList(),
+                        ],
+                      ),
+                    ),
                   ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  MainCard(
-                    label: 'Học tiếng anh',
-                    count: 4,
-                    sticker: 'coin',
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],

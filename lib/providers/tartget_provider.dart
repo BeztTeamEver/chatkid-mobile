@@ -3,8 +3,8 @@ import 'package:chatkid_mobile/services/target_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final getTargetByMember = FutureProvider.autoDispose
-    .family<List<TargetModel>, String>((ref, memberId) async {
-  final response =
-      await ref.read(targetServiceProvider).getTargetByMember(memberId);
+    .family<List<TargetModel>, TargetListRequestModel>((ref, member) async {
+  final response = await ref.read(targetServiceProvider).getTargetByMember(
+      TargetListRequestModel(memberId: member.memberId, date: member.date));
   return response;
 });

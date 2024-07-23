@@ -17,10 +17,24 @@ class _CaptureEvidenceState extends State<CaptureEvidence> {
   @override
   void initState() {
     super.initState();
-    _controller = CameraController(
-      camera,
-      ResolutionPreset.medium,
-    );
+    _controller = CameraController(camera, ResolutionPreset.max);
+    _controller.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    }).catchError((Object e) {
+      if (e is CameraException) {
+        switch (e.code) {
+          case 'CameraAccessDenied':
+            // Handle access errors here.
+            break;
+          default:
+            // Handle other errors here.
+            break;
+        }
+      }
+    });
     _initializeControllerFuture = _controller.initialize();
   }
 
@@ -28,7 +42,7 @@ class _CaptureEvidenceState extends State<CaptureEvidence> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        height: 400,
+        height: 500,
         child: FutureBuilder<void>(
           future: _initializeControllerFuture,
           builder: (context, snapshot) {

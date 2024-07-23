@@ -1,18 +1,22 @@
 import 'dart:io';
 
+import 'package:chatkid_mobile/models/file_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/target_store.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_assign_page.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/widgets/mission_create_item.dart';
+import 'package:chatkid_mobile/services/file_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
@@ -28,6 +32,7 @@ class TargetAddGiftPage extends StatefulWidget {
 
 class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
   final TargetFormStore targetFormStore = Get.find();
+  bool uploadingImage = false;
   String? giftImageErrorText;
 
   void uploadGiftImage() async {
@@ -45,18 +50,33 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
     }
   }
 
-  void onSubmit() {
+  void onSubmit() async {
     final form = targetFormStore.formKey.currentState;
 
     if (form?.saveAndValidate() ?? false) {
-      if (targetFormStore.giftImages.isEmpty) {
-        ShowToast.error(msg: "Vui lòng chọn hình ảnh minh họa");
-        return;
-      }
+      setState(() {
+        uploadingImage = true;
+      });
+      try {
+        if (targetFormStore.giftImages.isEmpty) {
+          ShowToast.error(msg: "Vui lòng chọn hình ảnh minh họa");
+          return;
+        }
+        File file = File(targetFormStore.giftImages[0]);
+        FileModel rewardImageUrl = await FileService().sendfile(file);
 
-      targetFormStore.increaseStep();
-      targetFormStore.updateProgress();
-      Navigator.of(context).push(createRoute(() => TargetAssignPage()));
+        form?.fields['rewardImageUrl']?.didChange(rewardImageUrl.url);
+
+        targetFormStore.increaseStep();
+        targetFormStore.updateProgress();
+        Navigator.of(context).push(createRoute(() => TargetAssignPage()));
+      } catch (e) {
+        ShowToast.error(msg: "Có lỗi xảy ra, vui lòng thử lại sau");
+      } finally {
+        setState(() {
+          uploadingImage = false;
+        });
+      }
     }
   }
 
@@ -82,8 +102,12 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                FormBuilderField(
+                  builder: (field) => Container(),
+                  name: 'rewardImageUrl',
+                ),
                 InputField(
-                  name: 'gift',
+                  name: 'reward',
                   label: "Tên quà",
                   hint: "Nhập tên quà",
                   validator: FormBuilderValidators.compose([
@@ -130,13 +154,21 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
           onPressed: () {
             onSubmit();
           },
-          child: Text(
-            "Tiếp theo",
-            style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+          isDisabled: uploadingImage,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (uploadingImage) CustomCircleProgressIndicator(),
+              SizedBox(width: uploadingImage ? 0 : 8),
+              Text(
+                "Tiếp theo",
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+              ),
+            ],
           ),
         ),
       ),
