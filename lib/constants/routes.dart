@@ -6,7 +6,6 @@ import 'package:chatkid_mobile/pages/home_page.dart';
 import 'package:chatkid_mobile/pages/init_page.dart';
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
-import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/pages/sign_up/sign_up_page.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +50,6 @@ final Map<String, Widget Function(BuildContext)> routes =
       const NotificationPage(),
   '/${AppRoutes.home}': (BuildContext context) => const HomePage(),
   '/${AppRoutes.profile}': (BuildContext context) => ProfilePage(),
-  // '/${AppRoutes.wallet}': (BuildContext context) => WalletPage(family: null,),
   '/${AppRoutes.voice}': (BuildContext context) => const HomePage(),
   '/${AppRoutes.initPage}': (BuildContext context) => const InitPage(),
   '/${AppRoutes.login}': (BuildContext context) => const LoginPage(),

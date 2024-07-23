@@ -1,18 +1,13 @@
 import 'dart:convert';
 
-import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
-import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/profile/information_detail.dart';
 import 'package:chatkid_mobile/pages/profile/subcription_page.dart';
 import 'package:chatkid_mobile/pages/profile/transfer_energy.dart';
-import 'package:chatkid_mobile/pages/profile/wallet_page.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
-import 'package:chatkid_mobile/pages/start_page/info_page.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
-import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
@@ -276,7 +271,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         return Container();
                       } else {
                         return Container(
-                          height: MediaQuery.of(context).size.height - 100,
+                          height: MediaQuery.of(context).size.height * 0.4,
                           child: const Center(
                             child: CircularProgressIndicator(),
                           ),

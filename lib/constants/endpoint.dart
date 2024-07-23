@@ -40,14 +40,11 @@ class Endpoint {
 
   //Subcription
   static const subcriptionEndPoint = "/api/packages";
+  static const createZaloPayOrderEndPoint = "/api/packages/{id}";
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";
   static const channelMessagesEndPoint = "/api/chat/channels";
-
-  // Paypal
-  static const paypalEndPoint = "/api/paypal/create-paypal-order";
-  static const capturePaypalEndPoint = "/api/paypal/capture";
 
   // Transaction 
   static const createTransactionEndPoint = "/api/payment-transaction";

@@ -19,7 +19,6 @@ import 'package:logger/logger.dart';
 import 'package:pinput/pinput.dart';
 
 class InformationUpdate extends ConsumerStatefulWidget {
-
   const InformationUpdate({super.key});
 
   @override
@@ -42,7 +41,8 @@ class _InformationUpdateState extends ConsumerState<InformationUpdate> {
     genderController.setText(currentUser.profile.value.gender ?? '');
     roleController.setText(currentUser.profile.value.role ?? '');
     avatarController.setText(currentUser.profile.value.avatarUrl ?? '');
-    yearBirthDayController.setText(currentUser.profile.value.yearOfBirth?.toString() ?? '2024');
+    yearBirthDayController
+        .setText(currentUser.profile.value.yearOfBirth?.toString() ?? '2024');
   }
 
   void handleUpdateProfile() {
@@ -67,88 +67,105 @@ class _InformationUpdateState extends ConsumerState<InformationUpdate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon:
-              const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.grey),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text("Thông tin tài khoản"),
-        titleTextStyle: const TextStyle(
-          color: Color(0xFF242837),
-          fontSize: 16,
-          fontFamily: 'Nunito',
-          fontWeight: FontWeight.w600,
-          height: 0,
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 500,
-                child: InfoPage(
-                  nameController: nameController,
-                  genderController: genderController,
-                  avatarController: avatarController,
-                  roleController: roleController,
-                  yearBirthDayController: yearBirthDayController,
-                  isParent: false,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 12,
-                  left: 8,
-                  right: 8,
-                ),
-                child: Row(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 22, right: 22, top: 10, bottom: 20),
+            child: Column(
+              children: [
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ButtonStyle(
-                          side: MaterialStatePropertyAll(
-                            BorderSide(width: 2, color: primary.shade500),
-                          ),
-                          fixedSize: MaterialStatePropertyAll(
-                            Size(
-                                MediaQuery.of(context).size.width / 2 - 40, 48),
-                          ),
-                        ),
-                        child: const Text(
-                          "Huỷ",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                    IconButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(primary.shade100),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
                       ),
+                      icon: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: primary.shade400,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                    FullWidthButton(
-                      onPressed: handleUpdateProfile,
-                      width: MediaQuery.of(context).size.width / 2 - 40,
-                      child: const Text(
-                        'Lưu thay đổi',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                        ),
+                    const Text(
+                      "Thay đổi thông tin",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'Nunito',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
                       ),
                     ),
+                    const SizedBox(width: 40),
                   ],
                 ),
-              )
-            ],
+                SizedBox(
+                  height: 500,
+                  child: InfoPage(
+                    nameController: nameController,
+                    genderController: genderController,
+                    avatarController: avatarController,
+                    roleController: roleController,
+                    yearBirthDayController: yearBirthDayController,
+                    isParent: false,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 12,
+                    left: 8,
+                    right: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ButtonStyle(
+                            side: MaterialStatePropertyAll(
+                              BorderSide(width: 2, color: primary.shade500),
+                            ),
+                            fixedSize: MaterialStatePropertyAll(
+                              Size(
+                                  MediaQuery.of(context).size.width / 2 - 40, 48),
+                            ),
+                          ),
+                          child: const Text(
+                            "Huỷ",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      FullWidthButton(
+                        onPressed: handleUpdateProfile,
+                        width: MediaQuery.of(context).size.width / 2 - 40,
+                        child: const Text(
+                          'Lưu thay đổi',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
