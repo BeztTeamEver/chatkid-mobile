@@ -85,6 +85,7 @@ dependencies:
     expandable_bottom_sheet: ^1.1.1+1
     rflutter_alert: ^2.0.7
     fluttertoast: ^8.2.6
+    flutter_zalopay_sdk: ^0.1.14
     equatable: ^2.0.5
 
 flutter_launcher_icons:
@@ -140,6 +141,7 @@ flutter:
         - assets/thumbnails/
         - assets/blog/
         - assets/blog/universe/
+        - assets/profile/
         - assets/todoPage/banner/
         - assets/todoPage/
         - assets/todoPage/todoItem/

@@ -29,4 +29,10 @@ class DateTimeUtils {
   static String toTwoDigit(int number) {
     return number < 10 ? "0$number" : "$number";
   }
+
+  static String getFormattedDateTime(String dateTime) {
+    String time = dateTime.substring(0, 16).split("T")[1];
+    String date = dateTime.substring(0, 10).split("-").reversed.join("/");
+    return "$time, $date";
+  }
 }

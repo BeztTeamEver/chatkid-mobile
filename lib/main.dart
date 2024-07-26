@@ -1,6 +1,4 @@
 import 'package:chatkid_mobile/constants/routes.dart';
-import 'package:chatkid_mobile/pages/bot/bot_asset.dart';
-import 'package:chatkid_mobile/pages/bot/bot_asset_store.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';

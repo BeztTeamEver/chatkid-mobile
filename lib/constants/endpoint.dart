@@ -19,7 +19,8 @@ class Endpoint {
   static const refreshTokenEndPoint = "/api/auth/refresh-token";
   // User
   static const userEndPoint = "/api/profiles";
-  static const profileUserEnpoint = "/api/member";
+  static const profileUserEndpoint = "/api/member";
+  static const transferDiamondEndpoint = "/api/wallet/transfer";
 
   // Bot
   static const botAssetEndPoint = "/api/assets";
@@ -38,18 +39,16 @@ class Endpoint {
   static const gptChatEndPoint = "/api/gpt/chat";
 
   //Subcription
-  static const subcriptionEndPoint = "/api/subscription";
+  static const packageEndPoint = "/api/packages";
+  static const createZaloPayOrderEndPoint = "/api/packages/{id}";
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";
   static const channelMessagesEndPoint = "/api/chat/channels";
 
-  // Paypal
-  static const paypalEndPoint = "/api/paypal/create-paypal-order";
-  static const capturePaypalEndPoint = "/api/paypal/capture";
-
-  // Transaction
+  // Transaction 
   static const createTransactionEndPoint = "/api/payment-transaction";
+  static const getPaymentTransactionEndPoint = "/api/payment-transaction";
 
   //Notification
   static const notificationEndPoint = "/api/history";

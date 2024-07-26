@@ -23,10 +23,10 @@ class AvatarPng extends StatelessWidget {
             width: 2,
           ),
           color: Colors.white,
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(100),
         ),
         child: ClipRRect(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(100),
             child: isUrl != null || isUrl == true
                 ? Image.network(
                     imageUrl!,

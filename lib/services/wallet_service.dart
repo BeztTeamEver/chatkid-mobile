@@ -1,8 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:chatkid_mobile/constants/endpoint.dart';
+import 'package:chatkid_mobile/models/wallet_model.dart';
+import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class WalletController extends GetxController {
   Rx<int> diamond = 0.obs;
@@ -21,5 +27,26 @@ class WalletController extends GetxController {
       diamond.value = value.diamond ?? 0;
       coin.value = value.coin ?? 0;
     });
+  }
+
+  transferDiamond(TransferDiamondPayloadModel data, Function() callback) async {
+    if (data.diamond <= 0) {
+      ShowToast.error(msg: "Số lượng kim cương phải lớn hơn 0!");
+      return;
+    }
+
+    final response = await BaseHttp.instance.patch(
+      endpoint: Endpoint.transferDiamondEndpoint,
+      body: data.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      refetchWallet();
+      ShowToast.success(msg: "Chuyển kim cương thành công 🎉");
+      callback();
+    } else {
+      refetchWallet();
+      ShowToast.error(msg: "Chuyển kim cương thất bại, vui lòng thử lại sau");
+    }
   }
 }
