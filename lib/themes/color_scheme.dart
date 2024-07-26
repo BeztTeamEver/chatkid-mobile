@@ -57,7 +57,7 @@ final MaterialColor red = MaterialColor(_redColorValue, <int, Color>{
   100: HexColor('FFDADA'),
   500: HexColor('F03C3C'),
   800: HexColor('B30000'),
-  900: HexColor('6A0101'),
+  900: HexColor('6B0014'),
 });
 
 final MaterialColor green = MaterialColor(_greenColorValue, <int, Color>{

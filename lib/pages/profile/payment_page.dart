@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:chatkid_mobile/models/subcription_model.dart';
+import 'package:chatkid_mobile/models/package_model.dart';
 import 'package:chatkid_mobile/models/transaction_model.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/profile/payment_success_page.dart';
@@ -19,8 +19,8 @@ import 'package:logger/logger.dart';
 import 'package:flutter_zalopay_sdk/flutter_zalopay_sdk.dart';
 
 class PaymentPage extends ConsumerStatefulWidget {
-  final SubcriptionModel subcription;
-  const PaymentPage({super.key, required this.subcription});
+  final PackageModel package;
+  const PaymentPage({super.key, required this.package});
 
   @override
   ConsumerState<PaymentPage> createState() => _PaymentPageState();
@@ -40,7 +40,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     try {
       DateTime now = DateTime.now();
       PaymentService()
-          .createZaloPayOrder(widget.subcription.id)
+          .createZaloPayOrder(widget.package.id)
           .then((value) => {
                 FlutterZaloPaySdk.payOrder(zpToken: value.zp_trans_token)
                     .then((event) {
@@ -164,7 +164,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            widget.subcription.diamond.toString(),
+                            widget.package.diamond.toString(),
                             style: TextStyle(
                               color: neutral.shade800,
                               fontWeight: FontWeight.w600,
@@ -174,7 +174,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                         ],
                       ),
                       Text(
-                        '${NumberFormat.formatAmount(widget.subcription.actualPrice.toString())} vnđ',
+                        '${NumberFormat.formatAmount(widget.package.actualPrice.toString())} vnđ',
                         style: TextStyle(
                           color: neutral.shade900,
                           fontSize: 18,
@@ -228,7 +228,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                               ),
                             ),
                             Text(
-                              '${NumberFormat.formatAmount(widget.subcription.actualPrice.toString())} vnđ',
+                              '${NumberFormat.formatAmount(widget.package.actualPrice.toString())} vnđ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -272,7 +272,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                               ),
                             ),
                             Text(
-                              '${NumberFormat.formatAmount(widget.subcription.actualPrice.toString())} vnđ',
+                              '${NumberFormat.formatAmount(widget.package.actualPrice.toString())} vnđ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/pages/profile/information_detail.dart';
-import 'package:chatkid_mobile/pages/profile/subcription_page.dart';
+import 'package:chatkid_mobile/pages/profile/package_page.dart';
 import 'package:chatkid_mobile/pages/profile/transfer_energy.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
@@ -150,7 +150,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     onTap: () => {
                                       Navigator.of(context).push(
                                         createRoute(
-                                          () => SubcriptionPage(),
+                                          () => PackagePage(),
                                         ),
                                       )
                                     },

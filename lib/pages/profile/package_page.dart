@@ -1,6 +1,7 @@
-import 'package:chatkid_mobile/models/subcription_model.dart';
+import 'package:chatkid_mobile/models/package_model.dart';
+import 'package:chatkid_mobile/pages/profile/payment_history_page.dart';
 import 'package:chatkid_mobile/pages/profile/payment_page.dart';
-import 'package:chatkid_mobile/services/subcription_service.dart';
+import 'package:chatkid_mobile/services/package_service.dart';
 import 'package:chatkid_mobile/services/wallet_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/number_format.dart';
@@ -10,21 +11,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
-class SubcriptionPage extends StatefulWidget {
-  const SubcriptionPage({super.key});
+class PackagePage extends StatefulWidget {
+  const PackagePage({super.key});
 
   @override
-  State<SubcriptionPage> createState() => _SubcriptionPageState();
+  State<PackagePage> createState() => _PackagePageState();
 }
 
-class _SubcriptionPageState extends State<SubcriptionPage> {
-  late final Future<List<SubcriptionModel>> subscriptions;
+class _PackagePageState extends State<PackagePage> {
+  late final Future<List<PackageModel>> packages;
   final WalletController wallet = Get.find();
 
   @override
   void initState() {
     super.initState();
-    subscriptions = SubcriptionService().getSubcriptions();
+    packages = PackageService().getPackages();
   }
 
   @override
@@ -96,7 +97,8 @@ class _SubcriptionPageState extends State<SubcriptionPage> {
                       color: primary.shade400,
                       size: 32,
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => Navigator.push(
+                        context, createRoute(() => const PaymentHistoryPage())),
                   ),
                 ],
               ),
@@ -143,10 +145,10 @@ class _SubcriptionPageState extends State<SubcriptionPage> {
                     ),
                     const SizedBox(height: 12),
                     FutureBuilder(
-                      future: subscriptions,
+                      future: packages,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          final data = snapshot.data as List<SubcriptionModel>;
+                          final data = snapshot.data as List<PackageModel>;
                           return ListView.separated(
                               itemBuilder: (context, index) {
                                 return GestureDetector(
@@ -155,7 +157,7 @@ class _SubcriptionPageState extends State<SubcriptionPage> {
                                       context,
                                       createRoute(
                                         () => PaymentPage(
-                                          subcription: data[index],
+                                          package: data[index],
                                         ),
                                       ),
                                     )
@@ -175,8 +177,8 @@ class _SubcriptionPageState extends State<SubcriptionPage> {
                                         ]),
                                     child: Row(
                                       children: [
-                                        Image.asset(
-                                          "assets/payment/thumbnail-$index.png",
+                                        Image.network(
+                                          data[index].thumbnailUrl,
                                           fit: BoxFit.cover,
                                           width: 120,
                                         ),

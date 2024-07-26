@@ -1,4 +1,4 @@
-import 'package:chatkid_mobile/models/subcription_model.dart';
+import 'package:chatkid_mobile/models/package_model.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
 import 'package:chatkid_mobile/services/wallet_service.dart';

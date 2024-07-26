@@ -71,8 +71,8 @@ class _AvatarChangeState extends State<AvatarChange> {
                     height: 20,
                   ),
                   SizedBox(
-                    width: 60,
-                    height: 60,
+                    width: 100,
+                    height: 100,
                     child: AvatarPng(imageUrl: _avatarUrl),
                   )
                 ],

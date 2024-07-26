@@ -1,0 +1,105 @@
+import 'dart:convert';
+
+import 'package:chatkid_mobile/models/transaction_model.dart';
+import 'package:chatkid_mobile/pages/profile/card-transaction.dart';
+import 'package:chatkid_mobile/services/transaction_service.dart';
+import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
+
+class PaymentHistoryPage extends ConsumerStatefulWidget {
+  const PaymentHistoryPage({super.key});
+
+  @override
+  ConsumerState<PaymentHistoryPage> createState() => _PaymentHistoryPageState();
+}
+
+class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
+  late Future<List<TransactionModel>> transactions;
+
+  @override
+  void initState() {
+    super.initState();
+
+    transactions = TransactionService().getTransaction().catchError((err) {
+      Logger().e(err);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(primary.shade100),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: primary.shade400,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const Text(
+                    "Lịch sử thanh toán",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontFamily: 'Nunito',
+                      fontWeight: FontWeight.w500,
+                      height: 0,
+                    ),
+                  ),
+                  const SizedBox(width: 40),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              height: MediaQuery.of(context).size.height - 240,
+              child: SingleChildScrollView(
+                child: FutureBuilder(
+                  future: transactions,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final data = snapshot.data as List<TransactionModel>;
+                      return Wrap(
+                        direction: Axis.vertical,
+                        spacing: 12,
+                        children: data
+                            .map((e) => CardTransaction(transaction: e))
+                            .toList(),
+                      );
+                    } else {
+                      return SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height - 240,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

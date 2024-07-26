@@ -39,7 +39,7 @@ class Endpoint {
   static const gptChatEndPoint = "/api/gpt/chat";
 
   //Subcription
-  static const subcriptionEndPoint = "/api/packages";
+  static const packageEndPoint = "/api/packages";
   static const createZaloPayOrderEndPoint = "/api/packages/{id}";
 
   // Message
@@ -48,6 +48,7 @@ class Endpoint {
 
   // Transaction 
   static const createTransactionEndPoint = "/api/payment-transaction";
+  static const getPaymentTransactionEndPoint = "/api/payment-transaction";
 
   //Notification
   static const notificationEndPoint = "/api/history";

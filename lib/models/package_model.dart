@@ -1,24 +1,27 @@
-class SubcriptionModel {
+class PackageModel {
   late String id;
   late String name;
   late int price;
   late int actualPrice;
   late int diamond;
+  late String thumbnailUrl;
 
-  SubcriptionModel({
+  PackageModel({
     required this.id,
     required this.name,
     required this.price,
     required this.actualPrice,
     required this.diamond,
+    required this.thumbnailUrl,
   });
 
-  SubcriptionModel.fromJson(Map<String, dynamic> json) {
+  PackageModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     price = json['price'];
     actualPrice = json['actualPrice'];
     diamond = json['diamond'];
+    thumbnailUrl = json['thumbnailUrl'];
   }
 
   Map<String, dynamic> toJson() {
@@ -28,6 +31,7 @@ class SubcriptionModel {
     data['price'] = price;
     data['actualPrice'] = actualPrice;
     data['diamond'] = diamond;
+    data['thumbnailUrl'] = thumbnailUrl;
     return data;
   }
 }
