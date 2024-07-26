@@ -161,6 +161,7 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
           onSubmit();
         },
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             isLoading
                 ? const CustomCircleProgressIndicator()
