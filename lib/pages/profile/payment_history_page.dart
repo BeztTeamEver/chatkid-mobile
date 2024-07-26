@@ -40,7 +40,8 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
                 children: [
                   IconButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(primary.shade100),
+                      backgroundColor:
+                          MaterialStatePropertyAll(primary.shade100),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -67,10 +68,9 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 22),
-              height: MediaQuery.of(context).size.height - 240,
+              height: MediaQuery.of(context).size.height - 110,
               child: SingleChildScrollView(
                 child: FutureBuilder(
                   future: transactions,
@@ -80,9 +80,11 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
                       return Wrap(
                         direction: Axis.vertical,
                         spacing: 12,
-                        children: data
-                            .map((e) => CardTransaction(transaction: e))
-                            .toList(),
+                        children: [
+                          const SizedBox(),
+                          ...data.map((e) => CardTransaction(transaction: e)),
+                          const SizedBox(height: 10),
+                        ],
                       );
                     } else {
                       return SizedBox(
