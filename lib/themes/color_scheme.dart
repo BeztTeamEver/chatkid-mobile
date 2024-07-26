@@ -120,7 +120,7 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontSize: 36,
       fontWeight: FontWeight.w800,
       color: textDefault,
-      height: 1.02,
+      height: 0.12,
     ),
     headlineMedium: TextStyle(
       fontSize: 28,
@@ -134,7 +134,7 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontWeight: FontWeight.w700,
       color: textDefault,
       height: 1,
-      letterSpacing: 1.1,
+      letterSpacing: 0.1,
     ),
     labelLarge: TextStyle(
       color: textDefault,

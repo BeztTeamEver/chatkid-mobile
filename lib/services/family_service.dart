@@ -14,7 +14,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 class FamilyService {
   LocalStorage _localStorage = LocalStorage.instance;
 
-  Future<ResponseModel<dynamic>> createFamily({required String name}) async {
+  Future<FamilyModel> createFamily({required String name}) async {
     final body = FamilyRequestModel(name: name);
     final response = await BaseHttp.instance.post(
       endpoint: Endpoint.familiesEndPoint,
@@ -22,7 +22,7 @@ class FamilyService {
     );
 
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      return ResponseModel.fromJson(jsonDecode(response.body));
+      return FamilyModel.fromJson(jsonDecode(response.body));
     }
     switch (response.statusCode) {
       case 401:
@@ -108,10 +108,10 @@ class FamilyService {
       isUseFamilyToken: true,
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      Logger().d(response.body);
+      // Logger().d(response.body);
       final data = jsonDecode(response.body);
 
-      Logger().i(response.body);
+      // Logger().i(response.body);
       final family = FamilyModel.fromJson(data);
 
       return family;
@@ -134,7 +134,6 @@ class FamilyService {
 
   Future<ChannelModel> getFamilyChannel() async {
     final familyId = _localStorage.getUser().familyId ?? '';
-    Logger().i(familyId);
     final response = await BaseHttp.instance.get(
       endpoint: Endpoint.familyChannelsEndPoint.replaceFirst('{id}', familyId),
     );

@@ -17,7 +17,7 @@ class ResponseModel<TData> {
   }
 }
 
-class PagingResponseModel<T extends IBaseModel> {
+class PagingResponseModel<T> {
   List<T> items;
   // int? limit;
   int totalItem;

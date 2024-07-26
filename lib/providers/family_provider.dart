@@ -1,16 +1,19 @@
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 final createFamilyProvider =
-    FutureProvider.family<ResponseModel<dynamic>, String>((ref, name) async {
+    FutureProvider.autoDispose.family<FamilyModel, String>((ref, name) async {
   try {
     final result =
         await ref.watch(familyServiceProvider).createFamily(name: name);
+    LocalStorage.instance.setString(LocalStorageKey.FAMILY_ID, result.familyId);
     return result;
   } catch (e, s) {
     Logger().e(e, stackTrace: s);
@@ -18,7 +21,7 @@ final createFamilyProvider =
   }
 });
 
-final getFamilyProvider = FutureProvider<FamilyModel>(
+final getFamilyProvider = FutureProvider.autoDispose<FamilyModel>(
   (ref) async {
     try {
       final result = await ref.watch(familyServiceProvider).getFamily();
@@ -29,10 +32,19 @@ final getFamilyProvider = FutureProvider<FamilyModel>(
   },
 );
 
-final getFamilyChannel = FutureProvider<ChannelModel>((ref) {
+final getFamilyChannel = FutureProvider.autoDispose<ChannelModel>((ref) {
   try {
     final result = ref.watch(familyServiceProvider).getFamilyChannel();
     Logger().d(result);
+    return result;
+  } catch (e) {
+    throw Exception(e);
+  }
+});
+
+final getOwnFamily = FutureProvider.autoDispose<FamilyModel>((ref) {
+  try {
+    final result = ref.watch(familyServiceProvider).getFamily();
     return result;
   } catch (e) {
     throw Exception(e);

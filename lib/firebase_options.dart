@@ -27,7 +27,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -62,7 +65,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyC4mS-ti-4R6QNV6XuJGqSgVYADmkRNTIQ',
-    appId: '1:343387729372:ios:d84f970375a352e8f6f319',
+    appId: '1:343387729372:ios:842cca52fb5178b9f6f319',
     messagingSenderId: '343387729372',
     projectId: 'kidtalkie-979b7',
     databaseURL: 'https://kidtalkie-979b7-default-rtdb.firebaseio.com',
@@ -76,7 +79,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyC4mS-ti-4R6QNV6XuJGqSgVYADmkRNTIQ',
-    appId: '1:343387729372:ios:d84f970375a352e8f6f319',
+    appId: '1:343387729372:ios:3825a9188ab41ce2f6f319',
     messagingSenderId: '343387729372',
     projectId: 'kidtalkie-979b7',
     databaseURL: 'https://kidtalkie-979b7-default-rtdb.firebaseio.com',

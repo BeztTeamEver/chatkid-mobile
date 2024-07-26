@@ -23,7 +23,7 @@ enum AppRoutes {
   login,
   wallet,
   blog,
-  chat
+  chat,
 }
 
 final Map<String, String> routesName = <String, String>{
