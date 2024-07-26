@@ -1,4 +1,4 @@
-import 'package:chatkid_mobile/models/paging_model.dart';
+import 'package:chatkid_mobile/models/emoji_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/services/todo_service.dart';
@@ -14,6 +14,18 @@ final getTaskByMember = FutureProvider.autoDispose
           .getMemberTasks(params.memberId, params.paging);
       return result;
     } catch (e, s) {
+      Logger().e(e);
+      throw Exception(e);
+    }
+  },
+);
+
+final getTaskEmoji = FutureProvider.autoDispose<List<EmojiModel>>(
+  (ref) async {
+    try {
+      final result = await ref.watch(todoServiceProvider).getTaskEmoji();
+      return result;
+    } catch (e) {
       Logger().e(e);
       throw Exception(e);
     }

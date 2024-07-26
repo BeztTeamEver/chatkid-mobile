@@ -13,9 +13,13 @@ class TaskModel implements IBaseModel {
   String taskTypeId;
   String memberId;
   DateTime startTime;
+  DateTime endTime;
+  String assigneerId;
   DateTime? finishTime;
+
   String? evidence;
   List<TodoFrequency>? frequency;
+  int? numberOfCoin;
   String note;
   String status;
   TaskTypeModel taskType;
@@ -26,6 +30,9 @@ class TaskModel implements IBaseModel {
     required this.memberId,
     required this.startTime,
     this.finishTime,
+    this.numberOfCoin,
+    required this.assigneerId,
+    required this.endTime,
     this.evidence,
     this.frequency,
     required this.note,
@@ -42,8 +49,11 @@ class TaskModel implements IBaseModel {
     return TaskModel(
       id: json['id'],
       taskTypeId: json['taskTypeId'],
+      assigneerId: json['assigneerId'],
+      endTime: DateTime.parse(json['endTime']),
       memberId: json['memberId'],
       startTime: DateTime.parse(json['startTime']),
+      numberOfCoin: json['numberOfCoin'],
       finishTime: json['finishTime'] != null
           ? DateTime.parse(json['finishTime'])
           : null,
@@ -69,7 +79,10 @@ class TaskModel implements IBaseModel {
       'startTime': startTime.toIso8601String(),
       'finishTime': finishTime?.toIso8601String(),
       'evidence': evidence,
+      'asssigneerId': assigneerId,
+      'endTime': endTime.toIso8601String(),
       'frequency': frequency,
+      'numberOfCoin': numberOfCoin,
       'note': note,
       'status': status,
       'taskType': taskType.toJson(),
@@ -169,44 +182,44 @@ class TodoRequestModel {
 }
 
 class TodoCreateModel {
-  String memberId;
+  List<String> memberIds;
   String taskTypeId;
   DateTime startTime;
   DateTime endTime;
-  int giftTicket;
+  int numberOfCoin;
   List<String>? frequency;
   String note;
 
   TodoCreateModel({
-    required this.memberId,
+    required this.memberIds,
     required this.taskTypeId,
     required this.startTime,
     required this.endTime,
     this.frequency,
-    required this.giftTicket,
+    required this.numberOfCoin,
     required this.note,
   });
 
   factory TodoCreateModel.fromJson(Map<String, dynamic> json) {
     return TodoCreateModel(
-      memberId: json['memberId'],
+      memberIds: json['memberIds'],
       taskTypeId: json['taskTypeId'],
       startTime: json['startTime'],
       endTime: json['endTime'],
       frequency: json['frequency'],
-      giftTicket: int.parse(json['giftTicket'] ?? "0"),
+      numberOfCoin: json['numberOfCoin'],
       note: json['note'],
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'memberId': memberId,
+      'memberIds': memberIds,
       'taskTypeId': taskTypeId,
       'startTime': "${startTime.toIso8601String()}Z",
       'endTime': "${endTime.toIso8601String()}Z",
       'frequency': frequency,
-      'giftTicket': giftTicket,
+      'numberOfCoin': numberOfCoin,
       'note': note,
     };
   }
@@ -215,15 +228,31 @@ class TodoCreateModel {
 }
 
 class TaskListModel {
+  RxList<TaskModel> availableTasks;
+  RxList<TaskModel> inprogressTasks;
   RxList<TaskModel> pendingTasks;
   RxList<TaskModel> completedTasks;
   RxList<TaskModel> expiredTasks;
   RxList<TaskModel> canceledTasks;
+  RxList<TaskModel> notCompletedTasks;
 
   TaskListModel({
+    required this.availableTasks,
+    required this.inprogressTasks,
     required this.pendingTasks,
     required this.completedTasks,
     required this.expiredTasks,
     required this.canceledTasks,
+    required this.notCompletedTasks,
   });
+
+  clear() {
+    availableTasks.clear();
+    inprogressTasks.clear();
+    pendingTasks.clear();
+    completedTasks.clear();
+    expiredTasks.clear();
+    canceledTasks.clear();
+    notCompletedTasks.clear();
+  }
 }

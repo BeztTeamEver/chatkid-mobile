@@ -147,7 +147,7 @@ class _CalendarState extends State<Calendar>
                     InfiniteListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       scrollDirection: Axis.horizontal,
-                      itemCount: DateTime.now().getDaysInYear,
+                      itemCount: DateTime.now().getDaysInMonth,
                       controller: _conroller,
                       itemBuilder: (context, index) {
                         final currentDate = DateTime.now()

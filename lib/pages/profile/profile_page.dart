@@ -87,7 +87,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     width: 80,
                                     height: 80,
                                     child: AvatarPng(
-                                      imageUrl: currentUser.profile.value.avatarUrl,
+                                      imageUrl:
+                                          currentUser.profile.value.avatarUrl,
                                     ),
                                   ),
                                   const SizedBox(

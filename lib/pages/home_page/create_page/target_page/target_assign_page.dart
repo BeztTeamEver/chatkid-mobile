@@ -1,52 +1,64 @@
 import 'package:chatkid_mobile/constants/account_list.dart';
-import 'package:chatkid_mobile/constants/routes.dart';
-import 'package:chatkid_mobile/models/todo_model.dart';
-import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
-import 'package:chatkid_mobile/pages/home_page/todo_home_page.dart';
+import 'package:chatkid_mobile/models/target_model.dart';
+import 'package:chatkid_mobile/pages/controller/todo_page/target_store.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
-import 'package:chatkid_mobile/pages/routes/todo_create_route.dart';
-import 'package:chatkid_mobile/pages/routes/todo_route.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
-import 'package:chatkid_mobile/services/todo_service.dart';
+import 'package:chatkid_mobile/services/target_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/route.dart';
-import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
-import 'package:chatkid_mobile/widgets/route.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
-class TodoAssignPage extends ConsumerStatefulWidget {
-  const TodoAssignPage({super.key});
+class TargetAssignPage extends ConsumerStatefulWidget {
+  const TargetAssignPage({super.key});
 
   @override
-  ConsumerState<TodoAssignPage> createState() => _TodoAssignPageState();
+  ConsumerState<TargetAssignPage> createState() => _TargetAssignPageState();
 }
 
-class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
-  TodoFormCreateController todoFormCreateController = Get.find();
-  List<int> _selectedIndex = [];
+class _TargetAssignPageState extends ConsumerState<TargetAssignPage> {
+  TargetFormStore targetFormStore = Get.find();
+  bool isSubmitting = false;
+  List<String> _selectedMember = [];
+
+  toggleSubmit(bool isSubmitting) {
+    setState(() {
+      this.isSubmitting = isSubmitting;
+    });
+  }
 
   onSubmit() async {
     try {
-      if (todoFormCreateController.formKey.currentState!.saveAndValidate()) {
-        final formState = todoFormCreateController.formKey.currentState!;
+      toggleSubmit(true);
+      if (targetFormStore.formKey.currentState!.saveAndValidate()) {
+        final formState = targetFormStore.formKey.currentState!;
         // Assign for a member
+        if (_selectedMember.isEmpty) {
+          ShowToast.error(msg: "Vui lòng chọn thành viên");
+        }
 
-        final value = TodoCreateModel.fromJson(formState.value);
-        Logger().i(value.toJson());
-        await TodoService().createTask(value);
-        Get.offAll(MainPage());
+        final value = formState.value;
+
+        await TargetService().createTarget(TargetRequestModal.fromJson({
+          ...value,
+          "memberIds": _selectedMember,
+        }));
+
+        Get.offAll(() => const MainPage());
         return;
       }
     } catch (e) {
       Logger().e(e);
+      final errorMessage =
+          e.toString().split(":")[e.toString().split(":").length - 1].trim();
+      ShowToast.error(msg: errorMessage);
+    } finally {
+      toggleSubmit(false);
     }
   }
 
@@ -58,7 +70,7 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
 
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.all(14),
+        padding: const EdgeInsets.all(14),
         child: FormBuilderField(
             name: "memberId",
             builder: (field) {
@@ -71,19 +83,19 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Expanded(
                     child: FutureBuilder(
                       future: familyUsers,
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
-                          return Center(
+                          return const Center(
                             child: Text('Error'),
                           );
                         }
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Center(
+                          return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
@@ -95,15 +107,15 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
                         });
 
                         if (data == null) {
-                          return Center(
+                          return const Center(
                             child: Text('Không có dữ liệu'),
                           );
                         }
                         return ListView.separated(
-                          padding: EdgeInsets.only(bottom: 64),
+                          padding: const EdgeInsets.only(bottom: 64),
                           itemCount: data.length,
                           separatorBuilder: (context, index) =>
-                              SizedBox(height: 10),
+                              const SizedBox(height: 10),
                           itemBuilder: (context, index) {
                             final icon = data[index].avatarUrl != null &&
                                     data[index].avatarUrl != ""
@@ -112,22 +124,24 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
                             return SizedBox(
                               width: double.infinity,
                               child: SelectButton(
-                                isSelected: _selectedIndex.contains(index),
+                                isSelected:
+                                    _selectedMember.contains(data[index].id),
                                 borderColor: primary.shade100,
                                 hasBackground: true,
                                 icon: icon,
                                 label: data[index].name ?? "No name",
                                 onPressed: () {
                                   // Multiple select
-                                  // setState(() {
-                                  //   if (_selectedIndex.contains(index)) {
-                                  //     _selectedIndex.remove(index);
-                                  //   } else {
-                                  //     _selectedIndex.add(index);
-                                  //   }
-                                  // });
-                                  _selectedIndex = [index];
-                                  field.didChange(data[index].id);
+                                  setState(() {
+                                    if (_selectedMember
+                                        .contains(data[index].id)) {
+                                      _selectedMember.remove(data[index].id);
+                                    } else {
+                                      _selectedMember.add(data[index].id);
+                                    }
+                                  });
+                                  // _selectedIndex = [index];
+                                  // field.didChange(data[index].id);
                                 },
                               ),
                             );
@@ -145,12 +159,28 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
         onPressed: () {
           onSubmit();
         },
-        child: Text(
-          "Xác nhận",
-          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                color: Colors.white,
-                fontSize: 18,
+        isDisabled: isSubmitting,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isSubmitting)
+              const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
               ),
+            const SizedBox(width: 8),
+            Text(
+              "Xác nhận",
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+            ),
+          ],
         ),
       ),
     );

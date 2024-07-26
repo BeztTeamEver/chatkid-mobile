@@ -1,4 +1,3 @@
-import 'package:chatkid_mobile/pages/activation_page.dart';
 import 'package:chatkid_mobile/pages/explore/blogs/blog_page.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';

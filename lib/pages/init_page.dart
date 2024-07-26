@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:chatkid_mobile/constants/init_item.dart';
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/pages/sign_up/sign_up_page.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/indicator.dart';
@@ -132,6 +134,8 @@ class _InitPageState extends State<InitPage> {
                 FullWidthButton(
                   onPressed: () {
                     _timer?.cancel();
+                    LocalStorage.instance.preferences
+                        .setBool(LocalStorageKey.IS_FIRST_SCREEN, false);
                     Navigator.pushReplacement(
                         context, createRoute(() => const SignUpPage()));
                   },

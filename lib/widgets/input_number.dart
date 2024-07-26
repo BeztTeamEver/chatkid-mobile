@@ -17,6 +17,7 @@ class InputNumber extends StatefulWidget {
   final String? label;
   final String? rightLableIcon;
   final int? initValue;
+  final Color? backgroundColor;
   final GlobalKey<FormBuilderState> formKey;
   const InputNumber({
     super.key,
@@ -28,6 +29,7 @@ class InputNumber extends StatefulWidget {
     this.errorText,
     this.buttonWidth = 34,
     this.label,
+    this.backgroundColor,
     this.rightLableIcon,
   });
 
@@ -39,7 +41,6 @@ class _InputNumberState extends State<InputNumber> {
   increase() {
     final form = widget.formKey.currentState as FormBuilderState;
     final field = form.fields[widget.name];
-    Logger().i(field?.value);
     field!.didChange(
       (int.parse(field.value ?? "0") + 1).toString(),
     );
@@ -107,7 +108,7 @@ class _InputNumberState extends State<InputNumber> {
               Container(
                 width: 64,
                 height: widget.height,
-                color: Colors.transparent,
+                color: widget.backgroundColor ?? Colors.transparent,
                 child: TextAreaInput(
                   name: widget.name,
                   textAlign: TextAlign.center,

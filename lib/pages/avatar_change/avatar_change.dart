@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/widgets/avatar.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:file_picker/file_picker.dart';
@@ -20,7 +21,8 @@ class AvatarChange extends StatefulWidget {
 }
 
 class _AvatarChangeState extends State<AvatarChange> {
-  String _avatarUrl = "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
+  String _avatarUrl =
+      "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
 
   @override
   void initState() {
@@ -87,15 +89,15 @@ class _AvatarChangeState extends State<AvatarChange> {
                     runSpacing: 2,
                     spacing: 2,
                     children: [
-                      // GestureDetector(
-                      //   onTap: () async {
-                      //     _onFileUpload();
-                      //   },
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(8.0),
-                      //     child: Avatar(icon: "upload"),
-                      //   ),
-                      // ),
+                      GestureDetector(
+                        onTap: () async {
+                          _onFileUpload();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Avatar(icon: "upload"),
+                        ),
+                      ),
                       ...widget.options.map(
                         (e) => GestureDetector(
                           onTap: () {

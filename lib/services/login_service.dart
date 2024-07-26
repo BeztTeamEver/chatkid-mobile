@@ -25,6 +25,8 @@ class AuthService {
       final authTokens = AuthModel.fromJson(body);
       final family = FamilyModel.fromJson(body['family']);
       Logger().d(family.familyId);
+      _localStorage.preferences
+          .setString(LocalStorageKey.MEMBERS, jsonEncode(family.members));
       _localStorage.setString(LocalStorageKey.FAMILY_ID, family.familyId);
       _saveToken(authTokens);
       return authTokens;

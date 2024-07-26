@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/info_form.dart';
@@ -8,6 +9,7 @@ import 'package:chatkid_mobile/providers/file_provider.dart';
 import 'package:chatkid_mobile/services/file_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:chatkid_mobile/widgets/wheel_input.dart';
@@ -42,14 +44,16 @@ class InfoPage extends ConsumerStatefulWidget {
 }
 
 class _InfoPageState extends ConsumerState<InfoPage> {
-  String newAvatar = '';
+  String _avatarUrl = "animal/bear";
+  bool isLoadingAvatar = false;
+  List<String> _avatarList = [];
 
   @override
   void initState() {
     super.initState();
 
     setState(() {
-      newAvatar = widget.avatarController.text;
+      _avatarUrl = widget.avatarController.text;
     });
   }
 
@@ -61,6 +65,19 @@ class _InfoPageState extends ConsumerState<InfoPage> {
     widget.yearBirthDayController.dispose();
     widget.avatarController.dispose();
     super.dispose();
+  }
+
+  onUploadAvatar(avatarUrl) async {
+    setState(() {
+      isLoadingAvatar = true;
+    });
+    File avatarFile = File(avatarUrl);
+    final uploadedFile = await FileService().sendfile(avatarFile);
+    setState(() {
+      _avatarUrl = uploadedFile.url;
+      isLoadingAvatar = false;
+    });
+    widget.avatarController.setText(uploadedFile.url);
   }
 
   @override
@@ -105,11 +122,12 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                     child: SizedBox(
                       width: 60,
                       height: 60,
-                      child: Image.network(
-                        newAvatar,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                      child: isLoadingAvatar
+                          ? const CircularProgressIndicator()
+                          : AvatarPng(
+                              imageUrl: _avatarUrl,
+                            ),
+                    ), //TODO: change icon
                   ),
                   const SizedBox(
                     height: 10,
@@ -123,18 +141,11 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              createRoute(
-                                () => AvatarChange(
-                                  options: data,
-                                  value: widget.avatarController.text,
-                                  onAccept: (avatarUrl) {
-                                    widget.avatarController.setText(avatarUrl);
-                                    setState(() {
-                                      newAvatar = avatarUrl;
-                                    });
-                                  },
-                                ),
-                              ),
+                              createRoute(() => AvatarChange(
+                                    options: data,
+                                    value: _avatarUrl,
+                                    onAccept: onUploadAvatar,
+                                  )),
                             );
                           },
                           style: ButtonStyle(

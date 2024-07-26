@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/date.dart';
 import 'package:chatkid_mobile/constants/endpoint.dart';
+import 'package:chatkid_mobile/models/emoji_model.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
@@ -36,6 +37,26 @@ class TodoService {
         pageSize: data["pageSize"],
         pageNumber: data["pageNumber"],
       );
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
+
+  Future<TaskModel> getTaskDetail(String id) async {
+    final response =
+        await httpService.get(endpoint: Endpoint.taskEndPoint + "/$id");
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return TaskModel.fromJson(data);
     }
     switch (response.statusCode) {
       case 401:
@@ -101,6 +122,53 @@ class TodoService {
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return true;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
+
+  Future<bool> deleteTask(String id) async {
+    final response = await httpService.delete(
+      endpoint: Endpoint.taskEndPoint + "/$id",
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return true;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
+
+  Future<List<EmojiModel>> getTaskEmoji() async {
+    final response =
+        await httpService.get(endpoint: Endpoint.taskEmojiEndpoint);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      try {
+        final List<dynamic> data = jsonDecode(response.body);
+        final result =
+            data.map<EmojiModel>((e) => EmojiModel.fromJson(e)).toList();
+        return result;
+      } catch (e) {
+        Logger().e(e);
+        throw Exception('Không thể lấy thông tin emoji, vui lòng thử lại!');
+      }
     }
     switch (response.statusCode) {
       case 401:

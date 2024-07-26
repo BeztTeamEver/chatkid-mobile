@@ -94,6 +94,7 @@ class _GoogleButtonState extends State<GoogleButton> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FullWidthButton(
+            isDisabled: _isLoading,
             onPressed: () async {
               await _signInWithGoogle(
                 () => Navigator.pushReplacement(

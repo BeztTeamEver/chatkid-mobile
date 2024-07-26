@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
+import 'package:chatkid_mobile/widgets/camera_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,15 +15,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   // load env file
   await dotenv.load(fileName: ".env");
 
   //Firesbase setup
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -30,6 +32,7 @@ void main() async {
   final ttsService = TtsService().instance;
   await firebaseService.init();
   await firebaseService.getFCMToken();
+  await CameraService().init();
 
   // tts service setup
   await TtsService().initState();

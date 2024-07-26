@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/enum/todo.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
+import 'package:chatkid_mobile/models/response_model.dart';
+import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/services/target_service.dart';
 import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -20,6 +26,7 @@ class TodoHomeStore extends GetxController {
   RxList<UserModel> members = <UserModel>[].obs;
   Rx<int> currentUserIndex = 0.obs;
   Rx<bool> isTaskLoading = false.obs;
+  Rx<bool> isTargetLoading = false.obs;
 
   Rx<DateTime> selectedDate = DateTime.now().obs;
 
@@ -33,11 +40,15 @@ class TodoHomeStore extends GetxController {
   ).obs;
 
   Rx<TaskListModel> tasks = TaskListModel(
-          pendingTasks: <TaskModel>[].obs,
-          completedTasks: <TaskModel>[].obs,
-          canceledTasks: <TaskModel>[].obs,
-          expiredTasks: <TaskModel>[].obs)
-      .obs;
+    availableTasks: <TaskModel>[].obs,
+    inprogressTasks: <TaskModel>[].obs,
+    pendingTasks: <TaskModel>[].obs,
+    completedTasks: <TaskModel>[].obs,
+    canceledTasks: <TaskModel>[].obs,
+    expiredTasks: <TaskModel>[].obs,
+    notCompletedTasks: <TaskModel>[].obs,
+  ).obs;
+  RxList<TargetModel> targets = <TargetModel>[].obs;
 
   RxList<String> favoritedTaskTypes = <String>[].obs;
   Rx<UserModel> get currentUser => members[currentUserIndex.value].obs;
@@ -49,24 +60,45 @@ class TodoHomeStore extends GetxController {
 
   fetchData() async {
     isTaskLoading.value = true;
+    isTargetLoading.value = true;
     try {
-      tasks.value.pendingTasks.clear();
-      tasks.value.completedTasks.clear();
+      tasks.value.clear();
+
+      targets.clear();
       pagingRequest.value.pageNumber = 0;
       pagingRequest.value.pageSize = 100;
       if (members.isEmpty) {
         return;
       }
-      final data = await TodoService().getMemberTasks(
+      final tasksData = TodoService().getMemberTasks(
           members[currentUserIndex.value].id!, pagingRequest.value);
+      final targetsData = TargetService().getTargetByMember(
+        TargetListRequestModel(
+          memberId: members[currentUserIndex.value].id!,
+          date: selectedDate.value,
+        ),
+      );
 
-      if (data.items.isNotEmpty) {
-        setTasks(data.items);
+      final [
+        taskList as PagingResponseModel<TaskModel>,
+        targetList as List<TargetModel>
+      ] = await Future.wait([tasksData, targetsData]).catchError((e) {
+        throw e;
+      });
+
+      if (targetList.isNotEmpty) {
+        setTargets(targetList);
       }
-    } catch (e) {
+
+      if (taskList.items.isNotEmpty) {
+        setTasks(taskList.items);
+      }
+    } catch (e, stack) {
       Logger().e(e);
+      Logger().e(stack);
     } finally {
       isTaskLoading.value = false;
+      isTargetLoading.value = false;
     }
   }
 
@@ -108,11 +140,21 @@ class TodoHomeStore extends GetxController {
   setTasks(List<TaskModel> tasks) {
     tasks.forEach((element) {
       switch (element.status) {
+        case TodoStatus.inprogress:
+          this.tasks.value.inprogressTasks.add(element);
+          break;
+        case TodoStatus.available:
+          this.tasks.value.availableTasks.add(element);
+          break;
         case TodoStatus.pending:
           this.tasks.value.pendingTasks.add(element);
           break;
         case TodoStatus.completed:
           this.tasks.value.completedTasks.add(element);
+          break;
+        case TodoStatus.notCompleted:
+          this.tasks.value.notCompletedTasks.add(element);
+          break;
         case TodoStatus.expired:
           this.tasks.value.expiredTasks.add(element);
           break;
@@ -125,13 +167,22 @@ class TodoHomeStore extends GetxController {
 
   deleteTask(String id) async {
     try {
+      await TodoService().deleteTask(id);
+      tasks.value.availableTasks.removeWhere((element) => element.id == id);
+      tasks.value.inprogressTasks.removeWhere((element) => element.id == id);
       tasks.value.pendingTasks.removeWhere((element) => element.id == id);
       tasks.value.completedTasks.removeWhere((element) => element.id == id);
       tasks.value.expiredTasks.removeWhere((element) => element.id == id);
       tasks.value.canceledTasks.removeWhere((element) => element.id == id);
+      tasks.value.notCompletedTasks.removeWhere((element) => element.id == id);
     } catch (e) {
       Logger().e(e);
+      ShowToast.error(msg: e.toString());
     }
+  }
+
+  setTargets(List<TargetModel> targets) {
+    this.targets.assignAll(targets);
   }
 }
 

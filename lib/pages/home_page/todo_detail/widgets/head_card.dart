@@ -1,16 +1,24 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/constants/date.dart';
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/constants/task_status.dart';
+import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class HeadCard extends StatefulWidget {
   final String id;
@@ -29,11 +37,31 @@ class _HeadCardState extends State<HeadCard> {
     await _ttsService.speak(message);
   }
 
+  UserModel createdBy = UserModel();
   @override
   void dispose() {
     // TODO: implement dispose
     _ttsService.stop();
     super.dispose();
+  }
+
+  void getAssigner() {
+    final members =
+        (jsonDecode(LocalStorage.instance.getString(LocalStorageKey.MEMBERS))
+                as List<dynamic>)
+            .map((e) => UserModel.fromJson(jsonDecode(e)));
+
+    final assigner =
+        members.firstWhere((element) => element.id == widget.task.assigneerId);
+    setState(() {
+      createdBy = assigner;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAssigner();
   }
 
   @override
@@ -62,7 +90,7 @@ class _HeadCardState extends State<HeadCard> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               child: Row(
@@ -89,13 +117,12 @@ class _HeadCardState extends State<HeadCard> {
               height: 42,
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
                     // TODO: use task time
-                    "${widget.task.startTime.format(DateConstants.timeFormatWithoutSecond)} ${widget.task.finishTime != null ? widget.task.finishTime!.format(DateConstants.timeFormatWithoutSecond) : ""}, ${widget.task.startTime.format(DateConstants.dateSlashFormat)}",
+                    "${widget.task.startTime.format(DateConstants.timeFormatWithoutSecond)} - ${widget.task.endTime.format(DateConstants.timeFormatWithoutSecond)} ${widget.task.finishTime != null ? widget.task.finishTime!.format(DateConstants.timeFormatWithoutSecond) : ""}, ${widget.task.startTime.format(DateConstants.dateSlashFormat)}",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                   ),
@@ -109,13 +136,16 @@ class _HeadCardState extends State<HeadCard> {
                   Text(
                     StatusTextMap[widget.task.status] ?? "",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: StatusColorMap[widget.task.status],
                         ),
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: 8,
             ),
             widget.task.finishTime != null
                 ? Container(
@@ -131,12 +161,48 @@ class _HeadCardState extends State<HeadCard> {
                   )
                 : Container(),
             Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Text(
+                    "Người giao việc:",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Container(
+                    width: 28,
+                    height: 28,
+                    child: AvatarPng(
+                      imageUrl: createdBy.avatarUrl,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "${createdBy.name}",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: neutral.shade500,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Container(
               height: 42,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   Text(
-                    "Thưởng 1000",
+                    "Thưởng ${widget.task.numberOfCoin}",
                     style: TextStyle(
                       fontSize: 14,
                       color: neutral.shade500,

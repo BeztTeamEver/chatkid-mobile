@@ -18,8 +18,9 @@ class _TodoCreateFormWrapperState extends State<TodoCreateFormWrapper> {
     "startTime": DateTime.now(),
     "endTime": DateTime.now(),
     "frequency": <String>[],
-    "giftTicket": "1",
-    "memberId": "",
+    "numberOfCoin": '0',
+    "memberIds": [],
+    "duration": DateTime.now(),
     "note": "",
     "assignees": <String>[],
   };

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,10 +11,13 @@ class CustomCard extends StatefulWidget {
   final GestureTapCallback? onTap;
   final Color? onTapColor;
   final double? height;
+  final double? width;
   final EdgeInsets? padding;
   final String? backgroundImage;
   final Function? onLongPressed;
   final String? heroTag;
+  final BoxConstraints? constraints;
+
   const CustomCard({
     super.key,
     this.onTap,
@@ -21,8 +26,10 @@ class CustomCard extends StatefulWidget {
     this.crossAxisAlignment = CrossAxisAlignment.center,
     this.backgroundImage,
     required this.children,
+    this.width,
     this.padding,
     this.height,
+    this.constraints,
     this.onLongPressed,
     this.heroTag,
   });
@@ -34,6 +41,8 @@ class CustomCard extends StatefulWidget {
 class _CustomCardState extends State<CustomCard> {
   @override
   Widget build(BuildContext context) {
+    final isFile = File(widget.backgroundImage ?? "").existsSync();
+
     return Card(
       child: InkWell(
         onLongPress: widget.onLongPressed as void Function()?,
@@ -46,20 +55,32 @@ class _CustomCardState extends State<CustomCard> {
           children: [
             Positioned(
               right: 0,
-              width: 200,
+              width: 140,
               child: widget.backgroundImage != null
                   ? Hero(
                       tag: widget.heroTag ?? "",
-                      child: Image.network(
-                        widget.backgroundImage!,
-                        fit: BoxFit.contain,
-                      ),
+                      child: widget.backgroundImage!.contains("http")
+                          ? Image.network(
+                              widget.backgroundImage!,
+                              fit: BoxFit.fill,
+                            )
+                          : isFile
+                              ? Image.file(
+                                  File(widget.backgroundImage!),
+                                  fit: BoxFit.fill,
+                                )
+                              : Image.asset(
+                                  widget.backgroundImage!,
+                                  fit: BoxFit.fill,
+                                ),
                     )
                   : Container(),
             ),
             Container(
               padding: widget.padding ?? const EdgeInsets.all(10),
               height: widget.height,
+              width: widget.width,
+              constraints: widget.constraints,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: widget.mainAxisAlignment,

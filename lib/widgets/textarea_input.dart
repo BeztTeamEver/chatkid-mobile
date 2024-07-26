@@ -80,22 +80,18 @@ class _TextAreaInputState extends State<TextAreaInput> {
                 widget.label!,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: neutral.shade800,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
               )
             : Container(),
         widget.label != null ? const SizedBox(height: 8) : Container(),
         Container(
           height: widget.height,
-          color: widget.backgroundColor ?? Colors.transparent,
+          decoration: BoxDecoration(
+            color: widget.backgroundColor ?? Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: FormBuilderTextField(
-            // validator: widget.validation,
-            // name: widget.name,
-            // initialValue: widget.defaultValue,
-            // autovalidateMode: AutovalidateMode.onUserInteraction,
-            // onChanged: (value) {
-            //   controller.text = value.toString();
-            // },
             validator: widget.validation,
             name: widget.name,
             focusNode: widget.focusNode,
@@ -104,6 +100,9 @@ class _TextAreaInputState extends State<TextAreaInput> {
             maxLength: widget.maxLength,
             textInputAction: widget.textInputAction,
             keyboardType: widget.type,
+            valueTransformer: (value) => widget.type == TextInputType.number
+                ? int.tryParse(value ?? "") ?? 0
+                : value,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             onTapOutside: (e) {
               FocusScope.of(context).unfocus();
@@ -113,7 +112,7 @@ class _TextAreaInputState extends State<TextAreaInput> {
             },
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: neutral.shade800,
-                  fontWeight: widget.fontWeight ?? FontWeight.w500,
+                  fontWeight: widget.fontWeight ?? FontWeight.w600,
                   fontSize: widget.fontSize!.toDouble(),
                 ),
             // onEditingComplete: () {
@@ -180,109 +179,12 @@ class _TextAreaInputState extends State<TextAreaInput> {
               counterText: "",
               // errorText: widget.disableErrorText == true ? "" : null,
               errorStyle: widget.disableErrorText == true
-                  ? TextStyle(height: 0, fontSize: 0)
+                  ? TextStyle(height: 0, fontSize: 0, color: Colors.transparent)
                   : TextStyle(
-                      fontSize: 12,
-                      color: red.shade100,
+                      fontSize: 14,
+                      color: red.shade500,
                     ),
             ),
-
-            // builder: (field) {
-            //   return TextFormField(
-            //     focusNode: widget.focusNode,
-            //     maxLines: widget.maxLines,
-            //     minLines: widget.minLines,
-            //     maxLength: widget.maxLength,
-            //     controller: controller,
-            //     textInputAction: widget.textInputAction,
-            //     keyboardType: widget.type,
-            //     autovalidateMode: AutovalidateMode.onUserInteraction,
-            //     onTapOutside: (e) {
-            //       FocusScope.of(context).unfocus();
-            //     },
-            //     onTap: () {
-            //       FocusScope.of(context).requestFocus();
-            //     },
-            //     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            //           color: neutral.shade800,
-            //           fontWeight: widget.fontWeight ?? FontWeight.w500,
-            //           fontSize: widget.fontSize!.toDouble(),
-            //         ),
-            //     // onEditingComplete: () {
-            //     //   if (widget.isNextWhenComplete == true) {
-            //     //     FocusScope.of(context).nextFocus();
-            //     //   }
-            //     // },
-            //     onSaved: (newValue) {
-            //       field.didChange(newValue);
-            //     },
-            //     onChanged: (value) {
-            //       field.didChange(value);
-            //       widget.onChanged?.call(widget.name, value);
-
-            //       //TODO: fix the focus
-            //       if (widget.isNextWhenComplete == true) {
-            //         if (value.length == widget.maxLength) {
-            //           FocusScope.of(context).nextFocus();
-            //         }
-            //         if (value.isEmpty == true) {
-            //           FocusScope.of(context).previousFocus();
-            //         }
-            //       }
-            //     },
-            //     textAlign: widget.textAlign ?? TextAlign.start,
-            //     decoration: InputDecoration(
-            //       contentPadding: widget.contentPadding,
-            //       border: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(8),
-            //         borderSide: BorderSide(
-            //           color: widget.borderColor ?? neutral.shade400,
-            //         ),
-            //       ),
-            //       enabledBorder: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(8),
-            //         borderSide: BorderSide(
-            //           color: widget.borderColor ?? neutral.shade400,
-            //         ),
-            //       ),
-            //       focusedBorder: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(8),
-            //         borderSide: BorderSide(
-            //           color: widget.focusBorderColor ?? primary.shade400,
-            //         ),
-            //       ),
-            //       focusedErrorBorder: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(8),
-            //         borderSide: BorderSide(
-            //           color: red.shade500,
-            //         ),
-            //       ),
-            //       errorBorder: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(8),
-            //         borderSide: BorderSide(
-            //           color: red.shade500,
-            //         ),
-            //       ),
-            //       hintStyle: TextStyle(
-            //         fontSize: widget.fontSize!.toDouble(),
-            //         color: Colors.grey,
-            //       ),
-            //       fillColor: widget.backgroundColor ?? Colors.white,
-            //       hintText: widget.hint,
-            //       counterText: "",
-            //       errorText: widget.disableErrorText == true &&
-            //               field.hasError == true
-            //           ? ""
-            //           : null,
-            //       errorStyle: widget.disableErrorText == true
-            //           ? TextStyle(height: 0)
-            //           : TextStyle(
-            //               fontSize: 12,
-            //               color: red.shade100,
-            //             ),
-            //     ),
-            //   );
-            // },
           ),
         ),
       ],

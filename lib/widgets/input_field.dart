@@ -16,8 +16,10 @@ class InputField extends StatefulWidget {
   final bool autoFocus;
   final bool? isObscure;
   final double? height;
+  final GlobalKey<FormBuilderState>? formKey;
   final double? fontSize;
   final EdgeInsetsGeometry? contentPadding;
+  final Function()? onChanged;
   final Function()? onTap;
   final Function(String?)? onChange;
   final Function(String?)? onSubmit;
@@ -28,7 +30,9 @@ class InputField extends StatefulWidget {
     this.label = "",
     this.autoFocus = false,
     this.type = TextInputType.text,
+    this.onChanged,
     this.hint = "",
+    this.formKey,
     required this.name,
     this.validator,
     this.errorText,
@@ -49,6 +53,13 @@ class InputField extends StatefulWidget {
 }
 
 class _InputFieldState extends State<InputField> {
+  _resetValidate() {
+    if (widget.formKey != null &&
+        widget.formKey!.currentState?.fields[widget.name] != null) {
+      widget.formKey!.currentState!.validate();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -72,10 +83,15 @@ class _InputFieldState extends State<InputField> {
             keyboardType: widget.type,
             key: widget.key,
             autofocus: widget.autoFocus,
+            onChanged: (value) {
+              if (widget.formKey != null) {
+                _resetValidate();
+              }
+              widget.onChange?.call(value);
+            },
             validator: widget.validator,
             inputFormatters: widget.inputFormatters,
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            onChanged: widget.onChange,
             obscureText: widget.type == TextInputType.visiblePassword &&
                     widget.isObscure!
                 ? true
