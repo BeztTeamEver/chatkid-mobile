@@ -79,7 +79,7 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
                         child: SecondaryButton(
                           child: SvgIcon(
                             icon: 'chevron-left',
-                            color: primary.shade500,
+                            color: primary.shade400,
                           ),
                           onTap: () {
                             if (targetFormStore.step.value == 0) {

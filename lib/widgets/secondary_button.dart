@@ -24,7 +24,7 @@ class _SecondaryButtonState extends State<SecondaryButton> {
         ),
         padding: MaterialStateProperty.all(const EdgeInsets.all(2)),
         backgroundColor: MaterialStateProperty.all(
-          primary.shade200,
+          primary.shade100,
         ),
       ),
       child: widget.child,

@@ -6,7 +6,7 @@ class TtsService {
 
   factory TtsService() => _instance;
 
-  get instance => _instance;
+  TtsService get instance => _instance;
 
   TtsService._internal();
 
@@ -14,7 +14,7 @@ class TtsService {
     // TODO: get language device and check if language is supported
     await _instance.setLanguage("vi-VN");
     await _instance.setVolume(1.0);
-    await _instance.setPitch(1.2);
+    await _instance.setPitch(1.4);
     await _instance.setSpeechRate(0.6);
   }
 

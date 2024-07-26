@@ -366,10 +366,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.info_outline_rounded), onPressed: () {})
-        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () {

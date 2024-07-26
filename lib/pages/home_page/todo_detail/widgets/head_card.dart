@@ -90,7 +90,7 @@ class _HeadCardState extends State<HeadCard> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               child: Row(
@@ -117,13 +117,12 @@ class _HeadCardState extends State<HeadCard> {
               height: 42,
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
                     // TODO: use task time
                     "${widget.task.startTime.format(DateConstants.timeFormatWithoutSecond)} - ${widget.task.endTime.format(DateConstants.timeFormatWithoutSecond)} ${widget.task.finishTime != null ? widget.task.finishTime!.format(DateConstants.timeFormatWithoutSecond) : ""}, ${widget.task.startTime.format(DateConstants.dateSlashFormat)}",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                   ),
@@ -137,13 +136,16 @@ class _HeadCardState extends State<HeadCard> {
                   Text(
                     StatusTextMap[widget.task.status] ?? "",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: StatusColorMap[widget.task.status],
                         ),
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: 8,
             ),
             widget.task.finishTime != null
                 ? Container(

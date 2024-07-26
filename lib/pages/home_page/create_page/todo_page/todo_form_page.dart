@@ -55,10 +55,10 @@ class _TodoFormPageState extends State<TodoFormPage> {
   }
 
   void onSubmit() {
-    if (todoFormCreateController.formKey.currentState!.saveAndValidate()) {
-      final formState = todoFormCreateController.formKey.currentState!;
-      final formValue = formState.value;
+    final formState = todoFormCreateController.formKey.currentState!;
+    final formValue = formState.value;
 
+    if (formState.saveAndValidate()) {
       // final startHour =
       //     formValue['startTime.hour1']! * 10 + formValue['startTime.hour2']!;
       // final startMinute = formValue['startTime.minute1']! * 10 +
@@ -117,7 +117,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
       // formState.fields['endTime']?.didChange(endTime);
 
       if (formValue['frequency'].isEmpty) {
-        formState.fields['frequency']?.didChange(['']);
+        formState.fields['frequency']?.didChange(<String>[]);
       }
 
       todoFormCreateController.increaseStep();
@@ -203,10 +203,10 @@ class _TodoFormPageState extends State<TodoFormPage> {
               ),
               const SizedBox(height: 14),
               Text(
-                'Thời gian bắt đầu',
+                'Bắt đầu lúc',
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                 textAlign: TextAlign.left,
               ),
@@ -248,7 +248,11 @@ class _TodoFormPageState extends State<TodoFormPage> {
                 label: "Lặp lại trong tuần",
                 isMultiple: true,
                 options: TodoCreateFormOptions.daysOfWeekOption,
-                onSelected: (value) {},
+                onSelected: (value) {
+                  todoFormCreateController
+                      .formKey.currentState!.fields['frequency']!
+                      .didChange(value);
+                },
               ),
               SizedBox(height: 14),
               InputNumber(
@@ -324,7 +328,7 @@ class _ClockInputState extends State<ClockInput> {
                   widget.label!,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: neutral.shade800,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                 )
               : Container(),

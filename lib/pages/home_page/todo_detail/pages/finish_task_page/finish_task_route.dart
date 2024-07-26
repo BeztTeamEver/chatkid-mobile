@@ -25,7 +25,7 @@ class _FinishTaskRouteState extends State<FinishTaskRoute>
     todoFeedbackStore.stepController.value = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
-      value: 0.25,
+      value: 0.1,
     )..addListener(() {
         setState(() {});
       });
@@ -38,7 +38,7 @@ class _FinishTaskRouteState extends State<FinishTaskRoute>
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: todoFeedbackStore.step.value == 1,
+      canPop: todoFeedbackStore.step.value == 0,
       onPopInvoked: (didPop) {
         if (didPop) {
           todoFeedbackStore.stepController.value!.dispose();

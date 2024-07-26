@@ -35,35 +35,40 @@ class _FinishTaskPageState extends State<FinishTaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      extendBody: false,
-      body: FormBuilder(
-        initialValue: initData,
-        child: Column(
-          children: [
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 24),
-                child: BotMessage()),
-            Expanded(
-              child: PageView(
-                physics: NeverScrollableScrollPhysics(),
-                controller: todoFeedbackStore.pageController,
-                children: [
-                  FeedbackDifficult(),
-                  FeedBackEmotion(),
-                  CaptureEvidence(),
-                  FeedbackVoice(),
-                  FinishStep(),
-                ],
+        resizeToAvoidBottomInset: false,
+        extendBody: false,
+        body: FormBuilder(
+          initialValue: initData,
+          child: Column(
+            children: [
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 24),
+                  child: BotMessage()),
+              Expanded(
+                child: PageView(
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: todoFeedbackStore.pageController,
+                  children: [
+                    FeedbackDifficult(),
+                    FeedBackEmotion(),
+                    CaptureEvidence(),
+                    FeedbackVoice(),
+                    FinishStep(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      bottomSheet: todoFeedbackStore.step.value != 3
-          ? BottomAction(todoFeedbackStore: todoFeedbackStore)
-          : null,
-    );
+        bottomSheet: Obx(() {
+          return todoFeedbackStore.step.value != 2 ||
+                  todoFeedbackStore.isCaptured
+              ? BottomAction(todoFeedbackStore: todoFeedbackStore)
+              : const SizedBox(
+                  width: 0,
+                  height: 0,
+                );
+        }));
   }
 }
 
@@ -75,99 +80,93 @@ class BottomAction extends StatelessWidget {
 
   final TodoFeedbackStore todoFeedbackStore;
 
+  void _handleBack() {
+    if (todoFeedbackStore.step.value == 0) {
+      Get.back();
+    } else {
+      todoFeedbackStore.decreaseStep();
+      todoFeedbackStore.updateProgress();
+      todoFeedbackStore.previousPage();
+      // Navigator.pop(context);
+    }
+  }
+
+  void _handleSecondaryButton() {
+    if (todoFeedbackStore.isCaptured && todoFeedbackStore.step.value == 2) {
+      todoFeedbackStore.setIsCaptured(false);
+    } else {
+      _handleBack();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 100,
       color: Theme.of(context).colorScheme.background,
       padding: const EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              child: Text(
-                'Quay lại',
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: primary.shade500,
-                      fontSize: 16,
-                    ),
-              ),
-              onPressed: () {
-                if (todoFeedbackStore.step.value == 1) {
-                  Get.back();
-                } else {
-                  todoFeedbackStore.decreaseStep();
-                  todoFeedbackStore.updateProgress();
-                  todoFeedbackStore.previousPage();
-                  // Navigator.pop(context);
-                }
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  Colors.transparent,
+      child: Obx(
+        () => Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FormBuilderField(builder: (field) => Container(), name: "evidence"),
+            Expanded(
+              child: ElevatedButton(
+                child: Text(
+                  todoFeedbackStore.isCaptured ? 'Chụp lại' : 'Quay lại',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: primary.shade500,
+                        fontSize: 16,
+                      ),
                 ),
-                surfaceTintColor: MaterialStateColor.resolveWith(
-                  (states) => Colors.transparent,
-                ),
-                shadowColor: MaterialStateColor.resolveWith(
-                  (states) => Colors.transparent,
-                ),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
-                    side: BorderSide(
-                      color: primary.shade500,
+                onPressed: () {
+                  _handleSecondaryButton();
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Colors.transparent,
+                  ),
+                  surfaceTintColor: MaterialStateColor.resolveWith(
+                    (states) => Colors.transparent,
+                  ),
+                  shadowColor: MaterialStateColor.resolveWith(
+                    (states) => Colors.transparent,
+                  ),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(40),
+                      side: BorderSide(
+                        color: primary.shade500,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: FullWidthButton(
-              width: 200,
-              child: Text(
-                'Tiếp theo',
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
+            SizedBox(width: 16),
+            Expanded(
+              child: FullWidthButton(
+                width: 200,
+                child: Text(
+                  'Tiếp theo',
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                ),
+                onPressed: () {
+                  if (todoFeedbackStore.step.value == 4) {
+                  } else {
+                    todoFeedbackStore.increaseStep();
+                    todoFeedbackStore.updateProgress();
+                    todoFeedbackStore.nextPage();
+                  }
+                },
               ),
-              onPressed: () {
-                if (todoFeedbackStore.step.value == 5) {
-                } else {
-                  todoFeedbackStore.increaseStep();
-                  todoFeedbackStore.updateProgress();
-                  todoFeedbackStore.nextPage();
-                }
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
-  }
-}
-
-class Step1 extends StatelessWidget {
-  const Step1({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text('Step 1'),
-      ),
-    );
-  }
-}
-
-class Step2 extends StatelessWidget {
-  const Step2({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }

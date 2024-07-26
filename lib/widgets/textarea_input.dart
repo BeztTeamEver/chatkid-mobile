@@ -80,7 +80,7 @@ class _TextAreaInputState extends State<TextAreaInput> {
                 widget.label!,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: neutral.shade800,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
               )
             : Container(),

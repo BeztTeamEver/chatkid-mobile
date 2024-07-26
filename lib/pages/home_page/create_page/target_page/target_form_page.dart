@@ -108,7 +108,7 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
                       errorText: "Không nhập quá 100 ký tự"),
                 ]),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               Text(
                 'Thời gian bắt đầu',
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(

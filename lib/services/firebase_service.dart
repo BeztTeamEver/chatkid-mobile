@@ -37,7 +37,15 @@ class FirebaseService {
   Future<void> init() async {
     // await _firebaseAuth.useAuthEmulator('localhost', 9099);
 
-    await _firebaseMessaging.requestPermission(provisional: true);
+    await _firebaseMessaging.requestPermission(
+      provisional: true,
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      sound: true,
+    );
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       _firebaseMessaging.setForegroundNotificationPresentationOptions(
         alert: true,
@@ -52,8 +60,8 @@ class FirebaseService {
       fcmToken = await _firebaseMessaging.getToken();
 
       appId = fcmToken?.split(':').first ?? "";
-      FirebaseMessaging.onBackgroundMessage(
-          (message) => _firebaseMessagingBackgroundHandler(message));
+      // FirebaseMessaging.onBackgroundMessage(
+      //     (message) => _firebaseMessagingBackgroundHandler(message));
       return fcmToken ?? '';
     } catch (e) {
       print(e);

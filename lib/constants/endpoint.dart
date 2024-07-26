@@ -78,6 +78,7 @@ class Endpoint {
   static const taskCategoryEndPoint = "/api/task-categories";
   static const taskMemberEndpoint = "/api/tasks/member";
   static const favoriteTaskTypeEndPoint = "/api/favorite-task-type";
+  static const taskEmojiEndpoint = "/api/tasks/emoji";
 
   // Tasks
   static const taskEndPoint = "/api/tasks";

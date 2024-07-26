@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/constants/feedback_page.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_detail_store.dart';
+import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
@@ -15,6 +16,11 @@ class BotMessage extends StatefulWidget {
 
 class _BotMessageState extends State<BotMessage> {
   TodoFeedbackStore todoFeedbackStore = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

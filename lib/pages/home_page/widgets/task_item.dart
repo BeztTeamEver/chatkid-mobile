@@ -72,7 +72,7 @@ class _TaskItemState extends State<TaskItem> {
         heroTag: widget.task.id,
         backgroundImage: widget.task.taskType.imageHomeUrl ??
             "https://picsum.photos/200/200",
-        padding: const EdgeInsets.only(left: 12, top: 6, bottom: 10),
+        padding: const EdgeInsets.all(14),
         children: [
           Container(
             height: 24,

@@ -55,23 +55,23 @@ class _CustomCardState extends State<CustomCard> {
           children: [
             Positioned(
               right: 0,
-              width: 200,
+              width: 140,
               child: widget.backgroundImage != null
                   ? Hero(
                       tag: widget.heroTag ?? "",
                       child: widget.backgroundImage!.contains("http")
                           ? Image.network(
                               widget.backgroundImage!,
-                              fit: BoxFit.contain,
+                              fit: BoxFit.fill,
                             )
                           : isFile
                               ? Image.file(
                                   File(widget.backgroundImage!),
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit.fill,
                                 )
                               : Image.asset(
                                   widget.backgroundImage!,
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit.fill,
                                 ),
                     )
                   : Container(),

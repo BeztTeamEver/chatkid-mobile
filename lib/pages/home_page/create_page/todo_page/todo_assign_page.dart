@@ -1,19 +1,14 @@
 import 'package:chatkid_mobile/constants/account_list.dart';
-import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
-import 'package:chatkid_mobile/pages/home_page/todo_home_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
-import 'package:chatkid_mobile/pages/routes/todo_create_route.dart';
-import 'package:chatkid_mobile/pages/routes/todo_route.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/route.dart';
-import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
+import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
-import 'package:chatkid_mobile/widgets/route.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -33,8 +28,17 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
   TodoFormCreateController todoFormCreateController = Get.find();
   List<String> _selectedIndex = [];
 
+  bool isLoading = false;
+
   onSubmit() async {
     try {
+      if (_selectedIndex.isEmpty) {
+        ShowToast.error(msg: "Vui lòng chọn thành viên");
+        return;
+      }
+      setState(() {
+        isLoading = true;
+      });
       if (todoFormCreateController.formKey.currentState!.saveAndValidate()) {
         final formState = todoFormCreateController.formKey.currentState!;
 
@@ -50,6 +54,11 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
       }
     } catch (e) {
       Logger().e(e);
+      ShowToast.error(msg: "Có lỗi xảy ra");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -147,15 +156,24 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FullWidthButton(
+        isLoading: isLoading,
         onPressed: () {
           onSubmit();
         },
-        child: Text(
-          "Xác nhận",
-          style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                color: Colors.white,
-                fontSize: 18,
-              ),
+        child: Row(
+          children: [
+            isLoading
+                ? const CustomCircleProgressIndicator()
+                : const SizedBox(),
+            isLoading ? const SizedBox(width: 10) : const SizedBox(),
+            Text(
+              "Xác nhận",
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+            ),
+          ],
         ),
       ),
     );

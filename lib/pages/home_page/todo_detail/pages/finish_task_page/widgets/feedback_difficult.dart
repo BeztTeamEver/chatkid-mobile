@@ -74,7 +74,7 @@ class _MainCardState extends State<MainCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: FeedbackEmojiList.map(
-                              (e) => EmojiLabel(emoji: e.emoji, label: e.label))
+                              (e) => EmojiLabel(emoji: e.url, label: e.name))
                           .toList(),
                     ),
                   ),

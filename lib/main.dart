@@ -22,11 +22,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Permission.notification.isDenied.then((value) {
-    if (value) {
-      Permission.notification.request();
-    }
-  });
+
   // load env file
   await dotenv.load(fileName: ".env");
 
@@ -39,6 +35,7 @@ void main() async {
   await firebaseService.init();
   await firebaseService.getFCMToken();
   await CameraService().init();
+
   // tts service setup
   await TtsService().initState();
   // share preferrence setup for one time page

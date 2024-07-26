@@ -1,18 +1,12 @@
 import 'package:chatkid_mobile/enum/role.dart';
-
-class EmojiModel {
-  final String emoji;
-  final String label;
-
-  EmojiModel({required this.emoji, required this.label});
-}
+import 'package:chatkid_mobile/models/emoji_model.dart';
 
 final FeedbackEmojiList = [
-  EmojiModel(emoji: 'emoji/hard', label: "Rất khó"),
-  EmojiModel(emoji: 'emoji/semi_hard', label: "Khó"),
-  EmojiModel(emoji: 'emoji/normal', label: "Bình thường"),
-  EmojiModel(emoji: 'emoji/semi_easy', label: "Dễ"),
-  EmojiModel(emoji: 'emoji/easy', label: "Rất dễ"),
+  EmojiModel(url: 'emoji/hard', name: "Rất khó"),
+  EmojiModel(url: 'emoji/semi_hard', name: "Khó"),
+  EmojiModel(url: 'emoji/normal', name: "Bình thường"),
+  EmojiModel(url: 'emoji/semi_easy', name: "Dễ"),
+  EmojiModel(url: 'emoji/easy', name: "Rất dễ"),
 ];
 
 final BotFeedBackMessage = [

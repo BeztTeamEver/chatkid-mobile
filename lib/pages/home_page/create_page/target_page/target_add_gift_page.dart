@@ -132,6 +132,9 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
                         fontWeight: FontWeight.w600,
                       ),
                 ),
+                const SizedBox(
+                  height: 12,
+                ),
                 if (gifts.isNotEmpty) gifts[0],
                 const SizedBox(
                   height: 12,
