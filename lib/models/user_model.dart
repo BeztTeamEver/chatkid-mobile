@@ -1,9 +1,6 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/models/kid_service_model.dart';
-import 'package:chatkid_mobile/models/wallet_model.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logger/logger.dart';
 
 class UserModel {
   String? id;
@@ -21,6 +18,7 @@ class UserModel {
   String? refreshToken;
   String? notSeenActivities;
   String? doing;
+  int? yearOfBirth;
   List<KidServiceModel>? kidServices;
 
   UserModel({
@@ -40,6 +38,7 @@ class UserModel {
     this.refreshToken,
     this.doing,
     this.notSeenActivities,
+    this.yearOfBirth,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -59,6 +58,7 @@ class UserModel {
       deviceToken: json['deviceToken'],
       notSeenActivities: json['notSeenActivities'],
       doing: json['doing'],
+      yearOfBirth: json['yearOfBirth'],
       kidServices: json['kidServices'] != null
           ? (json['kidServices'] as List)
               .map((e) => KidServiceModel.fromJson(e))
@@ -115,6 +115,9 @@ class UserModel {
     }
     if (refreshToken != null) {
       data['refreshToken'] = refreshToken;
+    }
+    if (yearOfBirth != null) {
+      data['yearOfBirth'] = yearOfBirth;
     }
     // if (wallets != null) {
     //   data['wallets'] = wallets!.map((v) => v.toMap()).toList();

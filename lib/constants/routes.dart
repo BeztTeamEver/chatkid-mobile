@@ -49,7 +49,6 @@ final Map<String, Widget Function(BuildContext)> routes =
       const NotificationPage(),
   '/${AppRoutes.home}': (BuildContext context) => const HomePage(),
   '/${AppRoutes.profile}': (BuildContext context) => ProfilePage(),
-  // '/${AppRoutes.wallet}': (BuildContext context) => WalletPage(family: null,),
   '/${AppRoutes.voice}': (BuildContext context) => const HomePage(),
   '/${AppRoutes.initPage}': (BuildContext context) => const InitPage(),
   '/${AppRoutes.login}': (BuildContext context) => const LoginPage(),

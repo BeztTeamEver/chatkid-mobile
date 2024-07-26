@@ -15,4 +15,8 @@ class NumberFormat {
     }
     return priceInText.trim();
   }
+
+  static String formatSale(int price, int sale) {
+    return "${((1 - sale / price) * 100).ceil()}%";
+  }
 }

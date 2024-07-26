@@ -3,6 +3,7 @@ import 'package:chatkid_mobile/models/blog_type_model.dart';
 import 'package:chatkid_mobile/pages/explore/blogs/blog_detail_page.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/services/blog_service.dart';
+import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:flutter/material.dart';
@@ -29,93 +30,115 @@ class _BlogPageState extends ConsumerState<BlogPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon:
-              const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.grey),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(widget.type?.name ?? "Kiến thức"),
-        titleTextStyle: const TextStyle(
-          color: Color(0xFF242837),
-          fontSize: 16,
-          fontFamily: 'Nunito',
-          fontWeight: FontWeight.w600,
-          height: 0,
-        ),
-        centerTitle: true,
-      ),
-      body: FutureBuilder(
-        future: blogs,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final data = snapshot.data as List<BlogModel>;
-            return Stack(
-              children: [
-                GridView.builder(
-                    padding: const EdgeInsets.only(top: 10),
-                    itemCount: data.length,
-                    shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: 2.9,
-                      crossAxisCount: 1,
-                    ),
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () => {
-                          Navigator.push(
-                            context,
-                            createRoute(
-                              () => BlogDetailPage(
-                                type: widget.type,
-                                blog: data[index],
-                              ),
-                            ),
-                          )
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0x144E2813),
-                                blurRadius: 20,
-                                offset: Offset(0, -4),
-                                spreadRadius: 0,
-                              ),
-                            ],
-                          ),
-                          child: data[index].imageUrl == null
-                              ? Image.asset(
-                                  'assets/blog/the_gioi_dong_vat.png',
-                                  width: MediaQuery.of(context).size.width,
-                                )
-                              : Image.network(
-                                  data[index].imageUrl ?? '',
-                                  width: MediaQuery.of(context).size.width,
-                                ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStatePropertyAll(primary.shade100),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                      );
-                    }),
-              ],
-            );
-          }
-          if (snapshot.hasError) {
-            Logger().e(snapshot.error);
-            return Container();
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-      bottomNavigationBar: BottomMenu(
-        currentIndex: 0,
-        onTap: (index) {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => MainPage(index: index)));
-        },
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: primary.shade400,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  Text(
+                    widget.type?.name ?? "Kiến thức",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontFamily: 'Nunito',
+                      fontWeight: FontWeight.w500,
+                      height: 0,
+                    ),
+                  ),
+                  const SizedBox(width: 40),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height - 110,
+              child: FutureBuilder(
+                future: blogs,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final data = snapshot.data as List<BlogModel>;
+                    return Stack(
+                      children: [
+                        GridView.builder(
+                            padding: const EdgeInsets.only(top: 10),
+                            itemCount: data.length,
+                            shrinkWrap: true,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              childAspectRatio: 2.9,
+                              crossAxisCount: 1,
+                            ),
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () => {
+                                  Navigator.push(
+                                    context,
+                                    createRoute(
+                                      () => BlogDetailPage(
+                                        type: widget.type,
+                                        blog: data[index],
+                                      ),
+                                    ),
+                                  )
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Color(0x144E2813),
+                                        blurRadius: 20,
+                                        offset: Offset(0, -4),
+                                        spreadRadius: 0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: data[index].imageUrl == null
+                                      ? Image.asset(
+                                          'assets/blog/the_gioi_dong_vat.png',
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                        )
+                                      : Image.network(
+                                          data[index].imageUrl ?? '',
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                        ),
+                                ),
+                              );
+                            }),
+                      ],
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    Logger().e(snapshot.error);
+                    return Container();
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

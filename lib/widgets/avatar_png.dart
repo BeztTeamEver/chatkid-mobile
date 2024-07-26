@@ -27,8 +27,9 @@ class AvatarPng extends StatelessWidget {
             width: 2,
           ),
           color: Colors.white,
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(100),
         ),
+        padding: !isFile ? EdgeInsets.zero : const EdgeInsets.all(2),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(40),
           child: isUrl == true
@@ -37,7 +38,10 @@ class AvatarPng extends StatelessWidget {
                   fit: BoxFit.cover,
                 )
               : isFile
-                  ? Image.file(File(imageUrl!))
+                  ? Image.file(
+                      File(imageUrl!),
+                      fit: BoxFit.cover,
+                    )
                   : Image.asset(
                       imageUrl!,
                       fit: BoxFit.cover,

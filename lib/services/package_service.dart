@@ -1,22 +1,21 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
-import 'package:chatkid_mobile/models/pagination_response_model.dart';
-import 'package:chatkid_mobile/models/subcription_model.dart';
+import 'package:chatkid_mobile/models/package_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:logger/logger.dart';
 
-class SubcriptionService {
-  Future<List<SubcriptionModel>> getSubcriptions() async {
+class PackageService {
+  Future<List<PackageModel>> getPackages() async {
     final response = await BaseHttp.instance.get(
-      endpoint: Endpoint.subcriptionEndPoint,
+      endpoint: Endpoint.packageEndPoint,
     );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       List data = jsonDecode(response.body);
       Logger().i(data);
-      final result = data.map((res) => SubcriptionModel.fromJson(res)).toList();
-      result.sort((a, b) => a.energy - b.energy);
+      final result = data.map((res) => PackageModel.fromJson(res)).toList();
+      result.sort((a, b) => a.diamond - b.diamond);
       Logger().i(result);
       return result;
     }
