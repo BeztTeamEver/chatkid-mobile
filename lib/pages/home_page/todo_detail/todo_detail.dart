@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class TodoDetail extends StatefulWidget {
   final String id;
@@ -41,6 +42,7 @@ class _TodoDetailState extends State<TodoDetail> {
           ? FeedBackCard()
           : Container(),
     ];
+    Logger().i(widget.task.toJson());
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

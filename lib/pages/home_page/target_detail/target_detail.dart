@@ -27,7 +27,7 @@ class _TargetDetailState extends State<TargetDetail> {
                 Stack(
                   children: [
                     Container(
-                      height: MediaQuery.of(context).size.height / 5 + 20,
+                      height: MediaQuery.of(context).size.height / 4 + 40,
                       width: MediaQuery.of(context).size.width,
                       child: SvgPicture.asset(
                         "assets/todoPage/shining_background.svg",
@@ -37,7 +37,7 @@ class _TargetDetailState extends State<TargetDetail> {
                     Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      height: 200,
+                      height: 260,
                       child: HeadCard(
                         target: widget.target,
                       ),

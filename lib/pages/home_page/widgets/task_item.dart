@@ -6,16 +6,19 @@ import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/todo_detail.dart';
+import 'package:chatkid_mobile/pages/routes/todo_create_route.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
+import 'package:chatkid_mobile/widgets/confirmation/confirm_modal.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class TaskItem extends StatefulWidget {
   final TaskModel task;
@@ -53,6 +56,7 @@ class _TaskItemState extends State<TaskItem> {
             builder: (context) {
               return TaskActions(
                 id: widget.task.id,
+                task: widget.task,
               );
             },
           );
@@ -134,7 +138,8 @@ class _TaskItemState extends State<TaskItem> {
 
 class TaskActions extends StatefulWidget {
   final String id;
-  const TaskActions({super.key, required this.id});
+  final TaskModel task;
+  const TaskActions({super.key, required this.id, required this.task});
 
   @override
   State<TaskActions> createState() => TaskActionsState();
@@ -168,20 +173,60 @@ class TaskActionsState extends State<TaskActions>
       child: Column(
         children: [
           ListTile(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(color: neutral.shade400, width: 1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              onTap: () {
-                todoHomeStore.deleteTask(widget.id);
-                Navigator.of(context).pop();
-              },
-              title: const Text("Xóa công việc"),
-              leading: SvgIcon(
-                icon: 'trash',
-                size: 24,
-              )),
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: neutral.shade400, width: 1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+            onTap: () {
+              todoHomeStore.setTask(widget.id);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return TodoCreateRoute(id: widget.id);
+                  },
+                ),
+              );
+            },
+            title: const Text("Chỉnh sửa công việc"),
+            leading: SvgIcon(
+              icon: 'edit',
+              size: 24,
+              color: primary.shade500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ListTile(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: neutral.shade400, width: 1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => ConfirmModal(
+                  content: "Công việc sau khi xóa sẽ không thể hoàn tác lại ",
+                  title:
+                      "Bạn xác nhận xóa công việc \n ${widget.task.taskType.name} từ ${widget.task.startTime.format(DateConstants.timeFormatWithoutSecond)} đến ${widget.task.endTime.format(DateConstants.timeFormatWithoutSecond)} không?",
+                  imageUrl: widget.task.taskType.imageHomeUrl,
+                  onConfirm: () async {
+                    await todoHomeStore.deleteTask(widget.id);
+                  },
+                ),
+              ).then((value) {
+                if (value) {
+                  Navigator.of(context).pop();
+                }
+              });
+              // Navigator.of(context).pop();
+            },
+            title: const Text("Xóa công việc"),
+            leading: SvgIcon(
+              icon: 'trash',
+              size: 24,
+            ),
+          ),
         ],
       ),
     );

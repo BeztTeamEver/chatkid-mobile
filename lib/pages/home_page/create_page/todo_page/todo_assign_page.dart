@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
@@ -47,9 +48,13 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
           ...formState.value,
           "memberIds": _selectedIndex,
         });
-
+        Logger().i(value);
         await TodoService().createTask(value);
-        Get.offAll(MainPage());
+        Get.delete<TodoFormCreateController>();
+
+        Get.offAll(() => MainPage());
+
+        // todoFormCreateController.navigatorKey.currentState!.pop();
         return;
       }
     } catch (e) {
@@ -60,6 +65,11 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
         isLoading = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

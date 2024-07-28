@@ -57,18 +57,33 @@ class _HeadCardState extends State<HeadCard> {
                                   widget.target.totalProgress,
                             ),
                           ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Image.network(
-                            widget.target.rewardImageUrl ??
-                                "https://via.placeholder.com/150",
-                            width: 80,
-                            height: 62,
-                          ),
                         ],
                       ),
                     ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Row(
+                      children: [
+                        Image.network(
+                          widget.target.rewardImageUrl ??
+                              "https://via.placeholder.com/150",
+                          width: 120,
+                          height: 82,
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          "${widget.target.reward}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: neutral.shade600,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

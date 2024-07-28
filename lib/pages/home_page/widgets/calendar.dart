@@ -2,18 +2,15 @@ import 'dart:ui';
 
 import 'package:chatkid_mobile/constants/calendar.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
-import 'package:chatkid_mobile/providers/todo_provider.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:infinite_listview/infinite_listview.dart';
 import 'package:logger/logger.dart';
-import 'package:material_color_utilities/material_color_utilities.dart';
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
@@ -27,26 +24,23 @@ class _CalendarState extends State<Calendar>
   final _listContainerKey = GlobalKey();
   final _conroller =
       InfiniteScrollController(keepScrollOffset: true, initialScrollOffset: 48);
+  late final TabController _tabController;
   final todoHomeController = Get.find<TodoHomeStore>();
   // DateTime _selectedDate = DateTime.now();
   double _itemWidth = 0;
   double _listContainerWidth = 0;
+  DateTime _baseDate = DateTime.now().startOfWeek.add(Duration(days: 1));
 
   nextPage(
     context, {
-    int days = 1,
+    int days = 7,
     double itemWidth = 0,
   }) async {
-    if (_conroller.position.isScrollingNotifier.value) {
-      return;
-    }
-
-    await _conroller.animateTo(
-      _conroller.offset + itemWidth * days,
-      duration: Duration(milliseconds: 200),
-      curve: Curves.easeIn,
-    );
-    await todoHomeController.nextDate(days: days);
+    setState(() {
+      _baseDate = _baseDate.add(Duration(days: days));
+    });
+    _tabController.animateTo(_baseDate.weekday - 1);
+    todoHomeController.setDate(_baseDate);
   }
 
 //TODO jump to a day
@@ -54,24 +48,18 @@ class _CalendarState extends State<Calendar>
   prevPage(
     context, {
     double itemWidth = 0,
-    int days = 1,
-  }) async {
-    if (_conroller.position.isScrollingNotifier.value) {
-      return;
-    }
-
-    await _conroller.animateTo(
-      _conroller.offset - itemWidth * days,
-      duration: Duration(milliseconds: 200),
-      curve: Curves.easeIn,
-    );
-    await todoHomeController.prevDate(days: days);
+    int days = 7,
+  }) {
+    setState(() {
+      _baseDate = _baseDate.subtract(Duration(days: days));
+    });
+    _tabController.animateTo(_baseDate.weekday - 1);
+    todoHomeController.setDate(_baseDate);
   }
 
   @override
   void dispose() {
     _conroller.dispose();
-
     super.dispose();
   }
 
@@ -80,6 +68,10 @@ class _CalendarState extends State<Calendar>
     // TODO: implement initState
     super.initState();
 
+    _tabController = TabController(
+        length: 7,
+        vsync: this,
+        initialIndex: todoHomeController.selectedDate.value.weekday - 1);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (_listContainerKey.currentContext != null) {
         setState(
@@ -99,8 +91,30 @@ class _CalendarState extends State<Calendar>
     });
   }
 
+  initBaseDate() {
+    if (7 == todoHomeController.selectedDate.value.weekday) {
+      _baseDate = todoHomeController.selectedDate.value.startOfWeek
+          .subDays(7)
+          .add(Duration(days: 1));
+    }
+    Logger().i("base date ${_baseDate} ");
+  }
+
+  Widget TabItem(DateTime currentDate, double itemWidth) {
+    return Obx(
+      () => Tab(
+        child: ConsistantCalendar(
+          itemWidth: itemWidth,
+          selectedDate: todoHomeController.selectedDate.value,
+          currentDate: currentDate,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    initBaseDate();
     return Container(
       height: 52,
       width: MediaQuery.of(context).size.width,
@@ -126,118 +140,92 @@ class _CalendarState extends State<Calendar>
             child: LayoutBuilder(
               builder: (context, constraints) {
                 double itemWidth = constraints.maxWidth / 7;
-
+                final weekDays = List.generate(7, (index) {
+                  return TabItem(
+                    _baseDate.clone.add(Duration(days: index)),
+                    itemWidth,
+                  );
+                });
                 return Stack(
                   fit: StackFit.expand,
                   children: [
-                    Positioned(
-                      width: itemWidth,
-                      left: constraints.maxWidth / 2 - itemWidth / 2 - 2,
-                      top: 2,
-                      height: 48,
-                      child: Container(
-                        width: 10,
-                        height: 48,
-                        decoration: BoxDecoration(
-                            color: primary.shade500,
-                            borderRadius: BorderRadius.circular(4)),
+                    TabBar(
+                      controller: _tabController,
+                      dividerColor: Colors.transparent,
+                      indicator: BoxDecoration(
+                        color: primary.shade500,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
                       ),
-                    ),
-                    // GetBuilder<TodoHomeStore>(builder: (state) {
-                    InfiniteListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: DateTime.now().getDaysInMonth,
-                      controller: _conroller,
-                      itemBuilder: (context, index) {
-                        final currentDate = DateTime.now()
-                            .sub(Duration(days: 4))
-                            .add(Duration(days: index));
-                        return Obx(() {
-                          final selectedDate =
-                              todoHomeController.selectedDate.value;
-                          return GestureDetector(
-                            onTap: () {
-                              if (selectedDate.isBefore(currentDate)) {
-                                nextPage(context,
-                                    days: currentDate
-                                        .difference(selectedDate)
-                                        .inDays,
-                                    itemWidth: itemWidth);
-
-                                return;
-                              }
-
-                              prevPage(
-                                context,
-                                days: selectedDate
-                                    .add(Duration(days: 1))
-                                    .difference(currentDate)
-                                    .inDays,
-                                itemWidth: itemWidth,
-                              );
-                            },
-                            child: Container(
-                              height: 48,
-                              width: itemWidth,
-                              decoration: BoxDecoration(
-                                color: selectedDate.isSameDate(currentDate)
-                                    ? Colors.transparent
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(4),
-                                // boxShadow: selectedDate.isSameDate(currentDate)
-                                //     ? [
-                                //         BoxShadow(
-                                //           color: Theme.of(context).shadowColor,
-                                //           blurRadius: 2,
-                                //           offset: Offset(0, 2),
-                                //         )
-                                //       ]
-                                //     : [],
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  AnimatedDefaultTextStyle(
-                                    curve: Curves.easeIn,
-                                    duration: Duration(milliseconds: 100),
-                                    child: Text(
-                                      "${weekDayShort[currentDate.weekday - 1]}",
-                                    ),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: selectedDate
-                                              .isSameDate(currentDate)
-                                          ? primary.shade100
-                                          : selectedDate.isAfter(currentDate)
-                                              ? neutral.shade400
-                                              : neutral.shade700,
-                                    ),
-                                  ),
-                                  AnimatedDefaultTextStyle(
-                                    duration: Duration(milliseconds: 100),
-                                    child: Text(
-                                      currentDate.format('dd'),
-                                    ),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: selectedDate
-                                              .isSameDate(currentDate)
-                                          ? primary.shade100
-                                          : selectedDate.isAfter(currentDate)
-                                              ? neutral.shade400
-                                              : neutral.shade700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        });
+                      labelColor: Colors.white,
+                      labelPadding: EdgeInsets.zero,
+                      onTap: (value) {
+                        todoHomeController.setDate(
+                          _baseDate.clone.add(
+                            Duration(days: value),
+                          ),
+                        );
                       },
+                      tabs: weekDays,
                     ),
+                    // Positioned(
+                    //   width: itemWidth,
+                    //   top: 2,
+                    //   height: 48,
+                    //   child: Container(
+                    //     width: 10,
+                    //     height: 48,
+                    //     decoration: BoxDecoration(
+                    //         color: primary.shade500,
+                    //         borderRadius: BorderRadius.circular(4)),
+                    //   ),
+                    // ),
+                    // GetBuilder<TodoHomeStore>(builder: (state) {
+                    // InfiniteListView.builder(
+                    //   physics: const NeverScrollableScrollPhysics(),
+                    //   scrollDirection: Axis.horizontal,
+                    //   itemCount: DateTime.now().getDaysInMonth,
+                    //   controller: _conroller,
+                    //   itemBuilder: (context, index) {
+                    //     final currentDate = DateTime.now()
+                    //         .sub(Duration(days: 1))
+                    //         .add(Duration(days: index));
+                    //     return Obx(() {
+                    //       final selectedDate =
+                    //           todoHomeController.selectedDate.value;
+
+                    // return GestureDetector(
+                    //   onTap: () {
+                    //     if (selectedDate.isBefore(currentDate)) {
+                    //       nextPage(context,
+                    //           days: currentDate
+                    //               .difference(selectedDate)
+                    //               .inDays,
+                    //           itemWidth: itemWidth);
+
+                    //       return;
+                    //     }
+
+                    //     prevPage(
+                    //       context,
+                    //       days: selectedDate
+                    //           .add(Duration(days: 1))
+                    //           .difference(currentDate)
+                    //           .inDays,
+                    //       itemWidth: itemWidth,
+                    //     );
+                    //   },
+                    //   child: ConsistantCalendar(
+                    //       itemWidth: itemWidth,
+                    //       selectedDate: selectedDate,
+                    //       currentDate: currentDate),
+
+                    // );
+                    //     });
+                    //   },
+                    // ),
                     // }),
                   ],
                 );
@@ -254,6 +242,68 @@ class _CalendarState extends State<Calendar>
                 Icons.arrow_forward_ios,
                 size: 18,
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ConsistantCalendar extends StatefulWidget {
+  const ConsistantCalendar({
+    super.key,
+    required this.itemWidth,
+    required this.selectedDate,
+    required this.currentDate,
+  });
+
+  final double itemWidth;
+  final DateTime selectedDate;
+  final DateTime currentDate;
+
+  @override
+  State<ConsistantCalendar> createState() => _ConsistantCalendarState();
+}
+
+class _ConsistantCalendarState extends State<ConsistantCalendar> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 48,
+      width: widget.itemWidth,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedDefaultTextStyle(
+            curve: Curves.easeIn,
+            duration: Duration(milliseconds: 100),
+            child: Text(
+              "${weekDayShort[widget.currentDate.weekday - 1]}",
+            ),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: widget.selectedDate.isSameDate(widget.currentDate)
+                  ? primary.shade100
+                  : neutral.shade700,
+            ),
+          ),
+          AnimatedDefaultTextStyle(
+            duration: Duration(milliseconds: 100),
+            child: Text(
+              widget.currentDate.format('dd'),
+            ),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: widget.selectedDate.isSameDate(widget.currentDate)
+                  ? primary.shade100
+                  : neutral.shade700,
             ),
           ),
         ],
