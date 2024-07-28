@@ -1,60 +1,59 @@
-class TransactionModel {
-  String? id;
-  String? subscriptionId;
-  String? memberId;
-  String? paymentMethodId;
-  String? createdAt;
-  String? status;
-  String? identifier;
+import 'package:chatkid_mobile/models/package_model.dart';
 
-  TransactionModel(
-      {this.id,
-      this.subscriptionId,
-      this.memberId,
-      this.paymentMethodId,
-      this.createdAt,
-      this.status,
-      this.identifier});
+class TransactionModel {
+  late String id;
+  late String packageId;
+  late String memberId;
+  late String status;
+  late String createdAt;
+  late PackageModel package;
+
+  TransactionModel({
+    required this.id,
+    required this.packageId,
+    required this.memberId,
+    required this.createdAt,
+    required this.status,
+    required this.package,
+  });
 
   TransactionModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    subscriptionId = json['subscriptionId'];
+    packageId = json['packageId'];
     memberId = json['memberId'];
-    paymentMethodId = json['paymentMethodId'];
     createdAt = json['createdAt'];
     status = json['status'];
-    identifier = json['identifier'];
+    package = PackageModel.fromJson(json['package']);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['subscriptionId'] = subscriptionId;
+    data['packageId'] = packageId;
     data['memberId'] = memberId;
-    data['paymentMethodId'] = paymentMethodId;
     data['createdAt'] = createdAt;
     data['status'] = status;
-    data['identifier'] = identifier;
+    data['package'] = package;
     return data;
   }
 }
 
 class CreateTransactionModel {
-  String? subscriptionId;
+  String? packageId;
   String? paymentMethodId;
 
   CreateTransactionModel(
-      {this.subscriptionId,
+      {this.packageId,
       this.paymentMethodId = "ae51672d-e58c-4ba6-891e-c1e5165c487b"});
 
   CreateTransactionModel.fromJson(Map<String, dynamic> json) {
-    subscriptionId = json['subscriptionId'];
+    packageId = json['packageId'];
     paymentMethodId = json['paymentMethodId'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['subscriptionId'] = subscriptionId;
+    data['packageId'] = packageId;
     data['paymentMethodId'] = paymentMethodId;
     return data;
   }

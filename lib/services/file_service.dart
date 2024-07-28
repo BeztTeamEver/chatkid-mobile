@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/file_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -15,10 +16,8 @@ class FileService {
 
   Future<List<FileModel>> getAvatars() async {
     final response = await _http.get(endpoint: Endpoint.avatarEndpoint);
-    Logger().i(response.body);
+    
     if (response.statusCode >= 200 && response.statusCode <= 210) {
-      // final data = jsonDecode(response.body)
-      //     .map((e) => FileModel.fromJson(jsonDecode(e)));
       final list = jsonDecode(response.body) as List;
       final List<FileModel> data = list.map((e) {
         return FileModel.fromJson(e);
@@ -50,6 +49,18 @@ class FileService {
       return data;
     }
     throw Exception('Lỗi không thể gửi dữ liệu, vui lòng thử lại!');
+  }
+
+  Future<FileModel?> pickAndUploadFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg', 'svg'],
+    );
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      return await sendfile(file);
+    }
+    return null;
   }
 }
 

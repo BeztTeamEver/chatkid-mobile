@@ -57,7 +57,7 @@ final MaterialColor red = MaterialColor(_redColorValue, <int, Color>{
   100: HexColor('FFDADA'),
   500: HexColor('F03C3C'),
   800: HexColor('B30000'),
-  900: HexColor('6A0101'),
+  900: HexColor('6B0014'),
 });
 
 final MaterialColor green = MaterialColor(_greenColorValue, <int, Color>{
@@ -120,7 +120,7 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontSize: 36,
       fontWeight: FontWeight.w800,
       color: textDefault,
-      height: 1.02,
+      height: 0.12,
     ),
     headlineMedium: TextStyle(
       fontSize: 28,
@@ -134,7 +134,7 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontWeight: FontWeight.w700,
       color: textDefault,
       height: 1,
-      letterSpacing: 1.1,
+      letterSpacing: 0.1,
     ),
     labelLarge: TextStyle(
       color: textDefault,

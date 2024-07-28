@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:chatkid_mobile/pages/chats/widget/action_button.dart';
+import 'package:chatkid_mobile/services/file_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/widgets/custom_bottom_sheet.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/recorder.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class ParentBottomBar extends StatefulWidget {
@@ -15,12 +17,14 @@ class ParentBottomBar extends StatefulWidget {
   final void Function(File?) onRecorded;
   final TextEditingController messageController;
   final void Function(String?) onSendMessage;
+  final void Function(String?) onSendImage;
   final void Function() onOpenSticker;
 
   const ParentBottomBar({
     super.key,
     required this.isExpanded,
     required this.onChangeBottomSheet,
+    required this.onSendImage,
     required this.onRecorded,
     required this.messageController,
     required this.onSendMessage,
@@ -50,15 +54,22 @@ class _ParentBottomBarState extends State<ParentBottomBar> {
           children: [
             ActionButton(
               icon: const SvgIcon(icon: 'photo'),
-              onPressed: () {},
+              onPressed: () async {
+                final file = await FileService().pickAndUploadFile();
+                if (file != null) {
+                  widget.onSendImage(
+                    file.url,
+                  );
+                }
+              },
             ),
-            ActionButton(
-              icon: SvgIcon(
-                icon: 'sticker',
-                color: widget.isExpanded == true ? primary.shade500 : null,
-              ),
-              onPressed: widget.onOpenSticker,
-            ),
+            // ActionButton(
+            //   icon: SvgIcon(
+            //     icon: 'sticker',
+            //     color: widget.isExpanded == true ? primary.shade500 : null,
+            //   ),
+            //   onPressed: widget.onOpenSticker,
+            // ),
             Hero(
               tag: 'voiceChat/mic',
               child: ActionButton(
@@ -79,14 +90,6 @@ class _ParentBottomBarState extends State<ParentBottomBar> {
                   width: 20.0,
                   child: CircularProgressIndicator(),
                 );
-              },
-            ),
-            ActionButton(
-              icon: const SvgIcon(icon: 'location'),
-              onPressed: () {
-                ErrorSnackbar.showError(
-                    err: Exception("Chức năng này đang được phát triển"),
-                    context: context);
               },
             ),
             const SizedBox(

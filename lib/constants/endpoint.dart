@@ -23,7 +23,8 @@ class Endpoint {
   static const refreshTokenEndPoint = "/api/auth/refresh-token";
   // User
   static const userEndPoint = "/api/profiles";
-  static const profileUserEnpoint = "/api/member";
+  static const profileUserEndpoint = "/api/member";
+  static const transferDiamondEndpoint = "/api/wallet/transfer";
 
   // Bot
   static const botAssetEndPoint = "/api/assets";
@@ -42,18 +43,17 @@ class Endpoint {
   static const gptChatEndPoint = "/api/gpt/chat";
 
   //Subcription
-  static const subcriptionEndPoint = "/api/subscription";
+  static const packageEndPoint = "/api/packages";
+  static const createZaloPayOrderEndPoint = "/api/packages/{id}";
+  static const listTransactionTransferEndPoint = "/api/application-transactions";
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";
   static const channelMessagesEndPoint = "/api/chat/channels";
 
-  // Paypal
-  static const paypalEndPoint = "/api/paypal/create-paypal-order";
-  static const capturePaypalEndPoint = "/api/paypal/capture";
-
   // Transaction 
   static const createTransactionEndPoint = "/api/payment-transaction";
+  static const getPaymentTransactionEndPoint = "/api/payment-transaction";
 
   //Notification
   static const notificationEndPoint = "/api/history";
@@ -77,4 +77,18 @@ class Endpoint {
   static const onGroupCreateEndPoint = "onGroupCreate";
   static const onGroupJoinEndPoint = "onGroupJoin";
   static const onGroupLeaveEndPoint = "onGroupLeave";
+
+  // Task category
+  static const taskCategoryEndPoint = "/api/task-categories";
+  static const taskMemberEndpoint = "/api/tasks/member";
+  static const favoriteTaskTypeEndPoint = "/api/favorite-task-type";
+  static const taskEmojiEndpoint = "/api/tasks/emoji";
+
+  // Tasks
+  static const taskEndPoint = "/api/tasks";
+
+  // Target
+  static const targetEndpoint = "/api/targets";
+  static const myTargetEndpoint = "/api/targets/me";
+  static const memberTargetEndpoint = "/api/targets/member";
 }

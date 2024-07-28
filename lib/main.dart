@@ -7,20 +7,25 @@ import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
+import 'package:chatkid_mobile/widgets/camera_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   // load env file
   await dotenv.load(fileName: ".env");
 
   //Firesbase setup
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -28,6 +33,7 @@ void main() async {
   final ttsService = TtsService().instance;
   await firebaseService.init();
   await firebaseService.getFCMToken();
+  await CameraService().init();
 
   // tts service setup
   await TtsService().initState();
@@ -49,7 +55,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'KidTalkie',
       color: primary,
       theme: ThemeData(
@@ -157,9 +163,23 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      // home: const SplashPages(),
-      home: const StorePage(),
-      routes: routes,
+      home: const SplashPages(),
+      builder: (context, widget) {
+        ErrorWidget.builder = (errorDetails) {
+          errorDetails.printError();
+          return Center(
+            child: Text(
+              'Something went wrong',
+              style: textTheme.bodyMedium!.copyWith(
+                color: red.shade800,
+              ),
+            ),
+          );
+        };
+        if (widget != null) return widget;
+        throw StateError('widget is null');
+      },
+      // routes: routes,
     );
   }
 }

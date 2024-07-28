@@ -107,6 +107,14 @@
 					}
 				},
 				{
+					"client_id": "343387729372-38qg4vkm3leknh3auv3fatnggqd6e4jq.apps.googleusercontent.com",
+					"client_type": 1,
+					"android_info": {
+						"package_name": "com.kidtalkie",
+						"certificate_hash": "1cd3875a4fee68eab33f5ff7ed69d0ea868db0ed"
+					}
+				},
+				{
 					"client_id": "343387729372-4dhao22rson8lk7il7llr465jmk90rke.apps.googleusercontent.com",
 					"client_type": 1,
 					"android_info": {

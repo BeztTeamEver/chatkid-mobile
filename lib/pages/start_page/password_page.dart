@@ -107,8 +107,9 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
             label: "Nhập lại mật khẩu",
             hint: "Mật khẩu của bạn",
             validator: (val) {
-              if (val !=
-                  widget.formKey.currentState?.fields['password']?.value) {
+              if (widget.formKey.currentState != null &&
+                  val !=
+                      widget.formKey.currentState?.fields['password']?.value) {
                 return "Mật khẩu không khớp";
               }
               return null;

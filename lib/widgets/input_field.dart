@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:logger/logger.dart';
 
@@ -8,35 +9,43 @@ class InputField extends StatefulWidget {
   final String hint;
   final TextInputType type;
   final String? Function(String?)? validator;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? errorText;
   final String name;
   final Widget? suffixIcon;
   final bool autoFocus;
   final bool? isObscure;
   final double? height;
+  final GlobalKey<FormBuilderState>? formKey;
   final double? fontSize;
   final EdgeInsetsGeometry? contentPadding;
+  final Function()? onChanged;
   final Function()? onTap;
+  final Function(String?)? onChange;
   final Function(String?)? onSubmit;
+  final List<TextInputFormatter>? inputFormatters;
 
   const InputField({
     super.key,
     this.label = "",
     this.autoFocus = false,
     this.type = TextInputType.text,
+    this.onChanged,
     this.hint = "",
+    this.formKey,
     required this.name,
     this.validator,
     this.errorText,
     this.suffixIcon,
-    this.isObscure,
-    required this.controller,
+    this.isObscure = false,
+    this.controller,
     this.height,
     this.fontSize,
     this.contentPadding,
     this.onSubmit,
     this.onTap,
+    this.inputFormatters,
+    this.onChange,
   });
 
   @override
@@ -44,6 +53,13 @@ class InputField extends StatefulWidget {
 }
 
 class _InputFieldState extends State<InputField> {
+  _resetValidate() {
+    if (widget.formKey != null &&
+        widget.formKey!.currentState?.fields[widget.name] != null) {
+      widget.formKey!.currentState!.validate();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -67,7 +83,14 @@ class _InputFieldState extends State<InputField> {
             keyboardType: widget.type,
             key: widget.key,
             autofocus: widget.autoFocus,
+            onChanged: (value) {
+              if (widget.formKey != null) {
+                _resetValidate();
+              }
+              widget.onChange?.call(value);
+            },
             validator: widget.validator,
+            inputFormatters: widget.inputFormatters,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             obscureText: widget.type == TextInputType.visiblePassword &&
                     widget.isObscure!
@@ -98,7 +121,7 @@ class _InputFieldState extends State<InputField> {
             onSubmitted: (value) {
               if (widget.onSubmit != null) {
                 widget.onSubmit!(value);
-                widget.controller.clear();
+                widget.controller?.clear();
               }
             },
           ),

@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/pages/start_page/info_page.dart';
 import 'package:chatkid_mobile/pages/start_page/password_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
 import 'package:chatkid_mobile/pages/start_page/start_page.dart';
+import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/providers/file_provider.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
@@ -101,6 +102,7 @@ class _FormPageState extends ConsumerState<FormPage> {
       // return;
       ref.watch(userServiceProvider).createUser(newUser).then((value) {
         callback();
+        ref.invalidate(getOwnFamily);
       }).catchError((e) {
         Logger().e(e);
         ErrorSnackbar.showError(err: e, context: context);

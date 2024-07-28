@@ -1,0 +1,4 @@
+enum TodoCreateType {
+  TASK,
+  CAMPAIGN,
+}

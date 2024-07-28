@@ -60,26 +60,6 @@ class _HeaderCardState extends State<HeaderCard> {
                 child: Column(
                   children: [
                     Text(
-                      'Cấp',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: neutral.shade800,
-                          ),
-                    ),
-                    Text(
-                      "0",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: neutral.shade900,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    Text(
                       'Bạn bè',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.w400,
