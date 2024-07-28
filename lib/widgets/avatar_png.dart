@@ -43,7 +43,7 @@ class AvatarPng extends StatelessWidget {
                       fit: BoxFit.cover,
                     )
                   : Image.asset(
-                      imageUrl!,
+                      (imageUrl == null || imageUrl == '') ? "assets/profile/default-avatar.png" : imageUrl!,
                       fit: BoxFit.cover,
                     ),
         ),

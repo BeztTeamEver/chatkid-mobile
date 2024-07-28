@@ -41,6 +41,7 @@ class Endpoint {
   //Subcription
   static const packageEndPoint = "/api/packages";
   static const createZaloPayOrderEndPoint = "/api/packages/{id}";
+  static const listTransactionTransferEndPoint = "/api/application-transactions";
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";

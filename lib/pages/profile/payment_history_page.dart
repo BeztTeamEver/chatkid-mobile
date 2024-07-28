@@ -75,7 +75,15 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
                 child: FutureBuilder(
                   future: transactions,
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height - 240,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (snapshot.hasData) {
                       final data = snapshot.data as List<TransactionModel>;
                       return Wrap(
                         direction: Axis.vertical,
@@ -90,8 +98,25 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
                       return SizedBox(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height - 240,
-                        child: const Center(
-                          child: CircularProgressIndicator(),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/payment/bot-head.png",
+                                width: 150,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                "Lịch sử thanh toán hiện đang trống",
+                                style: TextStyle(
+                                  color: neutral.shade900,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }

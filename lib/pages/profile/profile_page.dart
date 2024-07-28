@@ -204,7 +204,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     onTap: () async {
                                       Navigator.of(context).push(
                                         createRoute(
-                                          () => TransferEnergyPage(),
+                                          () => const TransferEnergyPage(),
                                         ),
                                       );
                                     },
@@ -222,9 +222,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                         Text(
                                           'Chuyển kim cương',
                                           style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 17,
-                                              letterSpacing: 0.5),
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 17,
+                                            letterSpacing: 0.5,
+                                          ),
                                         ),
                                       ],
                                     ),

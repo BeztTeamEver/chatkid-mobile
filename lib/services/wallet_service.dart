@@ -30,7 +30,7 @@ class WalletController extends GetxController {
   }
 
   transferDiamond(TransferDiamondPayloadModel data, Function() callback) async {
-    if (data.diamond <= 0) {
+    if (data.diamond == 0) {
       ShowToast.error(msg: "Số lượng kim cương phải lớn hơn 0!");
       return;
     }
@@ -42,11 +42,14 @@ class WalletController extends GetxController {
 
     if (response.statusCode == 200) {
       refetchWallet();
-      ShowToast.success(msg: "Chuyển kim cương thành công 🎉");
+      ShowToast.success(
+          msg:
+              "${data.diamond > 0 ? "Chuyển" : "Rút"} kim cương thành công 🎉");
       callback();
     } else {
-      refetchWallet();
-      ShowToast.error(msg: "Chuyển kim cương thất bại, vui lòng thử lại sau");
+      ShowToast.error(
+          msg:
+              "${data.diamond > 0 ? "Chuyển" : "Rút"}  kim cương thất bại, vui lòng thử lại sau");
     }
   }
 }
