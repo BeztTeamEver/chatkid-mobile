@@ -40,7 +40,8 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
                 children: [
                   IconButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(primary.shade100),
+                      backgroundColor:
+                          MaterialStatePropertyAll(primary.shade100),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -67,29 +68,55 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 22),
-              height: MediaQuery.of(context).size.height - 240,
+              height: MediaQuery.of(context).size.height - 110,
               child: SingleChildScrollView(
                 child: FutureBuilder(
                   future: transactions,
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final data = snapshot.data as List<TransactionModel>;
-                      return Wrap(
-                        direction: Axis.vertical,
-                        spacing: 12,
-                        children: data
-                            .map((e) => CardTransaction(transaction: e))
-                            .toList(),
-                      );
-                    } else {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return SizedBox(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height - 240,
                         child: const Center(
                           child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (snapshot.hasData) {
+                      final data = snapshot.data as List<TransactionModel>;
+                      return Wrap(
+                        direction: Axis.vertical,
+                        spacing: 12,
+                        children: [
+                          const SizedBox(),
+                          ...data.map((e) => CardTransaction(transaction: e)),
+                          const SizedBox(height: 10),
+                        ],
+                      );
+                    } else {
+                      return SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height - 240,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/payment/bot-head.png",
+                                width: 150,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                "Lịch sử thanh toán hiện đang trống",
+                                style: TextStyle(
+                                  color: neutral.shade900,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }

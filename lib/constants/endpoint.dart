@@ -9,6 +9,10 @@ class Endpoint {
   static const familyChannelsEndPoint = "/api/families/{id}/channels";
   static const ownFamilyEndpoint = "/api/families/own-family";
 
+  // Store
+  static const listProductEndPoint = "/api/products";
+  static const productEndPoint = "/api/products/{id}";
+
   // Auth
   static const googleEndPoint = "/api/auth/login";
   static const regisEndPoint = "/api/auth/register";
@@ -41,6 +45,7 @@ class Endpoint {
   //Subcription
   static const packageEndPoint = "/api/packages";
   static const createZaloPayOrderEndPoint = "/api/packages/{id}";
+  static const listTransactionTransferEndPoint = "/api/application-transactions";
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";

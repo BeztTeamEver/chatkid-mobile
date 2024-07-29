@@ -77,6 +77,10 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
           Logger().e(onError);
           ShowToast.error(msg: "Đã có lỗi xảy ra, vui lòng thử lại sau!");
         },
+      ).whenComplete(
+        () => setState(() {
+          isLoading = false;
+        }),
       );
     } catch (err) {
       Logger().e(err);
