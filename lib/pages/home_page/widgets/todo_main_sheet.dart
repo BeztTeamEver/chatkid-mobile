@@ -131,22 +131,6 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
               ),
               SliverAppBar(
                 primary: false,
-                centerTitle: true,
-                toolbarHeight: 64,
-                titleSpacing: 0,
-                pinned: true,
-                backgroundColor: primary.shade100,
-                title: Container(
-                  decoration: BoxDecoration(
-                    color: primary.shade100,
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 2, vertical: 20),
-                  child: const Calendar(),
-                ),
-              ),
-              SliverAppBar(
-                primary: false,
                 pinned: true,
                 toolbarHeight: 46,
                 titleSpacing: 0,
@@ -165,6 +149,23 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
                   ),
                 ),
               ),
+              SliverAppBar(
+                primary: false,
+                centerTitle: true,
+                toolbarHeight: 132,
+                titleSpacing: 0,
+                pinned: true,
+                backgroundColor: primary.shade100,
+                title: Container(
+                  decoration: BoxDecoration(
+                    color: primary.shade100,
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 2, vertical: 20),
+                  child: const Calendar(),
+                ),
+              ),
+
               // SliverList.builder(
               //   itemBuilder: (context, index) {
               //     return TaskItem();

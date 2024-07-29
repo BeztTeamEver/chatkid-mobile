@@ -133,7 +133,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
       const SizedBox(
         width: 10,
       ),
-      widget.message != null && widget.message!.isNotEmpty
+      widget.message != null && widget.message!.isNotEmpty && widget.useVoice
           ? IconButton(
               onPressed: () {
                 _speak(widget.message ?? "");

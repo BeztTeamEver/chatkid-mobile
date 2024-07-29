@@ -17,6 +17,22 @@ final BotFeedBackMessage = [
   ""
 ];
 
+class FeedbackConstants {
+  static final String NORMAL = "normal";
+  static final String EASY = "easy";
+  static final String VERY_EASY = "very_easy";
+  static final String HARD = "hard";
+  static final String VERY_HARD = "very_hard";
+}
+
+final FeedbackMap = {
+  FeedbackConstants.NORMAL: "Bình thường",
+  FeedbackConstants.EASY: "Dễ",
+  FeedbackConstants.VERY_EASY: "Rất dễ",
+  FeedbackConstants.HARD: "Khó",
+  FeedbackConstants.VERY_HARD: "Rất khó",
+};
+
 class StickerList {
   static const _boySticker = [];
   static const _girlSticker = [];

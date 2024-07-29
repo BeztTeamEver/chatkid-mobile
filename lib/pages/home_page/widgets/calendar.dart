@@ -93,11 +93,23 @@ class _CalendarState extends State<Calendar>
 
   initBaseDate() {
     if (7 == todoHomeController.selectedDate.value.weekday) {
-      _baseDate = todoHomeController.selectedDate.value.startOfWeek
-          .subDays(7)
-          .add(Duration(days: 1));
+      setState(() {
+        _baseDate = todoHomeController.selectedDate.value.startOfWeek
+            .subDays(7)
+            .add(Duration(days: 1));
+      });
+    } else {
+      setState(() {
+        _baseDate = todoHomeController.selectedDate.value.startOfWeek
+            .add(Duration(days: 1));
+      });
     }
-    Logger().i("base date ${_baseDate} ");
+    _tabController.animateTo(todoHomeController.selectedDate.value.weekday - 1);
+  }
+
+  changeToday() {
+    todoHomeController.setDate(DateTime.now());
+    initBaseDate();
   }
 
   Widget TabItem(DateTime currentDate, double itemWidth) {
@@ -115,137 +127,225 @@ class _CalendarState extends State<Calendar>
   @override
   Widget build(BuildContext context) {
     initBaseDate();
-    return Container(
-      height: 52,
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          GestureDetector(
-            onTap: () => prevPage(context, itemWidth: _itemWidth),
-            child: Container(
-              width: 24,
-              height: 24,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Icon(
-                Icons.arrow_back_ios,
-                size: 18,
+    return Column(
+      children: [
+        Container(
+          height: 52,
+          width: MediaQuery.of(context).size.width,
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () => prevPage(context, itemWidth: _itemWidth),
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    size: 18,
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                key: _listContainerKey,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    double itemWidth = constraints.maxWidth / 7;
+                    final weekDays = List.generate(7, (index) {
+                      return TabItem(
+                        _baseDate.clone.add(Duration(days: index)),
+                        itemWidth,
+                      );
+                    });
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        TabBar(
+                          controller: _tabController,
+                          dividerColor: Colors.transparent,
+                          indicator: BoxDecoration(
+                            color: primary.shade500,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(4),
+                              bottomLeft: Radius.circular(4),
+                              bottomRight: Radius.circular(4),
+                              topRight: Radius.circular(4),
+                            ),
+                          ),
+                          labelColor: Colors.white,
+                          labelPadding: EdgeInsets.zero,
+                          onTap: (value) {
+                            todoHomeController.setDate(
+                              _baseDate.clone.add(
+                                Duration(days: value),
+                              ),
+                            );
+                          },
+                          tabs: weekDays,
+                        ),
+                        // Positioned(
+                        //   width: itemWidth,
+                        //   top: 2,
+                        //   height: 48,
+                        //   child: Container(
+                        //     width: 10,
+                        //     height: 48,
+                        //     decoration: BoxDecoration(
+                        //         color: primary.shade500,
+                        //         borderRadius: BorderRadius.circular(4)),
+                        //   ),
+                        // ),
+                        // GetBuilder<TodoHomeStore>(builder: (state) {
+                        // InfiniteListView.builder(
+                        //   physics: const NeverScrollableScrollPhysics(),
+                        //   scrollDirection: Axis.horizontal,
+                        //   itemCount: DateTime.now().getDaysInMonth,
+                        //   controller: _conroller,
+                        //   itemBuilder: (context, index) {
+                        //     final currentDate = DateTime.now()
+                        //         .sub(Duration(days: 1))
+                        //         .add(Duration(days: index));
+                        //     return Obx(() {
+                        //       final selectedDate =
+                        //           todoHomeController.selectedDate.value;
+
+                        // return GestureDetector(
+                        //   onTap: () {
+                        //     if (selectedDate.isBefore(currentDate)) {
+                        //       nextPage(context,
+                        //           days: currentDate
+                        //               .difference(selectedDate)
+                        //               .inDays,
+                        //           itemWidth: itemWidth);
+
+                        //       return;
+                        //     }
+
+                        //     prevPage(
+                        //       context,
+                        //       days: selectedDate
+                        //           .add(Duration(days: 1))
+                        //           .difference(currentDate)
+                        //           .inDays,
+                        //       itemWidth: itemWidth,
+                        //     );
+                        //   },
+                        //   child: ConsistantCalendar(
+                        //       itemWidth: itemWidth,
+                        //       selectedDate: selectedDate,
+                        //       currentDate: currentDate),
+
+                        // );
+                        //     });
+                        //   },
+                        // ),
+                        // }),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              GestureDetector(
+                onTap: () => nextPage(context, itemWidth: _itemWidth),
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            key: _listContainerKey,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                double itemWidth = constraints.maxWidth / 7;
-                final weekDays = List.generate(7, (index) {
-                  return TabItem(
-                    _baseDate.clone.add(Duration(days: index)),
-                    itemWidth,
-                  );
-                });
-                return Stack(
-                  fit: StackFit.expand,
+        ),
+        SizedBox(
+          height: 8,
+        ),
+        Obx(
+          () => Row(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
                   children: [
-                    TabBar(
-                      controller: _tabController,
-                      dividerColor: Colors.transparent,
-                      indicator: BoxDecoration(
-                        color: primary.shade500,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
+                    Text(
+                      "${todoHomeController.selectedDate.value.day}",
+                      style:
+                          Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                color: neutral.shade800,
+                                fontSize: 46,
+                                fontWeight: FontWeight.w600,
+                              ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${todoHomeController.selectedDate.value.getWeekday + 1 == 8 ? "Chủ nhật" : "Thứ ${todoHomeController.selectedDate.value.getWeekday + 1}"}',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: neutral.shade800,
+                                    fontSize: 16,
+                                  ),
+                        ),
+                        Text(
+                          'Tháng ${todoHomeController.selectedDate.value.format('M, yyyy')}',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: neutral.shade800,
+                                    fontSize: 16,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Spacer(),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: ElevatedButton(
+                  onPressed: () {
+                    changeToday();
+                  },
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(horizontal: 32, vertical: 4),
+                    ),
+                    backgroundColor:
+                        MaterialStateProperty.all(Colors.transparent),
+                    shadowColor: MaterialStateProperty.all(Colors.transparent),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40),
+                        side: BorderSide(
+                          color: primary.shade500,
+                          width: 1,
                         ),
                       ),
-                      labelColor: Colors.white,
-                      labelPadding: EdgeInsets.zero,
-                      onTap: (value) {
-                        todoHomeController.setDate(
-                          _baseDate.clone.add(
-                            Duration(days: value),
-                          ),
-                        );
-                      },
-                      tabs: weekDays,
                     ),
-                    // Positioned(
-                    //   width: itemWidth,
-                    //   top: 2,
-                    //   height: 48,
-                    //   child: Container(
-                    //     width: 10,
-                    //     height: 48,
-                    //     decoration: BoxDecoration(
-                    //         color: primary.shade500,
-                    //         borderRadius: BorderRadius.circular(4)),
-                    //   ),
-                    // ),
-                    // GetBuilder<TodoHomeStore>(builder: (state) {
-                    // InfiniteListView.builder(
-                    //   physics: const NeverScrollableScrollPhysics(),
-                    //   scrollDirection: Axis.horizontal,
-                    //   itemCount: DateTime.now().getDaysInMonth,
-                    //   controller: _conroller,
-                    //   itemBuilder: (context, index) {
-                    //     final currentDate = DateTime.now()
-                    //         .sub(Duration(days: 1))
-                    //         .add(Duration(days: index));
-                    //     return Obx(() {
-                    //       final selectedDate =
-                    //           todoHomeController.selectedDate.value;
-
-                    // return GestureDetector(
-                    //   onTap: () {
-                    //     if (selectedDate.isBefore(currentDate)) {
-                    //       nextPage(context,
-                    //           days: currentDate
-                    //               .difference(selectedDate)
-                    //               .inDays,
-                    //           itemWidth: itemWidth);
-
-                    //       return;
-                    //     }
-
-                    //     prevPage(
-                    //       context,
-                    //       days: selectedDate
-                    //           .add(Duration(days: 1))
-                    //           .difference(currentDate)
-                    //           .inDays,
-                    //       itemWidth: itemWidth,
-                    //     );
-                    //   },
-                    //   child: ConsistantCalendar(
-                    //       itemWidth: itemWidth,
-                    //       selectedDate: selectedDate,
-                    //       currentDate: currentDate),
-
-                    // );
-                    //     });
-                    //   },
-                    // ),
-                    // }),
-                  ],
-                );
-              },
-            ),
-          ),
-          GestureDetector(
-            onTap: () => nextPage(context, itemWidth: _itemWidth),
-            child: Container(
-              width: 30,
-              height: 30,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Icon(
-                Icons.arrow_forward_ios,
-                size: 18,
+                  ),
+                  child: Text(
+                    "Hôm nay",
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: primary.shade500,
+                          fontSize: 14,
+                        ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -269,6 +369,11 @@ class ConsistantCalendar extends StatefulWidget {
 class _ConsistantCalendarState extends State<ConsistantCalendar> {
   @override
   Widget build(BuildContext context) {
+    final textColor = widget.selectedDate.isSameDate(widget.currentDate)
+        ? primary.shade100
+        : widget.currentDate.isBefore(DateTime.now().subDays(1))
+            ? neutral.shade400
+            : neutral.shade700;
     return Container(
       height: 48,
       width: widget.itemWidth,
@@ -288,9 +393,7 @@ class _ConsistantCalendarState extends State<ConsistantCalendar> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: widget.selectedDate.isSameDate(widget.currentDate)
-                  ? primary.shade100
-                  : neutral.shade700,
+              color: textColor,
             ),
           ),
           AnimatedDefaultTextStyle(
@@ -301,9 +404,7 @@ class _ConsistantCalendarState extends State<ConsistantCalendar> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: widget.selectedDate.isSameDate(widget.currentDate)
-                  ? primary.shade100
-                  : neutral.shade700,
+              color: textColor,
             ),
           ),
         ],

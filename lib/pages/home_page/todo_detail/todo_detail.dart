@@ -39,7 +39,9 @@ class _TodoDetailState extends State<TodoDetail> {
       widget.task.status != TodoStatus.pending ? HelpCard() : Container(),
       widget.task.status == TodoStatus.pending ||
               widget.task.status == TodoStatus.completed
-          ? FeedBackCard()
+          ? FeedBackCard(
+              task: widget.task,
+            )
           : Container(),
     ];
     Logger().i(widget.task.toJson());

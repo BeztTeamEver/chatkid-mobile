@@ -51,8 +51,9 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
         Logger().i(value);
         await TodoService().createTask(value);
         Get.delete<TodoFormCreateController>();
+        // Get.delete<TodoHomeStore>();
 
-        Get.offAll(() => MainPage());
+        Get.offAll(() => MainPage(), predicate: (route) => false);
 
         // todoFormCreateController.navigatorKey.currentState!.pop();
         return;
