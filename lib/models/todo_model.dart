@@ -23,6 +23,9 @@ class TaskModel implements IBaseModel {
   String note;
   String status;
   TaskTypeModel taskType;
+  String? feedbackVoice;
+  String? feedbackEmoji;
+  String? feedbackLevel;
 
   TaskModel({
     required this.id,
@@ -38,6 +41,9 @@ class TaskModel implements IBaseModel {
     required this.note,
     required this.status,
     required this.taskType,
+    this.feedbackVoice,
+    this.feedbackEmoji,
+    this.feedbackLevel,
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
@@ -61,6 +67,9 @@ class TaskModel implements IBaseModel {
       note: json['note'],
       frequency: frequency,
       status: json['status'],
+      feedbackVoice: json['feedbackVoice'],
+      feedbackEmoji: json['feedbackEmoji'],
+      feedbackLevel: json['feedbackLevel'],
       taskType: TaskTypeModel.fromJson(json['taskType']),
     );
   }
@@ -85,6 +94,9 @@ class TaskModel implements IBaseModel {
       'numberOfCoin': numberOfCoin,
       'note': note,
       'status': status,
+      'feedbackVoice': feedbackVoice,
+      'feedbackEmoji': feedbackEmoji,
+      'feedbackLevel': feedbackLevel,
       'taskType': taskType.toJson(),
     };
   }

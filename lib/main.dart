@@ -24,7 +24,6 @@ void main() async {
 
   // load env file
   await dotenv.load(fileName: ".env");
-
   //Firesbase setup
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

@@ -14,6 +14,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -56,9 +57,9 @@ class _TodoFormPageState extends State<TodoFormPage> {
 
   void onSubmit() {
     final formState = todoFormCreateController.formKey.currentState!;
-    final formValue = formState.value;
-
     if (formState.saveAndValidate()) {
+      final formValue = formState.value;
+
       // final startHour =
       //     formValue['startTime.hour1']! * 10 + formValue['startTime.hour2']!;
       // final startMinute = formValue['startTime.minute1']! * 10 +
@@ -221,6 +222,9 @@ class _TodoFormPageState extends State<TodoFormPage> {
                 decoration: InputDecoration(
                   errorMaxLines: 2,
                 ),
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(),
+                ]),
                 maxLines: 1,
               ),
               const SizedBox(height: 16),
@@ -268,7 +272,11 @@ class _TodoFormPageState extends State<TodoFormPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FullWidthButton(
         onPressed: () {
-          onSubmit();
+          try {
+            onSubmit();
+          } catch (e, s) {
+            Logger().e(e, stackTrace: s);
+          }
         },
         child: Text(
           "Tiếp tục",

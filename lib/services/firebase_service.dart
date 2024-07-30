@@ -37,15 +37,19 @@ class FirebaseService {
   Future<void> init() async {
     // await _firebaseAuth.useAuthEmulator('localhost', 9099);
 
-    await _firebaseMessaging.requestPermission(
-      provisional: true,
+    final permission = await _firebaseMessaging.requestPermission(
       alert: true,
-      announcement: false,
+      announcement: true,
+      provisional: true,
       badge: true,
       carPlay: false,
       criticalAlert: false,
       sound: true,
     );
+    if (permission == null || permission == false) {
+      throw Exception("Không thể cấp quyền thông báo");
+    }
+
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       _firebaseMessaging.setForegroundNotificationPresentationOptions(
         alert: true,
@@ -60,6 +64,7 @@ class FirebaseService {
       fcmToken = await _firebaseMessaging.getToken();
 
       appId = fcmToken?.split(':').first ?? "";
+      Logger().i('FCM Token: $fcmToken');
       // FirebaseMessaging.onBackgroundMessage(
       //     (message) => _firebaseMessagingBackgroundHandler(message));
       return fcmToken ?? '';

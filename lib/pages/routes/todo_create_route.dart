@@ -12,7 +12,8 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class TodoCreateRoute extends StatefulWidget {
-  const TodoCreateRoute({super.key});
+  final String? id;
+  const TodoCreateRoute({super.key, this.id});
 
   @override
   State<TodoCreateRoute> createState() => _TodoCreateRouteState();
@@ -32,6 +33,13 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
       ..addListener(() {
         setState(() {});
       });
+    fetchDetail();
+  }
+
+  fetchDetail() {
+    if (widget.id != null) {
+      todoFormCreateController.initTask(widget.id!);
+    }
   }
 
   @override

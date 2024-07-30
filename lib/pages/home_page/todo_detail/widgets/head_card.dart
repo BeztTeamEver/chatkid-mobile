@@ -48,11 +48,18 @@ class _HeadCardState extends State<HeadCard> {
   void getAssigner() {
     final members =
         (jsonDecode(LocalStorage.instance.getString(LocalStorageKey.MEMBERS))
-                as List<dynamic>)
-            .map((e) => UserModel.fromJson(jsonDecode(e)));
+                as List<dynamic>?)
+            ?.map((e) => UserModel.fromJson(jsonDecode(e)))
+            .toList();
+    if (members == null || members.isEmpty) {
+      return;
+    }
+    final assigner = members
+        .firstWhereOrNull((element) => element.id == widget.task.assigneerId);
 
-    final assigner =
-        members.firstWhere((element) => element.id == widget.task.assigneerId);
+    if (assigner == null) {
+      return;
+    }
     setState(() {
       createdBy = assigner;
     });
@@ -160,42 +167,46 @@ class _HeadCardState extends State<HeadCard> {
                     ),
                   )
                 : Container(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  Text(
-                    "Người giao việc:",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+            createdBy.name != null
+                ? Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Người giao việc:",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        Container(
+                          width: 28,
+                          height: 28,
+                          child: AvatarPng(
+                            imageUrl: createdBy.avatarUrl,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "${createdBy.name}",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: neutral.shade500,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  Container(
-                    width: 28,
-                    height: 28,
-                    child: AvatarPng(
-                      imageUrl: createdBy.avatarUrl,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "${createdBy.name}",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: neutral.shade500,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 12,
-            ),
+                  )
+                : Container(),
+            createdBy.name != null
+                ? SizedBox(
+                    height: 12,
+                  )
+                : Container(),
             Container(
               height: 42,
               padding: const EdgeInsets.symmetric(horizontal: 16),

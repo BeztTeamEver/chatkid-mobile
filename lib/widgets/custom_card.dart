@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/widgets/button_icon.dart';
+import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -17,6 +19,7 @@ class CustomCard extends StatefulWidget {
   final Function? onLongPressed;
   final String? heroTag;
   final BoxConstraints? constraints;
+  final Widget? actionButton;
 
   const CustomCard({
     super.key,
@@ -31,6 +34,7 @@ class CustomCard extends StatefulWidget {
     this.height,
     this.constraints,
     this.onLongPressed,
+    this.actionButton,
     this.heroTag,
   });
 
@@ -88,6 +92,13 @@ class _CustomCardState extends State<CustomCard> {
                 children: widget.children,
               ),
             ),
+            widget.actionButton != null
+                ? Positioned(
+                    top: 2,
+                    right: 10,
+                    child: widget.actionButton!,
+                  )
+                : Container(),
           ],
         ),
       ),
