@@ -1,7 +1,10 @@
 import 'package:chatkid_mobile/constants/date.dart';
 import 'package:chatkid_mobile/constants/todo_form.dart';
+import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/todo_page/todo_assign_page.dart';
+import 'package:chatkid_mobile/pages/main_page.dart';
+import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/date_time.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -55,7 +58,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
             true;
   }
 
-  void onSubmit() {
+  void onSubmit() async {
     final formState = todoFormCreateController.formKey.currentState!;
     if (formState.saveAndValidate()) {
       final formValue = formState.value;
@@ -121,6 +124,17 @@ class _TodoFormPageState extends State<TodoFormPage> {
         formState.fields['frequency']?.didChange(<String>[]);
       }
 
+      if (todoFormCreateController.initForm['id'] != '') {
+        final value = TodoCreateModel.fromJson({
+          ...formValue,
+          "taskTypeId": todoFormCreateController.selectedTaskType.value,
+          "id": todoFormCreateController.initForm['id'],
+          "startTime": startTime,
+          "endTime": endTime,
+        });
+        await updateTask(todoFormCreateController.initForm['id'], value);
+        return;
+      }
       todoFormCreateController.increaseStep();
       todoFormCreateController.updateProgress();
       Navigator.push(context, createRoute(() => TodoAssignPage()));
@@ -150,6 +164,12 @@ class _TodoFormPageState extends State<TodoFormPage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+  }
+
+  updateTask(String id, TodoCreateModel value) async {
+    await TodoService().updateTask(id, value);
+    Get.delete<TodoFormCreateController>();
+    Get.offAll(() => MainPage(), predicate: (route) => false);
   }
 
   @override
@@ -247,7 +267,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
               // ),
 
               SizedBox(height: 14),
-              SelectButtonList<String>(
+              SelectButtonList<String?>(
                 name: "frequency",
                 label: "Lặp lại trong tuần",
                 isMultiple: true,
@@ -279,7 +299,9 @@ class _TodoFormPageState extends State<TodoFormPage> {
           }
         },
         child: Text(
-          "Tiếp tục",
+          todoFormCreateController.initForm['id'] == ''
+              ? "Tiếp tục"
+              : "Cập nhật",
           style: Theme.of(context)
               .textTheme
               .headlineMedium!

@@ -1,10 +1,16 @@
+import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/create_task_type_page/create_task_type_page.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/create_task_type_page/task_type_icon.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class CategoryCreateItem extends StatefulWidget {
-  final Function(String id) onTap;
+  final Function(bool id) onTap;
   const CategoryCreateItem({super.key, required this.onTap});
 
   @override
@@ -14,6 +20,7 @@ class CategoryCreateItem extends StatefulWidget {
 class _CategoryCreateItemState extends State<CategoryCreateItem>
     with TickerProviderStateMixin {
   late final AnimationController _controller;
+  final TodoFormCreateController todoFormCreateController = Get.find();
 
   @override
   void initState() {
@@ -44,13 +51,20 @@ class _CategoryCreateItemState extends State<CategoryCreateItem>
       // onForcePressEnd: (details) => _controller.reverse(from: 1),
       // onSecondaryLongPressMoveUpdate: (details) {},
       // onLongPressUp: () => _controller.reverse(from: 1),
-      onTap: () {
+      onTap: () async {
         // widget.onTap();
         // Logger().i('CategoryItem onTap');
         // if (todoFormCreateController.isEdit.value) {
         //   todoFormCreateController.toggleFavoriteTaskType(
         //       widget.taskCategoriesIndex, widget.taskType);
         // }
+        // Navigator.push(context, createRoute(() => CreateTaskTypePage()));
+        await Get.to(() => TaskTypeIcon())?.then((value) {
+          Logger().i(value);
+          if (value) {
+            widget.onTap(value);
+          }
+        });
       },
       child: SizedBox(
         width: 72,

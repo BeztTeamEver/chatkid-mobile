@@ -6,8 +6,6 @@ import 'package:dart_date/dart_date.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 
-class TodoFrequency {}
-
 class TaskModel implements IBaseModel {
   String id;
   String taskTypeId;
@@ -18,7 +16,7 @@ class TaskModel implements IBaseModel {
   DateTime? finishTime;
 
   String? evidence;
-  List<TodoFrequency>? frequency;
+  List<String>? frequency;
   int? numberOfCoin;
   String note;
   String status;
@@ -47,9 +45,11 @@ class TaskModel implements IBaseModel {
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
-    final frequency = json['frequency'].map<TodoFrequency>((freq) {
-      return TodoFrequency();
-    }).toList();
+    List<String>? frequency = [];
+    if (json['frequency'] != null && json['frequency'].isNotEmpty) {
+      frequency =
+          json['frequency'].map<String>((item) => item.toString()).toList();
+    }
 
     // TODO: handle frequency list
     return TaskModel(
@@ -102,15 +102,45 @@ class TaskModel implements IBaseModel {
   }
 }
 
+class TaskTypeImageModel {
+  String name;
+  String imageUrl;
+  String? imageHomeUrl;
+  TaskTypeImageModel({
+    required this.name,
+    required this.imageUrl,
+    this.imageHomeUrl,
+  });
+  factory TaskTypeImageModel.fromJson(Map<String, dynamic> json) {
+    return TaskTypeImageModel(
+      name: json['name'],
+      imageUrl: json['imageUrl'],
+      imageHomeUrl: json['imageHomeUrl'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'imageUrl': imageUrl,
+      'imageHomeUrl': imageHomeUrl,
+    };
+  }
+
+  String toJson() => jsonEncode(toMap());
+}
+
 class TaskTypeModel {
   String id;
   String name;
   String? imageUrl;
   String? imageHomeUrl;
+  String? status;
   bool? isFavorited;
   TaskTypeModel({
     required this.id,
     required this.name,
+    this.status,
     this.imageUrl,
     this.imageHomeUrl,
     this.isFavorited,
@@ -122,6 +152,7 @@ class TaskTypeModel {
       name: json['name'],
       imageUrl: json['imageUrl'],
       imageHomeUrl: json['imageHomeUrl'],
+      status: json['status'],
       isFavorited: json['isFavorited'],
     );
   }
@@ -131,6 +162,7 @@ class TaskTypeModel {
       'id': id,
       'name': name,
       'imageUrl': imageUrl,
+      'status': status,
       'imageHomeUrl': imageHomeUrl,
       'isFavorited': isFavorited,
     };
@@ -179,6 +211,39 @@ class TaskCategoryModel implements IBaseModel {
   String toJson() => jsonEncode(toMap());
 }
 
+class TaskCategoryImage {
+  String id;
+  String name;
+  List<TaskTypeImageModel> taskType;
+
+  TaskCategoryImage({
+    required this.id,
+    required this.name,
+    required this.taskType,
+  });
+
+  factory TaskCategoryImage.fromJson(Map<String, dynamic> json) {
+    return TaskCategoryImage(
+      id: json['id'],
+      name: json['name'],
+      taskType: json['taskTypes']
+          .map<TaskTypeImageModel>(
+              (taskType) => TaskTypeImageModel.fromJson(taskType))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'taskTypes': taskType.map((taskType) => taskType.toJson()).toList(),
+    };
+  }
+
+  String toJson() => jsonEncode(toMap());
+}
+
 class TodoFilter {
   String? status;
   DateTime date;
@@ -194,16 +259,17 @@ class TodoRequestModel {
 }
 
 class TodoCreateModel {
-  List<String> memberIds;
+  List<String>? memberIds;
   String taskTypeId;
   DateTime startTime;
   DateTime endTime;
+
   int numberOfCoin;
-  List<String>? frequency;
+  List<String?>? frequency;
   String note;
 
   TodoCreateModel({
-    required this.memberIds,
+    this.memberIds,
     required this.taskTypeId,
     required this.startTime,
     required this.endTime,
@@ -214,8 +280,8 @@ class TodoCreateModel {
 
   factory TodoCreateModel.fromJson(Map<String, dynamic> json) {
     return TodoCreateModel(
-      memberIds: json['memberIds'],
       taskTypeId: json['taskTypeId'],
+      memberIds: json['memberIds'],
       startTime: json['startTime'],
       endTime: json['endTime'],
       frequency: json['frequency'],
@@ -225,7 +291,8 @@ class TodoCreateModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    final memberIds = this.memberIds?.map((e) => e).toList();
+    final result = {
       'memberIds': memberIds,
       'taskTypeId': taskTypeId,
       'startTime': "${startTime.toIso8601String()}Z",
@@ -233,6 +300,42 @@ class TodoCreateModel {
       'frequency': frequency,
       'numberOfCoin': numberOfCoin,
       'note': note,
+    };
+
+    if (memberIds == null) {
+      result.remove('memberIds');
+    }
+    return result;
+  }
+
+  String toJson() => jsonEncode(toMap());
+}
+
+class RequestTaskTypeCreateModel extends TaskTypeImageModel {
+  String taskCategoryId;
+
+  RequestTaskTypeCreateModel({
+    required this.taskCategoryId,
+    required String name,
+    required String imageUrl,
+    String? imageHomeUrl,
+  }) : super(name: name, imageUrl: imageUrl, imageHomeUrl: imageHomeUrl);
+
+  factory RequestTaskTypeCreateModel.fromJson(Map<String, dynamic> json) {
+    return RequestTaskTypeCreateModel(
+      taskCategoryId: json['taskCategoryId'],
+      name: json['name'],
+      imageUrl: json['imageUrl'],
+      imageHomeUrl: json['imageHomeUrl'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'taskCategoryId': taskCategoryId,
+      'name': name,
+      'imageUrl': imageUrl,
+      'imageHomeUrl': imageHomeUrl,
     };
   }
 

@@ -9,13 +9,16 @@ import 'package:chatkid_mobile/pages/home_page/widgets/custom_tab_bar.dart';
 import 'package:chatkid_mobile/pages/routes/target_create_route.dart';
 import 'package:chatkid_mobile/providers/task_categories_provider.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/confirmation/confirm_modal.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:logger/logger.dart';
+import 'package:modals/modals.dart';
 
 class TodoCreatePage extends ConsumerStatefulWidget {
   const TodoCreatePage({super.key});
@@ -61,6 +64,39 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
     _controller.dispose();
     _offsetFloat.removeListener(() {});
     super.dispose();
+  }
+
+  handleDeleteTaskType() {
+    showDialog(
+      context: context,
+      builder: (context) => ConfirmModal(
+          isLoading: _isSaving,
+          title: "Bạn có chắc là muốn xóa loại công việc này không",
+          content:
+              "Xóa loại công việc sẽ xóa toàn bộ công việc thuộc loại công việc này",
+          onCancel: () {},
+          onConfirm: () async {
+            setState(() {
+              _isSaving = true;
+            });
+            await todoFormCreateController.deleteTaskType().whenComplete(
+              () {
+                setState(() {
+                  _isSaving = false;
+                });
+                todoFormCreateController.toggleDelete();
+                ref
+                    .refresh(getTaskCategoriesProvider(PagingModel(
+                            pageSize: pageSize, pageNumber: pageNumber))
+                        .future)
+                    .then((value) {
+                  todoFormCreateController.setTaskCategories(value);
+                  return value;
+                });
+              },
+            );
+          }),
+    );
   }
 
   @override
@@ -152,38 +188,57 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                               if (_tabController.index == 0 ||
                                   item.isFavorited == true) {
                                 previousValue.add(
-                                  CategoryItem(
-                                    imageUrl: item.imageUrl ?? '',
-                                    title: item.name,
-                                    isFavorited: item.isFavorited ?? false,
-                                    id: item.id,
-                                    onLongPress: () {
-                                      if (_tabController.index == 0) {
-                                        todoFormCreateController.toggleEdit();
-                                      }
-                                    },
-                                    onTap: (id) {
-                                      if (todoFormCreateController
-                                          .isEdit.value) {
-                                        todoFormCreateController
-                                            .toggleFavoriteTaskType(
-                                                index, item);
-                                      } else {
-                                        todoFormCreateController
-                                            .setSelectedTaskType(item.id);
-                                        todoFormCreateController.increaseStep();
-                                        todoFormCreateController
-                                            .updateProgress();
-                                        Navigator.of(context).push(
-                                          createRoute(() => TodoFormPage()),
-                                        );
-                                      }
-                                    },
-                                    taskCategoriesIndex: index,
-                                    taskTypeIndex: todoFormCreateController
-                                        .taskCategories[index].taskTypes
-                                        .indexOf(item),
-                                    taskType: item,
+                                  Obx(
+                                    () => CategoryItem(
+                                      imageUrl: item.imageUrl ?? '',
+                                      title: item.name,
+                                      isFavorited: item.isFavorited ?? false,
+                                      id: item.id,
+                                      isSelected: (!todoFormCreateController
+                                                  .isDelete.value &&
+                                              todoFormCreateController
+                                                  .selectedTaskType
+                                                  .contains(item.id)) ||
+                                          todoFormCreateController
+                                              .selectedDeletingTaskTypeId
+                                              .contains(item.id),
+                                      onLongPress: () {
+                                        if (_tabController.index == 0) {
+                                          todoFormCreateController.toggleEdit();
+                                        }
+                                      },
+                                      onTap: (id) {
+                                        if (todoFormCreateController
+                                            .isDelete.value) {
+                                          todoFormCreateController
+                                              .setSelectedDeletingTaskTypeId(
+                                                  id);
+                                          return;
+                                        }
+
+                                        if (todoFormCreateController
+                                            .isEdit.value) {
+                                          todoFormCreateController
+                                              .toggleFavoriteTaskType(
+                                                  index, item);
+                                        } else {
+                                          todoFormCreateController
+                                              .setSelectedTaskType(item.id);
+                                          todoFormCreateController
+                                              .increaseStep();
+                                          todoFormCreateController
+                                              .updateProgress();
+                                          Navigator.of(context).push(
+                                            createRoute(() => TodoFormPage()),
+                                          );
+                                        }
+                                      },
+                                      taskCategoriesIndex: index,
+                                      taskTypeIndex: todoFormCreateController
+                                          .taskCategories[index].taskTypes
+                                          .indexOf(item),
+                                      taskType: item,
+                                    ),
                                   ),
                                 );
                               }
@@ -194,39 +249,63 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                             return const SizedBox();
                           }
                           if (index == 0 && _tabController.index == 0) {
-                            taskTypes.insert(
-                                0, CategoryCreateItem(onTap: (id) {}));
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
+                            taskTypes.insert(0,
+                                CategoryCreateItem(onTap: (value) {
+                              if (value) {
+                                ref
+                                    .refresh(getTaskCategoriesProvider(
+                                            PagingModel(
+                                                pageSize: pageSize,
+                                                pageNumber: pageNumber))
+                                        .future)
+                                    .then((value) {
                                   todoFormCreateController
-                                      .taskCategories[index].name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall!
-                                      .copyWith(
-                                        fontSize: 18,
-                                        letterSpacing: 0.1,
-                                      ),
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Wrap(
-                                  alignment: WrapAlignment.start,
-                                  crossAxisAlignment: WrapCrossAlignment.start,
-                                  direction: Axis.horizontal,
-                                  spacing: 24,
-                                  runSpacing: 12,
-                                  children: taskTypes,
-                                ),
-                              ],
-                            ),
+                                      .setTaskCategories(value);
+                                  return value;
+                                });
+                              }
+                            }));
+                          }
+
+                          return Obx(
+                            () => todoFormCreateController.isDelete.value &&
+                                    todoFormCreateController
+                                            .taskCategories[index].name !=
+                                        'Công việc tùy chỉnh'
+                                ? Container()
+                                : Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 12),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          todoFormCreateController
+                                              .taskCategories[index].name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall!
+                                              .copyWith(
+                                                fontSize: 18,
+                                                letterSpacing: 0.1,
+                                              ),
+                                        ),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Wrap(
+                                          alignment: WrapAlignment.start,
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.start,
+                                          direction: Axis.horizontal,
+                                          spacing: 24,
+                                          runSpacing: 12,
+                                          children: taskTypes,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                           );
                         },
                       ),
@@ -240,15 +319,23 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: SlideTransition(
-          position: todoFormCreateController.isEdit.value
+          position: todoFormCreateController.isEdit.value ||
+                  todoFormCreateController.isDelete.value
               ? _offsetFloat
               : _offsetFloat,
           child: AnimatedContainer(
-            width: todoFormCreateController.isEdit.value ? 320 : 0,
+            width: todoFormCreateController.isEdit.value ||
+                    todoFormCreateController.isDelete.value
+                ? 320
+                : 0,
             duration: const Duration(milliseconds: 500),
             curve: Curves.fastEaseInToSlowEaseOut,
             child: FullWidthButton(
               onPressed: () async {
+                if (todoFormCreateController.isDelete.value) {
+                  handleDeleteTaskType();
+                  return;
+                }
                 setState(() {
                   _isSaving = true;
                 });
@@ -258,10 +345,13 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                   });
                 });
               },
-              isDisabled: _isSaving,
+              isDisabled: _isSaving ||
+                  (todoFormCreateController
+                          .selectedDeletingTaskTypeId.value.isEmpty &&
+                      todoFormCreateController.isDelete.value),
               child: !_isSaving
                   ? Text(
-                      'Lưu',
+                      todoFormCreateController.isDelete.value ? "Xóa" : 'Lưu',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

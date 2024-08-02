@@ -45,13 +45,14 @@ class Endpoint {
   //Subcription
   static const packageEndPoint = "/api/packages";
   static const createZaloPayOrderEndPoint = "/api/packages/{id}";
-  static const listTransactionTransferEndPoint = "/api/application-transactions";
+  static const listTransactionTransferEndPoint =
+      "/api/application-transactions";
 
   // Message
   static const messagesEndPoint = "/api/chat/recent";
   static const channelMessagesEndPoint = "/api/chat/channels";
 
-  // Transaction 
+  // Transaction
   static const createTransactionEndPoint = "/api/payment-transaction";
   static const getPaymentTransactionEndPoint = "/api/payment-transaction";
 
@@ -83,7 +84,10 @@ class Endpoint {
   static const taskMemberEndpoint = "/api/tasks/member";
   static const favoriteTaskTypeEndPoint = "/api/favorite-task-type";
   static const taskEmojiEndpoint = "/api/tasks/emoji";
+  static const taskTypeImageEndpoint = "/api/task-categories/images";
 
+  // Task-type
+  static const taskTypeEndPoint = "/api/task-types";
   // Tasks
   static const taskEndPoint = "/api/tasks";
 

@@ -14,7 +14,9 @@ class AuthService {
   static final _localStorage = LocalStorage.instance;
 
   static Future<AuthModel> googleLogin(String token) async {
-    RequestAuthModal requestAuthModal = RequestAuthModal(accessToken: token);
+    final deviceToken = await FirebaseService.instance.getFCMToken();
+    RequestAuthModal requestAuthModal =
+        RequestAuthModal(accessToken: token, deviceToken: deviceToken);
     final response = await BaseHttp.instance.post(
       endpoint: Endpoint.googleEndPoint,
       body: requestAuthModal.toJson(),
