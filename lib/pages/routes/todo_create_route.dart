@@ -44,6 +44,8 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
 
   @override
   void dispose() {
+    Logger().i('Dispose TodoCreateRoute');
+    Get.delete<TodoFormCreateController>();
     super.dispose();
   }
 
@@ -67,14 +69,16 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
           child: Obx(
             () => Column(
               children: [
-                Container(
-                  child: Obx(
-                    () => LinearProgressIndicator(
-                      value:
-                          todoFormCreateController.stepController.value!.value,
-                    ),
-                  ),
-                ),
+                todoFormCreateController.initForm['id'] != ''
+                    ? Container()
+                    : Container(
+                        child: Obx(
+                          () => LinearProgressIndicator(
+                            value: todoFormCreateController
+                                .stepController.value!.value,
+                          ),
+                        ),
+                      ),
                 Expanded(
                   child: Scaffold(
                     appBar: AppBar(
@@ -91,10 +95,14 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
                         !todoFormCreateController.isEdit.value &&
                                 todoFormCreateController.step.value == 1
                             ? ButtonIcon(
-                                onPressed: () {},
+                                onPressed: () {
+                                  todoFormCreateController.toggleDelete();
+                                },
                                 icon: 'trash',
                                 iconSize: 24,
-                                color: primary.shade500,
+                                color: todoFormCreateController.isDelete.value
+                                    ? neutral.shade400
+                                    : primary.shade500,
                               )
                             : Container(),
                       ],
@@ -120,7 +128,11 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
                       title: Text(
                         todoFormCreateController.isEdit.value
                             ? "Ghim công việc"
-                            : 'Tạo công việc',
+                            : todoFormCreateController.isDelete.value
+                                ? "Xóa công việc"
+                                : widget.id != null
+                                    ? "Chỉnh sửa công việc"
+                                    : "Tạo công việc",
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -138,6 +150,9 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
                           todoFormCreateController.updateProgress();
                           return true;
                         },
+                        pages: [
+                          MaterialPage(child: const TodoCreatePage()),
+                        ],
                         onGenerateRoute: (setting) {
                           return MaterialPageRoute(
                             builder: (context) {

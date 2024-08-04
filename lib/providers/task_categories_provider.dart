@@ -15,3 +15,14 @@ final getTaskCategoriesProvider =
     throw Exception(e);
   }
 });
+
+final getTaskImageProvider = FutureProvider.autoDispose((ref) async {
+  try {
+    final result = await ref
+        .watch<TaskCategoryService>(taskCategoryServiceProvider)
+        .getTaskTypeImage();
+    return result;
+  } catch (e) {
+    throw Exception(e);
+  }
+});

@@ -5,5 +5,6 @@ class TodoStatus {
   static const String completed = 'COMPLETED';
   static const String notCompleted = 'NOT_COMPLETED';
   static const String expired = 'EXPIRED';
+  static const String unavailable = 'UNAVAILABLE';
   static const String canceled = 'CANCELLED';
 }

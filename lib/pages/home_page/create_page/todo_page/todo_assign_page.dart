@@ -48,7 +48,6 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
           ...formState.value,
           "memberIds": _selectedIndex,
         });
-        Logger().i(value);
         await TodoService().createTask(value);
         Get.delete<TodoFormCreateController>();
         // Get.delete<TodoHomeStore>();

@@ -220,11 +220,11 @@ class _TargetListState extends State<TargetList> {
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: controller.targets.value.length,
+            itemCount: controller.targets.length,
             itemBuilder: (context, index) {
               return Obx(
                 () => TargetItem(
-                  target: controller.targets.value[index],
+                  target: controller.targets[index],
                 ),
               );
             },
