@@ -19,7 +19,7 @@ class _TemplateCardState extends State<TemplateCard> {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
-      height: 160,
+      height: 180,
       onTap: widget.onTap,
       padding: EdgeInsets.all(16),
       children: [
@@ -52,6 +52,7 @@ class _TemplateCardState extends State<TemplateCard> {
               ),
             ),
             Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: 100,
@@ -65,14 +66,17 @@ class _TemplateCardState extends State<TemplateCard> {
                     widget.targetModel.rewardImageUrl ?? "",
                   ),
                 ),
-                Flexible(
+                Container(
+                  width: 100,
                   child: Text(
-                    widget.targetModel.reward ?? "",
+                    widget.targetModel.reward ??
+                        "asdlfjhasdklfhsadkjlfhsadlkjhflsakdjhflaskdjfhlkjsdahf lksadhfljksad fljksadh flkj sadlkjf asdlhf lkjasdh flkjashf kljas",
                     softWrap: true,
                     maxLines: 2,
+                    textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                   ),
-                )
+                ),
               ],
             ),
           ],
