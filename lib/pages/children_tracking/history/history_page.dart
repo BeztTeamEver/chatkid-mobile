@@ -1,5 +1,5 @@
 import 'package:chatkid_mobile/models/history_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/providers/history_provider.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
@@ -39,6 +39,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       Logger().i("No more data");
       return;
     }
+    setState(() {
+      _isLoading = true;
+    });
 
     final request = HistoryRequestModal(
       memberId: widget.user.id!,
@@ -46,7 +49,6 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     );
 
     await ref.read(getHistoryProvider(request).future).then((value) {
-      Logger().i(value.items.length);
       if (value.items.isEmpty) {
         setState(() {
           _isLoadMore = false;
@@ -95,7 +97,6 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   Builder _listHistoryBuilder(
       BuildContext context, int index, List<HistoryModel> histories) {
     final history = histories[index];
-    Logger().i(history);
     return Builder(
       builder: (context) {
         return Container(
@@ -135,7 +136,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                             children: [
                               TextSpan(
                                 text: DateTimeUtils.getFormatedDate(
-                                    DateTime(2024),
+                                    DateTime.parse(history.createdAt!),
                                     DateTimeUtils.DATE_TIME_ACTIVITY_FORMAT),
                                 style: Theme.of(context)
                                     .textTheme
@@ -207,21 +208,30 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: [
-            Expanded(
-              child: ScrollablePositionedList.builder(
-                itemBuilder: (context, index) =>
-                    _listHistoryBuilder(context, index, _histories),
-                itemCount: _histories.length,
-                padding: const EdgeInsets.only(bottom: 40),
-                scrollOffsetController: _scrollOffsetController,
-                scrollOffsetListener: _scrollOffsetListener,
-                itemScrollController: _scrollController,
-                itemPositionsListener: _itemPositionsListener,
-              ),
-            ),
+            _histories.length != 0
+                ? Expanded(
+                    child: ScrollablePositionedList.builder(
+                      itemBuilder: (context, index) =>
+                          _listHistoryBuilder(context, index, _histories),
+                      itemCount: _histories.length,
+                      padding: const EdgeInsets.only(bottom: 40),
+                      scrollOffsetController: _scrollOffsetController,
+                      scrollOffsetListener: _scrollOffsetListener,
+                      itemScrollController: _scrollController,
+                      itemPositionsListener: _itemPositionsListener,
+                    ),
+                  )
+                : Container(),
+            _isLoading
+                ? const SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: CircularProgressIndicator(),
+                  )
+                : Container(),
           ],
         ),
       ),

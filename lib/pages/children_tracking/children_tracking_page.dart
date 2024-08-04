@@ -13,37 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
-final mockdata = [
-  {
-    'id': '1',
-    "name": "Hồng",
-    "avatarUrl": "assets/images/avatars/1.png",
-    "currentActive": " ở trường",
-    "unRead": 3,
-  },
-  {
-    'id': '2',
-    "name": "Hồng",
-    "avatarUrl": "assets/images/avatars/2.png",
-    "currentActive": null,
-    "unRead": 3,
-  },
-  {
-    'id': '3',
-    "name": "Hồng",
-    "avatarUrl": "assets/images/avatars/3.png",
-    "currentActive": " ở trường",
-    "unRead": 3,
-  },
-  {
-    'id': '4',
-    "name": "Hồng",
-    "avatarUrl": "assets/images/avatars/4.png",
-    "currentActive": " ở trường",
-    "unRead": 3,
-  },
-];
-
 class ChildrenTrackingPage extends ConsumerStatefulWidget {
   final UserModel? user;
   final int? userIndex;
@@ -62,7 +31,7 @@ class _ChildrenTrackingPageState extends ConsumerState<ChildrenTrackingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final family = FamilyService().getFamily();
+    final family = ref.watch(getFamilyProvider.future);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -87,7 +56,7 @@ class _ChildrenTrackingPageState extends ConsumerState<ChildrenTrackingPage> {
 
               final data =
                   snapshot.data!.members.fold(<UserModel>[], (value, element) {
-                if (element.role == RoleConstant.Parent) {
+                if (element.role == RoleConstant.Child) {
                   return value;
                 }
                 value.add(element);
@@ -95,7 +64,7 @@ class _ChildrenTrackingPageState extends ConsumerState<ChildrenTrackingPage> {
               });
 
               return ListView.builder(
-                itemCount: data.length < 3 ? data.length : 3,
+                itemCount: data.length,
                 itemBuilder: (context, index) {
                   final user = data[index];
 

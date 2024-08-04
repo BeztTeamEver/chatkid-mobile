@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:chatkid_mobile/models/base_model.dart';
 import 'package:chatkid_mobile/models/channel_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:logger/logger.dart';
 
 class ChatModel implements IBaseModel {
   // String? id;
@@ -43,26 +44,40 @@ class ChatModel implements IBaseModel {
   String? userId;
   String? imageUrl;
   String? voiceUrl;
-  UserModel? user;
+  String? sentTime;
+  UserModel? sender;
 
-  ChatModel({this.content, this.channelId, this.userId, this.user});
+  ChatModel(
+      {this.content,
+      this.channelId,
+      this.userId,
+      this.sentTime,
+      this.sender,
+      this.imageUrl,
+      this.voiceUrl});
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
       content: json['content'],
-      channelId: json['channelUserId'],
-      userId: json['ChannelUser']?['Member']?['id'],
-      user: json['ChannelUser']?['Member'] != null
-          ? UserModel.fromJson(json['ChannelUser']?['Member'])
-          : UserModel(),
+      channelId: json['channelId'],
+      userId: json['userId'],
+      voiceUrl: json['voiceUrl'],
+      imageUrl: json['imageUrl'],
+      sentTime: json['sentTime'],
+      sender: UserModel.fromJson(json['sender']),
     );
   }
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['content'] = content;
-    data['userId'] = userId;
-    data['channelId'] = channelId;
+    if (content != null) data['content'] = content;
+    if (channelId != null) data['channelId'] = channelId;
+    if (userId != null) data['userId'] = userId;
+    if (voiceUrl != null) data['voiceUrl'] = voiceUrl;
+    if (imageUrl != null) data['imageUrl'] = imageUrl;
+    if (sentTime != null) data['sentTime'] = sentTime;
+    if (sender != null) data['sender'] = sender!.toMap();
+
     return data;
   }
 

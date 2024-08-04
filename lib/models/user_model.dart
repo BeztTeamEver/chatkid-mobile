@@ -1,9 +1,6 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/models/kid_service_model.dart';
-import 'package:chatkid_mobile/models/wallet_model.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logger/logger.dart';
 
 class UserModel {
   String? id;
@@ -13,33 +10,36 @@ class UserModel {
   String? gender;
   String? role;
   int? status;
-  int? energy;
+  int? diamond;
+  int? coin;
   String? familyId;
   String? deviceToken;
   String? accessToken;
   String? refreshToken;
   String? notSeenActivities;
   String? doing;
+  int? yearOfBirth;
   List<KidServiceModel>? kidServices;
-  List<WalletModel>? wallets;
 
-  UserModel(
-      {this.id,
-      this.avatarUrl,
-      this.password,
-      this.name,
-      this.role,
-      this.status,
-      this.energy,
-      this.familyId,
-      this.gender,
-      this.deviceToken,
-      this.kidServices,
-      this.accessToken,
-      this.refreshToken,
-      this.doing,
-      this.notSeenActivities,
-      this.wallets});
+  UserModel({
+    this.id,
+    this.avatarUrl,
+    this.password,
+    this.name,
+    this.role,
+    this.status,
+    this.diamond,
+    this.coin,
+    this.familyId,
+    this.gender,
+    this.deviceToken,
+    this.kidServices,
+    this.accessToken,
+    this.refreshToken,
+    this.doing,
+    this.notSeenActivities,
+    this.yearOfBirth,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -49,7 +49,8 @@ class UserModel {
       name: json['name'],
       role: json['role'],
       status: json['status'],
-      energy: json['energy'],
+      diamond: json['diamond'],
+      coin: json['coin'],
       familyId: json['familyId'],
       gender: json['gender'],
       accessToken: json['accessToken'],
@@ -57,16 +58,17 @@ class UserModel {
       deviceToken: json['deviceToken'],
       notSeenActivities: json['notSeenActivities'],
       doing: json['doing'],
+      yearOfBirth: json['yearOfBirth'],
       kidServices: json['kidServices'] != null
           ? (json['kidServices'] as List)
               .map((e) => KidServiceModel.fromJson(e))
               .toList()
           : null,
-      wallets: json['wallets'] != null
-          ? (json['wallets'] as List)
-              .map((e) => WalletModel.fromJson(e))
-              .toList()
-          : null,
+      // wallets: json['wallets'] != null
+      //     ? (json['wallets'] as List)
+      //         .map((e) => WalletModel.fromJson(e))
+      //         .toList()
+      //     : null,
     );
   }
 
@@ -90,8 +92,11 @@ class UserModel {
     if (status != null) {
       data['status'] = status;
     }
-    if (energy != null) {
-      data['energy'] = energy;
+    if (diamond != null) {
+      data['diamond'] = diamond;
+    }
+    if (coin != null) {
+      data['coin'] = coin;
     }
     if (familyId != null) {
       data['familyId'] = familyId;
@@ -111,9 +116,12 @@ class UserModel {
     if (refreshToken != null) {
       data['refreshToken'] = refreshToken;
     }
-    if (wallets != null) {
-      data['wallets'] = wallets!.map((v) => v.toMap()).toList();
+    if (yearOfBirth != null) {
+      data['yearOfBirth'] = yearOfBirth;
     }
+    // if (wallets != null) {
+    //   data['wallets'] = wallets!.map((v) => v.toMap()).toList();
+    // }
     return data;
   }
 

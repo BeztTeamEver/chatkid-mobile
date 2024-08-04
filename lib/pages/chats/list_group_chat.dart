@@ -45,6 +45,7 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
   int _currentBanner = 0;
   Timer? _timer;
   final _pageController = PageController(initialPage: 0);
+  final currentUser = LocalStorage.instance.getUser();
 
   @override
   void initState() {
@@ -74,7 +75,6 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
     super.dispose();
   }
 
-  final currentUser = LocalStorage.instance.getUser();
   @override
   Widget build(BuildContext context) {
     // final family = ref
@@ -83,250 +83,162 @@ class _ListGroupChatState extends ConsumerState<ListGroupChat> {
     //     .asData
     //     ?.value;
     final familyChannel = ref.watch(getFamilyChannel);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Ink(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  border: Border.all(color: primary.shade200, width: 2),
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x144E2813),
-                      blurRadius: 8,
-                      offset: Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                    BoxShadow(
-                      color: Color(0x024E2914),
-                      blurRadius: 2,
-                      offset: Offset(0, -1),
-                      spreadRadius: 0,
-                    )
-                  ],
-                ),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(40),
-                  overlayColor: MaterialStateProperty.all(primary.shade100),
-                  onTap: () {},
-                  child: const Center(
-                    child: SvgIcon(
-                      icon: "search",
-                      size: 24,
-                    ),
+    return RefreshIndicator(
+      onRefresh: () => ref.refresh(getFamilyChannel.future),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: ListView(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: CustomCard(
+                    onTap: () => {
+                      familyChannel.when(
+                        data: (value) {
+                          Navigator.push(
+                            context,
+                            createRoute(
+                              () => GroupChatPage(
+                                channelId: value.id,
+                              ),
+                            ),
+                          );
+                        },
+                        error: (error, stackTrace) {
+                          Logger().e(error, stackTrace: stackTrace);
+                        },
+                        loading: () => CustomCircleProgressIndicator(),
+                      )
+                    },
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        child: Center(
+                          child: Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            alignment: WrapAlignment.center,
+                            children: [
+                              Avatar(
+                                icon: iconAnimalList[0],
+                                size: 40,
+                              ),
+                              Avatar(
+                                icon: iconAnimalList[1],
+                                size: 40,
+                              ),
+                              Avatar(
+                                icon: iconAnimalList[2],
+                                size: 40,
+                              ),
+                              Avatar(
+                                icon: iconAnimalList[3],
+                                size: 40,
+                              ),
+                              Avatar(
+                                icon: iconAnimalList[4],
+                                size: 40,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        "Gia đình",
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      )
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(
-                width: 12,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Wrap(spacing: 12, children: [
-                      Avatar(
-                        icon: iconAnimalList[0],
-                        size: 48,
-                      ),
-                      Avatar(
-                        icon: iconAnimalList[1],
-                        size: 48,
-                      ),
-                      Avatar(
-                        icon: iconAnimalList[2],
-                        size: 48,
-                      ),
-                      Avatar(
-                        icon: iconAnimalList[3],
-                        size: 48,
-                      ),
-                      Avatar(
-                        icon: iconAnimalList[4],
-                        size: 48,
-                      ),
-                      Avatar(
-                        icon: iconAnimalList[2],
-                        size: 48,
-                      ),
-                      Avatar(
-                        icon: iconAnimalList[3],
-                        size: 48,
-                      ),
-                      Avatar(
-                        icon: iconAnimalList[4],
-                        size: 48,
-                      ),
-                    ])),
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          FullWidthButton(
-            onPressed: () {},
-            child: const Text(
-              "Tạo nhóm chat mới",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontFamily: 'Nunito',
-                fontWeight: FontWeight.w800,
-                height: 0,
-                letterSpacing: 0.72,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: CustomCard(
-                  onTap: () => {
-                    Navigator.push(
-                      context,
-                      createRoute(
-                        () => const GroupChatPage(
-                          channelId: "6b02cfc1-0b92-4ec4-97e3-75f57a8c186b",
-                        ),
-                      ),
-                    )
-                  },
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      child: Center(
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 4,
-                          alignment: WrapAlignment.center,
-                          children: [
-                            Avatar(
-                              icon: iconAnimalList[0],
-                              size: 40,
-                            ),
-                            Avatar(
-                              icon: iconAnimalList[1],
-                              size: 40,
-                            ),
-                            Avatar(
-                              icon: iconAnimalList[2],
-                              size: 40,
-                            ),
-                            Avatar(
-                              icon: iconAnimalList[3],
-                              size: 40,
-                            ),
-                            Avatar(
-                              icon: iconAnimalList[4],
-                              size: 40,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "Gia đình",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    )
-                  ],
+                const SizedBox(
+                  width: 10,
                 ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: CustomCard(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      createRoute(() => BotChatPage(botType: BotType.PUMKIN)),
-                    );
-                  },
-                  children: [
-                    SvgPicture.asset('assets/robot/pumkin.svg'),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "Bí ngô",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Wrap(
-            runSpacing: 8,
-            children: [
-              switch (familyChannel) {
-                AsyncData(:final value) => SelectButton(
-                    label: value.name,
-                    icon:
-                        "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
-                    onPressed: () {
-                      ref.watch(receiveMessage);
+                Expanded(
+                  child: CustomCard(
+                    onTap: () {
                       Navigator.push(
                         context,
-                        createRoute(
-                          () => GroupChatPage(
-                            channelId: value.id,
-                          ),
-                        ),
+                        createRoute(() => BotChatPage(botType: BotType.PUMKIN)),
                       );
                     },
-                  ),
-                AsyncError(:final error, :final stackTrace) =>
-                  Builder(builder: (context) {
-                    Logger().e(error, stackTrace: stackTrace);
-                    return Container();
-                  }),
-                AsyncLoading() => CustomCircleProgressIndicator(),
-              },
-              // SelectButton(
-              //   label: "Gia đình",
-              //   icon:
-              //       "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
-              //   onPressed: () =>
-              //       Navigator.push(context, createRoute(() => GroupChatPage())),
-              // ),
-              ElevatedButton(
-                onPressed: () async {
-                  await FirebaseService.instance.signOut().then((value) {
-                    AuthService.signOut();
-                    Navigator.of(context).pushReplacement(
-                      createRoute(
-                        () => const LoginPage(),
+                    children: [
+                      SvgPicture.asset('assets/robot/pumkin.svg'),
+                      const SizedBox(
+                        height: 5,
                       ),
-                    );
-                  });
-                },
-                child: const Text("Sign out"),
-              )
-            ],
-          )
-        ],
+                      Text(
+                        "Bí ngô",
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseService.instance.signOut().then((value) {
+                  AuthService.signOut();
+                  Navigator.of(context).pushReplacement(
+                    createRoute(
+                      () => const LoginPage(),
+                    ),
+                  );
+                });
+              },
+              child: const Text("Sign out"),
+            )
+            // Wrap(
+            //   runSpacing: 8,
+            //   children: [
+            //     switch (familyChannel) {
+            //       AsyncData(:final value) => SelectButton(
+            //           label: value.name,
+            //           icon:
+            //               "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
+            //           onPressed: () {
+            //             ref.watch(receiveMessage);
+            //             Navigator.push(
+            //               context,
+            //               createRoute(
+            //                 () => GroupChatPage(
+            //                   channelId: value.id,
+            //                 ),
+            //               ),
+            //             );
+            //           },
+            //         ),
+            //       AsyncError(:final error, :final stackTrace) =>
+            //         Builder(builder: (context) {
+            //           Logger().e(error, stackTrace: stackTrace);
+            //           return Container();
+            //         }),
+            //       AsyncLoading() => CustomCircleProgressIndicator(),
+            //     },
+            //     // SelectButton(
+            //     //   label: "Gia đình",
+            //     //   icon:
+            //     //       "https://theforumcenter.com/wp-content/uploads/2023/02/topic-talk-about-your-family.jpg",
+            //     //   onPressed: () =>
+            //     //       Navigator.push(context, createRoute(() => GroupChatPage())),
+            //     // ),
+            //   ],
+            // )
+          ],
+        ),
       ),
     );
   }

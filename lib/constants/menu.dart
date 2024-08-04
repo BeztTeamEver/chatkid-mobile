@@ -5,34 +5,36 @@ import 'package:chatkid_mobile/pages/chats/list_group_chat.dart';
 import 'package:chatkid_mobile/pages/explore/explore_pages.dart';
 import 'package:chatkid_mobile/pages/children_tracking/children_tracking_page.dart';
 import 'package:chatkid_mobile/pages/notification/notification_page.dart';
-import 'package:chatkid_mobile/pages/children_tracking/user_profile_notification_page.dart';
 import 'package:chatkid_mobile/pages/profile/profile_page.dart';
+import 'package:chatkid_mobile/pages/routes/todo_route.dart';
 
 final List<Menu> menu = [
   Menu(
-    title: 'Khám phá',
-    iconDefault: 'bottomMenu/discover',
-    iconActive: 'bottomMenu/discover_active',
-    route: routesName['${AppRoutes.blog}']!,
-    role: [RoleConstant.Child],
-    widget: const ExplorePage(),
+    title: 'Trang chủ',
+    iconDefault: 'bottomMenu/list_detail',
+    iconActive: 'bottomMenu/list_detail_active',
+    route: routesName['${AppRoutes.home}']!,
+    role: [RoleConstant.Parent, RoleConstant.Child],
+    widget: const TodoRouteWrapper(),
   ),
+
   Menu(
     title: "Trò chuyện",
     iconDefault: 'bottomMenu/chat',
     iconActive: 'bottomMenu/chat_active',
     route: routesName['${AppRoutes.chat}']!,
-    role: [RoleConstant.Child, RoleConstant.Parent],
+    role: [RoleConstant.Child],
     widget: const ListGroupChat(),
   ),
-  Menu(
-    title: 'Thành tựu',
-    iconDefault: 'bottomMenu/reward',
-    iconActive: 'bottomMenu/reward_active',
-    route: routesName['${AppRoutes.history}']!,
-    role: [RoleConstant.Child],
-    widget: const UserProfileNotificationPage(),
-  ),
+
+  // Menu(
+  //   title: 'Thành tựu',
+  //   iconDefault: 'bottomMenu/reward',
+  //   iconActive: 'bottomMenu/reward_active',
+  //   route: routesName['${AppRoutes.history}']!,
+  //   role: [RoleConstant.Child],
+  //   widget: const UserProfileNotificationPage(),
+  // ),
   Menu(
     title: 'Bé',
     iconDefault: 'bottomMenu/kid',
@@ -42,12 +44,36 @@ final List<Menu> menu = [
     widget: const ChildrenTrackingPage(),
   ),
   Menu(
-    title: 'Thông báo',
-    iconDefault: 'bottomMenu/notification',
-    iconActive: 'bottomMenu/notification_active',
-    route: routesName['${AppRoutes.notification}']!,
+    title: 'center',
+    iconDefault: 'bottomMenu/plus',
+    iconActive: 'bottomMenu/plus_active',
+    route: routesName['${AppRoutes.blog}']!,
     role: [RoleConstant.Parent],
-    widget: const NotificationPage(),
+    widget: const ExplorePage(),
+  ),
+  Menu(
+    title: 'Khám phá',
+    iconDefault: 'bottomMenu/discover',
+    iconActive: 'bottomMenu/discover_active',
+    route: routesName['${AppRoutes.blog}']!,
+    role: [RoleConstant.Child],
+    widget: const ExplorePage(),
+  ),
+  // Menu(
+  //   title: 'Thông báo',
+  //   iconDefault: 'bottomMenu/notification',
+  //   iconActive: 'bottomMenu/notification_active',
+  //   route: routesName['${AppRoutes.notification}']!,
+  //   role: [RoleConstant.Parent],
+  //   widget: const NotificationPage(),
+  // ),
+  Menu(
+    title: "Thông báo",
+    iconDefault: 'bottomMenu/bell',
+    iconActive: 'bottomMenu/bell_active',
+    route: routesName['${AppRoutes.notification}']!,
+    role: [RoleConstant.Child, RoleConstant.Parent],
+    widget: NotificationPage(),
   ),
   Menu(
     title: 'Tài khoản',

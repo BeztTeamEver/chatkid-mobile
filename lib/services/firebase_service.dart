@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,7 +36,20 @@ class FirebaseService {
 
   Future<void> init() async {
     // await _firebaseAuth.useAuthEmulator('localhost', 9099);
-    await _firebaseMessaging.requestPermission();
+
+    final permission = await _firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: true,
+      provisional: true,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      sound: true,
+    );
+    if (permission == null || permission == false) {
+      throw Exception("Không thể cấp quyền thông báo");
+    }
+
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       _firebaseMessaging.setForegroundNotificationPresentationOptions(
         alert: true,
@@ -49,8 +64,9 @@ class FirebaseService {
       fcmToken = await _firebaseMessaging.getToken();
 
       appId = fcmToken?.split(':').first ?? "";
-      FirebaseMessaging.onBackgroundMessage(
-          (message) => _firebaseMessagingBackgroundHandler(message));
+      Logger().i('FCM Token: $fcmToken');
+      // FirebaseMessaging.onBackgroundMessage(
+      //     (message) => _firebaseMessagingBackgroundHandler(message));
       return fcmToken ?? '';
     } catch (e) {
       print(e);
@@ -60,6 +76,7 @@ class FirebaseService {
 
   Future<UserCredential> signInWithGoogle() async {
     try {
+      await GoogleSignIn().signOut();
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -76,7 +93,7 @@ class FirebaseService {
       // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
-      Logger().e(e.toString());
+      Logger().e(e);
       throw Exception("Lỗi đăng nhập tới Google, vui lòng thử lại sau");
     }
   }

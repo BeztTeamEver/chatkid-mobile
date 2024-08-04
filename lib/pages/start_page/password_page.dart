@@ -28,6 +28,8 @@ class PasswordPage extends ConsumerStatefulWidget {
 
 class _PasswordPageState extends ConsumerState<PasswordPage> {
   String? _errorText;
+  bool _obscured = true;
+  bool _obscuredConfirm = true;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +82,23 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
             type: TextInputType.visiblePassword,
             controller: widget.passwordController,
             autoFocus: false,
+            isObscure: _obscured,
+            suffixIcon: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _obscured = !_obscured;
+                  });
+                },
+                child: Icon(
+                  _obscured
+                      ? Icons.visibility_rounded
+                      : Icons.visibility_off_rounded,
+                  size: 24,
+                ),
+              ),
+            ),
           ),
           const SizedBox(
             height: 20,
@@ -88,15 +107,33 @@ class _PasswordPageState extends ConsumerState<PasswordPage> {
             label: "Nhập lại mật khẩu",
             hint: "Mật khẩu của bạn",
             validator: (val) {
-              if (val !=
-                  widget.formKey.currentState?.fields['password']?.value) {
+              if (widget.formKey.currentState != null &&
+                  val !=
+                      widget.formKey.currentState?.fields['password']?.value) {
                 return "Mật khẩu không khớp";
               }
               return null;
             },
+            isObscure: _obscuredConfirm,
             autoFocus: false,
             name: "confirmPassword",
             type: TextInputType.visiblePassword,
+            suffixIcon: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _obscuredConfirm = !_obscuredConfirm;
+                  });
+                },
+                child: Icon(
+                  _obscuredConfirm
+                      ? Icons.visibility_rounded
+                      : Icons.visibility_off_rounded,
+                  size: 24,
+                ),
+              ),
+            ),
             controller: widget.confirmPasswordController,
           ),
         ],

@@ -94,9 +94,11 @@ class _GoogleButtonState extends State<GoogleButton> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FullWidthButton(
+            isDisabled: _isLoading,
             onPressed: () async {
               await _signInWithGoogle(
-                () => Navigator.push(context, createRoute(() => _route)),
+                () => Navigator.pushReplacement(
+                    context, createRoute(() => _route)),
               );
             },
             height: 50,

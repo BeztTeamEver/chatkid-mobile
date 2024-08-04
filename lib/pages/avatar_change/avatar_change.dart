@@ -1,11 +1,8 @@
-import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/widgets/avatar.dart';
+import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import 'package:material_color_utilities/material_color_utilities.dart';
-import 'package:pinput/pinput.dart';
 
 class AvatarChange extends StatefulWidget {
   final String? value;
@@ -24,14 +21,15 @@ class AvatarChange extends StatefulWidget {
 }
 
 class _AvatarChangeState extends State<AvatarChange> {
-  String _avatarUrl = "animal/bear";
+  String _avatarUrl =
+      "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
     setState(() {
-      _avatarUrl = widget.value ?? "animal/bear";
+      _avatarUrl = widget.value ?? _avatarUrl;
     });
   }
 
@@ -39,7 +37,6 @@ class _AvatarChangeState extends State<AvatarChange> {
     setState(() {
       _avatarUrl = e;
     });
-    Logger().d(e);
   }
 
   _onFileUpload() async {
@@ -72,10 +69,14 @@ class _AvatarChangeState extends State<AvatarChange> {
                         .headlineMedium!
                         .copyWith(fontSize: 20),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
-                  Avatar(icon: _avatarUrl),
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: AvatarPng(imageUrl: _avatarUrl),
+                  )
                 ],
               ),
               ConstrainedBox(
@@ -104,7 +105,11 @@ class _AvatarChangeState extends State<AvatarChange> {
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Avatar(icon: e),
+                            child: SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: AvatarPng(imageUrl: e),
+                            ),
                           ),
                         ),
                       ),
@@ -114,8 +119,8 @@ class _AvatarChangeState extends State<AvatarChange> {
               ),
               FullWidthButton(
                   onPressed: () {
-                    widget.onAccept(_avatarUrl);
                     Navigator.pop(context);
+                    widget.onAccept(_avatarUrl);
                   },
                   child: Text(
                     "Xác nhận",

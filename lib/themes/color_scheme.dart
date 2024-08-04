@@ -12,7 +12,7 @@ final _greenColorValue = HexColor('0B2FE5').value;
 final MaterialColor primary = MaterialColor(
   _primaryColorValue,
   <int, Color>{
-    50: HexColor('FFFBF5'),
+    50: HexColor('FFF8ED'),
     100: HexColor('FFEDD1'),
     200: HexColor('FFD38F'),
     300: HexColor('FFBE5C'),
@@ -27,16 +27,16 @@ final MaterialColor primary = MaterialColor(
 
 final MaterialColor secondary =
     MaterialColor(_secondaryColorValue, <int, Color>{
-  50: HexColor('FFF5F7'),
-  100: HexColor('FFD1DA'),
-  200: HexColor('FF8FA3'),
-  300: HexColor('FF5C7A'),
-  400: HexColor('FF3358'),
-  500: HexColor('FF0634'),
-  600: HexColor('DD042B'),
-  700: HexColor('C20024'),
-  800: HexColor('9D011E'),
-  900: HexColor('6B0014')
+  50: HexColor('F6F9FE'),
+  100: HexColor('DAEDFF'),
+  200: HexColor('93CCFF'),
+  300: HexColor('67B8FF'),
+  400: HexColor('47A8FF'),
+  500: HexColor('2D9AFF'),
+  600: HexColor('2C8BF0'),
+  700: HexColor('2979DD'),
+  800: HexColor('0048B3'),
+  900: HexColor('012B6A')
 });
 
 final MaterialColor neutral = MaterialColor(_neutralColorValue, <int, Color>{
@@ -57,15 +57,20 @@ final MaterialColor red = MaterialColor(_redColorValue, <int, Color>{
   100: HexColor('FFDADA'),
   500: HexColor('F03C3C'),
   800: HexColor('B30000'),
-  900: HexColor('6A0101'),
+  900: HexColor('6B0014'),
 });
 
 final MaterialColor green = MaterialColor(_greenColorValue, <int, Color>{
-  50: HexColor('E3F6FF'),
-  100: HexColor('CCEAFF'),
-  500: HexColor('0B2FE5'),
-  800: HexColor('031677'),
-  900: HexColor('020E4B'),
+  50: HexColor('EBFCE9'),
+  100: HexColor('CDF6C8'),
+  200: HexColor('AAF0A3'),
+  300: HexColor('81E97B'),
+  400: HexColor('5BE35A'),
+  500: HexColor('25DC37'),
+  600: HexColor('00CB2F'),
+  700: HexColor('00B624'),
+  800: HexColor('00A119'),
+  900: HexColor('016A01'),
 });
 
 final Color textDefault = Color(_textDefaultColorValue);
@@ -115,7 +120,7 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontSize: 36,
       fontWeight: FontWeight.w800,
       color: textDefault,
-      height: 1.02,
+      height: 0.12,
     ),
     headlineMedium: TextStyle(
       fontSize: 28,
@@ -129,7 +134,7 @@ final TextTheme textTheme = GoogleFonts.nunitoTextTheme(
       fontWeight: FontWeight.w700,
       color: textDefault,
       height: 1,
-      letterSpacing: 1.1,
+      letterSpacing: 0.1,
     ),
     labelLarge: TextStyle(
       color: textDefault,

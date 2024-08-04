@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';

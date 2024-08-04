@@ -1,27 +1,53 @@
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:logger/logger.dart';
 
 class InputField extends StatefulWidget {
   final String label;
   final String hint;
   final TextInputType type;
   final String? Function(String?)? validator;
-  final controller;
+  final TextEditingController? controller;
   final String? errorText;
   final String name;
+  final Widget? suffixIcon;
   final bool autoFocus;
+  final bool? isObscure;
+  final double? height;
+  final GlobalKey<FormBuilderState>? formKey;
+  final String? initValue;
+  final double? fontSize;
+  final EdgeInsetsGeometry? contentPadding;
+  final Function()? onChanged;
+  final Function()? onTap;
+  final Function(String?)? onChange;
+  final Function(String?)? onSubmit;
+  final List<TextInputFormatter>? inputFormatters;
 
   const InputField({
     super.key,
     this.label = "",
     this.autoFocus = false,
     this.type = TextInputType.text,
+    this.onChanged,
     this.hint = "",
+    this.initValue,
+    this.formKey,
     required this.name,
     this.validator,
     this.errorText,
-    required this.controller,
+    this.suffixIcon,
+    this.isObscure = false,
+    this.controller,
+    this.height,
+    this.fontSize,
+    this.contentPadding,
+    this.onSubmit,
+    this.onTap,
+    this.inputFormatters,
+    this.onChange,
   });
 
   @override
@@ -29,10 +55,18 @@ class InputField extends StatefulWidget {
 }
 
 class _InputFieldState extends State<InputField> {
+  _resetValidate() {
+    if (widget.formKey != null &&
+        widget.formKey!.currentState?.fields[widget.name] != null) {
+      widget.formKey!.currentState!.validate();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         widget.label.isNotEmpty
             ? Text(
@@ -42,27 +76,56 @@ class _InputFieldState extends State<InputField> {
                     ),
               )
             : Container(),
-        const SizedBox(height: 10),
-        FormBuilderTextField(
-          name: widget.name,
-          // controller: widget.controller,
-          keyboardType: widget.type,
-          key: widget.key,
-          autofocus: widget.autoFocus,
-          validator: widget.validator,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          obscureText: widget.type == TextInputType.visiblePassword,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: neutral.shade500,
-              ),
-          onTapOutside: (event) {
-            FocusScope.of(context).unfocus();
-          },
-          decoration: InputDecoration(
-            hintText: widget.hint,
-            errorMaxLines: 2,
-            errorText: widget.errorText,
+        widget.label.isNotEmpty ? const SizedBox(height: 10) : Container(),
+        SizedBox(
+          height: widget.height,
+          child: FormBuilderTextField(
+            name: widget.name,
+            controller: widget.controller,
+            keyboardType: widget.type,
+            key: widget.key,
+            autofocus: widget.autoFocus,
+            onChanged: (value) {
+              if (widget.formKey != null) {
+                _resetValidate();
+              }
+              widget.onChange?.call(value);
+            },
+            validator: widget.validator,
+            inputFormatters: widget.inputFormatters,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            obscureText: widget.type == TextInputType.visiblePassword &&
+                    widget.isObscure!
+                ? true
+                : false,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: neutral.shade500,
+                  fontSize: widget.fontSize,
+                ),
+            onTapOutside: (event) {
+              FocusScope.of(context).unfocus();
+            },
+            onTap: widget.onTap,
+            // onEditingComplete: () {
+            //   Logger().i("Editing complete");
+            //   if (widget.onSubmit != null) {
+            //     widget.onSubmit!();
+            //   }
+            // },
+            decoration: InputDecoration(
+              hintText: widget.hint,
+              errorMaxLines: 2,
+              errorText: widget.errorText,
+              suffixIcon: widget.suffixIcon,
+              contentPadding: widget.contentPadding,
+            ),
+            onSubmitted: (value) {
+              if (widget.onSubmit != null) {
+                widget.onSubmit!(value);
+                widget.controller?.clear();
+              }
+            },
           ),
         ),
       ],

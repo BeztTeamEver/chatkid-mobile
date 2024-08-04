@@ -5,7 +5,7 @@ import 'dart:developer';
 import 'package:chatkid_mobile/config.dart';
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
-import 'package:chatkid_mobile/models/paging_modal.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/services/chat_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,8 +44,6 @@ final getChannelMessagesProvider =
 final receiveMessage = StreamProvider<ChatModel>((ref) async* {
   StreamController<ChatModel> stream = StreamController();
   final socket = SocketService();
-
-  List<ChatModel> listMessages = const <ChatModel>[];
 
   socket.onMessage((data) {
     stream.add(data);

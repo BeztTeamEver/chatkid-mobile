@@ -22,7 +22,7 @@ class _SwitchSignInState extends State<SwitchSignIn> {
     final label = widget.isSwitchLogin
         ? "Bạn đã có tài khoản? "
         : "Bạn chưa có tài khoản? ";
-    final textLink = widget.isSwitchLogin ? "Đăng nhập ngay" : "Đăng kí";
+    final textLink = widget.isSwitchLogin ? "Đăng nhập ngay" : "Đăng ký";
     final route = widget.isSwitchLogin ? const LoginPage() : const SignUpPage();
 
     return Text.rich(

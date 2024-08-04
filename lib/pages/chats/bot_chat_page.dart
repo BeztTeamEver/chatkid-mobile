@@ -1,24 +1,31 @@
+import 'dart:convert';
+
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/gpt_voice.dart';
-import 'package:chatkid_mobile/constants/service.dart';
 import 'package:chatkid_mobile/enum/bot_type.dart';
+import 'package:chatkid_mobile/models/bot_asset_model.dart';
 import 'package:chatkid_mobile/models/kid_service_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/bot/bot_asset.dart';
 import 'package:chatkid_mobile/providers/gpt_provider.dart';
-import 'package:chatkid_mobile/providers/user_provider.dart';
+import 'package:chatkid_mobile/services/asset_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
+import 'package:chatkid_mobile/services/wallet_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/loading_indicator.dart';
 import 'package:chatkid_mobile/widgets/speech_to_text.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class BotChatPage extends ConsumerStatefulWidget {
-  final BotType botType;
-  const BotChatPage({super.key, required this.botType});
+  final BotType? botType;
+  final String? content;
+  const BotChatPage({super.key, this.botType = BotType.PUMKIN, this.content});
 
   @override
   ConsumerState<BotChatPage> createState() => _BotChatPageState();
@@ -26,12 +33,13 @@ class BotChatPage extends ConsumerStatefulWidget {
 
 class _BotChatPageState extends ConsumerState<BotChatPage> {
   TtsService ttsService = TtsService().instance;
-  int _currentEnergy = 10;
   bool _loading = false;
   String? _lastWords = "";
   // TODO Remove this
   String _botServiceName = "Chat bot";
   UserModel? _user;
+  final WalletController wallet = Get.put(WalletController());
+  late Future<List<BotAssetModel>> currentSkin;
 
   Future<void> _onResult(String result) async {
     // _speechEnabled = await _speechToText.initialize();
@@ -47,44 +55,43 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
       setState(() {
         _loading = true;
       });
-      final kidService = _user?.kidServices ??
-          // TODO: remove
-          [
-            KidServiceModel(
-              id: '2f1b057b-67ac-4d8d-9c23-b0dd3d8b87b2',
-              serviceType: 'Chat bot',
-              status: 1,
-            )
-          ];
-      if (kidService == null) {
-        throw Exception("Kid service is null");
-      }
+      // final kidService = _user?.kidServices ??
+      //     // TODO: remove
+      //     [
+      //       KidServiceModel(
+      //         id: '2f1b057b-67ac-4d8d-9c23-b0dd3d8b87b2',
+      //         serviceType: 'Chat bot',
+      //         status: 1,
+      //       )
+      //     ];
+      // if (kidService == null) {
+      //   throw Exception("Kid service is null");
+      // }
 
-      String kidServiceId = kidService
-              .firstWhere((element) => element.serviceType == _botServiceName)
-              .id ??
-          '';
+      // String kidServiceId = kidService
+      //         .firstWhere((element) => element.serviceType == _botServiceName)
+      //         .id ??
+      //     '';
 
-      if (kidServiceId.isEmpty) {
-        throw Exception('Kid service id is empty');
-      }
+      // if (kidServiceId.isEmpty) {
+      //   throw Exception('Kid service id is empty');
+      // }
 
-      if (_currentEnergy == 0) {
+      if (wallet.diamond.value == 0) {
         await ttsService.speak(
-            "Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!");
+            'Tôi đã hết kim cương rồi, bạn hãy giúp tôi nạp kim cương nhé!');
         return;
       }
       final gptNotifier = ref.watch(gptProvider.notifier);
-      await gptNotifier.chat(result, kidServiceId).then((value) async {
-        await ttsService.speak(value);
-        // TODO: minus energy
-        // ref.watch(userProvider.notifier).subTractEnergy();
-        setState(() {
-          _lastWords = value;
-        });
-      }).whenComplete(() => setState(() {
-            _loading = false;
-          }));
+      // await gptNotifier.chat(result, kidServiceId).then((value) async {
+      //   wallet.refetchWallet();
+      //   await ttsService.speak(value);
+      //   setState(() {
+      //     _lastWords = value;
+      //   });
+      // }).whenComplete(() => setState(() {
+      //       _loading = false;
+      //     }));
     } catch (e, s) {
       Logger().e(e, stackTrace: s);
       ttsService.speak(
@@ -101,24 +108,21 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   }
 
   Future<void> _hello({bool? test = true}) async {
-    UserModel currentUser = LocalStorage.instance.getUser();
     // TODO: revert this
     // UserModel user = await ref
     //     .watch(userProvider.notifier)
     //     .getUser(currentUser.id, currentUser.password);
     final user = UserModel(
         id: "13854ecf-796c-4682-b66b-aaf735d85564", role: RoleConstant.Child);
-    final totalEnergy = user.wallets?.first.totalEnergy ?? 1;
     String lastWords =
         'Xin chào, tôi là Kidtalkie. Bạn có câu hỏi gì cho tôi không?';
 
-    if (totalEnergy == 0) {
+    if (wallet.diamond == 0) {
       lastWords =
-          'Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!';
+          'Tôi đã hết kim cương rồi, bạn hãy giúp tôi nạp kim cương nhé!';
     } else {
       setState(() {
         _user = user;
-        _currentEnergy = totalEnergy;
         // TODO: revert this
         // _botServiceName = widget.botType == BotType.PUMKIN
         //     ? ServiceTypeConstant.PUMPKIN
@@ -133,12 +137,16 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   }
 
   void initTts() async {
+    ttsService.stop();
     if (widget.botType == BotType.PUMKIN) {
       await ttsService.setVoice(GptVoice.PumkinVoice);
     } else {
       await ttsService.setVoice(GptVoice.CherryVoice);
     }
     await _hello();
+    if (widget.content != null) {
+      _onResult(widget.content!);
+    }
   }
 
   @override
@@ -146,6 +154,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     super.initState();
     initTts();
     ttsService.stop();
+    currentSkin = BotAssetService().getCurrentSkin();
   }
 
   @override
@@ -160,52 +169,36 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     final botName =
         widget.botType == BotType.PUMKIN ? 'full_pumkin' : 'full_cherry';
 
-    // if (user != null && user.wallets!.isNotEmpty) {
-    //   final totalEnergy = user.wallets!.first.totalEnergy ?? 0;
-    //   String lastWords =
-    //       'Xin chào, tôi là Kidtalkie. Bạn có câu hỏi gì cho tôi không?';
-    //   if (totalEnergy == 0) {
-    //     ttsService.stop();
-    //     ttsService.speak(
-    //         'Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!');
-    //     lastWords =
-    //         'Tôi đã hết năng lượng rồi, bạn hãy giúp tôi nạp năng lượng nhé!';
-    //   }
-    //   setState(() {
-    //     _currentEnergy = user.wallets!.first.totalEnergy ?? 0;
-    //     _lastWords = lastWords;
-    //   });
-    // }
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        padding: EdgeInsets.only(bottom: 20),
+      floatingActionButton: SizedBox(
         height: 96,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
               onPressed: () {
-                _onResult("Hát chúc mừng sinh nhật");
+                Navigator.push(
+                  context,
+                  createRoute(() => const BotAsset()),
+                );
               },
               icon: SvgIcon(
                 icon: "info",
-                size: 43,
+                size: 30,
                 color: primaryColor.shade500,
               ),
             ),
             SpeechToTextButton(
               onResult: _onResult,
-              // onSpeechResult: _onSpeechResult,
               color: primaryColor,
             ),
             IconButton(
               onPressed: () {},
               icon: SvgIcon(
                 icon: "history",
-                size: 43,
+                size: 30,
                 color: primaryColor.shade500,
               ),
             ),
@@ -223,7 +216,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
             ),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 30),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -243,77 +236,149 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SvgIcon(
-                          icon: 'bolt',
-                          size: 24,
-                          color: primaryColor.shade500,
+                        Image.asset(
+                          "assets/icons/diamond_icon.png",
+                          height: 20,
                         ),
-                        Text(
-                          _currentEnergy.toString(),
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        )
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Obx(
+                          () => Text(
+                            "${wallet.diamond}",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 80,
                   ),
-                  Container(
-                    height: 500,
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height - 310,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Container(
-                          constraints: BoxConstraints(
-                            maxHeight: 120,
-                          ),
-                          decoration: BoxDecoration(
-                            color: primary.shade100.withOpacity(0.8),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(40),
-                              bottomRight: Radius.circular(8),
-                              topLeft: Radius.circular(40),
-                              topRight: Radius.circular(40),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Container(
+                            constraints: const BoxConstraints(
+                              maxHeight: 120,
                             ),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              transitionBuilder: (child, animation) =>
-                                  ScaleTransition(
-                                      scale: animation, child: child),
-                              child: _loading
-                                  ? const CircularProgressIndicator()
-                                  : Text(
-                                      _lastWords ??
-                                          "Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                          ),
-                                      textAlign: TextAlign.center,
-                                    ),
+                            decoration: BoxDecoration(
+                              color: primary.shade100.withOpacity(0.8),
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(40),
+                                bottomRight: Radius.circular(8),
+                                topLeft: Radius.circular(40),
+                                topRight: Radius.circular(40),
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 200),
+                                transitionBuilder: (child, animation) =>
+                                    ScaleTransition(
+                                        scale: animation, child: child),
+                                child: _loading
+                                    ? const Loading()
+                                    : Text(
+                                        _lastWords ??
+                                            "Xin chào, tôi là kidtalkie. Bạn có câu hỏi gì cho tôi không?",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                            ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                              ),
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
-                        Container(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: SvgPicture.asset(
-                            'assets/robot/${botName}.svg',
-                            height: 340,
-                            fit: BoxFit.fitHeight,
-                            alignment: Alignment.topCenter,
+                        Center(
+                          child: FutureBuilder(
+                            future: currentSkin,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final data =
+                                    snapshot.data as List<BotAssetModel>;
+                                return Stack(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                                  2 -
+                                              AppBar().preferredSize.height / 2,
+                                      decoration:
+                                          BoxDecoration(color: primary.shade50),
+                                    ),
+                                    ...data
+                                        .map((item) => Positioned(
+                                              left: 0,
+                                              top: 0,
+                                              child: Image.network(
+                                                item.imageUrl ?? "",
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                height: MediaQuery.of(context)
+                                                            .size
+                                                            .height /
+                                                        2 -
+                                                    AppBar()
+                                                            .preferredSize
+                                                            .height /
+                                                        2,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ))
+                                        .toList(),
+                                  ],
+                                );
+                              }
+                              if (snapshot.hasError) {
+                                Logger().e(snapshot.error);
+                                // return SvgPicture.asset('robot/full_pumkin.svg',
+                                //     width: MediaQuery.of(context).size.width,
+                                //     height:
+                                //         MediaQuery.of(context).size.height / 2 -
+                                //             AppBar().preferredSize.height / 2,
+                                //     fit: BoxFit.cover);
+                              }
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.height / 2 -
+                                          AppBar().preferredSize.height / 2,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              return SvgPicture.asset(
+                                'assets/robot/full_pumkin.svg',
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height / 2 -
+                                    AppBar().preferredSize.height / 2,
+                                fit: BoxFit.cover,
+                              );
+                            },
                           ),
                         ),
                       ],

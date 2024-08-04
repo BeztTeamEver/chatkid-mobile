@@ -1,19 +1,11 @@
-import 'dart:convert';
-
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/pages/home_page.dart';
-import 'package:chatkid_mobile/pages/main_page.dart';
-import 'package:chatkid_mobile/pages/start_page/form_page.dart';
 import 'package:chatkid_mobile/pages/start_page/password_login_page.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/providers/step_provider.dart';
-import 'package:chatkid_mobile/providers/user_provider.dart';
-import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
@@ -64,7 +56,8 @@ class _StartPageState extends ConsumerState<StartPage> {
     Navigator.push(
       context,
       createRoute(
-        () => PasswordLoginPage(userId: _selectedAccount!.id!),
+        () => PasswordLoginPage(
+            userId: _selectedAccount!.id!, name: _selectedAccount!.name!),
       ),
     );
   }
@@ -72,7 +65,14 @@ class _StartPageState extends ConsumerState<StartPage> {
   @override
   Widget build(BuildContext context) {
     ref.watch(saveStepProvider(1));
-    final familyUsers = FamilyService().getFamily();
+    final familyUsers = ref.watch(getOwnFamily.future).then((value) {
+      if (value.members.length >= 5) {
+        setState(() {
+          _isCreateUser = false;
+        });
+      }
+      return value;
+    });
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -119,19 +119,37 @@ class _StartPageState extends ConsumerState<StartPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data as FamilyModel;
-                      if (data.members.length >= 5) {
-                        _isCreateUser = false;
+                      final members = data.members.fold(<UserModel>[],
+                          (previousValue, element) {
+                        if (element.role == RoleConstant.Parent) {
+                          previousValue.add(element);
+                        }
+                        return previousValue;
+                      });
+
+                      if (members.length == 0) {
+                        return Center(
+                          child: Text(
+                            "Không có tài khoản nào trong gia đình của bạn",
+                            style:
+                                Theme.of(context).textTheme.bodySmall!.copyWith(
+                                      color: neutral.shade700,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                            textAlign: TextAlign.center,
+                          ),
+                        );
                       }
                       return ListView.separated(
                         shrinkWrap: true,
-                        itemCount: 5,
+                        itemCount: members.length,
                         separatorBuilder: (context, index) => const SizedBox(
                           height: 10,
                         ),
                         itemBuilder: (context, index) {
-                          final icon = data.members[index].avatarUrl != null &&
-                                  data.members[index].avatarUrl != ""
-                              ? data.members[index].avatarUrl
+                          final icon = members[index].avatarUrl != null &&
+                                  members[index].avatarUrl != ""
+                              ? members[index].avatarUrl
                               : iconAnimalList[0];
                           return SizedBox(
                             width: double.infinity,
@@ -140,12 +158,12 @@ class _StartPageState extends ConsumerState<StartPage> {
                               borderColor: primary.shade100,
                               hasBackground: true,
                               icon: icon,
-                              label: data.members[index].name ?? "No name",
+                              label: members[index].name ?? "No name",
                               onPressed: () {
                                 setState(() {
-                                  _role = data.members[index].role!;
+                                  _role = members[index].role!;
                                   _selectedIndex = index;
-                                  _selectedAccount = data.members[index];
+                                  _selectedAccount = members[index];
                                 });
                               },
                             ),

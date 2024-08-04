@@ -14,7 +14,9 @@ class AuthService {
   static final _localStorage = LocalStorage.instance;
 
   static Future<AuthModel> googleLogin(String token) async {
-    RequestAuthModal requestAuthModal = RequestAuthModal(accessToken: token);
+    final deviceToken = await FirebaseService.instance.getFCMToken();
+    RequestAuthModal requestAuthModal =
+        RequestAuthModal(accessToken: token, deviceToken: deviceToken);
     final response = await BaseHttp.instance.post(
       endpoint: Endpoint.googleEndPoint,
       body: requestAuthModal.toJson(),
@@ -25,6 +27,8 @@ class AuthService {
       final authTokens = AuthModel.fromJson(body);
       final family = FamilyModel.fromJson(body['family']);
       Logger().d(family.familyId);
+      _localStorage.preferences
+          .setString(LocalStorageKey.MEMBERS, jsonEncode(family.members));
       _localStorage.setString(LocalStorageKey.FAMILY_ID, family.familyId);
       _saveToken(authTokens);
       return authTokens;
@@ -101,6 +105,7 @@ class AuthService {
 
   static Future<bool> signOut() async {
     // TODO: call api sign out here
+
     await _localStorage.removeToken();
     await _localStorage.removeUser();
     await _localStorage.preferences.remove(LocalStorageKey.FAMILY_ID);
