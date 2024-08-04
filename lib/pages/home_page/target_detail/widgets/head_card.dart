@@ -10,6 +10,7 @@ import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
@@ -78,12 +79,17 @@ class _HeadCardState extends State<HeadCard> {
                         const SizedBox(
                           width: 8,
                         ),
-                        Text(
-                          "${widget.target.reward}",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: neutral.shade600,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            "${widget.target.reward}",
+                            softWrap: true,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: neutral.shade600,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],

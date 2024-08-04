@@ -51,7 +51,7 @@ class _TemplateCardState extends State<TemplateCard> {
                 ],
               ),
             ),
-            Row(
+            Column(
               children: [
                 Container(
                   width: 100,
@@ -65,7 +65,14 @@ class _TemplateCardState extends State<TemplateCard> {
                     widget.targetModel.rewardImageUrl ?? "",
                   ),
                 ),
-                Text(widget.targetModel.reward ?? ""),
+                Flexible(
+                  child: Text(
+                    widget.targetModel.reward ?? "",
+                    softWrap: true,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )
               ],
             ),
           ],
