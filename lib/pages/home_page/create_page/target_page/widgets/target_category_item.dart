@@ -68,7 +68,7 @@ class _CategoryItemState extends State<TargetCategoryItem>
         widget.onTap(widget.id);
       },
       child: SizedBox(
-        width: 72,
+        width: 68,
         child: Column(
           children: [
             ScaleTransition(
@@ -108,7 +108,7 @@ class _CategoryItemState extends State<TargetCategoryItem>
                         padding: EdgeInsets.all(1),
                         child: Image.network(
                           widget.imageUrl,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           frameBuilder:
                               (context, child, frame, wasSynchronouslyLoaded) {
                             return ClipRRect(

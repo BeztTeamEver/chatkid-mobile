@@ -215,7 +215,7 @@ class TaskActionsState extends State<TaskActions>
                   },
                 ),
               ).then((value) {
-                if (value) {
+                if (value != null && value) {
                   Navigator.of(context).pop();
                 }
               });

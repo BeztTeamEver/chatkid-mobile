@@ -22,6 +22,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
 class TargetFormPage extends ConsumerStatefulWidget {
   const TargetFormPage({super.key});
@@ -66,7 +67,13 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
       targetFormStore.formKey.currentState!.save();
       targetFormStore.increaseStep();
       targetFormStore.updateProgress();
-      Navigator.of(context).push(createRoute(() => TargetAddGiftPage()));
+      await Navigator.of(context)
+          .push(createRoute(() => TargetAddGiftPage()))
+          .then((value) {
+        if (value != null) {
+          Get.back(result: value);
+        }
+      });
     }
   }
 
@@ -179,13 +186,15 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
                       itemBuilder: (context, index) {
                         TaskTypeModel? currentTask = null;
 
-                        targetFormStore.categories.forEach((element) {
-                          element.taskTypes.forEach((element) {
-                            if (element.id == targetFormStore.missions[index]) {
-                              currentTask = element;
+                        targetFormStore.categories.forEach((category) {
+                          category.taskTypes.forEach((tasktype) {
+                            if (tasktype.id ==
+                                targetFormStore.missions[index]) {
+                              currentTask = tasktype;
                             }
                           });
                         });
+
                         if (currentTask == null) {
                           return SizedBox();
                         }

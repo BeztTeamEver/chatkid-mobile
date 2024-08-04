@@ -130,7 +130,9 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
                             ? "Ghim công việc"
                             : todoFormCreateController.isDelete.value
                                 ? "Xóa công việc"
-                                : "Tạo công việc",
+                                : widget.id != null
+                                    ? "Chỉnh sửa công việc"
+                                    : "Tạo công việc",
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

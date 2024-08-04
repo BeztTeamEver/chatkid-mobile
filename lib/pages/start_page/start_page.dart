@@ -120,7 +120,15 @@ class _StartPageState extends ConsumerState<StartPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data as FamilyModel;
-                      if (data.members.length == 0) {
+                      final members = data.members.fold(<UserModel>[],
+                          (previousValue, element) {
+                        if (element.role == RoleConstant.Parent) {
+                          previousValue.add(element);
+                        }
+                        return previousValue;
+                      });
+
+                      if (members.length == 0) {
                         return Center(
                           child: Text(
                             "Không có tài khoản nào trong gia đình của bạn",
@@ -135,14 +143,14 @@ class _StartPageState extends ConsumerState<StartPage> {
                       }
                       return ListView.separated(
                         shrinkWrap: true,
-                        itemCount: data.members.length,
+                        itemCount: members.length,
                         separatorBuilder: (context, index) => const SizedBox(
                           height: 10,
                         ),
                         itemBuilder: (context, index) {
-                          final icon = data.members[index].avatarUrl != null &&
-                                  data.members[index].avatarUrl != ""
-                              ? data.members[index].avatarUrl
+                          final icon = members[index].avatarUrl != null &&
+                                  members[index].avatarUrl != ""
+                              ? members[index].avatarUrl
                               : iconAnimalList[0];
                           return SizedBox(
                             width: double.infinity,
@@ -151,12 +159,12 @@ class _StartPageState extends ConsumerState<StartPage> {
                               borderColor: primary.shade100,
                               hasBackground: true,
                               icon: icon,
-                              label: data.members[index].name ?? "No name",
+                              label: members[index].name ?? "No name",
                               onPressed: () {
                                 setState(() {
-                                  _role = data.members[index].role!;
+                                  _role = members[index].role!;
                                   _selectedIndex = index;
-                                  _selectedAccount = data.members[index];
+                                  _selectedAccount = members[index];
                                 });
                               },
                             ),

@@ -32,7 +32,7 @@ class _MainCardState extends State<MainCard> {
       child: CustomCard(
         mainAxisAlignment: MainAxisAlignment.start,
         backgroundImage: widget.mission.imageHomeUrl,
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         children: [
           Row(
             children: [

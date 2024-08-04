@@ -1,13 +1,16 @@
 import 'dart:io';
 
 import 'package:chatkid_mobile/models/file_model.dart';
+import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/target_store.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_assign_page.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/widgets/mission_create_item.dart';
 import 'package:chatkid_mobile/services/file_service.dart';
+import 'package:chatkid_mobile/services/target_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/utils/toast.dart';
+import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
@@ -66,7 +69,11 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
         FileModel rewardImageUrl = await FileService().sendfile(file);
 
         form?.fields['rewardImageUrl']?.didChange(rewardImageUrl.url);
-
+        if (targetFormStore.initForm['id'] != null) {
+          form?.save();
+          await handleUpdate();
+          return;
+        }
         targetFormStore.increaseStep();
         targetFormStore.updateProgress();
         Navigator.of(context).push(createRoute(() => TargetAssignPage()));
@@ -80,10 +87,23 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
     }
   }
 
+  handleUpdate() async {
+    try {
+      final value = targetFormStore.formKey.currentState!.value;
+
+      final target = await TargetService().updateTarget(
+          targetFormStore.initForm['id'],
+          TargetRequestModal.fromJson({...value}));
+      Navigator.of(context).pop(target);
+    } catch (e) {
+      ShowToast.error(msg: "Có lỗi xảy ra, vui lòng thử lại sau");
+    } finally {
+      targetFormStore.isLoading.value = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Logger().i(targetFormStore.formKey.currentState?.value['missions']);
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       primary: false,
@@ -93,11 +113,12 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.all(8),
         child: GetX<TargetFormStore>(builder: (controller) {
-          final gifts = targetFormStore.giftImages
+          final gifts = controller.giftImages
               .map(
                 (element) => GiftImageCard(imageUrl: element),
               )
               .toList();
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +128,9 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
                   name: 'rewardImageUrl',
                 ),
                 InputField(
+                  formKey: targetFormStore.formKey,
                   name: 'reward',
+                  initValue: targetFormStore.initForm['reward'],
                   label: "Tên quà",
                   hint: "Nhập tên quà",
                   validator: FormBuilderValidators.compose([
@@ -135,7 +158,7 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
                 const SizedBox(
                   height: 12,
                 ),
-                if (gifts.isNotEmpty) gifts[0],
+                gifts.isNotEmpty ? gifts[0] : Container(),
                 const SizedBox(
                   height: 12,
                 ),
@@ -189,39 +212,53 @@ class GiftImageCard extends StatelessWidget {
     final TargetFormStore targetFormStore = Get.find();
 
     return CustomCard(
+      height: 300,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.zero,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Slidable(
-          endActionPane: ActionPane(
-            motion: ScrollMotion(),
-            children: [
-              SlidableAction(
-                onPressed: (context) {
-                  targetFormStore.removeGiftImage(imageUrl);
-                },
-                icon: Icons.delete,
-                backgroundColor: red.shade500,
-                flex: 1,
-                label: 'Xóa',
+        Stack(
+          children: [
+            Slidable(
+              // endActionPane: ActionPane(
+              //   motion: ScrollMotion(),
+              //   children: [
+              //     SlidableAction(
+              //       onPressed: (context) {
+              //         targetFormStore.removeGiftImage(imageUrl);
+              //       },
+              //       icon: Icons.delete,
+              //       backgroundColor: red.shade500,
+              //       flex: 1,
+              //       label: 'Xóa',
+              //     ),
+              //   ],
+              // ),
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: 280,
+                ),
+                height: 280,
+                width: MediaQuery.of(context).size.width,
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Image.file(
+                    File(imageUrl),
+                    fit: BoxFit.fill,
+                  ),
+                ),
               ),
-            ],
-          ),
-          child: Container(
-            constraints: BoxConstraints(
-              maxHeight: 280,
             ),
-            width: MediaQuery.of(context).size.width,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Image.file(
-                File(imageUrl),
-                fit: BoxFit.fill,
-              ),
-            ),
-          ),
+            Positioned(
+                child: ButtonIcon(
+                    icon: 'trash',
+                    onPressed: () {
+                      targetFormStore.removeGiftImage(imageUrl);
+                    }),
+                right: 0,
+                top: 0),
+          ],
         ),
       ],
     );

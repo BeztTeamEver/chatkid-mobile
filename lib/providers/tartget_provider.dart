@@ -8,3 +8,15 @@ final getTargetByMember = FutureProvider.autoDispose
       TargetListRequestModel(memberId: member.memberId, date: member.date));
   return response;
 });
+
+final getTargetDetail =
+    FutureProvider.autoDispose.family<TargetModel, String>((ref, id) async {
+  final response = await ref.read(targetServiceProvider).getTargetDetail(id);
+  return response;
+});
+
+final getTemplateTargets =
+    FutureProvider.autoDispose<List<TargetModel>>((ref) async {
+  final response = await ref.read(targetServiceProvider).getTargetTemplate();
+  return response;
+});

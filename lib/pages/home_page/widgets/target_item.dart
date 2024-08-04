@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/constants/date.dart';
 import 'package:chatkid_mobile/models/target_model.dart';
+import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/target_detail/target_detail.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -23,6 +24,7 @@ class TargetItem extends StatefulWidget {
 }
 
 class _TargetItemState extends State<TargetItem> {
+  final TodoHomeStore store = Get.find();
   // TODO: implement data
   @override
   Widget build(BuildContext context) {
@@ -31,11 +33,10 @@ class _TargetItemState extends State<TargetItem> {
       child: CustomCard(
         padding: EdgeInsets.symmetric(vertical: 14, horizontal: 14),
         onTap: () {
+          store.setSelectedTarget(widget.target);
           Navigator.push(
             context,
-            createRoute(() => TargetDetail(
-                  target: widget.target,
-                )),
+            createRoute(() => TargetDetail()),
           );
         },
         children: [

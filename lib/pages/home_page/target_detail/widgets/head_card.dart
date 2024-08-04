@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/constants/date.dart';
 import 'package:chatkid_mobile/models/target_model.dart';
+import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/target_detail/widgets/edit_modal.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
@@ -9,6 +10,8 @@ import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class HeadCard extends StatefulWidget {
   final TargetModel target;
@@ -19,6 +22,7 @@ class HeadCard extends StatefulWidget {
 }
 
 class _HeadCardState extends State<HeadCard> {
+  final TodoHomeStore store = Get.find();
   @override
   Widget build(BuildContext context) {
     return CustomCard(
@@ -108,14 +112,20 @@ class _HeadCardState extends State<HeadCard> {
                 top: 1,
                 right: 4,
                 child: ButtonIcon(
-                  onPressed: () {
-                    showModalBottomSheet(
+                  onPressed: () async {
+                    final TargetModel? target = await showModalBottomSheet(
                       showDragHandle: true,
                       context: context,
                       builder: (context) {
-                        return EditModal();
+                        return EditModal(
+                          id: widget.target.id,
+                        );
                       },
                     );
+                    if (target != null) {
+                      store.updateTarget(target);
+                      store.setSelectedTarget(target);
+                    }
                   },
                   icon: "dots",
                 ),

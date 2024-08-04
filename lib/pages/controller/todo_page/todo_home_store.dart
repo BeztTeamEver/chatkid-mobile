@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/controller/todo_page/target_store.dart';
 import 'package:chatkid_mobile/services/target_service.dart';
 import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -18,6 +19,7 @@ import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:logger/logger.dart';
+import 'package:logger/web.dart';
 
 class TodoHomeStore extends GetxController {
   static TodoHomeStore get to => Get.find();
@@ -28,6 +30,18 @@ class TodoHomeStore extends GetxController {
   Rx<bool> isTaskLoading = false.obs;
   Rx<bool> isTargetLoading = false.obs;
   Rx<String> currentTask = "".obs;
+  Rx<TargetModel> selectedTarget = TargetModel(
+    id: "",
+    message: "",
+    endTime: DateTime.now(),
+    startTime: DateTime.now(),
+    currentProgress: 0,
+    totalProgress: 0,
+    memberId: "",
+    missions: [],
+    reward: "",
+    rewardImageUrl: "",
+  ).obs;
 
   Rx<DateTime> selectedDate = DateTime.now().obs;
 
@@ -173,6 +187,10 @@ class TodoHomeStore extends GetxController {
     });
   }
 
+  setSelectedTarget(TargetModel target) {
+    selectedTarget.value = target;
+  }
+
   Future<void> deleteTask(String id) async {
     try {
       await TodoService().deleteTask(id);
@@ -191,6 +209,14 @@ class TodoHomeStore extends GetxController {
 
   setTargets(List<TargetModel> targets) {
     this.targets.assignAll(targets);
+  }
+
+  updateTarget(TargetModel target) {
+    final index = targets.indexWhere((element) => element.id == target.id);
+    if (index != -1) {
+      targets[index] = target;
+    }
+    targets.refresh();
   }
 
   setTask(String id) {
