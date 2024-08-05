@@ -49,12 +49,13 @@ final MaterialColor neutral = MaterialColor(_neutralColorValue, <int, Color>{
   600: HexColor('757575'),
   700: HexColor('616161'),
   800: HexColor('424242'),
-  900: HexColor('212121'),
+  900: HexColor('252937'),
 });
 
 final MaterialColor red = MaterialColor(_redColorValue, <int, Color>{
   50: HexColor('FEF6F6'),
-  100: HexColor('FFDADA'),
+  100: HexColor('FFD1DA'),
+  200: HexColor('FF8FA3'),
   500: HexColor('F03C3C'),
   800: HexColor('B30000'),
   900: HexColor('6B0014'),

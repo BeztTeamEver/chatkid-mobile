@@ -1,20 +1,13 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:chatkid_mobile/models/blog_model.dart';
-import 'package:chatkid_mobile/models/blog_type_model.dart';
-import 'package:chatkid_mobile/pages/explore/blogs/blog_categories_detail_page.dart';
-import 'package:chatkid_mobile/pages/explore/blogs/blog_page.dart';
-import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
-import 'package:chatkid_mobile/widgets/bottom_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class BlogDetailPage extends StatefulWidget {
-  final BlogTypeModel? type;
   final BlogModel blog;
-  const BlogDetailPage({super.key, this.type, required this.blog});
+  const BlogDetailPage({super.key, required this.blog});
 
   @override
   State<BlogDetailPage> createState() => _BlogDetailPageState();
@@ -158,7 +151,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                                   borderRadius: BorderRadius.circular(18),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Color.fromARGB(255, 43, 43, 43)
+                                      color: const Color.fromARGB(255, 43, 43, 43)
                                           .withOpacity(0.1),
                                       spreadRadius: 1,
                                       blurRadius: 8,

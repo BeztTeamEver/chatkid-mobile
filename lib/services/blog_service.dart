@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/blog_model.dart';
 import 'package:chatkid_mobile/models/blog_type_model.dart';
-import 'package:chatkid_mobile/models/pagination_response_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:logger/logger.dart';
@@ -17,14 +16,6 @@ class BlogService {
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       List data = jsonDecode(response.body);
       final types = data.map((res) => BlogTypeModel.fromJson(res)).toList();
-      types.insert(
-          0,
-          BlogTypeModel.fromJson({
-            "id": "secret",
-            "name": "Vũ Trụ",
-            "imageUrl": "/assets/blog/vu_tru.png"
-          }));
-      types.removeAt(types.length - 1);
       return types;
     }
     switch (response.statusCode) {

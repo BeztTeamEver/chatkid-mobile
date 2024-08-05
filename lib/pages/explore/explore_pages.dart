@@ -1,154 +1,98 @@
-import 'package:chatkid_mobile/constants/init_item.dart';
-import 'package:chatkid_mobile/pages/explore/blogs/blog_categories_detail_page.dart';
-import 'package:chatkid_mobile/pages/explore/button/button.dart';
-import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/models/topic_model.dart';
+import 'package:chatkid_mobile/pages/explore/blogs/select_topic_page.dart';
+import 'package:chatkid_mobile/services/quiz_service.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:flutter/material.dart';
-import 'package:chatkid_mobile/widgets/indicator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
-class ExplorePage extends StatefulWidget {
+class ExplorePage extends ConsumerStatefulWidget {
   const ExplorePage({super.key});
 
   @override
-  State<ExplorePage> createState() => _ExplorePageState();
+  ConsumerState<ExplorePage> createState() => _ExplorePage();
 }
 
-class _ExplorePageState extends State<ExplorePage> {
-  int _currentBanner = 0;
-
-  final PageController _pageController = PageController(
-    initialPage: 0,
-  );
+class _ExplorePage extends ConsumerState<ExplorePage> {
+  late final Future<List<TopicModel>> listTopic;
+  @override
+  void initState() {
+    super.initState();
+    listTopic = QuizService().getTopics();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          SizedBox(
-            height: 200,
-            width: double.infinity,
-            child: Stack(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: PageView.builder(
-                    onPageChanged: (value) => setState(() {
-                      _currentBanner = value;
-                    }),
-                    itemCount: MAX_ITEMS,
-                    scrollDirection: Axis.horizontal,
-                    controller: _pageController,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                "https://bizweb.dktcdn.net/100/396/591/files/kv-web-banner-dl-25-10.jpg?v=1666775796140"),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: null,
-                      );
-                    },
-                  ),
-                ),
-                Positioned(
-                  bottom: 8,
-                  child: Container(
-                    decoration: const BoxDecoration(boxShadow: [
-                      BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 0,
-                          blurRadius: 20,
-                          offset: Offset(0, 0))
-                    ]),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Center(
-                        child: Indicator(
-                          index: _currentBanner,
-                          lenght: MAX_ITEMS,
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 17),
+          height: MediaQuery.of(context).size.height - 100,
+          child: SingleChildScrollView(
+            child: FutureBuilder(
+              future: listTopic,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final data = snapshot.data as List<TopicModel>;
+                  return Wrap(
+                    runSpacing: 12,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      const Text(
+                        'Blog',
+                        style: TextStyle(
+                          fontSize: 4,
+                          color: Colors.transparent,
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              ],
+                      ...data.map(
+                        (item) => GestureDetector(
+                          onTap: () => {
+                            Navigator.push(
+                              context,
+                              createRoute(
+                                () => SelectTopicPage(topicId: item.id, name: item.name),
+                              ),
+                            ),
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x144E2813),
+                                  blurRadius: 20,
+                                  offset: Offset(0, -4),
+                                  spreadRadius: 0,
+                                ),
+                              ],
+                            ),
+                            child: Image.network(
+                              item.imageUrl,
+                              width: MediaQuery.of(context).size.width,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const Text('Blog',
+                          style: TextStyle(
+                            fontSize: 4,
+                            color: Colors.transparent,
+                          )),
+                    ],
+                  );
+                }
+                if (snapshot.hasError) {
+                  Logger().e(snapshot.error);
+                  return Container();
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
             ),
           ),
-          const SizedBox(
-            height: 16,
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x0F4E2813),
-                  blurRadius: 12,
-                  offset: Offset(0, 6),
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: Color(0x0A4E2914),
-                  blurRadius: 2,
-                  offset: Offset(0, -1),
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: Color(0x0F742B00),
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                  spreadRadius: 0,
-                )
-              ],
-            ),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 16,
-              children: [
-                ButtonBlogAnimated(
-                  text: 'Kiến thức',
-                  icon: "bottomMenu/reward",
-                  onPressed: () {
-                    Future.delayed(const Duration(milliseconds: 100), () {
-                      Navigator.push(
-                          context, createRoute(() => const BlogCategoriesDetailPage()));
-                    });
-                  },
-                ),
-                ButtonBlogAnimated(
-                  text: 'Trò chơi',
-                  icon: "logo",
-                  onPressed: () {
-                    Future.delayed(const Duration(milliseconds: 100), () {
-                      Navigator.push(
-                          context, createRoute(() => const BlogCategoriesDetailPage()));
-                    });
-                  },
-                  primaryColor: const Color(0xFF32FF2D),
-                  secondaryColor: const Color(0xFF00E24C),
-                ),
-                ButtonBlogAnimated(
-                  text: 'Năng lượng',
-                  icon: "sparkle",
-                  onPressed: () {
-                    Future.delayed(const Duration(milliseconds: 100), () {
-                      Navigator.push(
-                          context, createRoute(() => const BlogCategoriesDetailPage()));
-                    });
-                  },
-                  primaryColor: primary.shade500,
-                  secondaryColor: primary.shade700,
-                ),
-              ],
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
