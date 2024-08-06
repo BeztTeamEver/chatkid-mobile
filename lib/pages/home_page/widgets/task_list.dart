@@ -94,7 +94,7 @@ class _TodoListState extends State<TodoList> {
     return Obx(
       () => SingleChildScrollView(
         controller: widget.scrollController,
-        padding: const EdgeInsets.only(top: 8, bottom: 26),
+        padding: const EdgeInsets.only(top: 4, bottom: 26),
         child: Column(
           children: [
             controller.tasks.value.availableTasks.isNotEmpty
@@ -220,11 +220,11 @@ class _TargetListState extends State<TargetList> {
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: controller.targets.value.length,
+            itemCount: controller.targets.length,
             itemBuilder: (context, index) {
               return Obx(
                 () => TargetItem(
-                  target: controller.targets.value[index],
+                  target: controller.targets[index],
                 ),
               );
             },

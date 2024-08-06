@@ -12,7 +12,7 @@ class TodoCreateFormWrapper extends StatefulWidget {
 }
 
 class _TodoCreateFormWrapperState extends State<TodoCreateFormWrapper> {
-  TodoFormCreateController todoFormCreateController = Get.find();
+  final TodoFormCreateController todoFormCreateController = Get.find();
 
   final initFormData = {
     "startTime": DateTime.now(),
@@ -28,7 +28,7 @@ class _TodoCreateFormWrapperState extends State<TodoCreateFormWrapper> {
   @override
   Widget build(BuildContext context) {
     return FormBuilder(
-      initialValue: initFormData,
+      initialValue: todoFormCreateController.initForm,
       key: todoFormCreateController.formKey,
       child: widget.child,
     );

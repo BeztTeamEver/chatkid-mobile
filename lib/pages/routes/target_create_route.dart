@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/pages/controller/todo_page/target_store.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_create_form_wrapper.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_form_page.dart';
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_template_page.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -7,9 +8,11 @@ import 'package:chatkid_mobile/widgets/secondary_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class TargetCreateRoute extends StatefulWidget {
-  const TargetCreateRoute({super.key});
+  final String? id;
+  const TargetCreateRoute({super.key, this.id});
 
   @override
   State<TargetCreateRoute> createState() => _TargetCreateRouteState();
@@ -27,6 +30,10 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
       ..addListener(() {
         setState(() {});
       });
+    if (widget.id != null) {
+      targetFormStore.initTarget(widget.id!);
+      // targetFormStore.targetId = widget.id!;
+    }
   }
 
   @override
@@ -52,80 +59,89 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
       child: Scaffold(
         body: SafeArea(
           child: Obx(
-            () => Column(
-              children: [
-                targetFormStore.step.value != 0
-                    ? Container(
-                        child: LinearProgressIndicator(
-                          value: targetFormStore.stepController.value!.value,
-                        ),
-                      )
-                    : Container(),
-                Expanded(
-                  child: Scaffold(
-                    appBar: AppBar(
-                      backgroundColor: Theme.of(context).colorScheme.background,
-                      // bottom: PreferredSize(
-                      //   preferredSize: const Size.fromHeight(16),
-                      //   child: Obx(
-                      //     () => LinearProgressIndicator(
-                      //       value: todoFormCreateController.stepController.value!.value,
-                      //     ),
-                      //   ),
-                      // ),
-
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
-                        child: SecondaryButton(
-                          child: SvgIcon(
-                            icon: 'chevron-left',
-                            color: primary.shade400,
+            () {
+              return Column(
+                children: [
+                  targetFormStore.step.value != 0 && widget.id == null
+                      ? Container(
+                          child: LinearProgressIndicator(
+                            value: targetFormStore.stepController.value!.value,
                           ),
-                          onTap: () {
-                            if (targetFormStore.step.value == 0) {
-                              Navigator.pop(context);
-                            } else {
+                        )
+                      : Container(),
+                  Expanded(
+                    child: Scaffold(
+                      appBar: AppBar(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
+                        // bottom: PreferredSize(
+                        //   preferredSize: const Size.fromHeight(16),
+                        //   child: Obx(
+                        //     () => LinearProgressIndicator(
+                        //       value: todoFormCreateController.stepController.value!.value,
+                        //     ),
+                        //   ),
+                        // ),
+
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          child: SecondaryButton(
+                            child: SvgIcon(
+                              icon: 'chevron-left',
+                              color: primary.shade400,
+                            ),
+                            onTap: () {
+                              if (targetFormStore.step.value == 0) {
+                                Navigator.pop(context);
+                              } else {
+                                targetFormStore.decreaseStep();
+                                targetFormStore.updateProgress();
+                                targetFormStore.navigatePop();
+                              }
+                            },
+                          ),
+                        ),
+                        centerTitle: true,
+                        title: Text(
+                          widget.id != null
+                              ? 'Chỉnh sửa công việc'
+                              : targetFormStore.step.value != 2
+                                  ? 'Tạo công việc'
+                                  : 'Thêm quà',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ),
+                      body: TargetCreateFormWrapper(
+                        child: Navigator(
+                            key: targetFormStore.navigatorKey,
+                            onPopPage: (route, result) {
+                              if (!route.didPop(result)) {
+                                return false;
+                              }
                               targetFormStore.decreaseStep();
                               targetFormStore.updateProgress();
-                              targetFormStore.navigatePop();
-                            }
-                          },
-                        ),
+                              return true;
+                            },
+                            onGenerateRoute: (settings) {
+                              return MaterialPageRoute(
+                                builder: (context) {
+                                  if (widget.id != null) {
+                                    return TargetFormPage();
+                                  }
+                                  return TargetTemplatePage();
+                                },
+                              );
+                            }),
                       ),
-                      centerTitle: true,
-                      title: Text(
-                        targetFormStore.step.value != 2
-                            ? 'Tạo công việc'
-                            : 'Thêm quà',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
-                    body: TargetCreateFormWrapper(
-                      child: Navigator(
-                          key: targetFormStore.navigatorKey,
-                          onPopPage: (route, result) {
-                            if (!route.didPop(result)) {
-                              return false;
-                            }
-                            targetFormStore.decreaseStep();
-                            targetFormStore.updateProgress();
-                            return true;
-                          },
-                          onGenerateRoute: (settings) {
-                            return MaterialPageRoute(
-                              builder: (context) {
-                                return TargetTemplatePage();
-                              },
-                            );
-                          }),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              );
+            },
           ),
         ),
       ),

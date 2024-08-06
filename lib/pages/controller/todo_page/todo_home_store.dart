@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/controller/todo_page/target_store.dart';
 import 'package:chatkid_mobile/services/target_service.dart';
 import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -18,6 +19,7 @@ import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:logger/logger.dart';
+import 'package:logger/web.dart';
 
 class TodoHomeStore extends GetxController {
   static TodoHomeStore get to => Get.find();
@@ -27,6 +29,19 @@ class TodoHomeStore extends GetxController {
   Rx<int> currentUserIndex = 0.obs;
   Rx<bool> isTaskLoading = false.obs;
   Rx<bool> isTargetLoading = false.obs;
+  Rx<String> currentTask = "".obs;
+  Rx<TargetModel> selectedTarget = TargetModel(
+    id: "",
+    message: "",
+    endTime: DateTime.now(),
+    startTime: DateTime.now(),
+    currentProgress: 0,
+    totalProgress: 0,
+    memberId: "",
+    missions: [],
+    reward: "",
+    rewardImageUrl: "",
+  ).obs;
 
   Rx<DateTime> selectedDate = DateTime.now().obs;
 
@@ -63,13 +78,14 @@ class TodoHomeStore extends GetxController {
     isTargetLoading.value = true;
     try {
       tasks.value.clear();
-
       targets.clear();
+
       pagingRequest.value.pageNumber = 0;
       pagingRequest.value.pageSize = 100;
       if (members.isEmpty) {
         return;
       }
+
       final tasksData = TodoService().getMemberTasks(
           members[currentUserIndex.value].id!, pagingRequest.value);
       final targetsData = TargetService().getTargetByMember(
@@ -100,6 +116,12 @@ class TodoHomeStore extends GetxController {
       isTaskLoading.value = false;
       isTargetLoading.value = false;
     }
+  }
+
+  setDate(DateTime date) async {
+    selectedDate.value = date;
+    pagingRequest.value.filter?.date = date;
+    await fetchData();
   }
 
   nextDate({
@@ -165,7 +187,11 @@ class TodoHomeStore extends GetxController {
     });
   }
 
-  deleteTask(String id) async {
+  setSelectedTarget(TargetModel target) {
+    selectedTarget.value = target;
+  }
+
+  Future<void> deleteTask(String id) async {
     try {
       await TodoService().deleteTask(id);
       tasks.value.availableTasks.removeWhere((element) => element.id == id);
@@ -184,24 +210,57 @@ class TodoHomeStore extends GetxController {
   setTargets(List<TargetModel> targets) {
     this.targets.assignAll(targets);
   }
+
+  updateTarget(TargetModel target) {
+    final index = targets.indexWhere((element) => element.id == target.id);
+    if (index != -1) {
+      targets[index] = target;
+    }
+    targets.refresh();
+  }
+
+  setTask(String id) {
+    currentTask.value = id;
+  }
+
+  removeTask() {
+    currentTask = "".obs;
+  }
 }
 
 class TodoFormCreateController extends GetxController
     with GetSingleTickerProviderStateMixin {
+  static final tag = 'todoFormCreateController';
   final formKey = GlobalKey<FormBuilderState>();
   final navigatorKey = GlobalKey<NavigatorState>();
+  final taskTypeNavigatorKey = GlobalKey<NavigatorState>();
 
   final Rxn<AnimationController> stepController = Rxn<AnimationController>();
   RxList<TaskCategoryModel> taskCategories = <TaskCategoryModel>[].obs;
 
   Rx<bool> isEdit = false.obs;
+  Rx<bool> isDelete = false.obs;
   RxInt step = 1.obs;
+
+  Rx<String> selectedDeletingTaskTypeId = "".obs;
 
   Rx<TodoCreateType> todoCreateType = TodoCreateType.TASK.obs;
 
   Rx<String> selectedTaskType = "".obs;
   RxList<String> pinnedList = <String>[].obs;
   RxList<String> unpinnedList = <String>[].obs;
+  RxMap<String, dynamic> initForm = {
+    "id": "",
+    "startTime": DateTime.now(),
+    "endTime": DateTime.now(),
+    "frequency": <String>[],
+    "numberOfCoin": '0',
+    "memberIds": [],
+    "duration": DateTime.now(),
+    "note": "",
+    "assignees": <String>[],
+  }.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -209,6 +268,47 @@ class TodoFormCreateController extends GetxController
     //   duration: const Duration(milliseconds: 600),
     //   vsync: this,
     // );
+  }
+
+  initTask(String id) async {
+    try {
+      final taskDetail = await TodoService().getTaskDetail(id);
+      final endTime = taskDetail.endTime;
+
+      selectedTaskType.value = taskDetail.taskType.id;
+      initForm['id'] = taskDetail.id;
+      initForm['startTime'] = taskDetail.startTime;
+      initForm['endTime'] = taskDetail.endTime;
+      initForm['frequency'] = taskDetail.frequency;
+      initForm['numberOfCoin'] = "${taskDetail.numberOfCoin}";
+      initForm['note'] = taskDetail.note;
+
+      final hour = endTime.diff(taskDetail.startTime).inHours;
+      final minute = endTime.diff(taskDetail.startTime).inMinutes % 60;
+      initForm['duration.hour1'] = '${(hour / 10).floor()}';
+      initForm['duration.hour2'] = '${hour % 10}';
+      initForm['duration.minute1'] = '${(minute / 10).floor()}';
+      initForm['duration.minute2'] = '${minute % 10}';
+      initForm['frequency'] = taskDetail.frequency;
+
+      // if (todoHomeStore.currentTask.value != null) {
+      //   final task = todoHomeStore.currentTask.value!;
+      //   formKey.currentState. = {
+      //     "startTime": DateTime.now(),
+      //     "endTime": DateTime.now(),
+      //     "frequency": <String>[],
+      //     "numberOfCoin": '0',
+      //     "memberIds": [],
+      //     "duration": DateTime.now(),
+      //     "note": "",
+      //     "assignees": <String>[],
+      //   };
+      // }
+    } catch (e, stack) {
+      Logger().e(e, stackTrace: stack);
+      ShowToast.error(
+          msg: "Không thể lấy thông tin công viêc, vui lòng thử lại");
+    }
   }
 
   @override
@@ -219,6 +319,7 @@ class TodoFormCreateController extends GetxController
     todoCreateType.close();
     stepController.close();
     taskCategories.close();
+    selectedTaskType.close();
     pinnedList.close();
     unpinnedList.close();
     super.onClose();
@@ -226,6 +327,10 @@ class TodoFormCreateController extends GetxController
 
   updateProgress() {
     stepController.value?.animateTo(step / 4);
+  }
+
+  setSelectedDeletingTaskTypeId(String id) {
+    selectedDeletingTaskTypeId.value = id;
   }
 
   setSelectedTaskType(String taskType) {
@@ -237,7 +342,32 @@ class TodoFormCreateController extends GetxController
   }
 
   setTaskCategories(List<TaskCategoryModel> taskCategories) {
-    this.taskCategories.assignAll(taskCategories);
+    final newCategories = taskCategories.map((e) {
+      final newTaskTypes =
+          e.taskTypes.fold(<TaskTypeModel>[], (previousValue, task) {
+        if (task.status != TodoStatus.unavailable) {
+          previousValue.add(task);
+        }
+        return previousValue;
+      });
+      e.taskTypes = newTaskTypes;
+      return e;
+    });
+    this.taskCategories.assignAll(newCategories);
+  }
+
+  toggleDelete() {
+    setSelectedDeletingTaskTypeId("");
+    isDelete.value = !isDelete.value;
+  }
+
+  deleteTaskType() async {
+    await TodoService().deleteTaskType(selectedDeletingTaskTypeId.value);
+    taskCategories.forEach((category) {
+      category.taskTypes.removeWhere(
+          (element) => element.id == selectedDeletingTaskTypeId.value);
+    });
+    selectedDeletingTaskTypeId.value = "";
   }
 
   toggleEdit() {

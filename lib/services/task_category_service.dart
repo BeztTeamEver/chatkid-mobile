@@ -34,6 +34,27 @@ class TaskCategoryService {
         throw Exception('Lỗi tạo gia đình, vui lòng thử lại sau!');
     }
   }
+
+  Future<List<TaskCategoryImage>> getTaskTypeImage() async {
+    final response =
+        await BaseHttp.instance.get(endpoint: Endpoint.taskTypeImageEndpoint);
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      final result = jsonDecode(response.body);
+      final listTaskCategoryImage = result
+          .map<TaskCategoryImage>((item) => TaskCategoryImage.fromJson(item))
+          .toList();
+      return listTaskCategoryImage;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      default:
+        throw Exception('Lỗi tạo gia đình, vui lòng thử lại sau!');
+    }
+  }
 }
 
 final taskCategoryServiceProvider =

@@ -17,6 +17,7 @@ class InputField extends StatefulWidget {
   final bool? isObscure;
   final double? height;
   final GlobalKey<FormBuilderState>? formKey;
+  final String? initValue;
   final double? fontSize;
   final EdgeInsetsGeometry? contentPadding;
   final Function()? onChanged;
@@ -32,6 +33,7 @@ class InputField extends StatefulWidget {
     this.type = TextInputType.text,
     this.onChanged,
     this.hint = "",
+    this.initValue,
     this.formKey,
     required this.name,
     this.validator,

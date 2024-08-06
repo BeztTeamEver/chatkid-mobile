@@ -42,7 +42,7 @@ class _FormItemState extends State<FormItem> {
     Logger().i(status);
     bool result = false;
     if (status.isDenied) {
-      await Permission.storage.onDeniedCallback(() {
+      await Permission.storage.onDeniedCallback(() async {
         Logger().i("Denied");
       }).onGrantedCallback(() {
         result = true;

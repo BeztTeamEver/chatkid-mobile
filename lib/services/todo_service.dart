@@ -136,6 +136,27 @@ class TodoService {
     }
   }
 
+  Future<bool> updateTask(String id, TodoCreateModel task) async {
+    final response = await httpService.patch(
+      endpoint: Endpoint.taskEndPoint + "/${id}",
+      body: task.toJson(),
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return true;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
+
   Future<bool> deleteTask(String id) async {
     final response = await httpService.delete(
       endpoint: Endpoint.taskEndPoint + "/$id",
@@ -169,6 +190,47 @@ class TodoService {
         Logger().e(e);
         throw Exception('Không thể lấy thông tin emoji, vui lòng thử lại!');
       }
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
+
+  Future<dynamic> createTaskType(RequestTaskTypeCreateModel taskType) async {
+    final response = await httpService.post(
+      endpoint: Endpoint.taskTypeEndPoint,
+      body: taskType.toJson(),
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return true;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
+
+  Future<dynamic> deleteTaskType(String id) async {
+    final response = await httpService.delete(
+      endpoint: Endpoint.taskTypeEndPoint + "/$id",
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return true;
     }
     switch (response.statusCode) {
       case 401:

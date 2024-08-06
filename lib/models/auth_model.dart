@@ -13,12 +13,14 @@ class AuthModel {
 
 class RequestAuthModal {
   String accessToken;
+  String? deviceToken;
 
-  RequestAuthModal({required this.accessToken});
+  RequestAuthModal({required this.accessToken, this.deviceToken});
 
   String toJson() {
     return jsonEncode({
       "accessToken": accessToken,
+      "deviceToken": deviceToken,
     });
   }
 }

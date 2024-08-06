@@ -114,7 +114,6 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     //     .getUser(currentUser.id, currentUser.password);
     final user = UserModel(
         id: "13854ecf-796c-4682-b66b-aaf735d85564", role: RoleConstant.Child);
-
     String lastWords =
         'Xin chào, tôi là Kidtalkie. Bạn có câu hỏi gì cho tôi không?';
 
