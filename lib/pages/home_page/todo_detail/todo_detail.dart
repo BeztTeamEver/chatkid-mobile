@@ -1,15 +1,20 @@
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
+import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/pages/finish_task_page/finish_task_route.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/widgets/feedback_card.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/widgets/head_card.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/widgets/help_card.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
+import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
+import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
+import 'package:chatkid_mobile/widgets/secondary_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -26,10 +31,25 @@ class TodoDetail extends StatefulWidget {
 }
 
 class _TodoDetailState extends State<TodoDetail> {
+  final TodoHomeStore store = Get.find();
   TtsService _ttsService = TtsService().instance;
 
   Future<void> _speak(String message) async {
     await _ttsService.speak(message);
+  }
+
+  onAccept() async {
+    final result =
+        await TodoService().updateTaskStatus(widget.id, TodoStatus.completed);
+
+    store.updateTaskStatus(widget.id, TodoStatus.pending, TodoStatus.completed);
+  }
+
+  onReject() async {
+    final result = await TodoService()
+        .updateTaskStatus(widget.id, TodoStatus.notCompleted);
+    store.updateTaskStatus(
+        widget.id, TodoStatus.pending, TodoStatus.notCompleted);
   }
 
   @override
@@ -63,24 +83,156 @@ class _TodoDetailState extends State<TodoDetail> {
           ),
         ),
       ),
-      floatingActionButton: widget.task.status == TodoStatus.inprogress &&
-              user.role == RoleConstant.Child
-          ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FullWidthButton(
-                onPressed: () {
-                  Navigator.push(context, createRoute(() => FinishTaskRoute()));
-                },
-                child: Text(
-                  'Hoàn thành công việc',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(color: Colors.white, fontSize: 18),
-                ),
-              ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: widget.task.status == TodoStatus.pending
+          ? ActionButtons(
+              onCancel: onReject,
+              onConfirm: onAccept,
             )
           : null,
+    );
+  }
+}
+
+class ActionButtons extends StatefulWidget {
+  final Function? onConfirm;
+  final Function? onCancel;
+
+  const ActionButtons({super.key, this.onConfirm, this.onCancel});
+
+  @override
+  State<ActionButtons> createState() => _ActionButtonsState();
+}
+
+class _ActionButtonsState extends State<ActionButtons> {
+  bool isLoading = false;
+  bool isCancelLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 64,
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () async {
+                if (isCancelLoading) {
+                  return;
+                }
+                setState(() {
+                  isCancelLoading = true;
+                });
+                if (widget.onCancel != null) {
+                  await widget.onCancel?.call();
+                  setState(() {
+                    isCancelLoading = false;
+                  });
+                  Navigator.of(context).pop();
+                }
+              },
+              style: ElevatedButtonTheme.of(context).style!.copyWith(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      Colors.transparent,
+                    ),
+                    shape: MaterialStatePropertyAll(
+                      RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: isLoading || isCancelLoading
+                              ? neutral.shade500
+                              : primary.shade500,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                    ),
+                    shadowColor: MaterialStatePropertyAll(
+                      Colors.transparent,
+                    ),
+                  ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  isCancelLoading != true
+                      ? Container()
+                      : Container(
+                          width: 32,
+                          height: 32,
+                          child: CustomCircleProgressIndicator(
+                            color: neutral.shade500,
+                          )),
+                  Text(
+                    "Từ chối",
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                          color: isLoading || isCancelLoading
+                              ? neutral.shade500
+                              : primary.shade500,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () async {
+                if (isLoading) {
+                  return;
+                }
+                setState(() {
+                  isLoading = true;
+                });
+                try {
+                  if (widget.onConfirm != null) {
+                    await widget.onConfirm!();
+                  }
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  Logger().e(e);
+                } finally {
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+              },
+              style: ElevatedButtonTheme.of(context).style!.copyWith(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      isLoading || isCancelLoading
+                          ? neutral.shade500
+                          : primary.shade500,
+                    ),
+                  ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  isLoading != true
+                      ? Container()
+                      : Container(
+                          width: 32,
+                          height: 32,
+                          child: CustomCircleProgressIndicator()),
+                  Text(
+                    "Xác nhận",
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

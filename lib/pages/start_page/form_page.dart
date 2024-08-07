@@ -91,6 +91,7 @@ class _FormPageState extends ConsumerState<FormPage> {
       UserModel newUser = UserModel.fromJson({
         ..._formKey.currentState!.value,
         "avatarUrl": _avatarController.text,
+        'yearOfBirth': int.parse(_yearBirthDayController.text),
         // "password": widget.user.password,
         "role": widget.userRole,
         "familyId": familyId,

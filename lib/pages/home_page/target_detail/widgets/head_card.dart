@@ -119,18 +119,25 @@ class _HeadCardState extends State<HeadCard> {
                 right: 4,
                 child: ButtonIcon(
                   onPressed: () async {
-                    final TargetModel? target = await showModalBottomSheet(
+                    final List<dynamic>? target = await showModalBottomSheet(
                       showDragHandle: true,
                       context: context,
                       builder: (context) {
                         return EditModal(
                           id: widget.target.id,
+                          target: widget.target,
                         );
                       },
                     );
+                    Logger().i(target);
+
                     if (target != null) {
-                      store.updateTarget(target);
-                      store.setSelectedTarget(target);
+                      if (target[0] == 'delete') {
+                        store.removeTarget(widget.target);
+                      } else {
+                        store.updateTarget(target[1]);
+                        store.setSelectedTarget(target[1]);
+                      }
                     }
                   },
                   icon: "dots",

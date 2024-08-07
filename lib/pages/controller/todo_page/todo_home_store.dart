@@ -208,7 +208,10 @@ class TodoHomeStore extends GetxController {
   }
 
   setTargets(List<TargetModel> targets) {
-    this.targets.assignAll(targets);
+    final filteredTargets = targets
+        .where((element) => element.status != TodoStatus.canceled)
+        .toList();
+    this.targets.assignAll(filteredTargets);
   }
 
   updateTarget(TargetModel target) {
@@ -219,8 +222,78 @@ class TodoHomeStore extends GetxController {
     targets.refresh();
   }
 
+  updateTask(TaskModel task) {
+    final index = tasks.value.availableTasks.indexWhere((element) {
+      return element.id == task.id;
+    });
+    if (index != -1) {
+      tasks.value.availableTasks[index] = task;
+    }
+    tasks.refresh();
+  }
+
+  removeTarget(TargetModel target) {
+    targets.removeWhere((element) => element.id == target.id);
+  }
+
   setTask(String id) {
     currentTask.value = id;
+  }
+
+  updateTaskStatus(String id, String fromStatus, String toStatus) async {
+    try {
+      TaskModel? task;
+
+      switch (fromStatus) {
+        case TodoStatus.available:
+          if (tasks.value.availableTasks.isEmpty) {
+            return;
+          }
+          task = tasks.value.availableTasks
+              .firstWhere((element) => element.id == id);
+          tasks.value.availableTasks.remove(task);
+          break;
+        case TodoStatus.inprogress:
+          if (tasks.value.inprogressTasks.isEmpty) {
+            return;
+          }
+          task = tasks.value.inprogressTasks
+              .firstWhere((element) => element.id == id);
+          tasks.value.inprogressTasks.remove(task);
+          break;
+        case TodoStatus.pending:
+          if (tasks.value.pendingTasks.isEmpty) {
+            return;
+          }
+          task = tasks.value.pendingTasks
+              .firstWhere((element) => element.id == id);
+          tasks.value.pendingTasks.remove(task);
+          break;
+      }
+      if (task == null) {
+        return;
+      }
+      switch (toStatus) {
+        case TodoStatus.inprogress:
+          tasks.value.inprogressTasks.add(task);
+          break;
+        case TodoStatus.pending:
+          tasks.value.pendingTasks.add(task);
+          break;
+        case TodoStatus.completed:
+          tasks.value.completedTasks.add(task);
+          break;
+        case TodoStatus.notCompleted:
+          tasks.value.notCompletedTasks.add(task);
+          break;
+        case TodoStatus.expired:
+          tasks.value.expiredTasks.add(task);
+          break;
+      }
+    } catch (e, s) {
+      Logger().e(e, stackTrace: s);
+      ShowToast.error(msg: e.toString());
+    }
   }
 
   removeTask() {

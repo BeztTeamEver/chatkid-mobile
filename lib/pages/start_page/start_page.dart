@@ -12,6 +12,7 @@ import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:chatkid_mobile/widgets/loading_indicator.dart';
@@ -141,35 +142,51 @@ class _StartPageState extends ConsumerState<StartPage> {
                           ),
                         );
                       }
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: members.length,
-                        separatorBuilder: (context, index) => const SizedBox(
-                          height: 10,
-                        ),
-                        itemBuilder: (context, index) {
-                          final icon = members[index].avatarUrl != null &&
-                                  members[index].avatarUrl != ""
-                              ? members[index].avatarUrl
-                              : iconAnimalList[0];
-                          return SizedBox(
-                            width: double.infinity,
-                            child: SelectButton(
-                              isSelected: _selectedIndex == index,
-                              borderColor: primary.shade100,
-                              hasBackground: true,
-                              icon: icon,
-                              label: members[index].name ?? "No name",
-                              onPressed: () {
-                                setState(() {
-                                  _role = members[index].role!;
-                                  _selectedIndex = index;
-                                  _selectedAccount = members[index];
-                                });
+                      return Column(
+                        children: [
+                          Text(
+                            "Tổng số thành viên hiện tại: ${data.members.length}",
+                            style:
+                                Theme.of(context).textTheme.bodySmall!.copyWith(
+                                      color: primary.shade600,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Expanded(
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              itemCount: members.length,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(
+                                height: 10,
+                              ),
+                              itemBuilder: (context, index) {
+                                final icon = members[index].avatarUrl != null &&
+                                        members[index].avatarUrl != ""
+                                    ? members[index].avatarUrl
+                                    : iconAnimalList[0];
+                                return SizedBox(
+                                  width: double.infinity,
+                                  child: SelectButton(
+                                    isSelected: _selectedIndex == index,
+                                    borderColor: primary.shade100,
+                                    hasBackground: true,
+                                    icon: icon,
+                                    label: members[index].name ?? "No name",
+                                    onPressed: () {
+                                      setState(() {
+                                        _role = members[index].role!;
+                                        _selectedIndex = index;
+                                        _selectedAccount = members[index];
+                                      });
+                                    },
+                                  ),
+                                );
                               },
                             ),
-                          );
-                        },
+                          ),
+                        ],
                       );
                     }
                     if (snapshot.hasError) {

@@ -1,4 +1,7 @@
+import 'package:chatkid_mobile/constants/todo.dart';
+import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/pages/routes/target_create_route.dart';
+import 'package:chatkid_mobile/services/target_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/confirmation/confirm_modal.dart';
@@ -9,13 +12,16 @@ import 'package:logger/logger.dart';
 
 class EditModal extends StatefulWidget {
   final String id;
-  const EditModal({super.key, required this.id});
+  final TargetModel target;
+  const EditModal({super.key, required this.id, required this.target});
 
   @override
   State<EditModal> createState() => _EditModalState();
 }
 
 class _EditModalState extends State<EditModal> {
+  bool isLoading = false;
+
   handleDelete() async {
     await showDialog(
       context: context,
@@ -38,7 +44,7 @@ class _EditModalState extends State<EditModal> {
             )));
 
     if (result != null) {
-      Navigator.of(context).pop(result);
+      Navigator.of(context).pop(['update', result]);
     }
     // Navigator.of(context).pop();
   }
@@ -54,25 +60,27 @@ class _EditModalState extends State<EditModal> {
       height: MediaQuery.of(context).size.height * 0.2,
       child: Column(
         children: [
-          ListTile(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(
-                color: neutral.shade400,
-                width: 1,
+          if (widget.target.status != TodoStatus.inprogress)
+            ListTile(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color: neutral.shade400,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(16),
               ),
-              borderRadius: BorderRadius.circular(16),
+              // enabled: widget.target.,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              onTap: () {
+                handleEdit();
+              },
+              title: const Text("Chỉnh sửa mục tiêu"),
+              leading: SvgIcon(
+                icon: 'edit',
+                color: primary.shade500,
+                size: 24,
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-            onTap: () {
-              handleEdit();
-            },
-            title: const Text("Chỉnh sửa mục tiêu"),
-            leading: SvgIcon(
-              icon: 'edit',
-              color: primary.shade500,
-              size: 24,
-            ),
-          ),
           SizedBox(
             height: 16,
           ),
@@ -85,10 +93,34 @@ class _EditModalState extends State<EditModal> {
                 borderRadius: BorderRadius.circular(16),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              onTap: () {
+              onTap: () async {
                 // todoHomeStore.deleteTask(widget.id);
+                final status = await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ConfirmModal(
+                        title:
+                            "Bạn xác nhận xóa phong trào thi đua \n '${widget.target.message}?'",
+                        content:
+                            "Phong trào thi đua sau khi xóa sẽ không thể hoàn tác lại.",
+                        isLoading: isLoading,
+                        imageUrl: widget.target.rewardImageUrl,
+                        onConfirm: () async {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          // todoHomeStore.deleteTask(widget.id);
+                          await TargetService().deleteTarget(widget.id);
+                          setState(() {
+                            isLoading = false;
+                          });
+                        },
+                      );
+                    });
 
-                Navigator.of(context).pop();
+                if (status == true) {
+                  Navigator.of(context).pop(['delete', widget]);
+                }
               },
               title: const Text("Xóa mục tiêu"),
               leading: SvgIcon(

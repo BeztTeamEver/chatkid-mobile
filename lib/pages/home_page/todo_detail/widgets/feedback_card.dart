@@ -29,7 +29,7 @@ class _FeedBackCardState extends State<FeedBackCard> {
           user: todoHomeStore.currentUser.value,
           useVoice: false,
           message:
-              'Công việc ${FeedbackMap[widget.task.feedbackLevel]!.toLowerCase()}',
+              'Công việc ${FeedbackMap[widget.task.feedbackLevel]?.toLowerCase() ?? ""}',
         ),
         SizedBox(height: 16),
         ChatTextBox(

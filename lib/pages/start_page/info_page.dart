@@ -255,9 +255,9 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                       controller: widget.yearBirthDayController,
                       options: InfoForm.YEAR_BIRTHDAY_OPTIONS,
                       defaultSelectionIndex:
-                          selectedYearIndex == -1 ? 2 : selectedYearIndex,
+                          selectedYearIndex == -1 ? 0 : selectedYearIndex,
                       defaultValue: widget.yearBirthDayController.text.isEmpty
-                          ? InfoForm.YEAR_BIRTHDAY_OPTIONS[2].value
+                          ? InfoForm.YEAR_BIRTHDAY_OPTIONS[0].value
                           : widget.yearBirthDayController.text,
                       listHeight: 400,
                       label: "Năm sinh",

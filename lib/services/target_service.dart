@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
+import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -99,8 +100,9 @@ class TargetService {
   }
 
   Future<bool> deleteTarget(String id) async {
-    final response =
-        await baseHttp.delete(endpoint: Endpoint.targetEndpoint + "/$id");
+    final response = await baseHttp.delete(
+      endpoint: Endpoint.targetEndpoint + "/$id",
+    );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return true;
     }

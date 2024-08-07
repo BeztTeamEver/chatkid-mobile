@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
@@ -19,7 +21,7 @@ class _TemplateCardState extends State<TemplateCard> {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
-      height: 160,
+      height: 180,
       onTap: widget.onTap,
       padding: EdgeInsets.all(16),
       children: [
@@ -62,14 +64,18 @@ class _TemplateCardState extends State<TemplateCard> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Image.network(
-                    widget.targetModel.rewardImageUrl ?? "",
+                    widget.targetModel.rewardImageUrl ??
+                        "https://via.placeholder.com/150",
+                    height: 100,
                   ),
                 ),
-                Flexible(
+                Container(
+                  width: 100,
                   child: Text(
                     widget.targetModel.reward ?? "",
                     softWrap: true,
                     maxLines: 2,
+                    textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                   ),
                 )

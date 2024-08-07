@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/progress_bar.dart';
+import 'package:chatkid_mobile/pages/home_page/target_detail/widgets/edit_modal.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,6 +39,27 @@ class _TargetItemState extends State<TargetItem> {
             context,
             createRoute(() => TargetDetail()),
           );
+        },
+        onLongPressed: () async {
+          final target = await showModalBottomSheet(
+            showDragHandle: true,
+            context: context,
+            builder: (context) {
+              return EditModal(
+                id: widget.target.id,
+                target: widget.target,
+              );
+            },
+          );
+
+          if (target != null) {
+            if (target[0] == 'delete') {
+              store.removeTarget(widget.target);
+            } else {
+              store.updateTarget(target[1]);
+              store.setSelectedTarget(target[1]);
+            }
+          }
         },
         children: [
           Row(
