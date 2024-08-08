@@ -56,7 +56,11 @@ class _TodoDetailState extends State<TodoDetail> {
   Widget build(BuildContext context) {
     final user = LocalStorage.instance.getUser();
     final contentWidgets = [
-      widget.task.status != TodoStatus.pending ? HelpCard() : Container(),
+      widget.task.status != TodoStatus.pending
+          ? HelpCard(
+              task: widget.task,
+            )
+          : Container(),
       widget.task.status == TodoStatus.pending ||
               widget.task.status == TodoStatus.completed
           ? FeedBackCard(

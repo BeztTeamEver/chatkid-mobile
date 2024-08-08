@@ -137,6 +137,7 @@ class TaskTypeModel {
   String? imageHomeUrl;
   String? status;
   bool? isFavorited;
+  List<String>? hintQuestions;
   TaskTypeModel({
     required this.id,
     required this.name,
@@ -144,15 +145,20 @@ class TaskTypeModel {
     this.imageUrl,
     this.imageHomeUrl,
     this.isFavorited,
+    this.hintQuestions,
   });
 
   factory TaskTypeModel.fromJson(Map<String, dynamic> json) {
+    final hintQuestions = json['hintQuestions'].map<String>((hint) {
+      return hint.toString();
+    }).toList();
     return TaskTypeModel(
       id: json['id'],
       name: json['name'],
       imageUrl: json['imageUrl'],
       imageHomeUrl: json['imageHomeUrl'],
       status: json['status'],
+      hintQuestions: hintQuestions,
       isFavorited: json['isFavorited'],
     );
   }
@@ -165,6 +171,7 @@ class TaskTypeModel {
       'status': status,
       'imageHomeUrl': imageHomeUrl,
       'isFavorited': isFavorited,
+      'hintQuestions': hintQuestions,
     };
   }
 

@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/enum/bot_type.dart';
+import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/chats/bot_chat_page.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -7,10 +8,12 @@ import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class HelpCard extends StatefulWidget {
-  const HelpCard({super.key});
+  final TaskModel task;
+  const HelpCard({super.key, required this.task});
 
   @override
   State<HelpCard> createState() => _HelpCardState();
@@ -38,7 +41,15 @@ class _HelpCardState extends State<HelpCard> {
             textAlign: TextAlign.start,
           ),
           const SizedBox(height: 16),
-          Option(content: "Làm sao để giữ trẻ hứng thú khi học tiếng Anh?"),
+          Container(
+              height: 120,
+              child: ListView.builder(
+                  itemCount: widget.task.taskType.hintQuestions!.length,
+                  itemBuilder: (context, index) {
+                    return Option(
+                        content:
+                            widget.task.taskType.hintQuestions?[index] ?? "");
+                  })),
           // const SizedBox(height: 16),
           // Option(content: "Làm sao để giữ trẻ hứng thú khi học tiếng Anh?"),
           // const SizedBox(height: 16),
