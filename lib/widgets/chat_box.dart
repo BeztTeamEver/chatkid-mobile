@@ -36,6 +36,7 @@ class ChatTextBox extends StatefulWidget {
 
 class ChatTextBoxState extends State<ChatTextBox> {
   TtsService _ttsService = TtsService().instance;
+  PlayerController _playerController = PlayerController();
 
   Future<void> _speak(String message) async {
     await _ttsService.speak(message);
