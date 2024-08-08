@@ -100,9 +100,9 @@ class _EditModalState extends State<EditModal> {
                     builder: (context) {
                       return ConfirmModal(
                         title:
-                            "Bạn xác nhận xóa phong trào thi đua \n '${widget.target.message}?'",
+                            "Bạn xác nhận xóa mục tiêu \n '${widget.target.message}?'",
                         content:
-                            "Phong trào thi đua sau khi xóa sẽ không thể hoàn tác lại.",
+                            "Mục tiêu sau khi xóa sẽ không thể hoàn tác lại.",
                         isLoading: isLoading,
                         imageUrl: widget.target.rewardImageUrl,
                         onConfirm: () async {

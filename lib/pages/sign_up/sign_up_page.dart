@@ -1,21 +1,12 @@
-import 'package:chatkid_mobile/pages/activation_page.dart';
 import 'package:chatkid_mobile/pages/confirmation/confirmation_page.dart';
-import 'package:chatkid_mobile/pages/home_page.dart';
-import 'package:chatkid_mobile/pages/main_page.dart';
-import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/utils/route.dart';
-import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/login_logout/google_button_widget.dart';
-import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/login_logout/switch_page.dart';
 import 'package:chatkid_mobile/widgets/logo.dart';
-import 'package:chatkid_mobile/widgets/svg_icon.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:form_validator/form_validator.dart';
 import 'package:logger/logger.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {

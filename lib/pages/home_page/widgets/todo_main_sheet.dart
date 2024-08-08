@@ -144,7 +144,7 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
                     onTabChange: (index) {
                       setState(() => _tabController.animateTo(index));
                     },
-                    tabs: const ["Công việc", "Phong trào thi đua"],
+                    tabs: const ["Công việc", "Mục tiêu"],
                     tabController: _tabController,
                   ),
                 ),

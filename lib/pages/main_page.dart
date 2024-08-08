@@ -219,7 +219,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Tạo phong trào thi đua',
+                      'Tạo mục tiêu',
                       style:
                           Theme.of(context).textTheme.headlineMedium!.copyWith(
                                 fontSize: 16,
