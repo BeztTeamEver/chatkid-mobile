@@ -159,8 +159,8 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                   child: Column(
                     children: [
                       Container(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.horizontal(
@@ -247,24 +247,26 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                         ),
                       ),
                       familyChannel.when(
-                        data: (value) => Badge(
-                          // TODO: update badge
-                          label: Text("1"),
-                          backgroundColor: red.shade500,
-                          textColor: Colors.white,
-                          alignment: Alignment.topRight,
-                          largeSize: 16,
-                          offset: Offset(-4, 4),
-                          child: ButtonIcon(
-                              onPressed: () {
-                                Get.to(
-                                  () => GroupChatPage(channelId: value.id),
-                                );
-                              },
-                              iconSize: 32,
-                              padding: 0,
-                              icon: "hipchat"),
-                        ),
+                        data: (value) =>
+                            // Badge(
+                            // // TODO: update badge
+                            // label: Text("1"),
+                            // backgroundColor: red.shade500,
+                            // textColor: Colors.white,
+                            // alignment: Alignment.topRight,
+                            // largeSize: 16,
+                            // offset: Offset(-4, 4),
+                            // child:
+                            ButtonIcon(
+                                onPressed: () {
+                                  Get.to(
+                                    () => GroupChatPage(channelId: value.id),
+                                  );
+                                },
+                                iconSize: 32,
+                                padding: 0,
+                                icon: "hipchat"),
+                        // ),
                         error: (error, stackTrace) {
                           Logger().i("Error: $error");
                           return Container();
