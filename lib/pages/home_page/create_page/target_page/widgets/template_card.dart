@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
@@ -52,7 +54,6 @@ class _TemplateCardState extends State<TemplateCard> {
               ),
             ),
             Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: 100,
@@ -63,20 +64,21 @@ class _TemplateCardState extends State<TemplateCard> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Image.network(
-                    widget.targetModel.rewardImageUrl ?? "",
+                    widget.targetModel.rewardImageUrl ??
+                        "https://via.placeholder.com/150",
+                    height: 100,
                   ),
                 ),
                 Container(
                   width: 100,
                   child: Text(
-                    widget.targetModel.reward ??
-                        "asdlfjhasdklfhsadkjlfhsadlkjhflsakdjhflaskdjfhlkjsdahf lksadhfljksad fljksadh flkj sadlkjf asdlhf lkjasdh flkjashf kljas",
+                    widget.targetModel.reward ?? "",
                     softWrap: true,
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
+                )
               ],
             ),
           ],

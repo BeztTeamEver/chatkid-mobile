@@ -44,7 +44,7 @@ class _TargetTemplatePageState extends ConsumerState<TargetTemplatePage> {
                       .push(createRoute(() => TargetFormPage()));
                 },
                 child: Text(
-                  'Tạo phong trào thi đua mới',
+                  'Tạo mục tiêu mới',
                   style: Theme.of(context).textTheme.labelMedium!.copyWith(
                         color: Colors.white,
                         fontSize: 18,
@@ -60,7 +60,7 @@ class _TargetTemplatePageState extends ConsumerState<TargetTemplatePage> {
             ),
             SizedBox(height: 8),
             Text(
-              'Mẫu Phong trào thi đua đã tạo',
+              'Mẫu mục tiêu đã tạo',
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,

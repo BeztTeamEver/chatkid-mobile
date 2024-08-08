@@ -8,6 +8,7 @@ class TargetModel {
   DateTime endTime;
   String? reward;
   String? rewardImageUrl;
+  String? status;
   String message;
   String memberId;
   List<MissionModel> missions;
@@ -21,6 +22,7 @@ class TargetModel {
     this.rewardImageUrl,
     required this.endTime,
     required this.message,
+    this.status,
     required this.memberId,
     required this.missions,
     this.currentProgress = 0,
@@ -43,6 +45,7 @@ class TargetModel {
       endTime: DateTime.parse(json['endTime']),
       message: json['message'],
       memberId: json['memberId'],
+      status: json['status'],
       reward: json['reward'],
       rewardImageUrl: json['rewardImageUrl'],
       missions: missions,
@@ -57,6 +60,7 @@ class TargetModel {
       'endTime': endTime.toIso8601String(),
       'message': message,
       'reward': reward,
+      'status': status,
       'rewardImageUrl': rewardImageUrl,
       'memberId': memberId,
       'missions': missions,
