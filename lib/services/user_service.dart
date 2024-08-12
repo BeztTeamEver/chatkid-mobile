@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
-import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/models/wallet_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -137,8 +138,6 @@ final userServiceProvider = Provider<UserService>((ref) {
 class MeController extends GetxController {
   Rx<UserModel> profile = LocalStorage.instance.getUser().obs;
 
-  Rx<String> memberId = (LocalStorage.instance.getUser().id ?? '').obs;
-
   @override
   void onInit() {
     super.onInit();
@@ -146,6 +145,8 @@ class MeController extends GetxController {
   }
 
   refetch() async {
+    Rx<String> memberId = (LocalStorage.instance.getUser().id ?? '').obs;
+
     await UserService().getUser(memberId.value).then((value) {
       Logger().d(value.toJson());
       profile.value = value;
@@ -154,5 +155,30 @@ class MeController extends GetxController {
 
   void updateProfile(UserModel newProfile) {
     profile.value = newProfile;
+  }
+
+
+  transferDiamond(TransferDiamondPayloadModel data, Function() callback) async {
+    if (data.diamond == 0) {
+      ShowToast.error(msg: "Số lượng kim cương phải lớn hơn 0!");
+      return;
+    }
+
+    final response = await BaseHttp.instance.patch(
+      endpoint: Endpoint.transferDiamondEndpoint,
+      body: data.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      refetch();
+      ShowToast.success(
+          msg:
+              "${data.diamond > 0 ? "Chuyển" : "Rút"} kim cương thành công 🎉");
+      callback();
+    } else {
+      ShowToast.error(
+          msg:
+              "${data.diamond > 0 ? "Chuyển" : "Rút"}  kim cương thất bại, vui lòng thử lại sau");
+    }
   }
 }

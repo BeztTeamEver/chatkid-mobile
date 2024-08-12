@@ -1,11 +1,9 @@
-import 'dart:ffi';
-
 import 'package:chatkid_mobile/models/transfer_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/models/wallet_model.dart';
 import 'package:chatkid_mobile/pages/profile/card-tranfer.dart';
 import 'package:chatkid_mobile/services/transaction_service.dart';
-import 'package:chatkid_mobile/services/wallet_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
@@ -17,7 +15,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 import 'package:modals/modals.dart';
 
 class TransferDetailPage extends StatefulWidget {
@@ -33,7 +30,7 @@ class TransferDetailPage extends StatefulWidget {
 
 class _TransferDetailPageState extends State<TransferDetailPage> {
   final String userId = LocalStorage.instance.getUser().id!;
-  final WalletController wallet = Get.find();
+  final MeController me = Get.find();
   final TextEditingController _numberController = TextEditingController();
   late Future<List<TransferModel>> transferHistory;
   int tempCount = 0;
@@ -119,7 +116,7 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
                       children: [
                         Obx(
                           () => Text(
-                            "Bạn đang có ${wallet.diamond}",
+                            "Bạn đang có ${me.profile.value.diamond ?? 0}",
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -446,7 +443,7 @@ class _TransferDetailPageState extends State<TransferDetailPage> {
                         FullWidthButton(
                           width: MediaQuery.of(context).size.width / 2 - 44,
                           onPressed: () {
-                            wallet.transferDiamond(
+                            me.transferDiamond(
                               TransferDiamondPayloadModel(
                                 ownerId: userId,
                                 receiverId: widget.user.id ?? '',

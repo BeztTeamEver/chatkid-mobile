@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/pages/profile/information_detail.dart';
@@ -12,7 +10,6 @@ import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/services/user_service.dart';
-import 'package:chatkid_mobile/services/wallet_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
@@ -32,8 +29,7 @@ class ProfilePage extends ConsumerStatefulWidget {
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
-  final MeController currentUser = Get.put(MeController());
-  final WalletController wallet = Get.put(WalletController());
+  final MeController currentUser = Get.find();
 
   @override
   void initState() {
@@ -185,7 +181,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                                 ),
                                                 const SizedBox(width: 4),
                                                 Text(
-                                                  "${wallet.diamond} kim cương",
+                                                  "${currentUser.profile.value.diamond ?? 0} kim cương",
                                                   style: const TextStyle(
                                                     color: Color.fromRGBO(
                                                         165, 168, 187, 1),

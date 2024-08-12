@@ -3,7 +3,7 @@ import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/store/card_item.dart';
 import 'package:chatkid_mobile/pages/store/form_item.dart';
 import 'package:chatkid_mobile/services/gift_service.dart';
-import 'package:chatkid_mobile/services/wallet_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/toast.dart';
@@ -27,7 +27,7 @@ class StorePage extends StatefulWidget {
 class _StorePageState extends State<StorePage> {
   final UserModel _currentAccount = LocalStorage.instance.getUser();
   late Future<List<GiftModel>> listGifts;
-  late WalletController wallet = Get.put(WalletController());
+  late MeController me = Get.find();
   bool isDeleting = false;
 
   @override
@@ -101,7 +101,7 @@ class _StorePageState extends State<StorePage> {
             });
             
             listGifts = GiftService().deleteGift(id).then((value) async {
-              await wallet.refetchWallet();
+              await me.refetch();
               ShowToast.success(msg: "Xoá quà thành công!");
               return value;
             }).catchError((e) {
@@ -243,7 +243,7 @@ class _StorePageState extends State<StorePage> {
                           ),
                           Obx(
                             () => Text(
-                              "${wallet.coin}",
+                              "${me.profile.value.coin ?? 0}",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,

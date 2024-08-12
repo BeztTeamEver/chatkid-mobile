@@ -4,6 +4,7 @@ import 'package:chatkid_mobile/pages/store/store_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
@@ -54,6 +55,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    Get.put(MeController());
+    
     return GetMaterialApp(
       title: 'KidTalkie',
       color: primary,
