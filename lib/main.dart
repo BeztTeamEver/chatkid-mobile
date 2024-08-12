@@ -1,6 +1,4 @@
-import 'package:chatkid_mobile/constants/routes.dart';
 import 'package:chatkid_mobile/pages/splash_pages.dart';
-import 'package:chatkid_mobile/pages/store/store_page.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
@@ -10,6 +8,7 @@ import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:chatkid_mobile/widgets/camera_service.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -17,8 +16,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:modals/modals.dart';
 import 'firebase_options.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,25 +40,28 @@ void main() async {
   await TtsService().initState();
   // share preferrence setup for one time page
   await LocalStorage.getInstance();
-
+  firebaseService.handleGetNotification(navigatorKey);
   SocketService();
   CacheManager.logLevel = CacheManagerLogLevel.verbose;
   runApp(
-    const ProviderScope(
+    ProviderScope(
       child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+  });
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     Get.put(MeController());
-    
+
     return GetMaterialApp(
+      navigatorKey: navigatorKey,
       title: 'KidTalkie',
       color: primary,
       theme: ThemeData(
