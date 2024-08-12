@@ -236,14 +236,6 @@ class TodoHomeStore extends GetxController {
     targets.removeWhere((element) => element.id == target.id);
   }
 
-  updateTarget(TargetModel target) {
-    final index = targets.indexWhere((element) => element.id == target.id);
-    if (index != -1) {
-      targets[index] = target;
-    }
-    targets.refresh();
-  }
-
   setTask(String id) {
     currentTask.value = id;
   }
