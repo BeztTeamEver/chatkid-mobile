@@ -2,7 +2,7 @@ import 'package:chatkid_mobile/models/package_model.dart';
 import 'package:chatkid_mobile/pages/profile/payment_history_page.dart';
 import 'package:chatkid_mobile/pages/profile/payment_page.dart';
 import 'package:chatkid_mobile/services/package_service.dart';
-import 'package:chatkid_mobile/services/wallet_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/number_format.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -20,7 +20,7 @@ class PackagePage extends StatefulWidget {
 
 class _PackagePageState extends State<PackagePage> {
   late final Future<List<PackageModel>> packages;
-  final WalletController wallet = Get.find();
+  final MeController me = Get.find();
 
   @override
   void initState() {
@@ -76,7 +76,7 @@ class _PackagePageState extends State<PackagePage> {
                           "assets/icons/diamond_icon.png",
                           width: 20,
                         ),
-                        Obx(() => Text("${wallet.diamond}"))
+                        Obx(() => Text("${me.profile.value.diamond ?? 0}",))
                       ],
                     ),
                   ),

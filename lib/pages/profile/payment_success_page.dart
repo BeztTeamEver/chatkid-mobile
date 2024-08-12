@@ -1,12 +1,7 @@
-import 'package:chatkid_mobile/models/package_model.dart';
-import 'package:chatkid_mobile/pages/main_page.dart';
-import 'package:chatkid_mobile/pages/profile/profile_page.dart';
-import 'package:chatkid_mobile/services/wallet_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class PaymentSuccessPage extends StatefulWidget {
@@ -19,7 +14,7 @@ class PaymentSuccessPage extends StatefulWidget {
 }
 
 class _PaymentSuccessPageState extends State<PaymentSuccessPage> {
-  WalletController wallet = Get.find();
+  MeController me = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +64,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  await wallet.refetchWallet();
+                  await me.refetch();
                   Navigator.pop(context);
                 },
                 style: ButtonStyle(

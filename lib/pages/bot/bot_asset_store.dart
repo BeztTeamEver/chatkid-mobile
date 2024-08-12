@@ -1,16 +1,13 @@
 // ignore_for_file: prefer_is_empty
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:chatkid_mobile/models/bot_asset_model.dart';
 import 'package:chatkid_mobile/pages/bot/card_asset_item.dart';
 import 'package:chatkid_mobile/pages/bot/empty_data.dart';
 import 'package:chatkid_mobile/services/asset_service.dart';
-import 'package:chatkid_mobile/services/wallet_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/error_snackbar.dart';
-import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
@@ -38,7 +35,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
   late TabController _tabController;
   late List<BotAssetModel> selectedItem = [];
   int _selectedIndex = 0;
-  final WalletController wallet = Get.find();
+  final MeController me = Get.find();
 
   final List<BotAssetModel> DEFAULT_SKIN = [
     BotAssetModel(
@@ -232,7 +229,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
             botAssets = BotAssetService()
                 .buySkin(selectedItem[0].id)
                 .then((value) async {
-              await wallet.refetchWallet();
+              await me.refetch();
               setState(() {
                 selectedItem = [];
               });
@@ -369,7 +366,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
                                           "assets/icons/diamond_icon.png",
                                           width: 20,
                                         ),
-                                        Obx(() => Text("${wallet.diamond}"))
+                                        Obx(() => Text("${me.profile.value.diamond ?? 0}"))
                                       ],
                                     ),
                                   ),

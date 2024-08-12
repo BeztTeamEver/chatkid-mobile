@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/auth_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -73,7 +75,9 @@ class LocalStorage {
   }
 
   Future<void> saveUser(UserModel user) async {
+    MeController meController = Get.find();
     await _instance!.preferences.setString(LocalStorageKey.USER, user.toJson());
+    meController.refetch();
   }
 
   UserModel getUser() {

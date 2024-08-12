@@ -1,16 +1,13 @@
-import 'dart:convert';
-
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/gpt_voice.dart';
 import 'package:chatkid_mobile/enum/bot_type.dart';
 import 'package:chatkid_mobile/models/bot_asset_model.dart';
-import 'package:chatkid_mobile/models/kid_service_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/bot/bot_asset.dart';
 import 'package:chatkid_mobile/providers/gpt_provider.dart';
 import 'package:chatkid_mobile/services/asset_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
-import 'package:chatkid_mobile/services/wallet_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/loading_indicator.dart';
@@ -35,10 +32,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
   TtsService ttsService = TtsService().instance;
   bool _loading = false;
   String? _lastWords = "";
-  // TODO Remove this
-  String _botServiceName = "Chat bot";
-  UserModel? _user;
-  final WalletController wallet = Get.put(WalletController());
+  final MeController me = Get.find();
   late Future<List<BotAssetModel>> currentSkin;
 
   Future<void> _onResult(String result) async {
@@ -77,7 +71,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
       //   throw Exception('Kid service id is empty');
       // }
 
-      if (wallet.diamond.value == 0) {
+      if ((me.profile.value.diamond ?? 0) == 0) {
         await ttsService.speak(
             'Tôi đã hết kim cương rồi, bạn hãy giúp tôi nạp kim cương nhé!');
         return;
@@ -117,18 +111,11 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
     String lastWords =
         'Xin chào, tôi là Kidtalkie. Bạn có câu hỏi gì cho tôi không?';
 
-    if (wallet.diamond == 0) {
+    if ((me.profile.value.diamond ?? 0) == 0) {
       lastWords =
           'Tôi đã hết kim cương rồi, bạn hãy giúp tôi nạp kim cương nhé!';
     } else {
       setState(() {
-        _user = user;
-        // TODO: revert this
-        // _botServiceName = widget.botType == BotType.PUMKIN
-        //     ? ServiceTypeConstant.PUMPKIN
-        //     : ServiceTypeConstant.STRAWBERRY;
-        _botServiceName = "Chat bot";
-
         _lastWords = lastWords;
       });
       Logger().i('init success');
@@ -245,7 +232,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                         ),
                         Obx(
                           () => Text(
-                            "${wallet.diamond}",
+                            "${me.profile.value.diamond ?? 0}",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),

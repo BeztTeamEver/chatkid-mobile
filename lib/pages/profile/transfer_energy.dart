@@ -3,7 +3,7 @@ import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/pages/profile/transfer_detail.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
-import 'package:chatkid_mobile/services/wallet_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -22,7 +22,7 @@ class TransferEnergyPage extends StatefulWidget {
 
 class _TransferEnergyPageState extends State<TransferEnergyPage> {
   final String userId = LocalStorage.instance.getUser().id!;
-  final WalletController wallet = Get.find();
+  final MeController me = Get.find();
   Future<FamilyModel> family = FamilyService().getFamily();
 
   void refetchFamily() {
@@ -112,7 +112,7 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                                   children: [
                                     Obx(
                                       () => Text(
-                                        "Bạn đang có ${wallet.diamond}",
+                                        "Bạn đang có ${me.profile.value.diamond ?? 0}",
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
