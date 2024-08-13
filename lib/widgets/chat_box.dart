@@ -141,7 +141,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
               },
               icon: SvgIcon(
                 icon: "volumn",
-                size: 36,
+                size: 28,
                 color: primary.shade500,
               ),
             )
@@ -163,6 +163,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: widget.isSender == true
                   ? MainAxisAlignment.end
                   : MainAxisAlignment.start,

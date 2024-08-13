@@ -281,49 +281,67 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
           ),
           GetBuilder<TodoHomeStore>(builder: (todoStore) {
             return Positioned(
-              left: -12,
+              left: 0,
               top: MediaQuery.of(context).size.height / 12,
-              width: MediaQuery.of(context).size.width + 24,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      final currentIndex = todoStore.currentUserIndex.value;
-                      if (currentIndex <= 0) {
-                        todoStore.setCurrentUser(todoStore.members.length - 1);
-                      } else {
-                        todoStore.setCurrentUser(currentIndex - 1);
-                      }
-                    },
-                    child: Container(
-                      width: 64,
-                      height: 64,
-                      child: SvgPicture.asset(
-                        "assets/todoPage/banner/chevron-left.svg",
-                        fit: BoxFit.fill,
+              width: MediaQuery.of(context).size.width,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        final currentIndex = todoStore.currentUserIndex.value;
+                        if (currentIndex <= 0) {
+                          todoStore
+                              .setCurrentUser(todoStore.members.length - 1);
+                        } else {
+                          todoStore.setCurrentUser(currentIndex - 1);
+                        }
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: primary.shade50.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: SvgPicture.asset(
+                          "assets/todoPage/banner/chevron-left.svg",
+                          fit: BoxFit.fill,
+                          colorFilter: ColorFilter.mode(
+                              primary.shade500, BlendMode.srcIn),
+                        ),
                       ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      final currentIndex = todoStore.currentUserIndex.value;
-                      if (currentIndex == todoStore.members.length - 1) {
-                        todoStore.setCurrentUser(0);
-                      } else {
-                        todoStore.setCurrentUser(currentIndex + 1);
-                      }
-                    },
-                    child: Container(
-                      width: 64,
-                      height: 64,
-                      child: SvgPicture.asset(
-                        "assets/todoPage/banner/chevron-right.svg",
-                        fit: BoxFit.fill,
+                    GestureDetector(
+                      onTap: () {
+                        final currentIndex = todoStore.currentUserIndex.value;
+                        if (currentIndex == todoStore.members.length - 1) {
+                          todoStore.setCurrentUser(0);
+                        } else {
+                          todoStore.setCurrentUser(currentIndex + 1);
+                        }
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: primary.shade50.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: SvgPicture.asset(
+                          "assets/todoPage/banner/chevron-right.svg",
+                          fit: BoxFit.fill,
+                          colorFilter: ColorFilter.mode(
+                            primary.shade500,
+                            BlendMode.srcIn,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           }),

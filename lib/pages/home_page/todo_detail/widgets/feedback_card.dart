@@ -1,8 +1,11 @@
 import 'dart:ui';
 
 import 'package:chatkid_mobile/constants/feedback_page.dart';
+import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
+import 'package:chatkid_mobile/pages/home_page/todo_detail/todo_detail.dart';
+import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/widgets/chat_box.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
@@ -19,18 +22,34 @@ class FeedBackCard extends StatefulWidget {
 
 class _FeedBackCardState extends State<FeedBackCard> {
   final TodoHomeStore todoHomeStore = Get.find();
+
+  onAccept() async {
+    final result = await TodoService()
+        .updateTaskStatus(widget.task.id, TodoStatus.completed);
+
+    todoHomeStore.updateTaskStatus(
+        widget.task.id, TodoStatus.pending, TodoStatus.completed);
+  }
+
+  onReject() async {
+    final result = await TodoService()
+        .updateTaskStatus(widget.task.id, TodoStatus.notCompleted);
+    todoHomeStore.updateTaskStatus(
+        widget.task.id, TodoStatus.pending, TodoStatus.notCompleted);
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomCard(
       padding: EdgeInsets.all(16),
       children: [
-        ChatTextBox(
-          isSender: false,
-          user: todoHomeStore.currentUser.value,
-          useVoice: false,
-          message:
-              'Công việc ${FeedbackMap[widget.task.feedbackLevel]?.toLowerCase() ?? ""}',
-        ),
+        // ChatTextBox(
+        //   isSender: false,
+        //   user: todoHomeStore.currentUser.value,
+        //   useVoice: false,
+        //   message:
+        //       'Công việc ${FeedbackMap[widget.task.feedbackLevel]?.toLowerCase() ?? ""}',
+        // ),
         SizedBox(height: 16),
         ChatTextBox(
           isSender: false,
@@ -51,6 +70,12 @@ class _FeedBackCardState extends State<FeedBackCard> {
           fit: BoxFit.cover,
           height: 400,
         ),
+        widget.task.status == TodoStatus.pending
+            ? ActionButtons(
+                onCancel: onReject,
+                onConfirm: onAccept,
+              )
+            : Container(),
       ],
     );
   }

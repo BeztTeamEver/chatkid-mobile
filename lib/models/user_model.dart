@@ -9,6 +9,7 @@ class UserModel {
   String? name;
   String? gender;
   String? role;
+  String? familyRole;
   int? status;
   int? diamond;
   int? coin;
@@ -32,6 +33,7 @@ class UserModel {
     this.coin,
     this.familyId,
     this.gender,
+    this.familyRole,
     this.deviceToken,
     this.kidServices,
     this.accessToken,
@@ -49,6 +51,7 @@ class UserModel {
       name: json['name'],
       role: json['role'],
       status: json['status'],
+      familyRole: json['familyRole'],
       diamond: json['diamond'],
       coin: json['coin'],
       familyId: json['familyId'],
@@ -91,6 +94,9 @@ class UserModel {
     }
     if (status != null) {
       data['status'] = status;
+    }
+    if (familyRole != null) {
+      data['familyRole'] = familyRole;
     }
     if (diamond != null) {
       data['diamond'] = diamond;

@@ -74,8 +74,8 @@ class _ParentBottomBarState extends State<ParentBottomBar> {
               tag: 'voiceChat/mic',
               child: ActionButton(
                 icon: const SvgIcon(icon: 'microphone_on'),
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  await Navigator.push(
                     context,
                     HeroDialogRoute(
                         builder: (context) => VoiceRecorder(

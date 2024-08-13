@@ -10,18 +10,21 @@ class SelectButton extends StatelessWidget {
   final bool _hasBackground;
   final Color? _borderColor;
   final bool _isSelected;
+  final String? _subLabel;
 
   const SelectButton(
       {super.key,
       String? icon,
       Color? borderColor,
       required String label,
+      String subLabel = "",
       VoidCallback? onPressed,
       bool isSelected = false,
       bool hasBackground = false})
       : _icon = icon,
         _isSelected = isSelected,
         _label = label,
+        _subLabel = subLabel,
         _onPressed = onPressed,
         _hasBackground = hasBackground,
         _borderColor = borderColor;
@@ -57,7 +60,7 @@ class SelectButton extends StatelessWidget {
               ),
             ),
         child: Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: const EdgeInsets.all(2.0),
           child: Row(
             mainAxisAlignment: alignContent,
             children: [
@@ -86,12 +89,28 @@ class SelectButton extends StatelessWidget {
               const SizedBox(
                 width: 16,
               ),
-              Text(
-                _label,
-                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                      color: _isSelected ? Colors.white : neutral.shade800,
-                      fontWeight: FontWeight.w600,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (_subLabel?.isNotEmpty == true)
+                    Text(
+                      _subLabel ?? "",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: neutral.shade600,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
                     ),
+                  Text(
+                    _label,
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          color: _isSelected ? Colors.white : neutral.shade800,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                  ),
+                ],
               ),
             ],
           ),

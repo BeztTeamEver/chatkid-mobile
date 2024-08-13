@@ -2,6 +2,7 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
+import 'package:chatkid_mobile/pages/home_page/create_page/widgets/todo_overlap_modal.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/todo_service.dart';
@@ -46,16 +47,28 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
         // Assign for a member
         final value = TodoCreateModel.fromJson({
           ...formState.value,
+          'frequency': <String?>[],
           "memberIds": _selectedIndex,
         });
+
+        final overlapUsers = await TodoService().checkOverlapTask(value);
+        if (overlapUsers != null) {
+          await showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return TodoOverlapModal(users: overlapUsers);
+              });
+        } else {
+          Logger().i(overlapUsers);
+        }
         await TodoService().createTask(value);
         Get.delete<TodoFormCreateController>();
         // Get.delete<TodoHomeStore>();
 
-        Get.offAll(() => MainPage(), predicate: (route) => false);
+        // Get.offAll(() => MainPage(), predicate: (route) => false);
 
-        // todoFormCreateController.navigatorKey.currentState!.pop();
-        return;
+        // // todoFormCreateController.navigatorKey.currentState!.pop();
+        // return;
       }
     } catch (e) {
       Logger().e(e);

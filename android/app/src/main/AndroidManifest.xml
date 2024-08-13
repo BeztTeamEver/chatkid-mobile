@@ -20,6 +20,7 @@
         android:label="Kidtalkie"
         android:requestLegacyExternalStorage="true"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/launcher_icon">
         <activity
@@ -43,7 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-             <!-- zalopay init -->
+                <!-- zalopay init -->
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -69,8 +70,7 @@
             android:value="demozpdk://app" />
         <meta-data
             android:name="com.vng.zalo.sdk.ENVIRONMENT"
-            android:value="SANDBOX" /> // OR value="PRODUCTION"
-        <!-- zalopay init -->
+            android:value="SANDBOX" /> // OR value="PRODUCTION" <!-- zalopay init -->
     </application>
 
 </manifest>

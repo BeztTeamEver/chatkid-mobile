@@ -2,19 +2,19 @@ import 'dart:io';
 
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/cache_manager.dart';
-import 'package:chatkid_mobile/utils/error_snackbar.dart';
-import 'package:chatkid_mobile/widgets/player_wave.dart';
-import 'package:chatkid_mobile/widgets/voice_chat.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class VoiceRecorder extends StatefulWidget {
   final Function(File? file) onRecorded;
-  const VoiceRecorder({super.key, required this.onRecorded});
+  final Function? onSpeechResult;
+  const VoiceRecorder(
+      {super.key, required this.onRecorded, this.onSpeechResult});
 
   @override
   State<VoiceRecorder> createState() => VoiceRecorderState();
@@ -22,6 +22,7 @@ class VoiceRecorder extends StatefulWidget {
 
 class VoiceRecorderState extends State<VoiceRecorder> {
   late final RecorderController controller;
+  final SpeechToText _speechToText = SpeechToText();
   bool isRecording = false;
   String? path = '';
   File? recordFile;
@@ -35,6 +36,11 @@ class VoiceRecorderState extends State<VoiceRecorder> {
     //     stack: StackTrace.current,
     //   );
     // }
+
+    _speechToText.initialize(
+      onError: (error) => Logger().e('Error: $error'),
+      onStatus: (status) => Logger().i('Status: $status'),
+    );
     controller = RecorderController()
       ..androidEncoder = AndroidEncoder.aac_eld
       ..updateFrequency = const Duration(milliseconds: 80)
@@ -52,9 +58,10 @@ class VoiceRecorderState extends State<VoiceRecorder> {
   void startOrStop(BuildContext context) async {
     try {
       if (isRecording) {
+        _stopListening();
         CustomCacheManager.instance.emptyCache();
         controller.reset();
-        path = await controller.stop(false);
+        path = await controller.stop();
         if (path != null) {
           // isRecordingCompleted = true;
           final file = File(path!);
@@ -80,8 +87,7 @@ class VoiceRecorderState extends State<VoiceRecorder> {
           Navigator.of(context).pop();
         }
       } else {
-        Logger().i('Recording');
-
+        await _startListening();
         await controller.record(); // Path is optional
         setState(() {
           recordFile = null;
@@ -94,6 +100,48 @@ class VoiceRecorderState extends State<VoiceRecorder> {
         isRecording = !isRecording;
       });
     }
+  }
+
+  Future<void> _startListening() async {
+    try {
+      await _speechToText.listen(
+        onResult: _onSpeechResult,
+        listenOptions: SpeechListenOptions(
+          listenMode: ListenMode.deviceDefault,
+        ),
+      );
+    } catch (e) {
+      print('Error starting speech recognition');
+      Logger().e(e.toString());
+    }
+    setState(() {});
+  }
+
+  /// Manually stop the active speech recognition session
+  /// Note that there are also timeouts that each platform enforces
+  /// and the SpeechToText plugin supports setting timeouts on the
+  /// listen method.
+  void _stopListening() async {
+    try {
+      final lastWords = _speechToText.lastRecognizedWords;
+      Logger().i(lastWords);
+      if (lastWords.isNotEmpty) {
+        await widget.onSpeechResult?.call(lastWords);
+      }
+    } catch (e) {
+      print('Error stopping speech recognition');
+      Logger().e(e.toString());
+    } finally {
+      _speechToText.stop();
+      setState(() {});
+    }
+  }
+
+  /// This is the callback that the SpeechToText plugin calls when
+  /// the platform returns recognized words.
+  void _onSpeechResult(SpeechRecognitionResult result) async {
+    widget.onSpeechResult?.call(result);
+    setState(() {});
   }
 
   @override
@@ -109,6 +157,7 @@ class VoiceRecorderState extends State<VoiceRecorder> {
       controller.stop();
     }
     controller.dispose();
+    _speechToText.cancel();
     super.dispose();
   }
 

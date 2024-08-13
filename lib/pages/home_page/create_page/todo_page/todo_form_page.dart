@@ -60,9 +60,10 @@ class _TodoFormPageState extends State<TodoFormPage> {
 
   void onSubmit() async {
     final formState = todoFormCreateController.formKey.currentState!;
+
     if (formState.saveAndValidate()) {
       final formValue = formState.value;
-
+      // TODO: check time is overlap or not
       // final startHour =
       //     formValue['startTime.hour1']! * 10 + formValue['startTime.hour2']!;
       // final startMinute = formValue['startTime.minute1']! * 10 +
@@ -120,13 +121,13 @@ class _TodoFormPageState extends State<TodoFormPage> {
       // );
       // formState.fields['endTime']?.didChange(endTime);
 
-      if (formValue['frequency'].isEmpty) {
-        formState.fields['frequency']?.didChange(<String>[]);
-      }
-
+      // if (formValue['frequency'].isEmpty) {
+      //   formState.fields['frequency']?.didChange(<String>[]);
+      // }
       if (todoFormCreateController.initForm['id'] != '') {
         final value = TodoCreateModel.fromJson({
           ...formValue,
+          'frequency': [],
           "taskTypeId": todoFormCreateController.selectedTaskType.value,
           "id": todoFormCreateController.initForm['id'],
           "startTime": startTime,
@@ -244,6 +245,12 @@ class _TodoFormPageState extends State<TodoFormPage> {
                 ),
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(),
+                  (value) {
+                    if (value?.isBefore(DateTime.now()) == true) {
+                      return "Thời gian bắt đầu phải sau thời gian hiện tại";
+                    }
+                    return null;
+                  }
                 ]),
                 maxLines: 1,
               ),
@@ -267,17 +274,17 @@ class _TodoFormPageState extends State<TodoFormPage> {
               // ),
 
               SizedBox(height: 14),
-              SelectButtonList<String?>(
-                name: "frequency",
-                label: "Lặp lại trong tuần",
-                isMultiple: true,
-                options: TodoCreateFormOptions.daysOfWeekOption,
-                onSelected: (value) {
-                  todoFormCreateController
-                      .formKey.currentState!.fields['frequency']!
-                      .didChange(value);
-                },
-              ),
+              // SelectButtonList<String?>(
+              //   name: "frequency",
+              //   label: "Lặp lại trong tuần",
+              //   isMultiple: true,
+              //   options: TodoCreateFormOptions.daysOfWeekOption,
+              //   onSelected: (value) {
+              //     todoFormCreateController
+              //         .formKey.currentState!.fields['frequency']!
+              //         .didChange(value);
+              //   },
+              // ),
               SizedBox(height: 14),
               InputNumber(
                 name: "numberOfCoin",

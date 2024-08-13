@@ -13,6 +13,7 @@ import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:chatkid_mobile/widgets/label.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
@@ -127,7 +128,7 @@ class _HeadCardState extends State<HeadCard> {
                 children: [
                   Text(
                     // TODO: use task time
-                    "${widget.task.startTime.format(DateConstants.timeFormatWithoutSecond)} - ${widget.task.endTime.format(DateConstants.timeFormatWithoutSecond)} ${widget.task.finishTime != null ? widget.task.finishTime!.format(DateConstants.timeFormatWithoutSecond) : ""}, ${widget.task.startTime.format(DateConstants.dateSlashFormat)}",
+                    "${widget.task.startTime.format(DateConstants.timeFormatWithoutSecond)} - ${widget.task.endTime.format(DateConstants.timeFormatWithoutSecond)}, ${widget.task.startTime.format(DateConstants.dateSlashFormat)}",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -140,33 +141,29 @@ class _HeadCardState extends State<HeadCard> {
                     thickness: 2,
                     width: 20,
                   ),
-                  Text(
-                    StatusTextMap[widget.task.status] ?? "",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: StatusColorMap[widget.task.status],
-                        ),
-                  ),
+                  Label(
+                      width: 112,
+                      type: StatusLabelTypeMap[widget.task.status]!,
+                      label: StatusTextMap[widget.task.status]!),
                 ],
               ),
             ),
             SizedBox(
               height: 8,
             ),
-            widget.task.finishTime != null
-                ? Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      "Thời gian hoàn thành: ${widget.task.finishTime != null ? widget.task.finishTime!.format(DateConstants.timeFormatWithoutSecond) : ""}, ${widget.task.finishTime != null ? widget.task.finishTime!.format(DateConstants.dateSlashFormat) : ""}",
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ),
-                  )
-                : Container(),
+            // widget.task.finishTime != null
+            //     ? Container(
+            //         width: MediaQuery.of(context).size.width,
+            //         padding: const EdgeInsets.symmetric(horizontal: 16),
+            //         child: Text(
+            //           "Thời gian hoàn thành: ${widget.task.finishTime != null ? widget.task.finishTime!.format(DateConstants.timeFormatWithoutSecond) : ""}, ${widget.task.finishTime != null ? widget.task.finishTime!.format(DateConstants.dateSlashFormat) : ""}",
+            //           style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            //                 fontSize: 14,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //         ),
+            //       )
+            //     : Container(),
             createdBy.name != null
                 ? Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),

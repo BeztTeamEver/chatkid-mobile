@@ -12,6 +12,7 @@ import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/confirmation/confirm_modal.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/secondary_button.dart';
@@ -38,20 +39,6 @@ class _TodoDetailState extends State<TodoDetail> {
     await _ttsService.speak(message);
   }
 
-  onAccept() async {
-    final result =
-        await TodoService().updateTaskStatus(widget.id, TodoStatus.completed);
-
-    store.updateTaskStatus(widget.id, TodoStatus.pending, TodoStatus.completed);
-  }
-
-  onReject() async {
-    final result = await TodoService()
-        .updateTaskStatus(widget.id, TodoStatus.notCompleted);
-    store.updateTaskStatus(
-        widget.id, TodoStatus.pending, TodoStatus.notCompleted);
-  }
-
   @override
   Widget build(BuildContext context) {
     final user = LocalStorage.instance.getUser();
@@ -61,8 +48,9 @@ class _TodoDetailState extends State<TodoDetail> {
               task: widget.task,
             )
           : Container(),
-      widget.task.status == TodoStatus.pending ||
-              widget.task.status == TodoStatus.completed
+      widget.task.feedbackEmoji != null ||
+              widget.task.feedbackVoice != null ||
+              widget.task.evidence != null
           ? FeedBackCard(
               task: widget.task,
             )
@@ -87,13 +75,13 @@ class _TodoDetailState extends State<TodoDetail> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: widget.task.status == TodoStatus.pending
-          ? ActionButtons(
-              onCancel: onReject,
-              onConfirm: onAccept,
-            )
-          : null,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // floatingActionButton: widget.task.status == TodoStatus.pending
+      //     ? ActionButtons(
+      //         onCancel: onReject,
+      //         onConfirm: onAccept,
+      //       )
+      //     : null,
     );
   }
 }
@@ -114,7 +102,7 @@ class _ActionButtonsState extends State<ActionButtons> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 64,
+      height: 56,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       child: Row(
@@ -127,20 +115,35 @@ class _ActionButtonsState extends State<ActionButtons> {
                 if (isCancelLoading) {
                   return;
                 }
-                setState(() {
-                  isCancelLoading = true;
-                });
-                if (widget.onCancel != null) {
-                  await widget.onCancel?.call();
-                  setState(() {
-                    isCancelLoading = false;
-                  });
-                  Navigator.of(context).pop();
-                }
+                await showDialog(
+                  context: context,
+                  builder: (context) => ConfirmModal(
+                    title: "Xác nhận trẻ không hoàn thành?",
+                    content:
+                        "Bạn có chắc muốn xác nhận trẻ chưa hoàn thành không?",
+                    confirmText: "Xác nhận",
+                    isLoading: isCancelLoading,
+                    onConfirm: () async {
+                      setState(() {
+                        isCancelLoading = true;
+                      });
+                      if (widget.onCancel != null) {
+                        await widget.onCancel?.call();
+                        setState(() {
+                          isCancelLoading = false;
+                        });
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                );
               },
               style: ElevatedButtonTheme.of(context).style!.copyWith(
                     backgroundColor: MaterialStateProperty.all<Color>(
                       Colors.transparent,
+                    ),
+                    padding: MaterialStatePropertyAll(
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     ),
                     shape: MaterialStatePropertyAll(
                       RoundedRectangleBorder(
@@ -191,21 +194,33 @@ class _ActionButtonsState extends State<ActionButtons> {
                 if (isLoading) {
                   return;
                 }
-                setState(() {
-                  isLoading = true;
-                });
-                try {
-                  if (widget.onConfirm != null) {
-                    await widget.onConfirm!();
-                  }
-                  Navigator.of(context).pop();
-                } catch (e) {
-                  Logger().e(e);
-                } finally {
-                  setState(() {
-                    isLoading = false;
-                  });
-                }
+                await showDialog(
+                  context: context,
+                  builder: (context) => ConfirmModal(
+                    title: "Xác nhận trẻ đã hoàn thành?",
+                    content:
+                        "Bạn có chắc muốn xác nhận trẻ đã hoàn thành không?",
+                    confirmText: "Xác nhận",
+                    isLoading: isLoading,
+                    onConfirm: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      try {
+                        if (widget.onConfirm != null) {
+                          await widget.onConfirm!();
+                        }
+                        Navigator.of(context).pop();
+                      } catch (e) {
+                        Logger().e(e);
+                      } finally {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    },
+                  ),
+                );
               },
               style: ElevatedButtonTheme.of(context).style!.copyWith(
                     backgroundColor: MaterialStateProperty.all<Color>(

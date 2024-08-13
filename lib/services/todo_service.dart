@@ -268,6 +268,28 @@ class TodoService {
         throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
     }
   }
+
+  Future<List<String>?> checkOverlapTask(TodoCreateModel data) async {
+    final response = await httpService.post(
+      endpoint: Endpoint.taskOverlapEndPoint,
+      body: data.toJson(),
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final data = jsonDecode(response.body);
+      return data.map<String>((e) => e.toString()).toList();
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
 }
 
 final todoServiceProvider = Provider<TodoService>((ref) {

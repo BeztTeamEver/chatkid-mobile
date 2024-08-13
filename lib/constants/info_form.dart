@@ -18,8 +18,12 @@ class InfoForm {
   ];
 
   static final List<Option> ROLE_OPTIONS = [
-    Option(label: 'Bố', value: FamilyRole.father.toString().split('.')[1]),
-    Option(label: 'Mẹ', value: FamilyRole.mother.toString().split('.')[1]),
+    Option(label: 'Bố', value: "Bố"),
+    Option(label: 'Mẹ', value: "Mẹ"),
+    Option(label: 'Cô', value: "Cô"),
+    Option(label: 'Chú', value: "Chú"),
+    Option(label: 'Dì', value: "Dì"),
+    Option(label: 'Bác', value: "Bác"),
   ];
   static final List<Option> YEAR_BIRTHDAY_OPTIONS =
       List.generate(100, (index) => DateTime.now().year - index)
