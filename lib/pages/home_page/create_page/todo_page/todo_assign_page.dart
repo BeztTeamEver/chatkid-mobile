@@ -26,11 +26,21 @@ class TodoAssignPage extends ConsumerStatefulWidget {
   ConsumerState<TodoAssignPage> createState() => _TodoAssignPageState();
 }
 
-class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
+class _TodoAssignPageState extends ConsumerState<TodoAssignPage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
   TodoFormCreateController todoFormCreateController = Get.find();
   List<String> _selectedIndex = [];
 
   bool isLoading = false;
+
+  handleSubmitData(value) async {
+    await TodoService().createTask(value);
+    Get.delete<TodoFormCreateController>();
+    // Get.delete<TodoHomeStore>();
+
+    Get.offAll(() => MainPage(), predicate: (route) => false);
+  }
 
   onSubmit() async {
     try {
@@ -52,21 +62,58 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
         });
 
         final overlapUsers = await TodoService().checkOverlapTask(value);
-        if (overlapUsers != null) {
-          await showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return TodoOverlapModal(users: overlapUsers);
-              });
-        } else {
-          Logger().i(overlapUsers);
+        if (overlapUsers != null && overlapUsers.isNotEmpty) {
+          setState(() {
+            isLoading = false;
+          });
+          if (mounted) {
+            await showModalBottomSheet(
+                context: context,
+                enableDrag: true,
+                showDragHandle: true,
+                backgroundColor: Theme.of(context).colorScheme.background,
+                transitionAnimationController: _controller,
+                isScrollControlled: true,
+                useSafeArea: true,
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height - 180,
+                ),
+                builder: (context) {
+                  bool isFull = true;
+                  for (var i = 0; i < _selectedIndex.length; i++) {
+                    final user = overlapUsers.firstWhereOrNull(
+                        (element) => element.id == _selectedIndex[i]);
+                    if (user == null) {
+                      isFull = false;
+                      break;
+                    }
+                  }
+                  return TodoOverlapModal(
+                      isFull: isFull,
+                      onConfirm: () async {
+                        final users = _selectedIndex.fold(<String>[],
+                            (previousValue, element) {
+                          if (overlapUsers.firstWhereOrNull(
+                                  (element2) => element2.id == element) ==
+                              null) {
+                            previousValue.add(element);
+                          }
+
+                          return previousValue;
+                        });
+                        value.memberIds = users;
+
+                        await handleSubmitData(value);
+                      },
+                      endTime: value.endTime,
+                      users: overlapUsers,
+                      startTime: value.startTime);
+                });
+
+            return;
+          }
         }
-        await TodoService().createTask(value);
-        Get.delete<TodoFormCreateController>();
-        // Get.delete<TodoHomeStore>();
-
-        // Get.offAll(() => MainPage(), predicate: (route) => false);
-
+        await handleSubmitData(value);
         // // todoFormCreateController.navigatorKey.currentState!.pop();
         // return;
       }
@@ -83,6 +130,16 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
   }
 
   @override

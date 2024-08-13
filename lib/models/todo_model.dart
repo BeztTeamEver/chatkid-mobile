@@ -296,7 +296,6 @@ class TodoCreateModel {
       note: json['note'],
     );
   }
-
   Map<String, dynamic> toMap() {
     final memberIds = this.memberIds?.map((e) => e).toList();
     final result = {
