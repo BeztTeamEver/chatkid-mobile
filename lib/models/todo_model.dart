@@ -291,7 +291,7 @@ class TodoCreateModel {
       memberIds: json['memberIds'],
       startTime: json['startTime'],
       endTime: json['endTime'],
-      frequency: json['frequency'],
+      frequency: json['frequency'] != null ? json['frequency'] : [],
       numberOfCoin: json['numberOfCoin'],
       note: json['note'],
     );

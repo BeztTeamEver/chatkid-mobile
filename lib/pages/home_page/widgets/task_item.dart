@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/pages/home_page/widgets/timeline_head.dart';
 import 'package:chatkid_mobile/pages/routes/todo_create_route.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/confirmation/confirm_modal.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
@@ -15,6 +16,7 @@ import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class TaskItem extends StatefulWidget {
@@ -26,6 +28,7 @@ class TaskItem extends StatefulWidget {
 }
 
 class _TaskItemState extends State<TaskItem> {
+  final TodoHomeStore todoHomeStore = Get.find();
   TtsService _ttsService = TtsService().instance;
 
   Future<void> _speak(String message) async {
@@ -41,6 +44,9 @@ class _TaskItemState extends State<TaskItem> {
 
   @override
   Widget build(BuildContext context) {
+    final member = todoHomeStore.members.firstWhereOrNull(
+      (element) => element.id == widget.task.memberId,
+    );
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
@@ -75,7 +81,7 @@ class _TaskItemState extends State<TaskItem> {
                 );
               },
               heroTag: widget.task.id,
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(8),
               children: [
                 Row(
                   children: [
@@ -86,11 +92,11 @@ class _TaskItemState extends State<TaskItem> {
                           child: Image.network(
                             widget.task.taskType.imageHomeUrl!,
                             fit: BoxFit.fill,
-                            width: 110,
+                            width: 100,
                           ),
                         ),
                         Label(
-                            width: 118,
+                            width: 110,
                             type: StatusLabelTypeMap[widget.task.status]!,
                             label: StatusTextMap[widget.task.status]!),
                       ],
@@ -99,24 +105,47 @@ class _TaskItemState extends State<TaskItem> {
                     Expanded(
                       child: Column(
                         children: [
-                          Container(
-                            height: 24,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      widget.task.taskType.name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                child: AvatarPng(
+                                  imageUrl: member?.avatarUrl,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                member?.name ?? "",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: neutral.shade400,
                                     ),
-                                  ],
+                              ),
+                            ],
+                          ),
+                          Container(
+                            height: 20,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    widget.task.note,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -139,7 +168,7 @@ class _TaskItemState extends State<TaskItem> {
                             children: [
                               const SvgIcon(
                                 icon: 'coin',
-                                size: 24,
+                                size: 22,
                               ),
                               const SizedBox(width: 4),
                               Text(

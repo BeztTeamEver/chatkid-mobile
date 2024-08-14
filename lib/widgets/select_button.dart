@@ -79,9 +79,13 @@ class SelectButton extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(40),
                           child: Image.network(
-                            _icon ??
-                                "https://static.vecteezy.com/system/resources/previews/026/619/142/non_2x/default-avatar-profile-icon-of-social-media-user-photo-image-vector.jpg",
+                            _icon ?? "",
                             fit: BoxFit.fill,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Image.asset(
+                              "assets/profile/default-avatar.png",
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ))

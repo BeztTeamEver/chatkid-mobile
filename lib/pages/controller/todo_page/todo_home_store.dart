@@ -67,11 +67,74 @@ class TodoHomeStore extends GetxController {
   RxList<TargetModel> targets = <TargetModel>[].obs;
 
   RxList<String> favoritedTaskTypes = <String>[].obs;
-  Rx<UserModel> get currentUser => members[currentUserIndex.value].obs;
+  Rx<UserModel> get currentUser {
+    if (currentUserIndex.value == -1) {
+      return UserModel().obs;
+    }
+    return members[currentUserIndex.value].obs;
+  }
+
+  Rx<bool> get isOverall {
+    if (currentUserIndex.value == -1) {
+      return true.obs;
+    }
+    return false.obs;
+  }
+
   @override
   Future<void> onInit() async {
     super.onInit();
     await fetchData();
+  }
+
+  fetchOverall() async {
+    final tasksData = TodoService().fetchTaskByDate(TodoFilter(
+      date: selectedDate.value,
+    ));
+    final targetsData = TargetService().getTargets(
+      TargetListRequestModel(
+        date: selectedDate.value,
+      ),
+    );
+
+    final [taskList as List<TaskModel>, targetList as List<TargetModel>] =
+        await Future.wait([tasksData, targetsData]).catchError((e) {
+      throw e;
+    });
+
+    if (targetList.isNotEmpty) {
+      setTargets(targetList);
+    }
+
+    if (taskList.isNotEmpty) {
+      setTasks(taskList);
+    }
+  }
+
+  fetchMemberTask() async {
+    final tasksData = TodoService().getMemberTasks(
+        members[currentUserIndex.value].id!, pagingRequest.value);
+    final targetsData = TargetService().getTargetByMember(
+      TargetListRequestModel(
+        memberId: members[currentUserIndex.value].id!,
+        date: selectedDate.value,
+      ),
+    );
+
+    final [
+      taskList as PagingResponseModel<TaskModel>,
+      targetList as List<TargetModel>
+    ] = await Future.wait([tasksData, targetsData]).catchError((e) {
+      throw e;
+    });
+
+    if (targetList.isNotEmpty) {
+      setTargets(targetList);
+    }
+
+    if (taskList.items.isNotEmpty) {
+      setTasks(taskList.items);
+    }
   }
 
   fetchData() async {
@@ -87,32 +150,15 @@ class TodoHomeStore extends GetxController {
         return;
       }
 
-      final tasksData = TodoService().getMemberTasks(
-          members[currentUserIndex.value].id!, pagingRequest.value);
-      final targetsData = TargetService().getTargetByMember(
-        TargetListRequestModel(
-          memberId: members[currentUserIndex.value].id!,
-          date: selectedDate.value,
-        ),
-      );
-
-      final [
-        taskList as PagingResponseModel<TaskModel>,
-        targetList as List<TargetModel>
-      ] = await Future.wait([tasksData, targetsData]).catchError((e) {
-        throw e;
-      });
-
-      if (targetList.isNotEmpty) {
-        setTargets(targetList);
-      }
-
-      if (taskList.items.isNotEmpty) {
-        setTasks(taskList.items);
+      if (currentUserIndex.value == -1) {
+        await fetchOverall();
+      } else {
+        await fetchMemberTask();
       }
     } catch (e, stack) {
       Logger().e(e);
       Logger().e(stack);
+      ShowToast.error(msg: e.toString());
     } finally {
       isTaskLoading.value = false;
       isTargetLoading.value = false;

@@ -231,21 +231,20 @@ class _HeadCardState extends State<HeadCard> {
                   ),
                   GetX<TodoHomeStore>(
                     builder: (controller) {
+                      final user = controller.members.firstWhereOrNull(
+                          (element) => element.id == widget.task.memberId);
+
                       return Row(children: [
                         SizedBox(
                           width: 28,
                           height: 28,
                           child: AvatarPng(
-                            imageUrl: controller
-                                .members[controller.currentUserIndex.value]
-                                .avatarUrl,
+                            imageUrl: user?.avatarUrl,
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          controller.members[controller.currentUserIndex.value]
-                                  .name ??
-                              "",
+                          user?.name ?? "",
                           style:
                               Theme.of(context).textTheme.bodyMedium!.copyWith(
                                     fontSize: 14,

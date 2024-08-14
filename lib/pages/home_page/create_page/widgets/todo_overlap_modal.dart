@@ -126,8 +126,8 @@ class _TodoOverlapModalState extends ConsumerState<TodoOverlapModal> {
                             return Container();
                           }
                           return Container(
-                            padding: const EdgeInsets.all(8),
-                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(4),
+                            margin: const EdgeInsets.only(bottom: 4),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -295,19 +295,19 @@ class _TaskItemCardState extends State<TaskItemCard> {
           child: CustomCard(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            height: 120,
+            height: 100,
             children: [
               Row(
                 children: [
                   SizedBox(
-                    width: 28,
-                    height: 28,
+                    width: 24,
+                    height: 24,
                     child: AvatarPng(
-                      imageUrl: widget.user.avatarUrl ?? '',
+                      imageUrl: widget.user.avatarUrl,
                     ),
                   ),
                   const SizedBox(
-                    width: 8,
+                    width: 4,
                   ),
                   Text(
                     widget.user.name ?? '',
@@ -318,7 +318,7 @@ class _TaskItemCardState extends State<TaskItemCard> {
                         ),
                   ),
                   SizedBox(
-                    width: 8,
+                    width: 4,
                   ),
                   Label(
                     type: StatusLabelTypeMap[widget.task.status]!,
@@ -327,7 +327,7 @@ class _TaskItemCardState extends State<TaskItemCard> {
                 ],
               ),
               const SizedBox(
-                height: 8,
+                height: 4,
               ),
               Text(
                 widget.task.taskType.name,

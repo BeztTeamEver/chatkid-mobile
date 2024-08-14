@@ -24,7 +24,7 @@ class AvatarPng extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
             color: borderColor ?? neutral.shade400,
-            width: 2,
+            width: 1,
           ),
           color: Colors.white,
           borderRadius: BorderRadius.circular(100),
@@ -36,11 +36,19 @@ class AvatarPng extends StatelessWidget {
               ? Image.network(
                   imageUrl!,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                    "assets/profile/default-avatar.png",
+                    fit: BoxFit.cover,
+                  ),
                 )
               : isFile
                   ? Image.file(
                       File(imageUrl!),
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        "assets/profile/default-avatar.png",
+                        fit: BoxFit.cover,
+                      ),
                     )
                   : Image.asset(
                       (imageUrl == null || imageUrl == '')
