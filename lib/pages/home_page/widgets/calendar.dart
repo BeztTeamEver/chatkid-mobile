@@ -312,33 +312,49 @@ class _CalendarState extends State<Calendar>
               Spacer(),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12),
-                child: ElevatedButton(
-                  onPressed: () {
-                    changeToday();
-                  },
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(horizontal: 32, vertical: 4),
-                    ),
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.transparent),
-                    shadowColor: MaterialStateProperty.all(Colors.transparent),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                        side: BorderSide(
-                          color: primary.shade500,
-                          width: 1,
+                child: Obx(
+                  () => ElevatedButton(
+                    onPressed: () {
+                      if (todoHomeController.selectedDate.value
+                          .isSameDate(DateTime.now())) {
+                        return;
+                      }
+                      changeToday();
+                    },
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      ),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.transparent),
+                      shadowColor:
+                          MaterialStateProperty.all(Colors.transparent),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                          side: BorderSide(
+                            color: todoHomeController.selectedDate.value
+                                    .isSameDate(DateTime.now())
+                                ? neutral.shade400
+                                : primary.shade500,
+                            width: 1,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  child: Text(
-                    "Hôm nay",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: primary.shade500,
-                          fontSize: 14,
-                        ),
+                    child: Text(
+                      todoHomeController.selectedDate.value
+                              .isSameDate(DateTime.now())
+                          ? "Hôm nay"
+                          : "Quay lại hôm nay",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: todoHomeController.selectedDate.value
+                                    .isSameDate(DateTime.now())
+                                ? neutral.shade400
+                                : primary.shade500,
+                            fontSize: 14,
+                          ),
+                    ),
                   ),
                 ),
               ),

@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,7 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
       }
     } catch (e) {
       Logger().e(e);
-      ErrorSnackbar.showError(err: e, context: context);
+      ShowToast.error(msg: e.toString().split(":")[1]);
       _formkey.currentState!.fields['password']!
           .invalidate(e.toString().split(":")[1], shouldFocus: false);
     }

@@ -73,6 +73,19 @@ final MaterialColor green = MaterialColor(_greenColorValue, <int, Color>{
   900: HexColor('016A01'),
 });
 
+final MaterialColor yellow = MaterialColor(_neutralColorValue, <int, Color>{
+  50: HexColor('FFF9E5'),
+  100: HexColor('FFFAD1'),
+  900: HexColor('8A7300'),
+});
+
+final MaterialColor blue = MaterialColor(_neutralColorValue, <int, Color>{
+  50: HexColor('F6F9FE'),
+  100: HexColor('DAEDFF'),
+  500: HexColor('2D9AFF'),
+  900: HexColor('012B6A'),
+});
+
 final Color textDefault = Color(_textDefaultColorValue);
 
 final TextTheme textTheme = GoogleFonts.nunitoTextTheme(

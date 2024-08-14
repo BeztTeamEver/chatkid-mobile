@@ -56,7 +56,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
   final GlobalKey<ExpandableBottomSheetState> bottomSheetKey = new GlobalKey();
 
   final _chatService = SocketService();
-  final _listMessages = <ChatModel>[];
+  List<ChatModel> _listMessages = <ChatModel>[];
   final user = LocalStorage.instance.getUser();
 
   int _pageNumber = 0;
@@ -87,23 +87,22 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         channelId: widget.channelId,
       ),
     );
+
     setState(() {
-      _listMessages.insert(
-        0,
-        ChatModel(
-          content: message,
-          sender: UserModel(
-            id: user.id,
-            name: user.name,
-            avatarUrl: user.avatarUrl,
+      _listMessages = List.from(_listMessages)
+        ..insert(
+          0,
+          ChatModel(
+            content: message,
+            imageUrl: imageUrl,
+            voiceUrl: voiceUrl,
+            userId: user.id!,
+            channelId: widget.channelId,
+            sender: user,
           ),
-          imageUrl: imageUrl,
-          voiceUrl: voiceUrl,
-          sentTime: DateTime.now().toIso8601String(),
-          channelId: widget.channelId,
-        ),
-      );
+        );
     });
+    Logger().i("Send message: ${_listMessages.toSet()}");
   }
 
   void _receiveMessage() {
@@ -124,7 +123,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     );
   }
 
-  void fetchMessage() async {
+  Future<void> fetchMessage() async {
     try {
       if (!_isLoadMore) {
         Logger().i("No more data");
@@ -182,7 +181,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
 
       if (positions.last.index == _listMessages.length - 1 &&
           _listMessages.length >= 10) {
-        fetchMessage();
+        await fetchMessage();
       }
     });
   }
@@ -226,13 +225,13 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     });
   }
 
-  _listMessageBuilder(context, index, List<ChatModel> value) {
-    if (index == value.length) {
+  _listMessageBuilder(context, index) {
+    if (index == _listMessages.length) {
       return const SizedBox(
         height: 80,
       );
     }
-    final sender = value[index].sender ??
+    final sender = _listMessages[index].sender ??
         UserModel(
           id: "1",
           name: "Người dùng",
@@ -247,9 +246,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         child: ChatTextBox(
           icon: 'animal/bear',
           user: sender,
-          imageUrl: value[index].imageUrl,
-          voiceUrl: value[index].voiceUrl,
-          message: value[index].content,
+          imageUrl: _listMessages[index].imageUrl,
+          voiceUrl: _listMessages[index].voiceUrl,
+          message: _listMessages[index].content,
           isSender: sender.id == user.id!,
         ),
       ),
@@ -396,8 +395,35 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
               _loading ? const Loading() : Container(),
               Expanded(
                 child: ScrollablePositionedList.builder(
-                  itemBuilder: (context, index) =>
-                      _listMessageBuilder(context, index, _listMessages),
+                  itemBuilder: (context, index) {
+                    if (index == _listMessages.length) {
+                      return const SizedBox(
+                        height: 80,
+                      );
+                    }
+                    final sender = _listMessages[index].sender ??
+                        UserModel(
+                          id: "1",
+                          name: "Người dùng",
+                          avatarUrl: "https://i.pravatar.cc/150?img=1",
+                        );
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.8,
+                        ),
+                        child: ChatTextBox(
+                          icon: 'animal/bear',
+                          user: sender,
+                          imageUrl: _listMessages[index].imageUrl,
+                          voiceUrl: _listMessages[index].voiceUrl,
+                          message: _listMessages[index].content,
+                          isSender: sender.id == user.id!,
+                        ),
+                      ),
+                    );
+                  },
                   itemCount: _listMessages.length,
                   padding: EdgeInsets.only(
                       bottom: user.role == RoleConstant.Child ? 60 : 20),
@@ -412,46 +438,46 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
           ),
         ),
       ),
-      floatingActionButton: user.role == RoleConstant.Child
-          ? Container(
-              decoration: const ShapeDecoration(
-                  shape: CircleBorder(), color: Colors.white),
-              child: Hero(
-                tag: 'voiceChat/mic',
-                placeholderBuilder: (context, heroSize, child) => Container(
-                  height: 20.0,
-                  width: 20.0,
-                  child: const CircularProgressIndicator(),
-                ),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      HeroDialogRoute(
-                        builder: (context) => VoiceRecorder(
-                          onRecorded: onRecorded,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: 64,
-                    height: 64,
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: primary.shade500,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: const SvgIcon(
-                      color: Colors.white,
-                      icon: "voice_on",
-                      size: 40,
-                    ),
-                  ),
-                ),
-              ),
-            )
-          : null,
+      // floatingActionButton: user.role == RoleConstant.Child
+      //     ? Container(
+      //         decoration: const ShapeDecoration(
+      //             shape: CircleBorder(), color: Colors.white),
+      //         child: Hero(
+      //           tag: 'voiceChat/mic',
+      //           placeholderBuilder: (context, heroSize, child) => Container(
+      //             height: 20.0,
+      //             width: 20.0,
+      //             child: const CircularProgressIndicator(),
+      //           ),
+      //           child: GestureDetector(
+      //             onTap: () {
+      //               Navigator.push(
+      //                 context,
+      //                 HeroDialogRoute(
+      //                   builder: (context) => VoiceRecorder(
+      //                     onRecorded: onRecorded,
+      //                   ),
+      //                 ),
+      //               );
+      //             },
+      //             child: Container(
+      //               width: 64,
+      //               height: 64,
+      //               padding: const EdgeInsets.all(18),
+      //               decoration: BoxDecoration(
+      //                 color: primary.shade500,
+      //                 borderRadius: BorderRadius.circular(100),
+      //               ),
+      //               child: const SvgIcon(
+      //                 color: Colors.white,
+      //                 icon: "voice_on",
+      //                 size: 40,
+      //               ),
+      //             ),
+      //           ),
+      //         ),
+      //       )
+      //     : null,
       floatingActionButtonLocation: user.role == RoleConstant.Child
           ? FloatingActionButtonLocation.centerDocked
           : null,

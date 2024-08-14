@@ -54,6 +54,9 @@ class _PlayerWaveState extends State<PlayerWave> {
 
   _init() async {
     try {
+      if (context.mounted == false) {
+        return;
+      }
       setState(() {
         playerWaveStyle = PlayerWaveStyle(
           fixedWaveColor: widget.fixedWaveColor ?? primary.shade200,
@@ -102,6 +105,21 @@ class _PlayerWaveState extends State<PlayerWave> {
       //     _duration = duration;
       //   });
       // });
+      _playerStateSubscription =
+          _controller.onPlayerStateChanged.listen((event) async {
+        switch (event) {
+          case PlayerState.initialized:
+            final duration = await _controller.getDuration(DurationType.max);
+            setState(() {
+              _duration = duration;
+            });
+            break;
+          case PlayerState.paused:
+            setState(() {});
+            break;
+          default:
+        }
+      });
     } catch (e) {
       Logger().e(e);
     }
@@ -118,21 +136,6 @@ class _PlayerWaveState extends State<PlayerWave> {
   void initState() {
     super.initState();
     _init();
-    _playerStateSubscription =
-        _controller.onPlayerStateChanged.listen((event) async {
-      switch (event) {
-        case PlayerState.initialized:
-          final duration = await _controller.getDuration(DurationType.max);
-          setState(() {
-            _duration = duration;
-          });
-          break;
-        case PlayerState.paused:
-          setState(() {});
-          break;
-        default:
-      }
-    });
   }
 
   @override

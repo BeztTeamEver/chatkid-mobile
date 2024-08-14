@@ -100,103 +100,120 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
               width: MediaQuery.of(context).size.width + 100,
             ),
           ),
-          Stack(
-            fit: StackFit.expand,
-            children: [
-              FutureBuilder(
-                initialData: <UserModel>[
-                  UserModel(
-                    id: "1",
-                    name: "Người dùng",
-                    avatarUrl: "https://i.pravatar.cc/150?img=1",
-                  ),
-                ],
-                future: familiesAccounts,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    Logger().i("Error: ${snapshot.error}");
-                    return Container();
-                    // return Text("Error: ${snapshot.error}");
-                  }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return BannerAvatar(isLoading: true);
-                  }
-                  if (snapshot.hasData) {
-                    return BannerAvatar();
-                  }
-                  return Positioned(
-                    width: 48,
-                    height: 48,
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      child: const CustomCircleProgressIndicator(),
+          Obx(
+            () => Stack(
+              fit: StackFit.expand,
+              children: [
+                !todoStore.isOverall.value
+                    ? FutureBuilder(
+                        initialData: <UserModel>[
+                          UserModel(
+                            id: "1",
+                            name: "Người dùng",
+                            avatarUrl: "https://i.pravatar.cc/150?img=1",
+                          ),
+                        ],
+                        future: familiesAccounts,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            Logger().i("Error: ${snapshot.error}");
+                            return Container();
+                            // return Text("Error: ${snapshot.error}");
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return BannerAvatar(isLoading: true);
+                          }
+                          if (snapshot.hasData) {
+                            return BannerAvatar();
+                          }
+                          return Positioned(
+                            width: 48,
+                            height: 48,
+                            child: Container(
+                              width: 48,
+                              height: 48,
+                              child: const CustomCircleProgressIndicator(),
+                            ),
+                          );
+                        },
+                      )
+                    : Positioned(
+                        top: 76,
+                        left: 22,
+                        width: 168,
+                        height: 100,
+                        child: Container(
+                          child: SvgPicture.asset(
+                            "assets/todoPage/banner/flowers.svg",
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ),
+                if (!todoStore.isOverall.value)
+                  Positioned(
+                    width: 50,
+                    height: 54,
+                    top: 120,
+                    left: 140,
+                    child: SvgPicture.asset(
+                      "assets/todoPage/banner/flower2.svg",
+                      fit: BoxFit.fill,
                     ),
-                  );
-                },
-              ),
-              Positioned(
-                width: 50,
-                height: 54,
-                top: 120,
-                left: 140,
-                child: SvgPicture.asset(
-                  "assets/todoPage/banner/flower2.svg",
-                  fit: BoxFit.fill,
-                ),
-              ),
-              Positioned(
-                width: 140,
-                top: 30,
-                right: 65,
-                child: GestureDetector(
-                  onTap: () => {
-                    Navigator.push(
-                      context,
-                      createRoute(() => const StorePage()),
-                    )
-                  },
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.horizontal(
-                            left: Radius.circular(40),
-                            right: Radius.circular(40),
+                  ),
+                Positioned(
+                  width: 140,
+                  top: 30,
+                  right: 65,
+                  child: GestureDetector(
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        createRoute(() => const StorePage()),
+                      )
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.horizontal(
+                              left: Radius.circular(40),
+                              right: Radius.circular(40),
+                            ),
+                          ),
+                          child: const Text(
+                            "Cửa hàng phần thưởng",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          "Cửa hàng phần thưởng",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        SizedBox(height: 4),
+                        SvgPicture.asset(
+                          "assets/todoPage/banner/store.svg",
+                          fit: BoxFit.fill,
                         ),
-                      ),
-                      SizedBox(height: 4),
-                      SvgPicture.asset(
-                        "assets/todoPage/banner/store.svg",
-                        fit: BoxFit.fill,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Positioned(
-                width: 80,
-                height: 84,
-                top: 90,
-                right: 0,
-                child: SvgPicture.asset(
-                  "assets/todoPage/banner/flower4.svg",
-                  fit: BoxFit.fill,
+                Positioned(
+                  width: 80,
+                  height: 84,
+                  top: 90,
+                  right: 0,
+                  child: SvgPicture.asset(
+                    "assets/todoPage/banner/flower4.svg",
+                    fit: BoxFit.fill,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           FutureBuilder(
             initialData: [
@@ -222,58 +239,63 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                 width: MediaQuery.of(context).size.width,
                 child: Padding(
                   padding: EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          child: GetX<TodoHomeStore>(builder: (controller) {
-                            if (controller.members.isEmpty ||
-                                todoStore.currentUserIndex.value >=
-                                    controller.members.length) {
-                              return Center();
-                            }
-                            return Text(
-                              controller
-                                      .members[
-                                          controller.currentUserIndex.value]
-                                      .name ??
-                                  "Người dùng",
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold),
-                            );
-                          }),
+                  child: Obx(
+                    () => Row(
+                      children: [
+                        !todoStore.isOverall.value
+                            ? Expanded(
+                                child: Container(
+                                  child: GetX<TodoHomeStore>(
+                                      builder: (controller) {
+                                    if (controller.members.isEmpty ||
+                                        todoStore.currentUserIndex.value >=
+                                            controller.members.length) {
+                                      return Center();
+                                    }
+                                    return Text(
+                                      controller
+                                              .members[controller
+                                                  .currentUserIndex.value]
+                                              .name ??
+                                          "Người dùng",
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold),
+                                    );
+                                  }),
+                                ),
+                              )
+                            : Expanded(child: Container()),
+                        familyChannel.when(
+                          data: (value) =>
+                              // Badge(
+                              // // TODO: update badge
+                              // label: Text("1"),
+                              // backgroundColor: red.shade500,
+                              // textColor: Colors.white,
+                              // alignment: Alignment.topRight,
+                              // largeSize: 16,
+                              // offset: Offset(-4, 4),
+                              // child:
+                              ButtonIcon(
+                                  onPressed: () {
+                                    Get.to(
+                                      () => GroupChatPage(channelId: value.id),
+                                    );
+                                  },
+                                  iconSize: 32,
+                                  padding: 0,
+                                  icon: "hipchat"),
+                          // ),
+                          error: (error, stackTrace) {
+                            Logger().i("Error: $error");
+                            return Container();
+                          },
+                          loading: () => const CustomCircleProgressIndicator(),
                         ),
-                      ),
-                      familyChannel.when(
-                        data: (value) =>
-                            // Badge(
-                            // // TODO: update badge
-                            // label: Text("1"),
-                            // backgroundColor: red.shade500,
-                            // textColor: Colors.white,
-                            // alignment: Alignment.topRight,
-                            // largeSize: 16,
-                            // offset: Offset(-4, 4),
-                            // child:
-                            ButtonIcon(
-                                onPressed: () {
-                                  Get.to(
-                                    () => GroupChatPage(channelId: value.id),
-                                  );
-                                },
-                                iconSize: 32,
-                                padding: 0,
-                                icon: "hipchat"),
-                        // ),
-                        error: (error, stackTrace) {
-                          Logger().i("Error: $error");
-                          return Container();
-                        },
-                        loading: () => const CustomCircleProgressIndicator(),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -281,49 +303,79 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
           ),
           GetBuilder<TodoHomeStore>(builder: (todoStore) {
             return Positioned(
-              left: -12,
+              left: 0,
               top: MediaQuery.of(context).size.height / 12,
-              width: MediaQuery.of(context).size.width + 24,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      final currentIndex = todoStore.currentUserIndex.value;
-                      if (currentIndex <= 0) {
-                        todoStore.setCurrentUser(todoStore.members.length - 1);
-                      } else {
-                        todoStore.setCurrentUser(currentIndex - 1);
-                      }
-                    },
-                    child: Container(
-                      width: 64,
-                      height: 64,
-                      child: SvgPicture.asset(
-                        "assets/todoPage/banner/chevron-left.svg",
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+              width: MediaQuery.of(context).size.width,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Obx(
+                  () => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      todoStore.currentUserIndex.value != -1
+                          ? GestureDetector(
+                              onTap: () {
+                                final currentIndex =
+                                    todoStore.currentUserIndex.value;
+                                if (currentIndex <= 0) {
+                                  // todoStore
+                                  //     .setCurrentUser(todoStore.members.length - 1);
+                                  todoStore.setCurrentUser(-1);
+                                } else {
+                                  todoStore.setCurrentUser(currentIndex - 1);
+                                }
+                              },
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: primary.shade50.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/todoPage/banner/chevron-left.svg",
+                                  fit: BoxFit.fill,
+                                  colorFilter: ColorFilter.mode(
+                                      primary.shade500, BlendMode.srcIn),
+                                ),
+                              ),
+                            )
+                          : Expanded(child: Container()),
+                      todoStore.currentUserIndex.value !=
+                              todoStore.members.length - 1
+                          ? GestureDetector(
+                              onTap: () {
+                                final currentIndex =
+                                    todoStore.currentUserIndex.value;
+                                if (currentIndex ==
+                                    todoStore.members.length - 1) {
+                                  todoStore.setCurrentUser(
+                                      todoStore.members.length - 1);
+                                } else {
+                                  todoStore.setCurrentUser(currentIndex + 1);
+                                }
+                              },
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: primary.shade50.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: SvgPicture.asset(
+                                  "assets/todoPage/banner/chevron-right.svg",
+                                  fit: BoxFit.fill,
+                                  colorFilter: ColorFilter.mode(
+                                    primary.shade500,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Expanded(child: Container()),
+                    ],
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      final currentIndex = todoStore.currentUserIndex.value;
-                      if (currentIndex == todoStore.members.length - 1) {
-                        todoStore.setCurrentUser(0);
-                      } else {
-                        todoStore.setCurrentUser(currentIndex + 1);
-                      }
-                    },
-                    child: Container(
-                      width: 64,
-                      height: 64,
-                      child: SvgPicture.asset(
-                        "assets/todoPage/banner/chevron-right.svg",
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             );
           }),

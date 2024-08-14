@@ -7,6 +7,7 @@ import 'package:chatkid_mobile/models/emoji_model.dart';
 import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
+import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -255,6 +256,55 @@ class TodoService {
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return true;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
+
+  Future<List<UserModel>?> checkOverlapTask(TodoCreateModel data) async {
+    final response = await httpService.post(
+      endpoint: Endpoint.taskOverlapEndPoint,
+      body: data.toJson(),
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final data = jsonDecode(response.body);
+      final res = data.map<UserModel>((e) => UserModel.fromJson(e)).toList();
+      return res;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy gói, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy thông tin gói, vui lòng thử lại!');
+    }
+  }
+
+  Future<List<TaskModel>> fetchTaskByDate(TodoFilter filter) async {
+    final response =
+        await httpService.get(endpoint: Endpoint.taskEndPoint, param: {
+      'date': filter.date.format(DateConstants.dateFormat),
+      'status': filter.status,
+    });
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List<TaskModel> tasks = data.map<TaskModel>((task) {
+        return TaskModel.fromJson(task);
+      }).toList();
+      return tasks;
     }
     switch (response.statusCode) {
       case 401:

@@ -8,6 +8,7 @@ import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
+import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
 
 class ChatTextBox extends StatefulWidget {
@@ -19,15 +20,19 @@ class ChatTextBox extends StatefulWidget {
   final UserModel? user;
   final bool useVoice;
   final bool useTextfullWidth;
+  final bool isThumbnail;
+  final Function? onOpenPreview;
   const ChatTextBox(
       {super.key,
       this.message,
       this.icon,
       this.useTextfullWidth = false,
       this.isSender,
+      this.onOpenPreview,
       this.user,
       this.useVoice = true,
       this.imageUrl,
+      this.isThumbnail = false,
       this.voiceUrl});
 
   @override
@@ -94,30 +99,60 @@ class ChatTextBoxState extends State<ChatTextBox> {
                 ? GestureDetector(
                     onTap: () {
                       // TODO: Open full image
+                      widget.onOpenPreview?.call();
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Image.network(
-                        widget.imageUrl ?? "",
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) =>
-                            loadingProgress == null
-                                ? child
-                                : Container(
-                                    width: 36,
-                                    height: 36,
-                                    padding: EdgeInsets.all(4),
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        color: widget.isSender == true
-                                            ? primary.shade100
-                                            : primary.shade500,
-                                      ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Hero(
+                              tag: widget.imageUrl ?? "",
+                              child: Image.network(
+                                widget.imageUrl ?? "",
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child,
+                                        loadingProgress) =>
+                                    loadingProgress == null
+                                        ? child
+                                        : Container(
+                                            width: 36,
+                                            height: 36,
+                                            padding: EdgeInsets.all(4),
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                color: widget.isSender == true
+                                                    ? primary.shade100
+                                                    : primary.shade500,
+                                              ),
+                                            ),
+                                          ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        widget.isThumbnail == true
+                            ? Positioned(
+                                child: Container(
+                                  height: 36,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.65,
+                                  padding: EdgeInsets.all(4),
+                                  // color: Colors.black.withOpacity(0.5),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.play_arrow,
+                                      color: primary.shade100,
+                                      size: 28,
                                     ),
                                   ),
-                      ),
+                                ),
+                              )
+                            : Container(),
+                      ],
                     ),
                   )
                 : TextBox(
@@ -141,7 +176,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
               },
               icon: SvgIcon(
                 icon: "volumn",
-                size: 36,
+                size: 28,
                 color: primary.shade500,
               ),
             )
@@ -163,6 +198,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: widget.isSender == true
                   ? MainAxisAlignment.end
                   : MainAxisAlignment.start,

@@ -74,6 +74,13 @@ class LocalStorage {
     _instance!.preferences.setString(key, value);
   }
 
+  List<UserModel> getMembers() {
+    String members =
+        _instance!.preferences.getString(LocalStorageKey.MEMBERS) ?? "[]";
+    List<dynamic> membersList = jsonDecode(members);
+    return membersList.map((e) => UserModel.fromJson(jsonDecode(e))).toList();
+  }
+
   Future<void> saveUser(UserModel user) async {
     MeController meController = Get.find();
     await _instance!.preferences.setString(LocalStorageKey.USER, user.toJson());

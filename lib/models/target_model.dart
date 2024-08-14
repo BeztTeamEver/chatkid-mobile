@@ -215,11 +215,11 @@ class TargetFormModel {
 }
 
 class TargetListRequestModel {
-  String memberId;
+  String? memberId;
   DateTime date;
 
   TargetListRequestModel({
-    required this.memberId,
+    this.memberId,
     required this.date,
   });
 

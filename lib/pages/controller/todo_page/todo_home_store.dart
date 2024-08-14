@@ -54,23 +54,87 @@ class TodoHomeStore extends GetxController {
     ),
   ).obs;
 
-  Rx<TaskListModel> tasks = TaskListModel(
-    availableTasks: <TaskModel>[].obs,
-    inprogressTasks: <TaskModel>[].obs,
-    pendingTasks: <TaskModel>[].obs,
-    completedTasks: <TaskModel>[].obs,
-    canceledTasks: <TaskModel>[].obs,
-    expiredTasks: <TaskModel>[].obs,
-    notCompletedTasks: <TaskModel>[].obs,
-  ).obs;
+  // Rx<TaskListModel> tasks = TaskListModel(
+  //   availableTasks: <TaskModel>[].obs,
+  //   inprogressTasks: <TaskModel>[].obs,
+  //   pendingTasks: <TaskModel>[].obs,
+  //   completedTasks: <TaskModel>[].obs,
+  //   canceledTasks: <TaskModel>[].obs,
+  //   expiredTasks: <TaskModel>[].obs,
+  //   notCompletedTasks: <TaskModel>[].obs,
+  // ).obs;
+  RxList<TaskModel> tasks = <TaskModel>[].obs;
   RxList<TargetModel> targets = <TargetModel>[].obs;
 
   RxList<String> favoritedTaskTypes = <String>[].obs;
-  Rx<UserModel> get currentUser => members[currentUserIndex.value].obs;
+  Rx<UserModel> get currentUser {
+    if (currentUserIndex.value == -1) {
+      return UserModel().obs;
+    }
+    return members[currentUserIndex.value].obs;
+  }
+
+  Rx<bool> get isOverall {
+    if (currentUserIndex.value == -1) {
+      return true.obs;
+    }
+    return false.obs;
+  }
+
   @override
   Future<void> onInit() async {
     super.onInit();
     await fetchData();
+  }
+
+  fetchOverall() async {
+    final tasksData = TodoService().fetchTaskByDate(TodoFilter(
+      date: selectedDate.value,
+    ));
+    final targetsData = TargetService().getTargets(
+      TargetListRequestModel(
+        date: selectedDate.value,
+      ),
+    );
+
+    final [taskList as List<TaskModel>, targetList as List<TargetModel>] =
+        await Future.wait([tasksData, targetsData]).catchError((e) {
+      throw e;
+    });
+
+    if (targetList.isNotEmpty) {
+      setTargets(targetList);
+    }
+
+    if (taskList.isNotEmpty) {
+      setTasks(taskList);
+    }
+  }
+
+  fetchMemberTask() async {
+    final tasksData = TodoService().getMemberTasks(
+        members[currentUserIndex.value].id!, pagingRequest.value);
+    final targetsData = TargetService().getTargetByMember(
+      TargetListRequestModel(
+        memberId: members[currentUserIndex.value].id!,
+        date: selectedDate.value,
+      ),
+    );
+
+    final [
+      taskList as PagingResponseModel<TaskModel>,
+      targetList as List<TargetModel>
+    ] = await Future.wait([tasksData, targetsData]).catchError((e) {
+      throw e;
+    });
+
+    if (targetList.isNotEmpty) {
+      setTargets(targetList);
+    }
+
+    if (taskList.items.isNotEmpty) {
+      setTasks(taskList.items);
+    }
   }
 
   fetchData() async {
@@ -86,32 +150,15 @@ class TodoHomeStore extends GetxController {
         return;
       }
 
-      final tasksData = TodoService().getMemberTasks(
-          members[currentUserIndex.value].id!, pagingRequest.value);
-      final targetsData = TargetService().getTargetByMember(
-        TargetListRequestModel(
-          memberId: members[currentUserIndex.value].id!,
-          date: selectedDate.value,
-        ),
-      );
-
-      final [
-        taskList as PagingResponseModel<TaskModel>,
-        targetList as List<TargetModel>
-      ] = await Future.wait([tasksData, targetsData]).catchError((e) {
-        throw e;
-      });
-
-      if (targetList.isNotEmpty) {
-        setTargets(targetList);
-      }
-
-      if (taskList.items.isNotEmpty) {
-        setTasks(taskList.items);
+      if (currentUserIndex.value == -1) {
+        await fetchOverall();
+      } else {
+        await fetchMemberTask();
       }
     } catch (e, stack) {
       Logger().e(e);
       Logger().e(stack);
+      ShowToast.error(msg: e.toString());
     } finally {
       isTaskLoading.value = false;
       isTargetLoading.value = false;
@@ -160,31 +207,39 @@ class TodoHomeStore extends GetxController {
   }
 
   setTasks(List<TaskModel> tasks) {
-    tasks.forEach((element) {
-      switch (element.status) {
-        case TodoStatus.inprogress:
-          this.tasks.value.inprogressTasks.add(element);
-          break;
-        case TodoStatus.available:
-          this.tasks.value.availableTasks.add(element);
-          break;
-        case TodoStatus.pending:
-          this.tasks.value.pendingTasks.add(element);
-          break;
-        case TodoStatus.completed:
-          this.tasks.value.completedTasks.add(element);
-          break;
-        case TodoStatus.notCompleted:
-          this.tasks.value.notCompletedTasks.add(element);
-          break;
-        case TodoStatus.expired:
-          this.tasks.value.expiredTasks.add(element);
-          break;
+    // tasks.forEach((element) {
+    // switch (element.status) {
+    //   case TodoStatus.inprogress:
+    //     this.tasks.value.inprogressTasks.add(element);
+    //     break;
+    //   case TodoStatus.available:
+    //     this.tasks.value.availableTasks.add(element);
+    //     break;
+    //   case TodoStatus.pending:
+    //     this.tasks.value.pendingTasks.add(element);
+    //     break;
+    //   case TodoStatus.completed:
+    //     this.tasks.value.completedTasks.add(element);
+    //     break;
+    //   case TodoStatus.notCompleted:
+    //     this.tasks.value.notCompletedTasks.add(element);
+    //     break;
+    //   case TodoStatus.expired:
+    //     this.tasks.value.expiredTasks.add(element);
+    //     break;
 
-        default:
-          this.tasks.value.canceledTasks.add(element);
+    //   default:
+    //     this.tasks.value.canceledTasks.add(element);
+    // }
+    // });
+    List<TaskModel> newTask = [];
+    tasks.sort((a, b) => a.startTime.compareTo(b.startTime));
+    tasks.forEach((element) {
+      if (element.status != TodoStatus.canceled) {
+        newTask.add(element);
       }
     });
+    this.tasks.assignAll(newTask);
   }
 
   setSelectedTarget(TargetModel target) {
@@ -194,13 +249,15 @@ class TodoHomeStore extends GetxController {
   Future<void> deleteTask(String id) async {
     try {
       await TodoService().deleteTask(id);
-      tasks.value.availableTasks.removeWhere((element) => element.id == id);
-      tasks.value.inprogressTasks.removeWhere((element) => element.id == id);
-      tasks.value.pendingTasks.removeWhere((element) => element.id == id);
-      tasks.value.completedTasks.removeWhere((element) => element.id == id);
-      tasks.value.expiredTasks.removeWhere((element) => element.id == id);
-      tasks.value.canceledTasks.removeWhere((element) => element.id == id);
-      tasks.value.notCompletedTasks.removeWhere((element) => element.id == id);
+      // tasks.value.availableTasks.removeWhere((element) => element.id == id);
+      // tasks.value.inprogressTasks.removeWhere((element) => element.id == id);
+      // tasks.value.pendingTasks.removeWhere((element) => element.id == id);
+      // tasks.value.completedTasks.removeWhere((element) => element.id == id);
+      // tasks.value.expiredTasks.removeWhere((element) => element.id == id);
+      // tasks.value.canceledTasks.removeWhere((element) => element.id == id);
+      // tasks.value.notCompletedTasks.removeWhere((element) => element.id == id);
+      tasks.removeWhere((element) => element.id == id);
+      tasks.refresh();
     } catch (e) {
       Logger().e(e);
       ShowToast.error(msg: e.toString());
@@ -223,11 +280,15 @@ class TodoHomeStore extends GetxController {
   }
 
   updateTask(TaskModel task) {
-    final index = tasks.value.availableTasks.indexWhere((element) {
-      return element.id == task.id;
-    });
+    // final index = tasks.value.availableTasks.indexWhere((element) {
+    //   return element.id == task.id;
+    // });
+    // if (index != -1) {
+    //   tasks.value.availableTasks[index] = task;
+    // }
+    final index = tasks.indexWhere((element) => element.id == task.id);
     if (index != -1) {
-      tasks.value.availableTasks[index] = task;
+      tasks[index] = task;
     }
     tasks.refresh();
   }
@@ -240,56 +301,62 @@ class TodoHomeStore extends GetxController {
     currentTask.value = id;
   }
 
-  updateTaskStatus(String id, String fromStatus, String toStatus) async {
+  updateTaskStatus(String id, String? fromStatus, String toStatus) async {
     try {
-      TaskModel? task;
+      int index = tasks.indexWhere((element) => element.id == id);
+      if (index != -1) {
+        tasks[index].status = toStatus;
+        tasks.refresh();
+      }
 
-      switch (fromStatus) {
-        case TodoStatus.available:
-          if (tasks.value.availableTasks.isEmpty) {
-            return;
-          }
-          task = tasks.value.availableTasks
-              .firstWhere((element) => element.id == id);
-          tasks.value.availableTasks.remove(task);
-          break;
-        case TodoStatus.inprogress:
-          if (tasks.value.inprogressTasks.isEmpty) {
-            return;
-          }
-          task = tasks.value.inprogressTasks
-              .firstWhere((element) => element.id == id);
-          tasks.value.inprogressTasks.remove(task);
-          break;
-        case TodoStatus.pending:
-          if (tasks.value.pendingTasks.isEmpty) {
-            return;
-          }
-          task = tasks.value.pendingTasks
-              .firstWhere((element) => element.id == id);
-          tasks.value.pendingTasks.remove(task);
-          break;
-      }
-      if (task == null) {
-        return;
-      }
-      switch (toStatus) {
-        case TodoStatus.inprogress:
-          tasks.value.inprogressTasks.add(task);
-          break;
-        case TodoStatus.pending:
-          tasks.value.pendingTasks.add(task);
-          break;
-        case TodoStatus.completed:
-          tasks.value.completedTasks.add(task);
-          break;
-        case TodoStatus.notCompleted:
-          tasks.value.notCompletedTasks.add(task);
-          break;
-        case TodoStatus.expired:
-          tasks.value.expiredTasks.add(task);
-          break;
-      }
+      // TaskModel? task = tasks.firstWhereOrNull((element) => element.id == id);
+
+      // switch (fromStatus) {
+      //   case TodoStatus.available:
+      //     if (tasks.value.availableTasks.isEmpty) {
+      //       return;
+      //     }
+      //     task = tasks.value.availableTasks
+      //         .firstWhere((element) => element.id == id);
+      //     tasks.value.availableTasks.remove(task);
+      //     break;
+      //   case TodoStatus.inprogress:
+      //     if (tasks.value.inprogressTasks.isEmpty) {
+      //       return;
+      //     }
+      //     task = tasks.value.inprogressTasks
+      //         .firstWhere((element) => element.id == id);
+      //     tasks.value.inprogressTasks.remove(task);
+      //     break;
+      //   case TodoStatus.pending:
+      //     if (tasks.value.pendingTasks.isEmpty) {
+      //       return;
+      //     }
+      //     task = tasks.value.pendingTasks
+      //         .firstWhere((element) => element.id == id);
+      //     tasks.value.pendingTasks.remove(task);
+      //     break;
+      // }
+      // if (task == null) {
+      //   return;
+      // }
+      // switch (toStatus) {
+      //   case TodoStatus.inprogress:
+      //     tasks.value.inprogressTasks.add(task);
+      //     break;
+      //   case TodoStatus.pending:
+      //     tasks.value.pendingTasks.add(task);
+      //     break;
+      //   case TodoStatus.completed:
+      //     tasks.value.completedTasks.add(task);
+      //     break;
+      //   case TodoStatus.notCompleted:
+      //     tasks.value.notCompletedTasks.add(task);
+      //     break;
+      //   case TodoStatus.expired:
+      //     tasks.value.expiredTasks.add(task);
+      //     break;
+      // }
     } catch (e, s) {
       Logger().e(e, stackTrace: s);
       ShowToast.error(msg: e.toString());
