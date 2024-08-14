@@ -56,7 +56,6 @@ class _TodoDetailState extends State<TodoDetail> {
             )
           : Container(),
     ];
-    Logger().i(widget.task.toJson());
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
