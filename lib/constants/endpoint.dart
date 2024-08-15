@@ -57,7 +57,7 @@ class Endpoint {
   static const getPaymentTransactionEndPoint = "/api/payment-transaction";
 
   //Notification
-  static const notificationEndPoint = "/api/history";
+  static const notificationEndPoint = "/api/notifications/me";
 
   //History
   static const historyEndPoint = "/api/history";

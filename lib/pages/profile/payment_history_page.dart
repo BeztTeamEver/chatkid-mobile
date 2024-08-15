@@ -58,9 +58,9 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
                     "Lịch sử thanh toán",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 16,
+                      fontSize: 18,
                       fontFamily: 'Nunito',
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       height: 0,
                     ),
                   ),

@@ -1,48 +1,47 @@
 class NotificationModel {
-  String? id;
-  String? title;
-  String? content;
-  String? receiver;
-  String? creatorEmail;
-  DateTime? createAt;
-  DateTime? updateAt;
-  DateTime? scheduleTime;
-  int? status;
+  late String id;
+  late String title;
+  late String body;
+  late String type;
+  late String? avatarUrl;
+  late String senderName;
+  late DateTime? createdAt;
+  late DateTime? updatedAt;
 
-  NotificationModel(
-      {this.id,
-      this.title,
-      this.content,
-      this.receiver,
-      this.creatorEmail,
-      this.createAt,
-      this.updateAt,
-      this.scheduleTime,
-      this.status});
+  NotificationModel({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.type,
+    required this.avatarUrl,
+    required this.senderName,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   NotificationModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
-    content = json['content'];
-    receiver = json['receiver'];
-    creatorEmail = json['creatorEmail'];
-    createAt = DateTime.tryParse(json['createAt']);
-    updateAt = DateTime.tryParse(json['updateAt']);
-    scheduleTime = DateTime.tryParse(json['scheduleTime']);
-    status = json['status'];
+    body = json['body'];
+    type = json['type'];
+    avatarUrl = json['avatarUrl'];
+    senderName = json['senderName'];
+    createdAt = DateTime.tryParse(json['createdAt']);
+    updatedAt = DateTime.tryParse(json['updatedAt']);
   }
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['content'] = this.content;
-    data['receiver'] = this.receiver;
-    data['creatorEmail'] = this.creatorEmail;
-    data['createAt'] = this.createAt.toString();
-    data['updateAt'] = this.updateAt.toString();
-    data['scheduleTime'] = this.scheduleTime.toString();
-    data['status'] = this.status;
+    data['id'] = id;
+    data['title'] = title;
+    data['body'] = body;
+    data['type'] = type;
+    data['avatarUrl'] = avatarUrl;
+    data['senderName'] = senderName;
+    data['createdAt'] = createdAt.toString();
+    data['updatedAt'] = updatedAt.toString();
     return data;
   }
 }
+
+

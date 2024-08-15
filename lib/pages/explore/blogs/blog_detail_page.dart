@@ -98,9 +98,9 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     "Chi tiết bài viết",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 16,
+                      fontSize: 18,
                       fontFamily: 'Nunito',
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       height: 0,
                     ),
                   ),

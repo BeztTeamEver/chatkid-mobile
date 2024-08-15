@@ -1,11 +1,14 @@
 import 'package:chatkid_mobile/models/notification_model.dart';
-import 'package:chatkid_mobile/pages/home_page.dart';
+import 'package:chatkid_mobile/pages/notification/notification_detail_page.dart';
 import 'package:chatkid_mobile/services/notification_service.dart';
-import 'package:chatkid_mobile/utils/number_format.dart';
+import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/avatar_png.dart';
+import 'package:chatkid_mobile/widgets/loading_indicator.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});
@@ -15,141 +18,229 @@ class NotificationPage extends StatefulWidget {
 }
 
 class _NotificationPageState extends State<NotificationPage> {
-  late final Future<List<NotificationModel>> notifications;
+  List<NotificationModel> notifications = [];
+  bool _loading = true;
+  bool _isLoadMore = true;
+  int _pageNumber = 0;
+
+  final ItemScrollController _scrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
+  final ScrollOffsetController _scrollOffsetController =
+      ScrollOffsetController();
+  final ScrollOffsetListener _scrollOffsetListener =
+      ScrollOffsetListener.create();
+
   @override
   void initState() {
     super.initState();
+    fetchNotification();
     // notifications = NotificationService().getNotifications();
+    _itemPositionsListener.itemPositions.addListener(() async {
+      final positions = _itemPositionsListener.itemPositions.value;
+      if (!_isLoadMore) {
+        Logger().i("No more data");
+        return;
+      }
+      if (positions.isEmpty) {
+        return;
+      }
+
+      if (positions.last.index == notifications.length - 1 &&
+          notifications.length >= 10 &&
+          _isLoadMore) {
+        fetchNotification();
+      }
+    });
+  }
+
+  void fetchNotification() async {
+    try {
+      if (!_isLoadMore) {
+        Logger().i("No more data");
+        return;
+      }
+
+      setState(() {
+        _loading = true;
+      });
+
+      await NotificationService().getNotifications(_pageNumber, 10).then(
+        (value) {
+          setState(() {
+            _isLoadMore =
+                value.totalItem > notifications.length + value.items.length;
+            _pageNumber++;
+            notifications.addAll(value.items);
+          });
+        },
+      ).whenComplete(
+        () => setState(
+          () {
+            _loading = false;
+          },
+        ),
+      );
+    } catch (e) {
+      Logger().e(e);
+    }
+  }
+
+  _listNotificationBuilder(context, index, List<NotificationModel> value) {
+    if (index == value.length) {
+      return const SizedBox(
+        height: 80,
+      );
+    }
+
+    final item = value[index];
+
+    return GestureDetector(
+      onTap: () {
+        if (item.type == 'SYSTEM') {
+          Navigator.push(
+            context,
+            createRoute(
+              () => NotificationDetailPage(
+                notification: item,
+              ),
+            ),
+          );
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: const [
+              BoxShadow(
+                color: Color.fromRGBO(78, 41, 20, 0.03),
+                spreadRadius: 0,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              )
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    child: AvatarPng(
+                      imageUrl: item.avatarUrl,
+                      borderColor: Colors.transparent,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.senderName,
+                        style: TextStyle(
+                          color: neutral.shade900,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        'lúc ${item.createdAt!.hour}:${item.createdAt!.minute}, ${item.createdAt!.day}/${item.createdAt!.month}/${item.createdAt!.year}',
+                        style: TextStyle(
+                          color: neutral.shade600,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              Visibility(
+                visible: item.type == 'SYSTEM',
+                child: Column(
+                  children: [
+                    const SizedBox(height: 6),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        item.title,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: neutral.shade900,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 6),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  item.body,
+                  textAlign: TextAlign.start,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Center(
-        child: Text('Chưa có thông báo mới!'),
-        //   child: ListView(
-        //     children: [
-        //       Container(
-        //         padding: const EdgeInsets.symmetric(vertical: 10),
-        //         decoration: const BoxDecoration(color: Colors.white),
-        //         child: Container(
-        //           alignment: Alignment.center,
-        //           padding: const EdgeInsets.only(right: 13.0),
-        //           child: const Text(
-        //             "Thông báo",
-        //             style: TextStyle(
-        //                 fontSize: 16,
-        //                 fontWeight: FontWeight.w600,
-        //                 overflow: TextOverflow.ellipsis),
-        //           ),
-        //         ),
-        //       ),
-        //       FutureBuilder(
-        //           future: notifications,
-        //           builder: (context, snapshot) {
-        //             if (snapshot.hasData) {
-        //               final data = snapshot.data as List<NotificationModel>;
-        //               return ListView.separated(
-        //                   scrollDirection: Axis.vertical,
-        //                   itemBuilder: (context, index) {
-        //                     return GestureDetector(
-        //                       onTap: () => {
-        //                         Navigator.push(
-        //                           context,
-        //                           createRoute(
-        //                             () => HomePage(),
-        //                           ),
-        //                         )
-        //                       },
-        //                       child: Container(
-        //                         margin:
-        //                             const EdgeInsets.symmetric(horizontal: 20),
-        //                         padding: const EdgeInsets.symmetric(
-        //                             horizontal: 20, vertical: 15),
-        //                         decoration: BoxDecoration(
-        //                             color: Colors.white,
-        //                             borderRadius: BorderRadius.circular(15),
-        //                             boxShadow: const [
-        //                               BoxShadow(
-        //                                   color: Color.fromRGBO(78, 41, 20, 0.03),
-        //                                   spreadRadius: 0,
-        //                                   blurRadius: 6,
-        //                                   offset: const Offset(0, 3))
-        //                             ]),
-        //                         child: Column(
-        //                           mainAxisAlignment: MainAxisAlignment.center,
-        //                           children: [
-        //                             Row(
-        //                               children: [
-        //                                 CircleAvatar(
-        //                                   child: SvgPicture.asset(
-        //                                       'assets/icons/logo.svg'),
-        //                                 ),
-        //                                 const SizedBox(
-        //                                   width: 10,
-        //                                 ),
-        //                                 Column(
-        //                                   mainAxisAlignment:
-        //                                       MainAxisAlignment.start,
-        //                                   crossAxisAlignment:
-        //                                       CrossAxisAlignment.start,
-        //                                   children: [
-        //                                     Text(
-        //                                       data[index].title ?? "",
-        //                                       style: Theme.of(context)
-        //                                           .textTheme
-        //                                           .bodyMedium!
-        //                                           .copyWith(
-        //                                               fontWeight:
-        //                                                   FontWeight.w600),
-        //                                     ),
-        //                                     Text(
-        //                                       'lúc ${data[index].createAt!.hour}:${data[index].createAt!.minute}, ${data[index].createAt!.day}/${data[index].createAt!.month}/${data[index].createAt!.year}',
-        //                                       style: const TextStyle(
-        //                                           color: Color.fromRGBO(
-        //                                               165, 168, 187, 1),
-        //                                           fontSize: 12,
-        //                                           fontWeight: FontWeight.w600),
-        //                                     )
-        //                                   ],
-        //                                 )
-        //                               ],
-        //                             ),
-        //                             const SizedBox(height: 10),
-        //                             Align(
-        //                               alignment: Alignment.topLeft,
-        //                               child: Text(
-        //                                 '${data[index].content}',
-        //                                 textAlign: TextAlign.start,
-        //                                 style: Theme.of(context)
-        //                                     .textTheme
-        //                                     .bodyMedium!
-        //                                     .copyWith(),
-        //                               ),
-        //                             )
-        //                           ],
-        //                         ),
-        //                       ),
-        //                     );
-        //                   },
-        //                   shrinkWrap: true,
-        //                   separatorBuilder: (context, index) => const SizedBox(
-        //                         height: 10,
-        //                       ),
-        //                   itemCount: data.length);
-        //             }
-        //             if (snapshot.hasError) {
-        //               Logger().e(snapshot.error);
-        //               return Container();
-        //             } else {
-        //               return const Center(
-        //                 child: CircularProgressIndicator(),
-        //               );
-        //             }
-        //           })
-        //     ],
-        //   ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: const Text(
+                "Thông báo",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontFamily: 'Nunito',
+                  fontWeight: FontWeight.w600,
+                  height: 0,
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              height: MediaQuery.of(context).size.height - 174,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ScrollablePositionedList.builder(
+                      itemBuilder: (context, index) => _listNotificationBuilder(
+                          context, index, notifications),
+                      itemCount: notifications.length,
+                      padding: const EdgeInsets.only(bottom: 20),
+                      scrollOffsetController: _scrollOffsetController,
+                      scrollOffsetListener: _scrollOffsetListener,
+                      itemScrollController: _scrollController,
+                      itemPositionsListener: _itemPositionsListener,
+                    ),
+                  ),
+                  _loading ? const Loading() : Container(),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

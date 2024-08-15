@@ -2,18 +2,32 @@ import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/endpoint.dart';
 import 'package:chatkid_mobile/models/notification_model.dart';
-import 'package:chatkid_mobile/models/pagination_response_model.dart';
+import 'package:chatkid_mobile/models/response_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 
 class NotificationService {
-  Future<List<NotificationModel>> getNotifications() async {
-    final response =
-        await BaseHttp.instance.get(endpoint: Endpoint.notificationEndPoint);
+  Future<PagingResponseModel<NotificationModel>> getNotifications(
+      int pageNumber, int pageSize) async {
+    final response = await BaseHttp.instance.get(
+      endpoint: Endpoint.notificationEndPoint,
+      param: {
+        'page-number': pageNumber,
+        'page-size': pageSize,
+      },
+    );
     if (response.statusCode >= 200 && response.statusCode <= 210) {
       final data = jsonDecode(response.body);
-      final model = PaginationResponseModel.fromJson(data);
-      return model.items.map((res) => NotificationModel.fromJson(res)).toList();
+      List<NotificationModel> listChat = (data['items'] as List<dynamic>)
+          .map((item) => NotificationModel.fromJson(item))
+          .toList();
+      final pagingResponseModel = PagingResponseModel<NotificationModel>(
+        pageSize: data['pageSize'],
+        pageNumber: data['pageNumber'],
+        totalItem: data['totalItem'],
+        items: listChat,
+      );
+      return pagingResponseModel;
     }
     switch (response.statusCode) {
       case 401:
