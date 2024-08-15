@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class TaskItem extends StatefulWidget {
   final TaskModel task;
@@ -30,6 +31,7 @@ class TaskItem extends StatefulWidget {
 class _TaskItemState extends State<TaskItem> {
   final TodoHomeStore todoHomeStore = Get.find();
   TtsService _ttsService = TtsService().instance;
+  SpeechToText _speech = SpeechToText();
 
   Future<void> _speak(String message) async {
     await _ttsService.speak(message);
@@ -96,7 +98,7 @@ class _TaskItemState extends State<TaskItem> {
                           ),
                         ),
                         Label(
-                            width: 110,
+                            width: 118,
                             type: StatusLabelTypeMap[widget.task.status]!,
                             label: StatusTextMap[widget.task.status]!),
                       ],

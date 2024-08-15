@@ -142,7 +142,6 @@ class _HeadCardState extends State<HeadCard> {
                     width: 20,
                   ),
                   Label(
-                      width: 112,
                       type: StatusLabelTypeMap[widget.task.status]!,
                       label: StatusTextMap[widget.task.status]!),
                 ],

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_tts/flutter_tts.dart';
 
 class TtsService {
@@ -16,6 +18,10 @@ class TtsService {
     await _instance.setVolume(1.0);
     await _instance.setPitch(1.4);
     await _instance.setSpeechRate(0.6);
+  }
+
+  Future<File> convertToAudio(String text) async {
+    return await _flutterTts.synthesizeToFile(text, "audio.mp3");
   }
 
   Future<List<dynamic>> getVoices() async {
