@@ -1,7 +1,9 @@
 import 'package:chatkid_mobile/models/notification_model.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/date_time.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class NotificationDetailPage extends StatefulWidget {
   final NotificationModel notification;
@@ -72,6 +74,20 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).shadowColor.withOpacity(0.05),
+                        spreadRadius: 0,
+                        blurRadius: 12,
+                        offset: const Offset(1, 6),
+                      ),
+                      BoxShadow(
+                        color: Theme.of(context).shadowColor.withOpacity(0.06),
+                        spreadRadius: 0,
+                        blurRadius: 2,
+                        offset: const Offset(1, -1),
+                      ),
+                    ],
                   ),
                   child: Column(
                     children: [
@@ -79,17 +95,26 @@ class _NotificationDetailPageState extends State<NotificationDetailPage> {
                         widget.notification.title,
                         style: TextStyle(
                           color: neutral.shade900,
-                          fontSize: 14,
+                          fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
-                        '${widget.notification.createdAt!.hour}:${widget.notification.createdAt!.minute}, ${widget.notification.createdAt!.day}/${widget.notification.createdAt!.month}/${widget.notification.createdAt!.year}',
+                        DateTimeUtils.getFormattedDateTime(
+                            widget.notification.createdAt.toString()),
                         style: TextStyle(
-                          color: neutral.shade600,
-                          fontSize: 11,
+                          color: neutral.shade500,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
+                      ),
+                      Html(
+                        data: widget.notification.body,
+                        style: {
+                          'body': Style(
+                            fontSize: FontSize(14),
+                          ),
+                        },
                       ),
                     ],
                   ),

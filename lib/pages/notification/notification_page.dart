@@ -2,6 +2,7 @@ import 'package:chatkid_mobile/models/notification_model.dart';
 import 'package:chatkid_mobile/pages/notification/notification_detail_page.dart';
 import 'package:chatkid_mobile/services/notification_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:chatkid_mobile/utils/date_time.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/loading_indicator.dart';
@@ -151,7 +152,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         ),
                       ),
                       Text(
-                        'lúc ${item.createdAt!.hour}:${item.createdAt!.minute}, ${item.createdAt!.day}/${item.createdAt!.month}/${item.createdAt!.year}',
+                        DateTimeUtils.getFormattedDateTime(item.createdAt.toString()),
                         style: TextStyle(
                           color: neutral.shade600,
                           fontSize: 11,
@@ -162,31 +163,31 @@ class _NotificationPageState extends State<NotificationPage> {
                   )
                 ],
               ),
-              Visibility(
-                visible: item.type == 'SYSTEM',
-                child: Column(
-                  children: [
-                    const SizedBox(height: 6),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        item.title,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          color: neutral.shade900,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Visibility(
+              //   visible: item.type == 'SYSTEM',
+              //   child: Column(
+              //     children: [
+              //       const SizedBox(height: 6),
+              //       Align(
+              //         alignment: Alignment.topLeft,
+              //         child: Text(
+              //           item.title,
+              //           textAlign: TextAlign.start,
+              //           style: TextStyle(
+              //             color: neutral.shade900,
+              //             fontSize: 14,
+              //             fontWeight: FontWeight.w600,
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               const SizedBox(height: 6),
               Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  item.body,
+                  item.type == 'SYSTEM' ? item.title : item.body,
                   textAlign: TextAlign.start,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(),
                 ),
