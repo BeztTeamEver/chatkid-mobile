@@ -1,10 +1,13 @@
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/pages/start_page/password_login_page.dart';
 import 'package:chatkid_mobile/pages/start_page/role_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/providers/step_provider.dart';
+import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
@@ -143,15 +146,15 @@ class _StartPageState extends ConsumerState<StartPage> {
                       }
                       return Column(
                         children: [
-                          Text(
-                            "Tổng số thành viên hiện tại: ${data.members.length}",
-                            style:
-                                Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      color: primary.shade600,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                            textAlign: TextAlign.center,
-                          ),
+                          // Text(
+                          //   "Tổng số thành viên hiện tại: ${data.members.length}",
+                          //   style:
+                          //       Theme.of(context).textTheme.bodySmall!.copyWith(
+                          //             color: primary.shade600,
+                          //             fontWeight: FontWeight.w600,
+                          //           ),
+                          //   textAlign: TextAlign.center,
+                          // ),
                           Expanded(
                             child: ListView.separated(
                               shrinkWrap: true,
@@ -172,6 +175,8 @@ class _StartPageState extends ConsumerState<StartPage> {
                                     borderColor: primary.shade100,
                                     hasBackground: true,
                                     icon: icon,
+                                    subLabel:
+                                        members[index].familyRole ?? "No role",
                                     label: members[index].name ?? "No name",
                                     onPressed: () {
                                       setState(() {
@@ -222,7 +227,7 @@ class _StartPageState extends ConsumerState<StartPage> {
                 ),
               ),
               Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 16),
+                  padding: const EdgeInsets.only(top: 4, bottom: 4),
                   child: Text(
                     "- hoặc -",
                     style: TextStyle(color: neutral.shade500),
@@ -265,13 +270,36 @@ class _StartPageState extends ConsumerState<StartPage> {
               ),
               !_isCreateUser
                   ? Padding(
-                      padding: const EdgeInsets.only(top: 16),
+                      padding: const EdgeInsets.only(top: 12),
                       child: Text(
                         "Bạn đã tạo đủ số tài khoản cho gia đình",
                         style: TextStyle(color: neutral.shade500),
                       ),
                     )
                   : Container(),
+              const SizedBox(
+                height: 12,
+              ),
+              FullWidthButton(
+                height: 50,
+                onPressed: () async {
+                  await FirebaseService.instance.signOut().then((value) {
+                    AuthService.signOut();
+                    Navigator.of(context).pushReplacement(
+                      createRoute(
+                        () => const LoginPage(),
+                      ),
+                    );
+                  });
+                },
+                child: const Text(
+                  "Đăng xuất",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700),
+                ),
+              ),
             ],
           ),
         ),

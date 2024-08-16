@@ -59,18 +59,26 @@ class _InfoPageState extends ConsumerState<InfoPage> {
 
   @override
   void dispose() {
-    widget.nameController.dispose();
-    widget.roleController.dispose();
-    widget.genderController.dispose();
-    widget.yearBirthDayController.dispose();
-    widget.avatarController.dispose();
+    // widget.nameController.dispose();
+    // widget.roleController.dispose();
+    // widget.genderController.dispose();
+    // widget.yearBirthDayController.dispose();
+    // widget.avatarController.dispose();
     super.dispose();
   }
 
-  onUploadAvatar(avatarUrl) async {
+  onUploadAvatar(String avatarUrl) async {
     setState(() {
       isLoadingAvatar = true;
     });
+    if (avatarUrl.contains("http")) {
+      setState(() {
+        _avatarUrl = avatarUrl;
+        isLoadingAvatar = false;
+      });
+      widget.avatarController.setText(avatarUrl);
+      return;
+    }
     File avatarFile = File(avatarUrl);
     final uploadedFile = await FileService().sendfile(avatarFile);
     setState(() {
@@ -193,7 +201,7 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                   children: [
                     widget.isParent
                         ? WheelInput(
-                            name: "role",
+                            name: "familyRole",
                             listHeight: 340,
                             label: "Vai trò",
                             defaultValue: InfoForm.ROLE_OPTIONS[0].value,

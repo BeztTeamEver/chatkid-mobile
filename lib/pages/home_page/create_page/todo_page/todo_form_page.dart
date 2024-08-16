@@ -8,6 +8,7 @@ import 'package:chatkid_mobile/services/todo_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/date_time.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/input_number.dart';
 import 'package:chatkid_mobile/widgets/select_button_list.dart';
@@ -37,6 +38,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
   String? endTimeErrorText;
   bool isStartTimeError = false;
   bool isEndTimeError = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -60,9 +62,10 @@ class _TodoFormPageState extends State<TodoFormPage> {
 
   void onSubmit() async {
     final formState = todoFormCreateController.formKey.currentState!;
+
     if (formState.saveAndValidate()) {
       final formValue = formState.value;
-
+      // TODO: check time is overlap or not
       // final startHour =
       //     formValue['startTime.hour1']! * 10 + formValue['startTime.hour2']!;
       // final startMinute = formValue['startTime.minute1']! * 10 +
@@ -120,13 +123,13 @@ class _TodoFormPageState extends State<TodoFormPage> {
       // );
       // formState.fields['endTime']?.didChange(endTime);
 
-      if (formValue['frequency'].isEmpty) {
-        formState.fields['frequency']?.didChange(<String>[]);
-      }
-
+      // if (formValue['frequency'].isEmpty) {
+      //   formState.fields['frequency']?.didChange(<String>[]);
+      // }
       if (todoFormCreateController.initForm['id'] != '') {
         final value = TodoCreateModel.fromJson({
           ...formValue,
+          // 'frequency': [],
           "taskTypeId": todoFormCreateController.selectedTaskType.value,
           "id": todoFormCreateController.initForm['id'],
           "startTime": startTime,
@@ -167,8 +170,16 @@ class _TodoFormPageState extends State<TodoFormPage> {
   }
 
   updateTask(String id, TodoCreateModel value) async {
-    await TodoService().updateTask(id, value);
+    setState(() {
+      isLoading = true;
+    });
+    await TodoService().updateTask(id, value).catchError((e) {
+      ShowToast.error(msg: e.message);
+    }).whenComplete(() => setState(() {
+          isLoading = false;
+        }));
     Get.delete<TodoFormCreateController>();
+
     Get.offAll(() => MainPage(), predicate: (route) => false);
   }
 
@@ -244,6 +255,12 @@ class _TodoFormPageState extends State<TodoFormPage> {
                 ),
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(),
+                  (value) {
+                    if (value?.isBefore(DateTime.now()) == true) {
+                      return "Thời gian bắt đầu phải sau thời gian hiện tại";
+                    }
+                    return null;
+                  }
                 ]),
                 maxLines: 1,
               ),
@@ -267,17 +284,17 @@ class _TodoFormPageState extends State<TodoFormPage> {
               // ),
 
               SizedBox(height: 14),
-              SelectButtonList<String?>(
-                name: "frequency",
-                label: "Lặp lại trong tuần",
-                isMultiple: true,
-                options: TodoCreateFormOptions.daysOfWeekOption,
-                onSelected: (value) {
-                  todoFormCreateController
-                      .formKey.currentState!.fields['frequency']!
-                      .didChange(value);
-                },
-              ),
+              // SelectButtonList<String?>(
+              //   name: "frequency",
+              //   label: "Lặp lại trong tuần",
+              //   isMultiple: true,
+              //   options: TodoCreateFormOptions.daysOfWeekOption,
+              //   onSelected: (value) {
+              //     todoFormCreateController
+              //         .formKey.currentState!.fields['frequency']!
+              //         .didChange(value);
+              //   },
+              // ),
               SizedBox(height: 14),
               InputNumber(
                 name: "numberOfCoin",
@@ -291,6 +308,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FullWidthButton(
+        isDisabled: isLoading,
         onPressed: () {
           try {
             onSubmit();
@@ -298,14 +316,29 @@ class _TodoFormPageState extends State<TodoFormPage> {
             Logger().e(e, stackTrace: s);
           }
         },
-        child: Text(
-          todoFormCreateController.initForm['id'] == ''
-              ? "Tiếp tục"
-              : "Cập nhật",
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium!
-              .copyWith(color: Colors.white, fontSize: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isLoading)
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+            const SizedBox(width: 8),
+            Text(
+              todoFormCreateController.initForm['id'] == ''
+                  ? "Tiếp tục"
+                  : "Cập nhật",
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium!
+                  .copyWith(color: Colors.white, fontSize: 20),
+            ),
+          ],
         ),
       ),
     );

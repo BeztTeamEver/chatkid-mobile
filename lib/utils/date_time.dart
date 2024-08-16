@@ -1,3 +1,5 @@
+import 'package:logger/logger.dart';
+
 class DateTimeUtils {
   static String DATE_FORMAT = "dd.MM.yyyy";
   static String DATE_TIME_FORMAT = "dd.MM.yyyy hh:mm";
@@ -31,6 +33,8 @@ class DateTimeUtils {
   }
 
   static String getFormattedDateTime(String dateTime) {
+
+    Logger().i("dateTime: $dateTime");
     String time = dateTime.substring(0, 16).split("T")[1];
     String date = dateTime.substring(0, 10).split("-").reversed.join("/");
     return "$time, $date";

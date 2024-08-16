@@ -23,6 +23,7 @@ class SocketService {
             .setExtraHeaders({
               "authorization": "1f2aad5f-4f7c-4153-9a7b-15d2fef30527",
             })
+            .setReconnectionDelay(1000)
             .enableForceNew()
             .build());
     initSocket();
@@ -39,6 +40,7 @@ class SocketService {
     socket.onDisconnect((_) => Logger().i('Disconnected'));
     socket.onConnectError((err) => ErrorHandler(err));
     socket.onError((err) => ErrorHandler(err));
+    socket.onReconnect((data) => Logger().i('Reconnected'));
     socket.connect();
   }
 

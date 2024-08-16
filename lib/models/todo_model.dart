@@ -56,12 +56,12 @@ class TaskModel implements IBaseModel {
       id: json['id'],
       taskTypeId: json['taskTypeId'],
       assigneerId: json['assigneerId'],
-      endTime: DateTime.parse(json['endTime']),
+      endTime: DateTime.parse(json['endTime']).toLocalTime,
       memberId: json['memberId'],
-      startTime: DateTime.parse(json['startTime']),
+      startTime: DateTime.parse(json['startTime']).toLocalTime,
       numberOfCoin: json['numberOfCoin'],
       finishTime: json['finishTime'] != null
-          ? DateTime.parse(json['finishTime'])
+          ? DateTime.parse(json['finishTime']).toLocalTime
           : null,
       evidence: json['evidence'],
       note: json['note'],
@@ -291,19 +291,18 @@ class TodoCreateModel {
       memberIds: json['memberIds'],
       startTime: json['startTime'],
       endTime: json['endTime'],
-      frequency: json['frequency'],
+      frequency: json['frequency'] != null ? json['frequency'] : [],
       numberOfCoin: json['numberOfCoin'],
       note: json['note'],
     );
   }
-
   Map<String, dynamic> toMap() {
     final memberIds = this.memberIds?.map((e) => e).toList();
     final result = {
       'memberIds': memberIds,
       'taskTypeId': taskTypeId,
-      'startTime': "${startTime.toIso8601String()}Z",
-      'endTime': "${endTime.toIso8601String()}Z",
+      'startTime': "${startTime.toIso8601String()}",
+      'endTime': "${endTime.toIso8601String()}",
       'frequency': frequency,
       'numberOfCoin': numberOfCoin,
       'note': note,

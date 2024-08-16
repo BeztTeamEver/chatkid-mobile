@@ -31,3 +31,17 @@ final getTaskEmoji = FutureProvider.autoDispose<List<EmojiModel>>(
     }
   },
 );
+
+final fetchTaskByDate =
+    FutureProvider.autoDispose.family<List<TaskModel>, TodoFilter>(
+  (ref, filter) async {
+    try {
+      final result =
+          await ref.watch(todoServiceProvider).fetchTaskByDate(filter);
+      return result;
+    } catch (e) {
+      Logger().e(e);
+      throw Exception(e);
+    }
+  },
+);

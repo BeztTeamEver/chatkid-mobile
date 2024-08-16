@@ -1,24 +1,23 @@
-import 'dart:convert';
-
 import 'package:chatkid_mobile/constants/date.dart';
-import 'package:chatkid_mobile/constants/local_storage.dart';
-import 'package:chatkid_mobile/models/family_model.dart';
+import 'package:chatkid_mobile/constants/task_status.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/todo_detail.dart';
+import 'package:chatkid_mobile/pages/home_page/widgets/timeline_head.dart';
 import 'package:chatkid_mobile/pages/routes/todo_create_route.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/button_icon.dart';
 import 'package:chatkid_mobile/widgets/confirmation/confirm_modal.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
+import 'package:chatkid_mobile/widgets/label.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 
 class TaskItem extends StatefulWidget {
   final TaskModel task;
@@ -29,6 +28,7 @@ class TaskItem extends StatefulWidget {
 }
 
 class _TaskItemState extends State<TaskItem> {
+  final TodoHomeStore todoHomeStore = Get.find();
   TtsService _ttsService = TtsService().instance;
 
   Future<void> _speak(String message) async {
@@ -44,91 +44,165 @@ class _TaskItemState extends State<TaskItem> {
 
   @override
   Widget build(BuildContext context) {
+    final member = todoHomeStore.members.firstWhereOrNull(
+      (element) => element.id == widget.task.memberId,
+    );
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: CustomCard(
-        onLongPressed: () {
-          showModalBottomSheet(
-            context: context,
-            useRootNavigator: true,
-            enableDrag: true,
-            showDragHandle: true,
-            builder: (context) {
-              return TaskActions(
-                id: widget.task.id,
-                task: widget.task,
-              );
-            },
-          );
-        },
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
-                return TodoDetail(
-                  id: widget.task.id,
-                  task: widget.task,
+      child: Row(
+        children: [
+          TimelineHead(task: widget.task),
+          Expanded(
+            child: CustomCard(
+              onLongPressed: () async {
+                await showModalBottomSheet(
+                  context: context,
+                  useRootNavigator: true,
+                  enableDrag: true,
+                  showDragHandle: true,
+                  builder: (context) {
+                    return TaskActions(
+                      id: widget.task.id,
+                      task: widget.task,
+                    );
+                  },
                 );
               },
-            ),
-          );
-        },
-        heroTag: widget.task.id,
-        backgroundImage: widget.task.taskType.imageHomeUrl ??
-            "https://picsum.photos/200/200",
-        padding: const EdgeInsets.all(14),
-        children: [
-          Container(
-            height: 24,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return TodoDetail(
+                        id: widget.task.id,
+                        task: widget.task,
+                      );
+                    },
+                  ),
+                );
+              },
+              heroTag: widget.task.id,
+              padding: const EdgeInsets.all(8),
               children: [
                 Row(
                   children: [
-                    Text(
-                      widget.task.taskType.name,
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                    Column(
+                      children: [
+                        Hero(
+                          tag: widget.task.id,
+                          child: Image.network(
+                            widget.task.taskType.imageHomeUrl!,
+                            fit: BoxFit.fill,
+                            width: 100,
                           ),
+                        ),
+                        Label(
+                            width: 110,
+                            type: StatusLabelTypeMap[widget.task.status]!,
+                            label: StatusTextMap[widget.task.status]!),
+                      ],
                     ),
-                    ButtonIcon(
-                      onPressed: () {
-                        _speak(widget.task.note ?? "");
-                      },
-                      icon: "volumn",
-                      iconSize: 32,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                child: AvatarPng(
+                                  imageUrl: member?.avatarUrl,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                member?.name ?? "",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: neutral.shade400,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            height: 20,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    widget.task.note,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Row(
+                          //   children: [
+                          //     Text(
+                          //       // TODO: use task time
+                          //       "${widget.task.startTime.format(DateConstants.timeFormatWithoutSecond)} ${widget.task.finishTime != null ? widget.task.finishTime?.format(DateConstants.timeFormatWithoutSecond) : ""}",
+                          //       style:
+                          //           Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          //                 fontSize: 14,
+                          //                 fontWeight: FontWeight.bold,
+                          //               ),
+                          //     ),
+                          //   ],
+                          // ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SvgIcon(
+                                icon: 'coin',
+                                size: 22,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                "X ${widget.task.numberOfCoin ?? 0}",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: neutral.shade600,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Container(
+                                width: 1,
+                                height: 12,
+                                color: neutral.shade400,
+                                margin: const EdgeInsets.only(left: 8),
+                              ),
+                              ButtonIcon(
+                                padding: 0,
+                                onPressed: () {
+                                  _speak(widget.task.note ?? "");
+                                },
+                                icon: "volumn",
+                                iconSize: 24,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
-          ),
-          Row(
-            children: [
-              Text(
-                // TODO: use task time
-                "${widget.task.startTime.format(DateConstants.timeFormatWithoutSecond)} ${widget.task.finishTime != null ? widget.task.finishTime?.format(DateConstants.timeFormatWithoutSecond) : ""}",
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
-                "Thưởng ${widget.task.numberOfCoin ?? 0}",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: neutral.shade600,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 8),
-              const SvgIcon(icon: 'coin')
-            ],
           ),
         ],
       ),
@@ -202,8 +276,8 @@ class TaskActionsState extends State<TaskActions>
               borderRadius: BorderRadius.circular(16),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-            onTap: () {
-              showDialog(
+            onTap: () async {
+              await showDialog(
                 context: context,
                 builder: (context) => ConfirmModal(
                   content: "Công việc sau khi xóa sẽ không thể hoàn tác lại ",

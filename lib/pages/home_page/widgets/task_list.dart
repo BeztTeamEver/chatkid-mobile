@@ -1,16 +1,11 @@
-import 'package:chatkid_mobile/constants/task_status.dart';
-import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/target_item.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/target_item.dart';
-import 'package:chatkid_mobile/pages/home_page/widgets/status_divider.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/task_item.dart';
-import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 
 class TaskList extends StatelessWidget {
   const TaskList({
@@ -31,12 +26,13 @@ class TaskList extends StatelessWidget {
         children: [
           GetX<TodoHomeStore>(
             builder: (controller) {
-              final isEmpty = controller.tasks.value.pendingTasks.isEmpty &&
-                  controller.tasks.value.completedTasks.isEmpty &&
-                  controller.tasks.value.expiredTasks.isEmpty &&
-                  controller.tasks.value.inprogressTasks.isEmpty &&
-                  controller.tasks.value.availableTasks.isEmpty &&
-                  controller.tasks.value.notCompletedTasks.isEmpty;
+              // final isEmpty = controller.tasks.value.pendingTasks.isEmpty &&
+              //     controller.tasks.value.completedTasks.isEmpty &&
+              //     controller.tasks.value.expiredTasks.isEmpty &&
+              //     controller.tasks.value.inprogressTasks.isEmpty &&
+              //     controller.tasks.value.availableTasks.isEmpty &&
+              //     controller.tasks.value.notCompletedTasks.isEmpty;
+              final isEmpty = controller.tasks.isEmpty;
               if (controller.isTaskLoading.value) {
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -53,7 +49,7 @@ class TaskList extends StatelessWidget {
           ),
           GetX<TodoHomeStore>(
             builder: (controller) {
-              final isEmpty = controller.targets.value.isEmpty;
+              final isEmpty = controller.targets.isEmpty;
               if (controller.isTargetLoading.value) {
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -95,110 +91,139 @@ class _TodoListState extends State<TodoList> {
       () => SingleChildScrollView(
         controller: widget.scrollController,
         padding: const EdgeInsets.only(top: 4, bottom: 26),
-        child: Column(
-          children: [
-            controller.tasks.value.availableTasks.isNotEmpty
-                ? StatusDivider(
-                    status: 'Sắp diễn ra',
-                    color: StatusColorMap[TodoStatus.available]!,
-                  )
-                : Container(),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: controller.tasks.value.availableTasks.length,
-              itemBuilder: (context, index) {
-                return Obx(() => TaskItem(
-                      task: controller.tasks.value.availableTasks[index],
-                    ));
-              },
-            ),
-            controller.tasks.value.inprogressTasks.isNotEmpty
-                ? StatusDivider(
-                    status: 'Đang diễn ra',
-                    color: StatusColorMap[TodoStatus.inprogress]!,
-                  )
-                : Container(),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: controller.tasks.value.inprogressTasks.length,
-              itemBuilder: (context, index) {
-                return Obx(() => TaskItem(
-                      task: controller.tasks.value.inprogressTasks[index],
-                    ));
-              },
-            ),
-            controller.tasks.value.pendingTasks.isNotEmpty
-                ? StatusDivider(
-                    status: 'Chờ xác nhận',
-                    color: StatusColorMap[TodoStatus.pending]!,
-                  )
-                : Container(),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: controller.tasks.value.pendingTasks.length,
-              itemBuilder: (context, index) {
-                return Obx(() => TaskItem(
-                      task: controller.tasks.value.pendingTasks[index],
-                    ));
-              },
-            ),
-            controller.tasks.value.completedTasks.isNotEmpty
-                ? StatusDivider(
-                    status: "Đã hoàn thành",
-                    color: StatusColorMap[TodoStatus.completed]!,
-                  )
-                : Container(),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: controller.tasks.value.completedTasks.length,
-              itemBuilder: (context, index) {
-                return Obx(() => TaskItem(
-                      task: controller.tasks.value.completedTasks[index],
-                    ));
-              },
-            ),
-            controller.tasks.value.notCompletedTasks.isNotEmpty
-                ? StatusDivider(
-                    status: "Chưa hoàn thành",
-                    color: StatusColorMap[TodoStatus.notCompleted]!,
-                  )
-                : Container(),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: controller.tasks.value.notCompletedTasks.length,
-              itemBuilder: (context, index) {
-                return Obx(() => TaskItem(
-                      task: controller.tasks.value.notCompletedTasks[index],
-                    ));
-              },
-            ),
-            controller.tasks.value.expiredTasks.isNotEmpty
-                ? StatusDivider(
-                    status: "Đã quá hạn",
-                    color: StatusColorMap[TodoStatus.expired]!,
-                  )
-                : Container(),
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: controller.tasks.value.expiredTasks.length,
-              itemBuilder: (context, index) {
-                return Obx(() => TaskItem(
-                      task: controller.tasks.value.expiredTasks[index],
-                    ));
-              },
-            ),
-          ],
-        ),
+        child: controller.tasks.isNotEmpty
+            ? Obx(
+                () => ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: controller.tasks.length,
+                  itemBuilder: (context, index) {
+                    return Obx(() => TaskItem(
+                          task: controller.tasks[index],
+                        ));
+                  },
+                ),
+              )
+            : const Center(
+                child: Text("Không có công việc nào"),
+              ),
       ),
     );
   }
 }
+
+// class OldWidget extends StatelessWidget {
+//   const OldWidget({
+//     super.key,
+//     required this.controller,
+//   });
+
+//   final TodoHomeStore controller;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         controller.tasks.value.availableTasks.isNotEmpty
+//             ? StatusDivider(
+//                 status: 'Sắp diễn ra',
+//                 color: StatusColorMap[TodoStatus.available]!,
+//               )
+//             : Container(),
+//         ListView.builder(
+//           physics: const NeverScrollableScrollPhysics(),
+//           shrinkWrap: true,
+//           itemCount: controller.tasks.value.availableTasks.length,
+//           itemBuilder: (context, index) {
+//             return Obx(() => TaskItem(
+//                   task: controller.tasks.value.availableTasks[index],
+//                 ));
+//           },
+//         ),
+//         controller.tasks.value.inprogressTasks.isNotEmpty
+//             ? StatusDivider(
+//                 status: 'Đang diễn ra',
+//                 color: StatusColorMap[TodoStatus.inprogress]!,
+//               )
+//             : Container(),
+//         ListView.builder(
+//           physics: const NeverScrollableScrollPhysics(),
+//           shrinkWrap: true,
+//           itemCount: controller.tasks.value.inprogressTasks.length,
+//           itemBuilder: (context, index) {
+//             return Obx(() => TaskItem(
+//                   task: controller.tasks.value.inprogressTasks[index],
+//                 ));
+//           },
+//         ),
+//         controller.tasks.value.pendingTasks.isNotEmpty
+//             ? StatusDivider(
+//                 status: 'Chờ xác nhận',
+//                 color: StatusColorMap[TodoStatus.pending]!,
+//               )
+//             : Container(),
+//         ListView.builder(
+//           physics: const NeverScrollableScrollPhysics(),
+//           shrinkWrap: true,
+//           itemCount: controller.tasks.value.pendingTasks.length,
+//           itemBuilder: (context, index) {
+//             return Obx(() => TaskItem(
+//                   task: controller.tasks.value.pendingTasks[index],
+//                 ));
+//           },
+//         ),
+//         controller.tasks.value.completedTasks.isNotEmpty
+//             ? StatusDivider(
+//                 status: "Đã hoàn thành",
+//                 color: StatusColorMap[TodoStatus.completed]!,
+//               )
+//             : Container(),
+//         ListView.builder(
+//           physics: const NeverScrollableScrollPhysics(),
+//           shrinkWrap: true,
+//           itemCount: controller.tasks.value.completedTasks.length,
+//           itemBuilder: (context, index) {
+//             return Obx(() => TaskItem(
+//                   task: controller.tasks.value.completedTasks[index],
+//                 ));
+//           },
+//         ),
+//         controller.tasks.value.notCompletedTasks.isNotEmpty
+//             ? StatusDivider(
+//                 status: "Chưa hoàn thành",
+//                 color: StatusColorMap[TodoStatus.notCompleted]!,
+//               )
+//             : Container(),
+//         ListView.builder(
+//           physics: const NeverScrollableScrollPhysics(),
+//           shrinkWrap: true,
+//           itemCount: controller.tasks.value.notCompletedTasks.length,
+//           itemBuilder: (context, index) {
+//             return Obx(() => TaskItem(
+//                   task: controller.tasks.value.notCompletedTasks[index],
+//                 ));
+//           },
+//         ),
+//         controller.tasks.value.expiredTasks.isNotEmpty
+//             ? StatusDivider(
+//                 status: "Đã quá hạn",
+//                 color: StatusColorMap[TodoStatus.expired]!,
+//               )
+//             : Container(),
+//         ListView.builder(
+//           physics: const NeverScrollableScrollPhysics(),
+//           shrinkWrap: true,
+//           itemCount: controller.tasks.value.expiredTasks.length,
+//           itemBuilder: (context, index) {
+//             return Obx(() => TaskItem(
+//                   task: controller.tasks.value.expiredTasks[index],
+//                 ));
+//           },
+//         ),
+//       ],
+//     );
+//   }
+// }
 
 class TargetList extends StatefulWidget {
   final ScrollController scrollController;

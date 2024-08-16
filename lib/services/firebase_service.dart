@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:chatkid_mobile/constants/notification.dart';
 import 'package:chatkid_mobile/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,6 +10,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -32,7 +36,9 @@ class FirebaseService {
 
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {}
+      RemoteMessage message) async {
+    Logger().i("Handling a background message: ${message.messageId}");
+  }
 
   Future<void> init() async {
     // await _firebaseAuth.useAuthEmulator('localhost', 9099);
@@ -49,14 +55,11 @@ class FirebaseService {
     if (permission == null || permission == false) {
       throw Exception("Không thể cấp quyền thông báo");
     }
-
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      _firebaseMessaging.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-    }
+    await _firebaseMessaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
   }
 
   Future<String?> getFCMToken() async {
@@ -96,6 +99,70 @@ class FirebaseService {
       Logger().e(e);
       throw Exception("Lỗi đăng nhập tới Google, vui lòng thử lại sau");
     }
+  }
+
+  void handleMessage(RemoteMessage message) {
+    Logger().i('Got a message whilst in the foreground!');
+    Logger().i('Message data: ${message.data}');
+    if (message.notification != null) {
+      Logger()
+          .i('Message also contained a notification: ${message.notification}');
+    }
+  }
+
+  void handleGetNotification(GlobalKey<NavigatorState> navigatorKey) {
+    // Handle notification when app is in background
+    FirebaseMessaging.onBackgroundMessage((RemoteMessage? message) async {
+      if (message == null) {
+        return;
+      }
+      await _firebaseMessagingBackgroundHandler(message);
+      // showDialog(
+      //     context: navigatorKey.currentContext!,
+      //     builder: (context) {
+      //       return AlertDialog(
+      //         title: Text('A new FCM message arrived!'),
+      //         content: Text('This is a FCM message background'),
+      //       );
+      //     });
+    });
+
+    // Handle notification when app is in foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage? message) {
+      if (message == null) {
+        return;
+      }
+      Logger().i("Message app: ${message.messageId}");
+      ShowToast.success(msg: "A new FCM message arrived!");
+
+      showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('A new FCM message arrived!'),
+              content: Text('This is a FCM message background'),
+            );
+          });
+      handleMessage(message);
+    });
+
+    // Handle notification when open app from notification
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? message) {
+      if (message == null) {
+        return;
+      }
+      Logger().i("Message opened app: ${message.messageId}");
+
+      showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('A new FCM message arrived!'),
+              content: Text('This is a FCM message background'),
+            );
+          });
+      handleMessage(message);
+    });
   }
 
   void authStateChanges(Function(User?) callback) {

@@ -90,7 +90,7 @@ class Endpoint {
   static const taskTypeEndPoint = "/api/task-types";
   // Tasks
   static const taskEndPoint = "/api/tasks";
-
+  static const taskOverlapEndPoint = "/api/tasks/overlap";
   // Target
   static const targetEndpoint = "/api/targets";
   static const myTargetEndpoint = "/api/targets/me";
