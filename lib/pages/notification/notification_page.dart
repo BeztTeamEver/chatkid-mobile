@@ -116,6 +116,10 @@ class _NotificationPageState extends State<NotificationPage> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              width: 1,
+              color: primary.shade100,
+            ),
             boxShadow: const [
               BoxShadow(
                 color: Color.fromRGBO(78, 41, 20, 0.03),
@@ -133,7 +137,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   CircleAvatar(
                     child: AvatarPng(
                       imageUrl: item.avatarUrl,
-                      borderColor: Colors.transparent,
+                      borderColor: primary.shade100,
                     ),
                   ),
                   const SizedBox(
@@ -221,7 +225,7 @@ class _NotificationPageState extends State<NotificationPage> {
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 22),
-              height: MediaQuery.of(context).size.height - 174,
+              height: MediaQuery.of(context).size.height - 153,
               child: Column(
                 children: [
                   Expanded(
@@ -239,7 +243,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   _loading ? const Loading() : Container(),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

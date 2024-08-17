@@ -41,6 +41,13 @@ class CardTransaction extends StatelessWidget {
         children: [
           Row(
             children: [
+              Image.network(
+                transaction.package.thumbnailUrl,
+                width: 90,
+              ),
+              const SizedBox(
+                width: 8,
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -61,20 +68,8 @@ class CardTransaction extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 4,
+                    height: 6,
                   ),
-                  Image.network(
-                    transaction.package.thumbnailUrl,
-                    width: 90,
-                  )
-                ],
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
                   Text(
                     transaction.package.name,
                     style: TextStyle(
@@ -84,7 +79,7 @@ class CardTransaction extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 8,
+                    height: 6,
                   ),
                   Row(
                     children: [
@@ -111,6 +106,15 @@ class CardTransaction extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
+                DateTimeUtils.getFormattedDateTime(transaction.createdAt),
+                style: TextStyle(
+                  color: neutral.shade600,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 10,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
                 "${NumberFormat.formatAmount(transaction.package.actualPrice.toString() ?? "0")} vnđ",
                 style: const TextStyle(
                   color: Colors.black,
@@ -125,15 +129,6 @@ class CardTransaction extends StatelessWidget {
                   color: green.shade800,
                   fontWeight: FontWeight.w400,
                   fontSize: 12,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                DateTimeUtils.getFormattedDateTime(transaction.createdAt),
-                style: TextStyle(
-                  color: neutral.shade600,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 10,
                 ),
               ),
             ],

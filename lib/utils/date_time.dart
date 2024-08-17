@@ -33,8 +33,6 @@ class DateTimeUtils {
   }
 
   static String getFormattedDateTime(String dateTime) {
-
-    Logger().i("dateTime: $dateTime");
     String time = dateTime.substring(0, 16).split("T")[1];
     String date = dateTime.substring(0, 10).split("-").reversed.join("/");
     return "$time, $date";

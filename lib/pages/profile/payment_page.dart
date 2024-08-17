@@ -232,7 +232,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                               ),
                             ),
                             Text(
-                              '${NumberFormat.formatAmount(widget.package.actualPrice.toString())} vnđ',
+                              '${NumberFormat.formatAmount(widget.package.price.toString())} vnđ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -253,7 +253,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                               ),
                             ),
                             Text(
-                              '0 vnđ',
+                              '${NumberFormat.formatAmount((widget.package.price - widget.package.actualPrice).toString())}  vnđ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
