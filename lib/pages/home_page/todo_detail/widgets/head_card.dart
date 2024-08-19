@@ -104,9 +104,13 @@ class _HeadCardState extends State<HeadCard> {
               child: Row(
                 children: [
                   Text(
-                    widget.task.taskType.name,
+                    widget.task.note.isNotEmpty
+                        ? widget.task.note
+                        : widget.task.taskType.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 22,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                   ),

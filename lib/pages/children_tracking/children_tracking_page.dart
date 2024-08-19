@@ -94,9 +94,16 @@ class _ChildrenTrackingPageState extends ConsumerState<ChildrenTrackingPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        user.doing != null
-                            ? Text(user.doing!)
-                            : Text("${user.name} đang không hoạt động"),
+                        // user.doing != null
+                        //     ? Text(user.doing!) :
+                        Text(
+                          "Bé ${user.name}",
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                        ),
                         const SizedBox(
                           height: 10,
                         ),

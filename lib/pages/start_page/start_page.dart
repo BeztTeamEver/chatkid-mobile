@@ -234,7 +234,7 @@ class _StartPageState extends ConsumerState<StartPage> {
                   )),
               FullWidthButton(
                 height: 50,
-                isDisabled: !_isCreateUser,
+                // isDisabled: !_isCreateUser,
                 onPressed: () {
                   Navigator.push(
                     context,

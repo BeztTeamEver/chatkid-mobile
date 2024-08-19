@@ -123,10 +123,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '${widget.user.name} ${history.title!}',
+                          // '${widget.user.name} ${history.title!}',,\
+                          "Bé ${widget.user.name}",
                           style:
                               Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
                                     fontSize: 14,
                                   ),
                         ),

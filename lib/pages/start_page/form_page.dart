@@ -146,7 +146,7 @@ class _FormPageState extends ConsumerState<FormPage> {
           padding: const EdgeInsets.fromLTRB(16, 36, 16, 10),
           child: FormBuilder(
             key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
+            autovalidateMode: AutovalidateMode.disabled,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -167,7 +167,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  height: _currentPage == 0 ? 0 : 240,
+                  height: _currentPage == 0 ? 0 : 260,
                   width: 300,
                   curve: Curves.easeInOut,
                   child: SvgPicture.asset(
