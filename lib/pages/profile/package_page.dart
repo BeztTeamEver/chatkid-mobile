@@ -77,9 +77,11 @@ class _PackagePageState extends State<PackagePage> {
                           "assets/icons/diamond_icon.png",
                           width: 20,
                         ),
-                        Obx(() => Text(
-                              "${me.profile.value.diamond ?? 0}",
-                            ))
+                        Obx(
+                          () => Text(
+                            "${me.profile.value.diamond ?? 0}",
+                          ),
+                        ),
                       ],
                     ),
                   ),

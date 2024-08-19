@@ -8,6 +8,7 @@ import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/loading_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -19,10 +20,7 @@ class NotificationPage extends StatefulWidget {
 }
 
 class _NotificationPageState extends State<NotificationPage> {
-  List<NotificationModel> notifications = [];
-  bool _loading = true;
-  bool _isLoadMore = true;
-  int _pageNumber = 0;
+  NotificationController notifications = Get.find();
 
   final ItemScrollController _scrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
@@ -31,15 +29,12 @@ class _NotificationPageState extends State<NotificationPage> {
       ScrollOffsetController();
   final ScrollOffsetListener _scrollOffsetListener =
       ScrollOffsetListener.create();
-
   @override
   void initState() {
     super.initState();
-    fetchNotification();
-    // notifications = NotificationService().getNotifications();
     _itemPositionsListener.itemPositions.addListener(() async {
       final positions = _itemPositionsListener.itemPositions.value;
-      if (!_isLoadMore) {
+      if (!notifications.isLoadMore.value) {
         Logger().i("No more data");
         return;
       }
@@ -47,53 +42,15 @@ class _NotificationPageState extends State<NotificationPage> {
         return;
       }
 
-      if (positions.last.index == notifications.length - 1 &&
-          notifications.length >= 10 &&
-          _isLoadMore) {
-        fetchNotification();
+      if (positions.last.index == notifications.data.length - 1 &&
+          notifications.data.length >= 10 &&
+          notifications.isLoadMore.value) {
+        notifications.fetchMore();
       }
     });
   }
 
-  void fetchNotification() async {
-    try {
-      if (!_isLoadMore) {
-        Logger().i("No more data");
-        return;
-      }
-
-      setState(() {
-        _loading = true;
-      });
-
-      await NotificationService().getNotifications(_pageNumber, 10).then(
-        (value) {
-          setState(() {
-            _isLoadMore =
-                value.totalItem > notifications.length + value.items.length;
-            _pageNumber++;
-            notifications.addAll(value.items);
-          });
-        },
-      ).whenComplete(
-        () => setState(
-          () {
-            _loading = false;
-          },
-        ),
-      );
-    } catch (e) {
-      Logger().e(e);
-    }
-  }
-
   _listNotificationBuilder(context, index, List<NotificationModel> value) {
-    if (index == value.length) {
-      return const SizedBox(
-        height: 80,
-      );
-    }
-
     final item = value[index];
 
     return GestureDetector(
@@ -126,7 +83,7 @@ class _NotificationPageState extends State<NotificationPage> {
                 spreadRadius: 0,
                 blurRadius: 6,
                 offset: Offset(0, 3),
-              )
+              ),
             ],
           ),
           child: Column(
@@ -156,7 +113,8 @@ class _NotificationPageState extends State<NotificationPage> {
                         ),
                       ),
                       Text(
-                        DateTimeUtils.getFormattedDateTime(item.createdAt.toString()),
+                        DateTimeUtils.getFormattedDateTime(
+                            item.createdAt.toString()),
                         style: TextStyle(
                           color: neutral.shade600,
                           fontSize: 11,
@@ -167,26 +125,6 @@ class _NotificationPageState extends State<NotificationPage> {
                   )
                 ],
               ),
-              // Visibility(
-              //   visible: item.type == 'SYSTEM',
-              //   child: Column(
-              //     children: [
-              //       const SizedBox(height: 6),
-              //       Align(
-              //         alignment: Alignment.topLeft,
-              //         child: Text(
-              //           item.title,
-              //           textAlign: TextAlign.start,
-              //           style: TextStyle(
-              //             color: neutral.shade900,
-              //             fontSize: 14,
-              //             fontWeight: FontWeight.w600,
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               const SizedBox(height: 6),
               Align(
                 alignment: Alignment.topLeft,
@@ -223,25 +161,38 @@ class _NotificationPageState extends State<NotificationPage> {
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 22),
-              height: MediaQuery.of(context).size.height - 153,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ScrollablePositionedList.builder(
-                      itemBuilder: (context, index) => _listNotificationBuilder(
-                          context, index, notifications),
-                      itemCount: notifications.length,
-                      padding: const EdgeInsets.only(bottom: 20),
-                      scrollOffsetController: _scrollOffsetController,
-                      scrollOffsetListener: _scrollOffsetListener,
-                      itemScrollController: _scrollController,
-                      itemPositionsListener: _itemPositionsListener,
-                    ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 22),
+                height: MediaQuery.of(context).size.height,
+                child: Obx(
+                  () => Column(
+                    children: [
+                      Expanded(
+                        child: ScrollablePositionedList.builder(
+                          itemBuilder: (context, index) =>
+                              _listNotificationBuilder(
+                                  context, index, notifications.data),
+                          itemCount: notifications.data.length,
+                          padding: EdgeInsets.only(
+                            bottom: notifications.loading.value ? 0 : 30,
+                          ),
+                          scrollOffsetController: _scrollOffsetController,
+                          scrollOffsetListener: _scrollOffsetListener,
+                          itemScrollController: _scrollController,
+                          itemPositionsListener: _itemPositionsListener,
+                        ),
+                      ),
+                      notifications.loading.value
+                          ? const Padding(
+                              padding: EdgeInsets.only(bottom: 40),
+                              child: Loading(),
+                            )
+                          : Container(),
+                    ],
                   ),
-                  _loading ? const Loading() : Container(),
-                ],
+                ),
               ),
             ),
           ],
