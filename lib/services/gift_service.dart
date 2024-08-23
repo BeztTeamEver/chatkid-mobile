@@ -61,4 +61,21 @@ class GiftService {
     }
     throw Exception('Lỗi không thể lấy thông tin cửa hàng!');
   }
+
+  Future<List<GiftModel>> getListHistory(String memberId) async {
+    final response = await BaseHttp.instance.get(
+      endpoint:
+          Endpoint.historyProductEndPoint.replaceAll("{memberId}", memberId),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      Logger().d(response.body);
+      final list = jsonDecode(response.body) as List;
+      final List<GiftModel> data = list.map((e) {
+        return GiftModel.fromJson(e);
+      }).toList();
+      return data;
+    }
+    throw Exception('Lỗi không thể lấy thông tin cửa hàng!');
+  }
 }
