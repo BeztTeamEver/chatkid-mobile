@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/cache_manager.dart';
+import 'package:ffmpeg_kit_flutter/ffprobe_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
+// import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -22,6 +24,7 @@ class VoiceRecorder extends StatefulWidget {
 
 class VoiceRecorderState extends State<VoiceRecorder> {
   late final RecorderController controller;
+  // late final AudioRecorder audioRecorder;
   final SpeechToText _speechToText = SpeechToText();
   bool isRecording = false;
   String? path = '';
@@ -41,13 +44,13 @@ class VoiceRecorderState extends State<VoiceRecorder> {
       onError: (error) => Logger().e('Error: $error'),
       onStatus: (status) => Logger().i('Status: $status'),
     );
+    // audioRecorder = AudioRecorder();
     controller = RecorderController()
-      ..androidEncoder = AndroidEncoder.aac_eld
-      ..updateFrequency = const Duration(milliseconds: 80)
-      ..androidOutputFormat = AndroidOutputFormat.mpeg4
-      ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
-      ..sampleRate = 88200
-      ..bitRate = 128000;
+      ..androidEncoder = AndroidEncoder.opus
+      ..androidOutputFormat = AndroidOutputFormat.webm
+      ..updateFrequency = const Duration(milliseconds: 50)
+      ..iosEncoder = IosEncoder.kAudioFormatOpus
+      ..sampleRate = 8000;
     await getApplicationDocumentsDirectory().then((value) {
       path = value.path;
       setState(() {});
@@ -61,10 +64,13 @@ class VoiceRecorderState extends State<VoiceRecorder> {
         _stopListening();
         CustomCacheManager.instance.emptyCache();
         controller.reset();
+
         path = await controller.stop();
         if (path != null) {
           // isRecordingCompleted = true;
           final file = File(path!);
+          // Logger().i(path);
+
           await CustomCacheManager.instance
               .putFile(
             file.path,
@@ -82,6 +88,12 @@ class VoiceRecorderState extends State<VoiceRecorder> {
             widget.onRecorded(value);
             Logger().i('Recorded');
           });
+          // setState(() {
+          //   recordFile = file;
+          // });
+
+          // widget.onRecorded(file);
+          // Logger().i('Recorded');
         }
         if (context.mounted) {
           Navigator.of(context).pop();
@@ -93,8 +105,8 @@ class VoiceRecorderState extends State<VoiceRecorder> {
           recordFile = null;
         });
       }
-    } catch (e) {
-      Logger().i(e.toString());
+    } catch (e, s) {
+      Logger().i(e.toString(), stackTrace: s);
     } finally {
       setState(() {
         isRecording = !isRecording;
@@ -156,6 +168,7 @@ class VoiceRecorderState extends State<VoiceRecorder> {
     if (controller.isRecording) {
       controller.stop();
     }
+    // audioRecorder.dispose();
     controller.dispose();
     _speechToText.cancel();
     super.dispose();

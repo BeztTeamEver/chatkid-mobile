@@ -97,6 +97,8 @@ dependencies:
   video_thumbnail: ^0.5.3
   video_player: ^2.9.1
   google_speech: ^5.3.0
+  record: ^5.1.2
+  ffmpeg_kit_flutter: ^6.0.3
 
 flutter_launcher_icons:
   android: 'launcher_icon'

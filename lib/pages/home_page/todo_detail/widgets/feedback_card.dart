@@ -10,6 +10,7 @@ import 'package:chatkid_mobile/widgets/avatar_png.dart';
 import 'package:chatkid_mobile/widgets/chat_box.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
+import 'package:chatkid_mobile/widgets/progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
@@ -107,11 +108,11 @@ class _FeedBackCardState extends State<FeedBackCard> {
               widget.task.feedbackEmoji ?? "https://picsum.photos/200/200",
         ),
         SizedBox(height: 16),
-        ChatTextBox(
-          isSender: false,
-          user: todoHomeStore.currentUser.value,
-          voiceUrl: widget.task.feedbackVoice,
-        ),
+        // ChatTextBox(
+        //   isSender: false,
+        //   user: todoHomeStore.currentUser.value,
+        //   voiceUrl: widget.task.feedbackVoice,
+        // ),
         SizedBox(height: 16),
         // Image.network(
         //   widget.task.evidence ?? "https://picsum.photos/200/200",
@@ -196,13 +197,15 @@ class VideoPreviewModal extends StatefulWidget {
   State<VideoPreviewModal> createState() => _VideoPreviewModalState();
 }
 
-class _VideoPreviewModalState extends State<VideoPreviewModal> {
+class _VideoPreviewModalState extends State<VideoPreviewModal>
+    with SingleTickerProviderStateMixin {
   late VideoPlayerController _videoController;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _videoController =
         VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
           ..addListener(() {
@@ -211,6 +214,9 @@ class _VideoPreviewModalState extends State<VideoPreviewModal> {
           ..initialize().then((value) {
             setState(() {});
           });
+    _videoController.addListener(() {
+      setState(() {});
+    });
   }
 
   void resetVideo() {
@@ -238,7 +244,6 @@ class _VideoPreviewModalState extends State<VideoPreviewModal> {
     return AlertDialog(
       content: Container(
         width: MediaQuery.of(context).size.width,
-        height: 420,
         constraints: BoxConstraints(minHeight: 320),
         child: Center(
           child: Column(
@@ -247,11 +252,27 @@ class _VideoPreviewModalState extends State<VideoPreviewModal> {
               Hero(
                 tag: widget.videoUrl,
                 child: _videoController.value.isInitialized
-                    ? Container(
-                        child: AspectRatio(
-                          aspectRatio: _videoController.value.aspectRatio,
-                          child: VideoPlayer(_videoController),
-                        ),
+                    ? Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          Container(
+                            child: AspectRatio(
+                              aspectRatio: _videoController.value.aspectRatio,
+                              child: VideoPlayer(_videoController),
+                            ),
+                          ),
+                          Positioned(
+                            child: VideoProgressIndicator(
+                              _videoController,
+                              allowScrubbing: true,
+                              colors: VideoProgressColors(
+                                playedColor: primary.shade500,
+                                bufferedColor: primary.shade100,
+                                backgroundColor: primary.shade50,
+                              ),
+                            ),
+                          ),
+                        ],
                       )
                     : Container(
                         width: 48,

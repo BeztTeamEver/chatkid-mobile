@@ -1,35 +1,25 @@
-import 'dart:ffi';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/pages/chats/widget/action_button.dart';
 import 'package:chatkid_mobile/pages/chats/widget/kid_bottom_bar.dart';
 import 'package:chatkid_mobile/pages/chats/widget/parent_bottom_bar.dart';
 import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/services/file_service.dart';
+import 'package:chatkid_mobile/services/google_speech.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
-import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
-import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/chat_box.dart';
-import 'package:chatkid_mobile/widgets/custom_bottom_sheet.dart';
-import 'package:chatkid_mobile/widgets/input_field.dart';
 import 'package:chatkid_mobile/widgets/loading_indicator.dart';
-import 'package:chatkid_mobile/widgets/recorder.dart';
-import 'package:chatkid_mobile/widgets/svg_icon.dart';
-import 'package:chatkid_mobile/widgets/voice_chat.dart';
 import 'package:expandable_bottom_sheet/expandable_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:logger/web.dart';
 import 'package:pinput/pinput.dart';
@@ -102,7 +92,6 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
           ),
         );
     });
-    Logger().i("Send message: ${_listMessages.toSet()}");
   }
 
   void _receiveMessage() {
@@ -181,6 +170,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
 
       if (positions.last.index == _listMessages.length - 1 &&
           _listMessages.length >= 10) {
+        if (_loading) {
+          return;
+        }
         await fetchMessage();
       }
     });
@@ -259,13 +251,28 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     if (file == null) {
       return;
     }
+    Logger().i(file.path);
+    final GoogleSpeech googleSpeech = GoogleSpeech.instance;
+    final speechToTextResponse =
+        await googleSpeech.recognize(file.path).then((value) {
+      return value;
+    }).catchError((e) {
+      ErrorSnackbar.showError(err: e, context: context);
+      return null;
+    });
+    final text = speechToTextResponse.results
+        .map((e) => e.alternatives.map((e) => e.transcript))
+        .join(" ");
+
+    Logger().i(text);
+    // _sendMessage(message: text);
     final response = await FileService().sendfile(file).then((value) async {
       return value;
     }).catchError((e) {
       ErrorSnackbar.showError(err: e, context: context);
     });
 
-    _sendMessage(voiceUrl: response.url);
+    _sendMessage(voiceUrl: response.url, message: text);
   }
 
   void onSendMessage(String? value) {
@@ -364,7 +371,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
 
   Scaffold body(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),

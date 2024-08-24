@@ -232,6 +232,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
                 name: "note",
                 minLines: 4,
                 maxLines: 6,
+                maxLength: 50,
               ),
               const SizedBox(height: 14),
               Text(

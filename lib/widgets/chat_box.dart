@@ -20,6 +20,7 @@ class ChatTextBox extends StatefulWidget {
   final UserModel? user;
   final bool useVoice;
   final bool useTextfullWidth;
+  final double? width;
   final bool isThumbnail;
   final Function? onOpenPreview;
   const ChatTextBox(
@@ -29,6 +30,7 @@ class ChatTextBox extends StatefulWidget {
       this.useTextfullWidth = false,
       this.isSender,
       this.onOpenPreview,
+      this.width,
       this.user,
       this.useVoice = true,
       this.imageUrl,
@@ -77,10 +79,11 @@ class ChatTextBoxState extends State<ChatTextBox> {
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.65,
         ),
-        width: widget.message == null || widget.message?.isEmpty == true
-            ? null
-            : MediaQuery.of(context).size.width *
-                (widget.useTextfullWidth ? 0.65 : 0.5),
+        // width: widget.message == null || widget.message?.isEmpty == true
+        //     ? null
+        //     : MediaQuery.of(context).size.width *
+        //         (widget.useTextfullWidth ? 0.65 : 0.5),
+        width: widget.width,
         // padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: widget.isSender == true ? primary.shade500 : primary.shade100,
@@ -169,7 +172,10 @@ class ChatTextBoxState extends State<ChatTextBox> {
       const SizedBox(
         width: 10,
       ),
-      widget.message != null && widget.message!.isNotEmpty && widget.useVoice
+      widget.voiceUrl == null &&
+              widget.message != null &&
+              widget.message!.isNotEmpty &&
+              widget.useVoice
           ? IconButton(
               onPressed: () {
                 _speak(widget.message ?? "");
@@ -183,31 +189,72 @@ class ChatTextBoxState extends State<ChatTextBox> {
           : Container(),
     ];
 
-    return Row(
-      mainAxisAlignment: widget.isSender == true
-          ? MainAxisAlignment.end
-          : MainAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: widget.isSender == true
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.85,
-            ),
-            width: MediaQuery.of(context).size.width * 0.85,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: widget.isSender == true
-                  ? MainAxisAlignment.end
-                  : MainAxisAlignment.start,
-              children: widget.isSender == true
-                  ? contentWidgets.reversed.toList()
-                  : contentWidgets,
-            ),
+        Container(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width *
+                (widget.useTextfullWidth ? 1 : 0.85),
+          ),
+          width: MediaQuery.of(context).size.width *
+              (widget.useTextfullWidth ? 1 : 0.85),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: widget.isSender == true
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
+            children: widget.isSender == true
+                ? contentWidgets.reversed.toList()
+                : contentWidgets,
           ),
         ),
+        if (widget.message != null && widget.voiceUrl != null)
+          const SizedBox(
+            height: 10,
+          ),
+        if (widget.message != null && widget.voiceUrl != null)
+          GestureDetector(
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      backgroundColor: Colors.white,
+                      content: Container(
+                        width: 400,
+                        color: Colors.transparent,
+                        child: Text(
+                          widget.message?.replaceAll(RegExp(r"[\(\)]+"), "") ??
+                              "",
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: primary.shade500,
+                                  ),
+                        ),
+                      ),
+                    );
+                  });
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                "Hiển thị văn bản",
+                textAlign: TextAlign.right,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: primary.shade500,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ),
+          ),
       ],
     );
   }

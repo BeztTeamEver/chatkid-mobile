@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/notification.dart';
 import 'package:chatkid_mobile/firebase_options.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:chatkid_mobile/firebase_options.dart';
@@ -184,6 +185,7 @@ class FirebaseService {
   }
 
   Future<void> signOut() async {
+    await AuthService.logoutMember(fcmToken ?? "");
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
   }

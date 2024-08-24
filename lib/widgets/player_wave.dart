@@ -54,9 +54,7 @@ class _PlayerWaveState extends State<PlayerWave> {
 
   _init() async {
     try {
-      if (context.mounted == false) {
-        return;
-      }
+      if (!mounted) return;
       setState(() {
         playerWaveStyle = PlayerWaveStyle(
           fixedWaveColor: widget.fixedWaveColor ?? primary.shade200,
@@ -88,7 +86,6 @@ class _PlayerWaveState extends State<PlayerWave> {
         noOfSamples: playerWaveStyle!.getSamplesForWidth(200),
         volume: 1.0,
       );
-
       _controller.updateFrequency =
           UpdateFrequency.low; // Update reporting rate of current duration.
 
@@ -105,21 +102,6 @@ class _PlayerWaveState extends State<PlayerWave> {
       //     _duration = duration;
       //   });
       // });
-      _playerStateSubscription =
-          _controller.onPlayerStateChanged.listen((event) async {
-        switch (event) {
-          case PlayerState.initialized:
-            final duration = await _controller.getDuration(DurationType.max);
-            setState(() {
-              _duration = duration;
-            });
-            break;
-          case PlayerState.paused:
-            setState(() {});
-            break;
-          default:
-        }
-      });
     } catch (e) {
       Logger().e(e);
     }
@@ -136,6 +118,21 @@ class _PlayerWaveState extends State<PlayerWave> {
   void initState() {
     super.initState();
     _init();
+    _playerStateSubscription =
+        _controller.onPlayerStateChanged.listen((event) async {
+      switch (event) {
+        case PlayerState.initialized:
+          final duration = await _controller.getDuration(DurationType.max);
+          setState(() {
+            _duration = duration;
+          });
+          break;
+        case PlayerState.paused:
+          setState(() {});
+          break;
+        default:
+      }
+    });
   }
 
   @override

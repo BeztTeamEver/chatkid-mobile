@@ -5,23 +5,26 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class SelectButton extends StatelessWidget {
   final String? _icon;
-  final String _label;
+  final String? _label;
   final VoidCallback? _onPressed;
   final bool _hasBackground;
   final Color? _borderColor;
   final bool _isSelected;
+  final String? _backgroundImage;
   final String? _subLabel;
 
   const SelectButton(
       {super.key,
       String? icon,
       Color? borderColor,
-      required String label,
+      String? label,
+      String? backgroundImage,
       String subLabel = "",
       VoidCallback? onPressed,
       bool isSelected = false,
       bool hasBackground = false})
       : _icon = icon,
+        _backgroundImage = backgroundImage,
         _isSelected = isSelected,
         _label = label,
         _subLabel = subLabel,
@@ -42,8 +45,9 @@ class SelectButton extends StatelessWidget {
         ),
         color: Colors.white,
         image: _hasBackground
-            ? const DecorationImage(
-                image: AssetImage('assets/selectButton/background.png'),
+            ? DecorationImage(
+                image: AssetImage(
+                    _backgroundImage ?? 'assets/selectButton/background.png'),
                 fit: BoxFit.cover,
               )
             : null,
@@ -106,14 +110,19 @@ class SelectButton extends StatelessWidget {
                             fontSize: 12,
                           ),
                     ),
-                  Text(
-                    _label,
-                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: _isSelected ? Colors.white : neutral.shade800,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                  ),
+                  _label != null
+                      ? Text(
+                          _label!,
+                          style:
+                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: _isSelected
+                                        ? Colors.white
+                                        : neutral.shade800,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                        )
+                      : Container(),
                 ],
               ),
             ],

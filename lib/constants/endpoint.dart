@@ -19,6 +19,7 @@ class Endpoint {
   static const verifyOtpEndPoint = "/api/auth/verify-OTP";
   static const resendOtp = "/api/auth/otp";
   static const infoEndpoint = "/api/auth/info";
+  static const logoutEndPoint = "/api/member/logout";
 
   static const refreshTokenEndPoint = "/api/auth/refresh-token";
   // User

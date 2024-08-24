@@ -116,10 +116,18 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              height: todoFormCreateController.isEdit.value ? 0 : 48,
+              height: todoFormCreateController.isEdit.value ||
+                      todoFormCreateController.isDelete.value
+                  ? 0
+                  : 48,
               curve: Curves.easeIn,
               transform: Matrix4.translationValues(
-                  0, !todoFormCreateController.isEdit.value ? 0 : -64, 0),
+                  0,
+                  !todoFormCreateController.isEdit.value ||
+                          todoFormCreateController.isDelete.value
+                      ? 0
+                      : -64,
+                  0),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: AnimatedContainer(
@@ -245,9 +253,7 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                               return previousValue;
                             },
                           );
-                          if (taskTypes.isEmpty) {
-                            return const SizedBox();
-                          }
+
                           if (index == 0 && _tabController.index == 0) {
                             taskTypes.insert(0,
                                 CategoryCreateItem(onTap: (value) {
@@ -266,7 +272,9 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                               }
                             }));
                           }
-
+                          if (taskTypes.isEmpty) {
+                            return const SizedBox();
+                          }
                           return Obx(
                             () => todoFormCreateController.isDelete.value &&
                                     todoFormCreateController

@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/pages/splash_pages.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/google_speech.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/services/user_service.dart';
@@ -34,6 +35,7 @@ void main() async {
   final ttsService = TtsService().instance;
   await firebaseService.init();
   await firebaseService.getFCMToken();
+  final googleSpeech = GoogleSpeech.instance;
   await CameraService().init();
 
   // tts service setup
@@ -173,9 +175,10 @@ class MyApp extends StatelessWidget {
       builder: (context, widget) {
         ErrorWidget.builder = (errorDetails) {
           errorDetails.printError();
+
           return Center(
             child: Text(
-              'Something went wrong',
+              errorDetails.exceptionAsString(),
               style: textTheme.bodyMedium!.copyWith(
                 color: red.shade800,
               ),

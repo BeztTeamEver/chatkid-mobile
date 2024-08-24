@@ -130,7 +130,7 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
                 InputField(
                   formKey: targetFormStore.formKey,
                   name: 'reward',
-                  initValue: targetFormStore.initForm['reward'],
+                  // initValue: targetFormStore.initForm['reward'],
                   label: "Tên quà",
                   hint: "Nhập tên quà",
                   validator: FormBuilderValidators.compose([

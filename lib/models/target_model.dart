@@ -43,7 +43,7 @@ class TargetModel {
       id: json['id'],
       startTime: DateTime.parse(json['startTime']),
       endTime: DateTime.parse(json['endTime']),
-      message: json['message'],
+      message: json['message'] ?? "Mục tiêu",
       memberId: json['memberId'],
       status: json['status'],
       reward: json['reward'],
