@@ -177,11 +177,11 @@ class _TrackingDetailPageState extends ConsumerState<TrackingDetailPage>
                 spacing: 24,
                 children: [
                   IconButton(
+                    color: primary.shade500,
                     onPressed: () => handleChangeDuration(7),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.chevron_left_rounded,
                       size: 32,
-                      color: primary.shade500,
                     ),
                   ),
                   Text(

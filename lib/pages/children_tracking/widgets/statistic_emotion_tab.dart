@@ -94,7 +94,7 @@ class _StatisticEmotionTabState extends State<StatisticEmotionTab> {
                                 const SizedBox(height: 8),
                                 Wrap(
                                   spacing: 8,
-                                  children: [...item.feedbackEmojis, ...item.feedbackEmojis, ...item.feedbackEmojis]
+                                  children: item.feedbackEmojis
                                       .map((emoji) => Column(
                                             children: [
                                               Container(
