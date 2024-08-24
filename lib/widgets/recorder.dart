@@ -64,7 +64,6 @@ class VoiceRecorderState extends State<VoiceRecorder> {
         _stopListening();
         CustomCacheManager.instance.emptyCache();
         controller.reset();
-
         path = await controller.stop();
         if (path != null) {
           // isRecordingCompleted = true;

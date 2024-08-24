@@ -92,6 +92,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
           ),
         );
     });
+    Logger().i("Send message: ${_listMessages.toSet()}");
   }
 
   void _receiveMessage() {

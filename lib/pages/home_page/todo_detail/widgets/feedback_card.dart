@@ -197,15 +197,13 @@ class VideoPreviewModal extends StatefulWidget {
   State<VideoPreviewModal> createState() => _VideoPreviewModalState();
 }
 
-class _VideoPreviewModalState extends State<VideoPreviewModal>
-    with SingleTickerProviderStateMixin {
+class _VideoPreviewModalState extends State<VideoPreviewModal> {
   late VideoPlayerController _videoController;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     _videoController =
         VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
           ..addListener(() {
@@ -214,9 +212,6 @@ class _VideoPreviewModalState extends State<VideoPreviewModal>
           ..initialize().then((value) {
             setState(() {});
           });
-    _videoController.addListener(() {
-      setState(() {});
-    });
   }
 
   void resetVideo() {
