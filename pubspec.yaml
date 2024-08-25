@@ -97,6 +97,7 @@ dependencies:
   flutter_html: ^3.0.0-beta.2
   video_thumbnail: ^0.5.3
   video_player: ^2.9.1
+  fl_chart: ^0.68.0
 
 flutter_launcher_icons:
   android: 'launcher_icon'
@@ -160,6 +161,7 @@ flutter:
     - assets/icons/stickers/
     - assets/tmp/
     - assets/profile/
+    - assets/activity/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

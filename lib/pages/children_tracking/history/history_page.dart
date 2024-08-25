@@ -187,30 +187,46 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Lịch sử hoạt động',
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-              ),
-        ),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+      body: SafeArea(
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(primary.shade100),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: primary.shade400,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const Text(
+                    'Lịch sử hoạt động',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 40,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 6,
+            ),
             _histories.length != 0
                 ? Expanded(
                     child: ScrollablePositionedList.builder(

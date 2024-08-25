@@ -12,8 +12,9 @@ import 'package:flutter/widgets.dart';
 class CardItem extends StatefulWidget {
   final GiftModel gift;
   final Function(String id) handleDelete;
+  final Function() refetch;
 
-  const CardItem({super.key, required this.gift, required this.handleDelete});
+  const CardItem({super.key, required this.gift, required this.handleDelete, required this.refetch});
 
   @override
   State<CardItem> createState() => _CardItemState();
@@ -142,7 +143,7 @@ class _CardItemState extends State<CardItem> {
                   onPressed: () {
                     Navigator.pop(context);
                     Navigator.push(context,
-                        createRoute(() => FormItem(gift: widget.gift)));
+                        createRoute(() => FormItem(gift: widget.gift, refetch: widget.refetch)));
                   },
                   style: ButtonStyle(
                     padding: const MaterialStatePropertyAll(EdgeInsets.all(0)),

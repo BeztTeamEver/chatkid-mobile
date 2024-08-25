@@ -23,16 +23,18 @@ class _TabButtonState extends State<TabButton> {
     return Expanded(
       child: Container(
         height: 38,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-        ),
-        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
         child: ElevatedButton(
           onPressed: () => widget.onTap(),
           style: ButtonStyle(
             padding: MaterialStateProperty.all(const EdgeInsets.all(2)),
             backgroundColor: MaterialStateProperty.all(
               widget.isSelected ? primary.shade500 : primary.shade200,
+            ),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
             ),
           ),
           child: Text(

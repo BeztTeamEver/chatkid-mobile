@@ -33,7 +33,13 @@ class _StorePageState extends State<StorePage> {
   @override
   void initState() {
     super.initState();
-    listGifts = GiftService().getListGift();
+    fetchData();
+  }
+
+  void fetchData() {
+    setState(() {
+      listGifts = GiftService().getListGift();
+    });
   }
 
   _handleDeleteStorePage(String id) {
@@ -168,6 +174,7 @@ class _StorePageState extends State<StorePage> {
                                   (e) => CardItem(
                                     gift: e,
                                     handleDelete: _handleDeleteStorePage,
+                                    refetch: fetchData,
                                   ),
                                 )
                                 .toList(),
@@ -199,7 +206,7 @@ class _StorePageState extends State<StorePage> {
               top: 14,
               child: IconButton(
                 icon: Icon(
-                  Icons.chevron_left,
+                  Icons.arrow_back_ios_new_rounded,
                   color: primary.shade400,
                 ),
                 style: ButtonStyle(
@@ -215,48 +222,6 @@ class _StorePageState extends State<StorePage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-              ),
-            ),
-            Positioned(
-              left: 0,
-              top: 17,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: primary.shade200, width: 2),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(100.0),
-                    ),
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-                      child: Wrap(
-                        spacing: 8,
-                        direction: Axis.horizontal,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/store/icon_star.png",
-                            width: 25,
-                          ),
-                          Obx(
-                            () => Text(
-                              "${me.profile.value.coin ?? 0}",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: neutral.shade900,
-                                decoration: TextDecoration.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
             Positioned(
@@ -279,7 +244,7 @@ class _StorePageState extends State<StorePage> {
                 ),
                 onPressed: () {
                   Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const FormItem()));
+                      MaterialPageRoute(builder: (context) => FormItem(refetch: fetchData,)));
                 },
               ),
             ),
