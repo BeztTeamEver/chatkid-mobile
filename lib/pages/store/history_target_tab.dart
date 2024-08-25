@@ -6,16 +6,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class StatisticTaskTab extends StatefulWidget {
+class HistoryTargetTab extends StatefulWidget {
   final Future<StatisticTaskModel> statisticTask;
 
-  const StatisticTaskTab({super.key, required this.statisticTask});
+  const HistoryTargetTab({super.key, required this.statisticTask});
 
   @override
-  State<StatisticTaskTab> createState() => _StatisticTaskTabState();
+  State<HistoryTargetTab> createState() => _HistoryTargetTabState();
 }
 
-class _StatisticTaskTabState extends State<StatisticTaskTab> {
+class _HistoryTargetTabState extends State<HistoryTargetTab> {
   final themeColorChart = [
     HexColor('#E337C7'),
     primary.shade500,
