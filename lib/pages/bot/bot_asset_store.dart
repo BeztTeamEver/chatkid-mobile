@@ -319,7 +319,7 @@ class _BotAssetStoreState extends State<BotAssetStore>
                             top: 14,
                             child: IconButton(
                               icon: Icon(
-                                Icons.chevron_left,
+                                Icons.arrow_back_ios_new_rounded,
                                 color: secondary.shade400,
                               ),
                               style: ButtonStyle(

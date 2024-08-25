@@ -4,21 +4,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CustomTabbar extends StatefulWidget {
+class CustomTabBar extends StatefulWidget {
   final Function onTabChange;
   final TabController tabController;
   final List<String> tabs;
-  const CustomTabbar(
+  const CustomTabBar(
       {super.key,
       required this.onTabChange,
       required this.tabController,
       required this.tabs});
 
   @override
-  State<CustomTabbar> createState() => _CustomTabbarState();
+  State<CustomTabBar> createState() => _CustomTabBarState();
 }
 
-class _CustomTabbarState extends State<CustomTabbar> {
+class _CustomTabBarState extends State<CustomTabBar> {
   @override
   void initState() {
     // TODO: implement initState
