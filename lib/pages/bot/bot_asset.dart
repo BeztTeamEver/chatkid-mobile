@@ -126,7 +126,7 @@ class _BotAssetState extends State<BotAsset>
                             top: 14,
                             child: IconButton(
                               icon: Icon(
-                                Icons.chevron_left,
+                                Icons.arrow_back_ios_new_rounded,
                                 color: primary.shade400,
                               ),
                               style: ButtonStyle(

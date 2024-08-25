@@ -206,13 +206,15 @@ class _TrackingDetailPageState extends ConsumerState<TrackingDetailPage>
               ),
               const SizedBox(height: 8),
               Expanded(
-                  child: TabBarView(
-                controller: _tabController,
-                children: [
-                  StatisticTaskTab(statisticTask: statisticTask),
-                  StatisticEmotionTab(statisticEmotion: statisticEmotion),
-                ],
-              )),
+                child: TabBarView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: _tabController,
+                  children: [
+                    StatisticTaskTab(statisticTask: statisticTask),
+                    StatisticEmotionTab(statisticEmotion: statisticEmotion),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
