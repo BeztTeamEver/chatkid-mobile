@@ -24,8 +24,9 @@ import 'package:permission_handler/permission_handler.dart';
 
 class FormItem extends StatefulWidget {
   final GiftModel? gift;
+  final Function() refetch;
 
-  const FormItem({super.key, this.gift});
+  const FormItem({super.key, this.gift, required this.refetch});
 
   @override
   State<FormItem> createState() => _FormItemState();
@@ -82,7 +83,8 @@ class _FormItemState extends State<FormItem> {
           .then(
             (value) => {
               ShowToast.success(msg: "Chỉnh sửa quà thành công 🎉"),
-              Navigator.push(context, createRoute(() => const StorePage()))
+              widget.refetch(),
+              Navigator.pop(context),
             },
           )
           .catchError(
@@ -109,8 +111,8 @@ class _FormItemState extends State<FormItem> {
                 .then(
                   (value) => {
                     ShowToast.success(msg: "Chỉnh sửa quà thành công 🎉"),
-                    Navigator.push(
-                        context, createRoute(() => const StorePage()))
+                    widget.refetch(),
+                    Navigator.pop(context),
                   },
                 )
                 .catchError(
@@ -141,7 +143,8 @@ class _FormItemState extends State<FormItem> {
               .then(
                 (value) => {
                   ShowToast.success(msg: "Thêm quà thành công 🎉"),
-                  Navigator.push(context, createRoute(() => const StorePage()))
+                  widget.refetch(),
+                  Navigator.pop(context),
                 },
               )
               .catchError(
@@ -184,7 +187,7 @@ class _FormItemState extends State<FormItem> {
                       top: 0,
                       child: IconButton(
                         icon: Icon(
-                          Icons.chevron_left,
+                          Icons.arrow_back_ios_new_rounded,
                           color: primary.shade400,
                         ),
                         style: ButtonStyle(

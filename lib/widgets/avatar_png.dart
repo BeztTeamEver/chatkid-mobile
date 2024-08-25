@@ -7,11 +7,13 @@ import 'package:logger/logger.dart';
 class AvatarPng extends StatelessWidget {
   final String? imageUrl;
   final Color? borderColor;
+  final double? borderWidth;
 
   const AvatarPng({
     super.key,
     this.imageUrl,
     this.borderColor,
+    this.borderWidth,
   });
 
   @override
@@ -24,7 +26,7 @@ class AvatarPng extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
             color: borderColor ?? neutral.shade400,
-            width: 1,
+            width: borderWidth ?? 1,
           ),
           color: Colors.white,
           borderRadius: BorderRadius.circular(100),

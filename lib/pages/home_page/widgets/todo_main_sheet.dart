@@ -140,7 +140,7 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
                   ),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 18),
-                  child: CustomTabbar(
+                  child: CustomTabBar(
                     onTabChange: (index) {
                       setState(() => _tabController.animateTo(index));
                     },

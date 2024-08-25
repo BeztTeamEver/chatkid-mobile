@@ -143,7 +143,7 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                         ),
                       ]),
                   padding: const EdgeInsets.all(4),
-                  child: CustomTabbar(
+                  child: CustomTabBar(
                     tabs: ['Tất cả', "Đã ghim"],
                     onTabChange: (index) {
                       if (index == 1 && todoFormCreateController.isEdit.value) {

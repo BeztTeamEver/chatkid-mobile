@@ -99,6 +99,7 @@ dependencies:
   google_speech: ^5.3.0
   record: ^5.1.2
   ffmpeg_kit_flutter: ^6.0.3
+  fl_chart: ^0.68.0
 
 flutter_launcher_icons:
   android: 'launcher_icon'
@@ -162,6 +163,7 @@ flutter:
     - assets/icons/stickers/
     - assets/tmp/
     - assets/profile/
+    - assets/activity/
     - .env
     - service-account.json
 
