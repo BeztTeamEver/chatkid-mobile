@@ -1,58 +1,85 @@
 import 'package:chatkid_mobile/models/gift_model.dart';
+import 'package:chatkid_mobile/services/gift_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/date_time.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:logger/logger.dart';
 
-class HistoryStoreTab extends StatelessWidget {
-  final Future<List<GiftModel>> histories;
+class HistoryStoreTab extends StatefulWidget {
+  final String userName;
+  final Function(int) handleRefetch;
+  final List<GiftModel> histories;
 
-  const HistoryStoreTab({super.key, required this.histories});
+  const HistoryStoreTab({
+    super.key,
+    required this.userName,
+    required this.histories,
+    required this.handleRefetch,
+  });
+
+  @override
+  State<HistoryStoreTab> createState() => _HistoryStoreTabState();
+}
+
+class _HistoryStoreTabState extends State<HistoryStoreTab> {
+  String idLoading = '';
+
+  void handleConfirm(String id) {
+    setState(() {
+      idLoading = id;
+    });
+
+    GiftService()
+        .confirmBoughtGift(id)
+        .then(
+          (value) => {
+            widget.handleRefetch(
+                widget.histories.indexWhere((element) => element.id == id)),
+            ShowToast.success(msg: "Xác nhận thành công 🎉"),
+          },
+        )
+        .catchError((e) {
+      Logger().e(e);
+      ShowToast.error(msg: "Đã có lỗi xảy ra vui lòng thử lại sau!");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: histories,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 70.0),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (snapshot.hasData) {
-          final data = snapshot.data as List<GiftModel>;
-          return SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: Wrap(
-              direction: Axis.vertical,
-              spacing: 12,
-              children: data
-                  .map(
-                    (item) => Container(
-                      width: MediaQuery.of(context).size.width - 44,
-                      padding: const EdgeInsets.only(
-                        top: 8,
-                        bottom: 8,
-                        left: 8,
-                        right: 16,
+    if (widget.histories.isNotEmpty) {
+      return SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Wrap(
+          direction: Axis.vertical,
+          spacing: 12,
+          children: widget.histories
+              .map(
+                (item) => Container(
+                  width: MediaQuery.of(context).size.width - 44,
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                    left: 8,
+                    right: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        spreadRadius: 1,
+                        blurRadius: 4,
+                        offset: const Offset(0, 3),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.06),
-                            spreadRadius: 1,
-                            blurRadius: 4,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Column(
@@ -101,63 +128,189 @@ class HistoryStoreTab extends StatelessWidget {
                           const SizedBox(
                             width: 12,
                           ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                DateTimeUtils.getFormattedDateTime(
-                                    item.createdAt ?? ''),
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: neutral.shade500,
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.8 - 72,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  DateTimeUtils.getFormattedDateTime(
+                                      item.createdAt ?? ''),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: neutral.shade500,
+                                  ),
                                 ),
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                Text(
+                                  item.title ?? '',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: neutral.shade900,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      if (item.status == "AWARDED")
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: neutral.shade50,
+                            borderRadius: BorderRadius.circular(46),
+                            border: Border.all(
+                              width: 1,
+                              color: neutral.shade300,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.done_rounded,
+                                size: 18,
+                                color: neutral.shade300,
                               ),
                               const SizedBox(
-                                height: 4,
+                                width: 4,
                               ),
                               Text(
-                                item.title ?? '',
+                                'Đã tặng quà',
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: neutral.shade900,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: neutral.shade300,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          );
-        } else {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/payment/bot-head.png",
-                  width: 150,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  "Lịch sử đổi quà hiện đang trống",
-                  style: TextStyle(
-                    color: neutral.shade900,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+                        )
+                      else if (item.id == idLoading)
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: neutral.shade50,
+                            borderRadius: BorderRadius.circular(46),
+                            border: Border.all(
+                              width: 1,
+                              color: neutral.shade300,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  color: neutral.shade300,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 6,
+                              ),
+                              Text(
+                                'Xác nhận đã tặng quà',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: neutral.shade300,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        IconButton(
+                          color: primary.shade500,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                              minHeight: 32, maxHeight: 32),
+                          onPressed: () {
+                            handleConfirm(item.id ?? '');
+                          },
+                          icon: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(46),
+                              border: Border.all(
+                                width: 1,
+                                color: primary.shade500,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.done_rounded,
+                                  size: 18,
+                                  color: primary.shade500,
+                                ),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  'Xác nhận đã tặng quà',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: primary.shade500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 130),
-              ],
+              )
+              .toList(),
+        ),
+      );
+    } else {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/payment/bot-head.png",
+              width: 150,
             ),
-          );
-        }
-      },
-    );
+            const SizedBox(height: 16),
+            Text(
+              "Lịch sử đổi quà hiện đang trống",
+              style: TextStyle(
+                color: neutral.shade900,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 130),
+          ],
+        ),
+      );
+    }
   }
 }

@@ -1,12 +1,12 @@
 import 'package:chatkid_mobile/models/gift_model.dart';
+import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/home_page/widgets/custom_tab_bar.dart';
 import 'package:chatkid_mobile/pages/store/history_store_tab.dart';
+import 'package:chatkid_mobile/pages/store/history_target_tab.dart';
 import 'package:chatkid_mobile/services/gift_service.dart';
+import 'package:chatkid_mobile/services/target_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/date_time.dart';
-import 'package:chatkid_mobile/utils/local_storage.dart';
-import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -22,14 +22,43 @@ class HistoryStorePage extends StatefulWidget {
 
 class _HistoryStorePageState extends State<HistoryStorePage>
     with SingleTickerProviderStateMixin {
-  late Future<List<GiftModel>> histories;
+  late List<GiftModel> historyStore;
+  late List<HistoryTargetModel> historyTarget;
   late final TabController _tabController;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    histories = GiftService().getListHistory(widget.user.id ?? '');
+    fetchData();
+  }
+
+  void fetchData() async {
+    setState(() {
+      isLoading = true;
+    });
+    final value = await Future.wait([
+      GiftService().getListHistory(widget.user.id ?? ''),
+      TargetService().getHistoryTarget(widget.user.id ?? ''),
+    ]);
+    setState(() {
+      historyStore = value[0] as List<GiftModel>;
+      historyTarget = value[1] as List<HistoryTargetModel>;
+      isLoading = false;
+    });
+  }
+
+  void updateHistoryStoreData(int idx) {
+    setState(() {
+      historyStore[idx].status = 'AWARDED';
+    });
+  }
+
+  void updateHistoryTargetData(int idx) {
+    setState(() {
+      historyTarget[idx].status = 'AWARDED';
+    });
   }
 
   @override
@@ -99,10 +128,33 @@ class _HistoryStorePageState extends State<HistoryStorePage>
                 child: TabBarView(
                   physics: const NeverScrollableScrollPhysics(),
                   controller: _tabController,
-                  children: [
-                    HistoryStoreTab(histories: histories),
-                    // StatisticEmotionTab(statisticEmotion: statisticEmotion),
-                  ],
+                  children: isLoading
+                      ? [
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 70.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 70.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        ]
+                      : [
+                          HistoryTargetTab(
+                            userName: widget.user.name ?? '',
+                            histories: historyTarget,
+                            handleRefetch: updateHistoryTargetData,
+                          ),
+                          HistoryStoreTab(
+                            userName: widget.user.name ?? '',
+                            histories: historyStore,
+                            handleRefetch: updateHistoryStoreData,
+                          ),
+                        ],
                 ),
               ),
             ],
