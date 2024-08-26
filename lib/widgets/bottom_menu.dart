@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/menu_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
+import 'package:chatkid_mobile/services/count_noti_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 class BottomMenu extends StatefulWidget {
@@ -27,6 +29,8 @@ class _BottomMenuState extends State<BottomMenu> {
     jsonDecode(LocalStorage.instance.preferences.getString('user') ?? "{}"),
   );
   final double _borderRadius = 8;
+  CountNotiController countNotiController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     final menu =
@@ -66,14 +70,33 @@ class _BottomMenuState extends State<BottomMenu> {
           selectedIndex: widget.currentIndex,
           destinations: menu.map((item) {
             if (item.title == 'center') return Container();
-            return NavigationDestination(
-              icon: SvgIcon(
-                size: 28,
-                icon: item.route == menu[widget.currentIndex].route
-                    ? item.iconActive
-                    : item.iconDefault,
+            return Obx(
+              () => Badge(
+                label: Text(
+                  countNotiController.countNoti.value.toString(),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                isLabelVisible: (item.route == menu[2].route ||
+                        item.route == menu[3].route) &&
+                    countNotiController.countNoti > 0,
+                backgroundColor: red.shade500,
+                textColor: Colors.white,
+                alignment: Alignment.topRight,
+                largeSize: 15,
+                offset: const Offset(-22, 4),
+                child: NavigationDestination(
+                  icon: SvgIcon(
+                    size: 28,
+                    icon: item.route == menu[widget.currentIndex].route
+                        ? item.iconActive
+                        : item.iconDefault,
+                  ),
+                  label: item.title.contains("center") ? "" : item.title,
+                ),
               ),
-              label: item.title.contains("center") ? "" : item.title,
             );
           }).toList(),
 

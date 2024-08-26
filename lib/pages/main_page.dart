@@ -8,6 +8,7 @@ import 'package:chatkid_mobile/pages/home_page/create_page/todo_page/todo_create
 import 'package:chatkid_mobile/pages/home_page/create_page/target_page/target_template_page.dart';
 import 'package:chatkid_mobile/pages/routes/target_create_route.dart';
 import 'package:chatkid_mobile/pages/routes/todo_create_route.dart';
+import 'package:chatkid_mobile/services/count_noti_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -33,6 +34,7 @@ class MainPage extends ConsumerStatefulWidget {
 class _MainPageState extends ConsumerState<MainPage> {
   int _currentIndex = 0;
   late UserModel _currentAccount;
+  CountNotiController countNotiController = Get.find();
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   }
 
   void onTap(index) {
+    countNotiController.onChangeIndex(index);
     setState(() {
       _currentIndex = index;
     });
