@@ -1,4 +1,5 @@
 import 'package:chatkid_mobile/constants/date.dart';
+import 'package:chatkid_mobile/constants/target_status.dart';
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/target_detail/target_detail.dart';
@@ -6,6 +7,7 @@ import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/custom_progress_indicator.dart';
+import 'package:chatkid_mobile/widgets/label.dart';
 import 'package:chatkid_mobile/widgets/progress_bar.dart';
 import 'package:chatkid_mobile/pages/home_page/target_detail/widgets/edit_modal.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
@@ -76,6 +78,12 @@ class _TargetItemState extends State<TargetItem> {
                               fontSize: 16,
                             ),
                       ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Label(
+                          type: TargetStatusLabelMap[widget.target.status]!,
+                          label: TargetTextMap[widget.target.status]!),
                       const SizedBox(
                         height: 5,
                       ),
