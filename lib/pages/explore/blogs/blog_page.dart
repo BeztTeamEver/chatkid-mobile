@@ -58,9 +58,9 @@ class _BlogPageState extends ConsumerState<BlogPage> {
                     widget.type?.name ?? "Kiến thức",
                     style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 16,
+                      fontSize: 18,
                       fontFamily: 'Nunito',
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       height: 0,
                     ),
                   ),

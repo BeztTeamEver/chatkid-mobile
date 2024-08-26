@@ -32,198 +32,216 @@ class _StatisticTaskTabState extends State<StatisticTaskTab> {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.done) {
           final data = snapshot.data as StatisticTaskModel;
+          bool isShowChart = false;
+          data.statistic.forEach((element) {
+            if (element.count > 0) {
+              isShowChart = true;
+            }
+          });
 
-          return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).shadowColor.withOpacity(0.08),
-                        spreadRadius: 0,
-                        blurRadius: 0.5,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Tổng',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: neutral.shade600,
-                              ),
-                            ),
-                            Text(
-                              data.totalTasks.toString(),
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                                color: neutral.shade800,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 2,
-                        height: 40,
-                        color: neutral.shade100,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Hoàn thành',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: neutral.shade600,
-                              ),
-                            ),
-                            Text(
-                              data.completedTasks.toString(),
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                                color: neutral.shade800,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 2,
-                        height: 40,
-                        color: neutral.shade100,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Bỏ qua',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: neutral.shade600,
-                              ),
-                            ),
-                            Text(
-                              data.expiredTasks.toString(),
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                                color: neutral.shade800,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+          return Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withOpacity(0.08),
+                      spreadRadius: 0,
+                      blurRadius: 0.5,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).shadowColor.withOpacity(0.08),
-                        spreadRadius: 0,
-                        blurRadius: 0.5,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Column(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: MediaQuery.of(context).size.width * 0.55,
+                          Text(
+                            'Tổng',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: neutral.shade600,
+                            ),
+                          ),
+                          Text(
+                            data.totalTasks.toString(),
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: neutral.shade800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 2,
+                      height: 40,
+                      color: neutral.shade100,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Hoàn thành',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: neutral.shade600,
+                            ),
+                          ),
+                          Text(
+                            data.completedTasks.toString(),
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: neutral.shade800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 2,
+                      height: 40,
+                      color: neutral.shade100,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Bỏ qua',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: neutral.shade600,
+                            ),
+                          ),
+                          Text(
+                            data.expiredTasks.toString(),
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: neutral.shade800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withOpacity(0.08),
+                      spreadRadius: 0,
+                      blurRadius: 0.5,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.width * 0.55,
+                          child: AspectRatio(
+                            aspectRatio: 1.3,
                             child: AspectRatio(
-                              aspectRatio: 1.3,
-                              child: AspectRatio(
-                                aspectRatio: 1,
-                                child: PieChart(
-                                  PieChartData(
-                                    borderData: FlBorderData(
-                                      show: false,
-                                    ),
-                                    sectionsSpace: 0,
-                                    centerSpaceRadius:
-                                        MediaQuery.of(context).size.width / 9,
-                                    sections: List.generate(
-                                        data.statistic.length, (i) {
-                                      return PieChartSectionData(
-                                        color: themeColorChart[i],
-                                        value: data.statistic[i].count /
-                                            data.totalTasks *
-                                            100,
+                              aspectRatio: 1,
+                              child: PieChart(
+                                PieChartData(
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  sectionsSpace: 0,
+                                  centerSpaceRadius:
+                                      MediaQuery.of(context).size.width / 9,
+                                  sections: [
+                                    if (isShowChart)
+                                      ...List.generate(
+                                        data.statistic.length,
+                                        (i) {
+                                          return PieChartSectionData(
+                                            color: themeColorChart[i],
+                                            value: data.statistic[i].count /
+                                                data.totalTasks *
+                                                100,
+                                            radius: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                7,
+                                            title: '',
+                                          );
+                                        },
+                                      )
+                                    else
+                                      PieChartSectionData(
+                                        color: neutral.shade200,
+                                        value: 100,
                                         radius:
                                             MediaQuery.of(context).size.width /
                                                 7,
                                         title: '',
-                                      );
-                                    }),
-                                  ),
+                                      ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: List.generate(data.statistic.length, (i) {
-                              return Row(
-                                children: [
-                                  Text(
-                                    data.statistic[i].taskCategory,
-                                    style: TextStyle(
-                                      color: neutral.shade700,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: List.generate(data.statistic.length, (i) {
+                            return Row(
+                              children: [
+                                Text(
+                                  data.statistic[i].taskCategory,
+                                  style: TextStyle(
+                                    color: neutral.shade700,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  const SizedBox(width: 2),
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(
-                                      color: themeColorChart[i],
-                                      shape: BoxShape.circle,
-                                    ),
+                                ),
+                                const SizedBox(width: 2),
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: themeColorChart[i],
+                                    shape: BoxShape.circle,
                                   ),
-                                ],
-                              );
-                            }),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
+                                ),
+                              ],
+                            );
+                          }),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         } else {
           return const Center(

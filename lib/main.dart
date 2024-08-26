@@ -1,6 +1,8 @@
 import 'package:chatkid_mobile/pages/splash_pages.dart';
+import 'package:chatkid_mobile/services/count_noti_service.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
 import 'package:chatkid_mobile/services/google_speech.dart';
+import 'package:chatkid_mobile/services/notification_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
 import 'package:chatkid_mobile/services/user_service.dart';
@@ -74,6 +76,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     Get.put(MeController());
+    Get.put(NotificationController());
+    Get.put(CountNotiController());
 
     return GetMaterialApp(
       navigatorKey: navigatorKey,

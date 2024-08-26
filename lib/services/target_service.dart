@@ -5,6 +5,7 @@ import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/services/base_http.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 class TargetService {
   final baseHttp = BaseHttp.instance;
@@ -162,6 +163,38 @@ class TargetService {
     } else {
       throw Exception('Không thể lấy thông tin mục tiêu, vui lòng thử lại!');
     }
+  }
+
+  Future<List<HistoryTargetModel>> getHistoryTarget(String memberId) async {
+    final response = await BaseHttp.instance.get(
+      endpoint:
+          Endpoint.getHistoryTargetEndpoint.replaceAll("{memberId}", memberId),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      Logger().d(response.body);
+
+      List data = jsonDecode(response.body);
+      final List<HistoryTargetModel> targets =
+          data.map<HistoryTargetModel>((target) {
+        return HistoryTargetModel.fromJson(target);
+      }).toList();
+      
+      return targets;
+    }
+    throw Exception('Đã có lỗi xảy ra vui lòng thử lại sau!');
+  }
+
+  Future<bool> confirmBoughtGift(String id) async {
+    final response = await BaseHttp.instance.patch(
+      endpoint:
+          Endpoint.confirmBoughtTargetEndPoint.replaceAll("{id}", id),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      return true;
+    }
+    throw Exception('Đã có lỗi xảy ra vui lòng thử lại sau!');
   }
 }
 

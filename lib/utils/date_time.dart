@@ -1,3 +1,5 @@
+import 'package:logger/logger.dart';
+
 class DateTimeUtils {
   static String DATE_FORMAT = "dd.MM.yyyy";
   static String DATE_TIME_FORMAT = "dd.MM.yyyy hh:mm";

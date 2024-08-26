@@ -8,6 +8,7 @@ import 'package:chatkid_mobile/pages/chats/group_chat_page_old.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/store/store_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
+import 'package:chatkid_mobile/services/count_noti_service.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
@@ -34,6 +35,7 @@ class TodoBanner extends ConsumerStatefulWidget {
 
 class _TodoBannerState extends ConsumerState<TodoBanner> {
   final UserModel user = LocalStorage.instance.getUser();
+  CountNotiController countNotiController = Get.find();
 
   TodoHomeStore todoStore = Get.find<TodoHomeStore>();
 
@@ -268,18 +270,25 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                               )
                             : Expanded(child: Container()),
                         familyChannel.when(
-                          data: (value) =>
-                              // Badge(
-                              // // TODO: update badge
-                              // label: Text("1"),
-                              // backgroundColor: red.shade500,
-                              // textColor: Colors.white,
-                              // alignment: Alignment.topRight,
-                              // largeSize: 16,
-                              // offset: Offset(-4, 4),
-                              // child:
-                              ButtonIcon(
+                          data: (value) => Obx(
+                            () => Badge(
+                              label: Text(
+                                countNotiController.countChat.value.toString(),
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              isLabelVisible:
+                                  countNotiController.countChat.value > 0,
+                              backgroundColor: red.shade500,
+                              textColor: Colors.white,
+                              alignment: Alignment.topRight,
+                              largeSize: 14,
+                              offset: const Offset(-5, 5),
+                              child: ButtonIcon(
                                   onPressed: () {
+                                    countNotiController.onChangeIndex(2);
                                     Get.to(
                                       () => GroupChatPage(channelId: value.id),
                                     );
@@ -287,7 +296,8 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
                                   iconSize: 32,
                                   padding: 0,
                                   icon: "hipchat"),
-                          // ),
+                            ),
+                          ),
                           error: (error, stackTrace) {
                             Logger().i("Error: $error");
                             return Container();
