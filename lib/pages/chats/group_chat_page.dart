@@ -10,6 +10,7 @@ import 'package:chatkid_mobile/pages/chats/widget/action_button.dart';
 import 'package:chatkid_mobile/pages/chats/widget/kid_bottom_bar.dart';
 import 'package:chatkid_mobile/pages/chats/widget/parent_bottom_bar.dart';
 import 'package:chatkid_mobile/providers/chat_provider.dart';
+import 'package:chatkid_mobile/services/count_noti_service.dart';
 import 'package:chatkid_mobile/services/file_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
@@ -54,6 +55,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
   final ScrollOffsetListener _scrollOffsetListener =
       ScrollOffsetListener.create();
   final GlobalKey<ExpandableBottomSheetState> bottomSheetKey = new GlobalKey();
+  CountNotiController countNotiController = Get.find();
 
   final _chatService = SocketService();
   List<ChatModel> _listMessages = <ChatModel>[];
@@ -168,6 +170,8 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
       ChannelUserModel(channelId: widget.channelId, userId: user.id ?? ""),
     );
     fetchMessage();
+    
+    countNotiController.onChangeIndex(2);
 
     _itemPositionsListener.itemPositions.addListener(() async {
       final positions = _itemPositionsListener.itemPositions.value;
@@ -195,6 +199,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
   @override
   void dispose() {
     // TODO: implement dispose
+    countNotiController.onChangeIndex(0);
     _chatService.leaveChannel(
       ChannelUserModel(channelId: widget.channelId, userId: user.id ?? ""),
     );

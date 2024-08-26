@@ -116,9 +116,9 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                   "Thanh toán",
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 16,
+                    fontSize: 18,
                     fontFamily: 'Nunito',
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     height: 0,
                   ),
                 ),
@@ -232,7 +232,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                               ),
                             ),
                             Text(
-                              '${NumberFormat.formatAmount(widget.package.actualPrice.toString())} vnđ',
+                              '${NumberFormat.formatAmount(widget.package.price.toString())} vnđ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!
@@ -253,7 +253,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                               ),
                             ),
                             Text(
-                              '0 vnđ',
+                              '${NumberFormat.formatAmount((widget.package.price - widget.package.actualPrice).toString())}  vnđ',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium!

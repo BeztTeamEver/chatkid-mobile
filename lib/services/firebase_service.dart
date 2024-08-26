@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:chatkid_mobile/constants/notification.dart';
 import 'package:chatkid_mobile/firebase_options.dart';
+import 'package:chatkid_mobile/services/count_noti_service.dart';
+import 'package:chatkid_mobile/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:chatkid_mobile/firebase_options.dart';
@@ -13,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -132,18 +135,16 @@ class FirebaseService {
       if (message == null) {
         return;
       }
-      Logger().i("Message app: ${message.messageId}");
-      ShowToast.success(msg: "A new FCM message arrived!");
+      NotificationController notifications = Get.find();
+      notifications.fetchData(0);
 
-      showDialog(
-          context: navigatorKey.currentContext!,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('A new FCM message arrived!'),
-              content: Text('This is a FCM message background'),
-            );
-          });
-      handleMessage(message);
+      CountNotiController countNotiController = Get.find();
+      //TYPE: 'TARGET' | 'WALLET' | 'TASK' | 'ASSET' | 'CHAT' | 'STORE' | 'SYSTEM'
+      if (message.data['type'] == 'CHAT') {
+        countNotiController.onCountChat();
+      } else {
+        countNotiController.onCountNoti();
+      }
     });
 
     // Handle notification when open app from notification
@@ -151,17 +152,9 @@ class FirebaseService {
       if (message == null) {
         return;
       }
-      Logger().i("Message opened app: ${message.messageId}");
 
-      showDialog(
-          context: navigatorKey.currentContext!,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('A new FCM message arrived!'),
-              content: Text('This is a FCM message background'),
-            );
-          });
-      handleMessage(message);
+      NotificationController notifications = Get.find();
+      notifications.fetchData(0);
     });
   }
 
