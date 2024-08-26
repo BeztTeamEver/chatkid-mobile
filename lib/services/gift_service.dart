@@ -78,4 +78,16 @@ class GiftService {
     }
     throw Exception('Lỗi không thể lấy thông tin cửa hàng!');
   }
+
+  Future<bool> confirmBoughtGift(String id) async {
+    final response = await BaseHttp.instance.patch(
+      endpoint:
+          Endpoint.confirmBoughtProductEndPoint.replaceAll("{id}", id),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      return true;
+    }
+    throw Exception('Đã có lỗi xảy ra vui lòng thử lại sau!');
+  }
 }

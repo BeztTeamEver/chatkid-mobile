@@ -72,6 +72,35 @@ class TargetModel {
   }
 }
 
+class HistoryTargetModel {
+  String id;
+  String finishTime;
+  String reward;
+  String rewardUrl;
+  String name;
+  String status;
+
+  HistoryTargetModel({
+    required this.id,
+    required this.finishTime,
+    required this.reward,
+    required this.rewardUrl,
+    required this.name,
+    required this.status,
+  });
+
+  factory HistoryTargetModel.fromJson(Map<String, dynamic> json) {
+    return HistoryTargetModel(
+      id: json['id'],
+      finishTime: json['finishTime'],
+      reward: json['reward'],
+      rewardUrl: json['rewardUrl'],
+      name: json['name'],
+      status: json['status'],
+    );
+  }
+}
+
 class MissionModel {
   String? id;
   String? name;

@@ -13,6 +13,7 @@ class Endpoint {
   static const listProductEndPoint = "/api/products";
   static const productEndPoint = "/api/products/{id}";
   static const historyProductEndPoint = "/api/products/history/{memberId}";
+  static const confirmBoughtProductEndPoint = "/api/products/history/{id}";
 
   // Auth
   static const googleEndPoint = "/api/auth/login";
@@ -96,6 +97,8 @@ class Endpoint {
   static const targetEndpoint = "/api/targets";
   static const myTargetEndpoint = "/api/targets/me";
   static const memberTargetEndpoint = "/api/targets/member";
+  static const getHistoryTargetEndpoint = "/api/targets/reward?memberId={memberId}";
+  static const confirmBoughtTargetEndPoint = "/api/targets/reward/{id}";
 
   //statistic
   static const statisticTaskEndPoint = "/api/statistic/task";
