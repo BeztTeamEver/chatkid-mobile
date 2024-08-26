@@ -79,8 +79,7 @@ class _BottomMenuState extends State<BottomMenu> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                isLabelVisible: (item.route == menu[2].route ||
-                        item.route == menu[3].route) &&
+                isLabelVisible: item.route == menu[3].route &&
                     countNotiController.countNoti > 0,
                 backgroundColor: red.shade500,
                 textColor: Colors.white,
