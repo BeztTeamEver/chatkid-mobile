@@ -242,7 +242,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
           const SizedBox(
             height: 10,
           ),
-        if (widget.message != null && widget.voiceUrl != null)
+        if (widget.message != null && widget.voiceUrl?.isNotEmpty == true)
           GestureDetector(
             onTap: () {
               showDialog(
