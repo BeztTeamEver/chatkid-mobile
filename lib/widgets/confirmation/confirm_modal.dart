@@ -14,12 +14,16 @@ class ConfirmModal extends StatefulWidget {
   final Function? onConfirm;
   final String confirmText;
   final String cancelText;
+  final Widget? contentWidget;
+  final Color? backgroundColor;
   final bool? isLoading;
   const ConfirmModal(
       {super.key,
+      this.backgroundColor,
       required this.title,
       required this.content,
       this.imageUrl,
+      this.contentWidget,
       this.onCancel,
       this.onConfirm,
       this.confirmText = "Xác nhận",
@@ -36,7 +40,10 @@ class _ConfirmModalState extends State<ConfirmModal> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: widget.backgroundColor ?? Colors.white,
+      surfaceTintColor: widget.backgroundColor ?? Colors.white,
       insetPadding: EdgeInsets.symmetric(horizontal: 20),
+      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       title: Text(
         widget.title,
         textAlign: TextAlign.center,
@@ -63,6 +70,7 @@ class _ConfirmModalState extends State<ConfirmModal> {
               width: 200,
               height: 200,
             ),
+          if (widget.contentWidget != null) widget.contentWidget!,
         ],
       ),
       actionsAlignment: MainAxisAlignment.center,

@@ -43,6 +43,8 @@ class Endpoint {
 
   // GPT chat
   static const gptChatEndPoint = "/api/gpt/chat";
+  static const botQuestionHistories = "/api/bot-questions/member";
+  static const ReportEndPoint = "/api/bot-questions/reports";
 
   //Subcription
   static const packageEndPoint = "/api/packages";

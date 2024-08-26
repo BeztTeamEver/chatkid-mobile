@@ -23,15 +23,22 @@ class ChatTextBox extends StatefulWidget {
   final double? width;
   final bool isThumbnail;
   final Function? onOpenPreview;
+  final bool useSenderAvatar;
+  final Color? backgroundColor;
+  final bool? isUseSenderAvatar;
+
   const ChatTextBox(
       {super.key,
       this.message,
       this.icon,
+      this.useSenderAvatar = true,
+      this.backgroundColor,
       this.useTextfullWidth = false,
       this.isSender,
       this.onOpenPreview,
       this.width,
       this.user,
+      this.isUseSenderAvatar = false,
       this.useVoice = true,
       this.imageUrl,
       this.isThumbnail = false,
@@ -43,7 +50,7 @@ class ChatTextBox extends StatefulWidget {
 
 class ChatTextBoxState extends State<ChatTextBox> {
   TtsService _ttsService = TtsService().instance;
-  PlayerController _playerController = PlayerController();
+  final PlayerController _playerController = PlayerController();
 
   Future<void> _speak(String message) async {
     await _ttsService.speak(message);
@@ -53,6 +60,17 @@ class ChatTextBoxState extends State<ChatTextBox> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _playerController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _playerController.dispose();
+    _ttsService.stop();
+    super.dispose();
   }
 
   @override
@@ -60,7 +78,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
     final color = widget.isSender == true ? neutral.shade100 : primary.shade600;
 
     final contentWidgets = [
-      widget.isSender == false
+      widget.isSender == false || widget.isUseSenderAvatar == true
           ? Container(
               width: 40,
               height: 40,
@@ -205,7 +223,7 @@ class ChatTextBoxState extends State<ChatTextBox> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: widget.isSender == true
                 ? MainAxisAlignment.end
                 : MainAxisAlignment.start,

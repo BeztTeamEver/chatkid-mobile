@@ -1,4 +1,5 @@
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -92,6 +93,7 @@ class _InputFieldState extends State<InputField> {
                     if (widget.formKey != null) {
                       _resetValidate();
                     }
+                    field.didChange(value);
                     widget.onChange?.call(value);
                   },
                   validator: widget.validator,
@@ -122,6 +124,8 @@ class _InputFieldState extends State<InputField> {
                       widget.controller?.clear();
                     }
                   },
+                  initialValue: ((widget.controller?.text as String?) ??
+                      field.value as String?),
                   decoration: InputDecoration(
                     hintText: widget.hint,
                     errorMaxLines: 2,

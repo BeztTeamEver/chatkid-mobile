@@ -1,11 +1,14 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/channel_model.dart';
 import 'package:chatkid_mobile/models/chat_model.dart';
+import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/chats/widget/kid_bottom_bar.dart';
 import 'package:chatkid_mobile/pages/chats/widget/parent_bottom_bar.dart';
+import 'package:chatkid_mobile/pages/controller/chat_page/chat_store.dart';
 import 'package:chatkid_mobile/providers/chat_provider.dart';
 import 'package:chatkid_mobile/services/file_service.dart';
 import 'package:chatkid_mobile/services/google_speech.dart';
@@ -20,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:logger/web.dart';
 import 'package:pinput/pinput.dart';
@@ -46,16 +50,16 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
   final GlobalKey<ExpandableBottomSheetState> bottomSheetKey = new GlobalKey();
 
   final _chatService = SocketService();
-  List<ChatModel> _listMessages = <ChatModel>[];
+  final ChatStore chatStore = Get.put(ChatStore());
   final user = LocalStorage.instance.getUser();
 
-  int _pageNumber = 0;
+  // int _pageNumber = 0;
 
   bool isMaxExtended = false;
   bool isActionActive = false;
   bool isExpanded = false;
-  bool _loading = true;
-  bool _isLoadMore = true;
+  // bool _loading = true;
+  // bool _isLoadMore = true;
 
   Future<void> _sendMessage({
     String? message,
@@ -77,22 +81,16 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         channelId: widget.channelId,
       ),
     );
-
-    setState(() {
-      _listMessages = List.from(_listMessages)
-        ..insert(
-          0,
-          ChatModel(
-            content: message,
-            imageUrl: imageUrl,
-            voiceUrl: voiceUrl,
-            userId: user.id!,
-            channelId: widget.channelId,
-            sender: user,
-          ),
-        );
-    });
-    Logger().i("Send message: ${_listMessages.toSet()}");
+    chatStore.addMessage(ChatModel(
+      content: message,
+      imageUrl: imageUrl,
+      voiceUrl: voiceUrl,
+      sender: user,
+      userId: user.id!,
+      channelId: widget.channelId,
+    ));
+    // setState(() {});
+    // Logger().i("Send message: ${_listMessages.toSet()}");
   }
 
   void _receiveMessage() {
@@ -102,7 +100,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         next.whenData(
           (value) => {
             setState(() {
-              _listMessages.insert(0, value);
+              chatStore.addMessage(value);
             })
           },
         );
@@ -113,55 +111,55 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     );
   }
 
-  Future<void> fetchMessage() async {
-    try {
-      if (!_isLoadMore) {
-        Logger().i("No more data");
-        return;
-      }
+  // Future<void> fetchMessage() async {
+  //   try {
+  //     if (!_isLoadMore) {
+  //       Logger().i("No more data");
+  //       return;
+  //     }
 
-      setState(() {
-        _loading = true;
-      });
+  //     setState(() {
+  //       _loading = true;
+  //     });
 
-      final request = MessageChannelRequest(
-        pageNumber: _pageNumber,
-        pageSize: 10,
-        channelId: widget.channelId,
-      );
+  //     final request = MessageChannelRequest(
+  //       pageNumber: _pageNumber,
+  //       pageSize: 10,
+  //       channelId: widget.channelId,
+  //     );
 
-      await ref.read(getChannelMessagesProvider(request).future).then(
-        (value) {
-          if (value.isEmpty) {
-            _isLoadMore = false;
-            return;
-          }
-          setState(() {
-            _pageNumber++;
-            _listMessages.addAll(value);
-          });
-        },
-      ).whenComplete(
-        () => setState(
-          () {
-            _loading = false;
-          },
-        ),
-      );
-    } catch (e) {
-      Logger().e(e);
-    }
-  }
+  //     await ref.read(getChannelMessagesProvider(request).future).then(
+  //       (value) {
+  //         if (value.isEmpty) {
+  //           _isLoadMore = false;
+  //           return;
+  //         }
+  //         setState(() {
+  //           _pageNumber++;
+  //           _listMessages.addAll(value);
+  //         });
+  //       },
+  //     ).whenComplete(
+  //       () => setState(
+  //         () {
+  //           _loading = false;
+  //         },
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     Logger().e(e);
+  //   }
+  // }
 
   void _onConnect() async {
     _chatService.joinChannel(
       ChannelUserModel(channelId: widget.channelId, userId: user.id ?? ""),
     );
-    fetchMessage();
+    chatStore.setChannelId(widget.channelId);
 
     _itemPositionsListener.itemPositions.addListener(() async {
       final positions = _itemPositionsListener.itemPositions.value;
-      if (!_isLoadMore) {
+      if (!chatStore.isLoadMore.value) {
         Logger().i("No more data");
         return;
       }
@@ -169,12 +167,13 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         return;
       }
 
-      if (positions.last.index == _listMessages.length - 1 &&
-          _listMessages.length >= 10) {
-        if (_loading) {
+      if (positions.last.index == chatStore.listMessages.length - 1 &&
+          chatStore.listMessages.length >= 10) {
+        if (chatStore.isLoading.value) {
           return;
         }
-        await fetchMessage();
+        // await fetchMessage();
+        chatStore.loadMore();
       }
     });
   }
@@ -218,35 +217,35 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     });
   }
 
-  _listMessageBuilder(context, index) {
-    if (index == _listMessages.length) {
-      return const SizedBox(
-        height: 80,
-      );
-    }
-    final sender = _listMessages[index].sender ??
-        UserModel(
-          id: "1",
-          name: "Người dùng",
-          avatarUrl: "https://i.pravatar.cc/150?img=1",
-        );
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.8,
-        ),
-        child: ChatTextBox(
-          icon: 'animal/bear',
-          user: sender,
-          imageUrl: _listMessages[index].imageUrl,
-          voiceUrl: _listMessages[index].voiceUrl,
-          message: _listMessages[index].content,
-          isSender: sender.id == user.id!,
-        ),
-      ),
-    );
-  }
+  // _listMessageBuilder(context, index) {
+  //   if (index == _listMessages.length) {
+  //     return const SizedBox(
+  //       height: 80,
+  //     );
+  //   }
+  //   final sender = _listMessages[index].sender ??
+  //       UserModel(
+  //         id: "1",
+  //         name: "Người dùng",
+  //         avatarUrl: "https://i.pravatar.cc/150?img=1",
+  //       );
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 10),
+  //     child: Container(
+  //       constraints: BoxConstraints(
+  //         maxWidth: MediaQuery.of(context).size.width * 0.8,
+  //       ),
+  //       child: ChatTextBox(
+  //         icon: 'animal/bear',
+  //         user: sender,
+  //         imageUrl: _listMessages[index].imageUrl,
+  //         voiceUrl: _listMessages[index].voiceUrl,
+  //         message: _listMessages[index].content,
+  //         isSender: sender.id == user.id!,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void onRecorded(File? file) async {
     if (file == null) {
@@ -272,7 +271,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     }).catchError((e) {
       ErrorSnackbar.showError(err: e, context: context);
     });
-
+    Logger().i("voice url: ${response.url}");
     _sendMessage(voiceUrl: response.url, message: text);
   }
 
@@ -300,7 +299,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
 
   void onSendImage(String? url) {
     if (url != null) {
-      _sendMessage(imageUrl: url);
+      // _sendMessage(imageUrl: url);
     }
   }
 
@@ -336,7 +335,118 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
         });
       },
       enableToggle: true,
-      background: body(context),
+      background: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_rounded),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          backgroundColor: Colors.white,
+          shadowColor: Colors.transparent,
+          centerTitle: true,
+          title: Text(
+            "Gia Đình",
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 10,
+              right: 10,
+              bottom: 40,
+              top: 0,
+            ),
+            child: Container(
+              height: MediaQuery.of(context).size.height - 40,
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Obx(
+                () => Column(
+                  children: [
+                    chatStore.isLoading.value ? const Loading() : Container(),
+                    Expanded(
+                      child: Obx(
+                        () => ScrollablePositionedList.builder(
+                          itemBuilder: (context, index) {
+                            if (index == chatStore.listMessages.length) {
+                              return const SizedBox(
+                                height: 80,
+                              );
+                            }
+                            final sender =
+                                chatStore.listMessages[index].sender ??
+                                    UserModel(
+                                      id: "1",
+                                      name: "Người dùng",
+                                      avatarUrl:
+                                          "https://i.pravatar.cc/150?img=1",
+                                    );
+                            if (index == 0) {
+                              Logger().i(
+                                  "voice url: ${chatStore.listMessages[index].voiceUrl}");
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                ),
+                                child: Obx(
+                                  () => ChatTextBox(
+                                    icon: 'animal/bear',
+                                    user: sender,
+                                    imageUrl:
+                                        chatStore.listMessages[index].imageUrl,
+                                    voiceUrl:
+                                        chatStore.listMessages[index].voiceUrl,
+                                    message:
+                                        chatStore.listMessages[index].content,
+                                    isSender: sender.id == user.id!,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          itemCount: chatStore.listMessages.length,
+                          padding: EdgeInsets.only(
+                              bottom:
+                                  user.role == RoleConstant.Child ? 60 : 20),
+                          scrollOffsetController: _scrollOffsetController,
+                          scrollOffsetListener: _scrollOffsetListener,
+                          itemScrollController: _scrollController,
+                          itemPositionsListener: _itemPositionsListener,
+                          reverse: true,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        floatingActionButtonLocation: user.role == RoleConstant.Child
+            ? FloatingActionButtonLocation.centerDocked
+            : null,
+        bottomSheet: user.role == RoleConstant.Parent
+            ? ParentBottomBar(
+                onOpenSticker: onOpenSticker,
+                onRecorded: onRecorded,
+                onSendImage: onSendImage,
+                isExpanded: isExpanded,
+                messageController: _messageController,
+                onChangeBottomSheet: onChangeBottomSheet,
+                onSendMessage: onSendMessage,
+              )
+            : KidBottomBar(context: context),
+      ),
       persistentHeader: isExpanded
           ? AnimatedContainer(
               duration: const Duration(milliseconds: 300),
@@ -370,136 +480,144 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     );
   }
 
-  Scaffold body(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Colors.white,
-        shadowColor: Colors.transparent,
-        centerTitle: true,
-        title: Text(
-          "Gia Đình",
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 10,
-            right: 10,
-            bottom: 40,
-            top: 0,
-          ),
-          child: Column(
-            children: [
-              _loading ? const Loading() : Container(),
-              Expanded(
-                child: ScrollablePositionedList.builder(
-                  itemBuilder: (context, index) {
-                    if (index == _listMessages.length) {
-                      return const SizedBox(
-                        height: 80,
-                      );
-                    }
-                    final sender = _listMessages[index].sender ??
-                        UserModel(
-                          id: "1",
-                          name: "Người dùng",
-                          avatarUrl: "https://i.pravatar.cc/150?img=1",
-                        );
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Container(
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.8,
-                        ),
-                        child: ChatTextBox(
-                          icon: 'animal/bear',
-                          user: sender,
-                          imageUrl: _listMessages[index].imageUrl,
-                          voiceUrl: _listMessages[index].voiceUrl,
-                          message: _listMessages[index].content,
-                          isSender: sender.id == user.id!,
-                        ),
-                      ),
-                    );
-                  },
-                  itemCount: _listMessages.length,
-                  padding: EdgeInsets.only(
-                      bottom: user.role == RoleConstant.Child ? 60 : 20),
-                  scrollOffsetController: _scrollOffsetController,
-                  scrollOffsetListener: _scrollOffsetListener,
-                  itemScrollController: _scrollController,
-                  itemPositionsListener: _itemPositionsListener,
-                  reverse: true,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      // floatingActionButton: user.role == RoleConstant.Child
-      //     ? Container(
-      //         decoration: const ShapeDecoration(
-      //             shape: CircleBorder(), color: Colors.white),
-      //         child: Hero(
-      //           tag: 'voiceChat/mic',
-      //           placeholderBuilder: (context, heroSize, child) => Container(
-      //             height: 20.0,
-      //             width: 20.0,
-      //             child: const CircularProgressIndicator(),
-      //           ),
-      //           child: GestureDetector(
-      //             onTap: () {
-      //               Navigator.push(
-      //                 context,
-      //                 HeroDialogRoute(
-      //                   builder: (context) => VoiceRecorder(
-      //                     onRecorded: onRecorded,
-      //                   ),
-      //                 ),
-      //               );
-      //             },
-      //             child: Container(
-      //               width: 64,
-      //               height: 64,
-      //               padding: const EdgeInsets.all(18),
-      //               decoration: BoxDecoration(
-      //                 color: primary.shade500,
-      //                 borderRadius: BorderRadius.circular(100),
-      //               ),
-      //               child: const SvgIcon(
-      //                 color: Colors.white,
-      //                 icon: "voice_on",
-      //                 size: 40,
-      //               ),
-      //             ),
-      //           ),
-      //         ),
-      //       )
-      //     : null,
-      floatingActionButtonLocation: user.role == RoleConstant.Child
-          ? FloatingActionButtonLocation.centerDocked
-          : null,
-      bottomSheet: user.role == RoleConstant.Parent
-          ? ParentBottomBar(
-              onOpenSticker: onOpenSticker,
-              onRecorded: onRecorded,
-              onSendImage: onSendImage,
-              isExpanded: isExpanded,
-              messageController: _messageController,
-              onChangeBottomSheet: onChangeBottomSheet,
-              onSendMessage: onSendMessage,
-            )
-          : KidBottomBar(context: context),
-    );
-  }
+  // Scaffold body(BuildContext context) {
+  //   return Scaffold(
+  //     resizeToAvoidBottomInset: true,
+  //     appBar: AppBar(
+  //       leading: IconButton(
+  //         icon: const Icon(Icons.arrow_back_ios_rounded),
+  //         onPressed: () {
+  //           Navigator.pop(context);
+  //         },
+  //       ),
+  //       backgroundColor: Colors.white,
+  //       shadowColor: Colors.transparent,
+  //       centerTitle: true,
+  //       title: Text(
+  //         "Gia Đình",
+  //         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //       ),
+  //     ),
+  //     body: SafeArea(
+  //       child: Padding(
+  //         padding: const EdgeInsets.only(
+  //           left: 10,
+  //           right: 10,
+  //           bottom: 40,
+  //           top: 0,
+  //         ),
+  //         child: Obx(
+  //           () => Column(
+  //             children: [
+  //               chatStore.isLoading.value ? const Loading() : Container(),
+  //               Expanded(
+  //                 child: Obx(
+  //                   () => ScrollablePositionedList.builder(
+  //                     itemBuilder: (context, index) {
+  //                       if (index == chatStore.listMessages.length) {
+  //                         return const SizedBox(
+  //                           height: 80,
+  //                         );
+  //                       }
+  //                       final sender = chatStore.listMessages[index].sender ??
+  //                           UserModel(
+  //                             id: "1",
+  //                             name: "Người dùng",
+  //                             avatarUrl: "https://i.pravatar.cc/150?img=1",
+  //                           );
+  //                       return Padding(
+  //                         padding: const EdgeInsets.only(bottom: 10),
+  //                         child: Container(
+  //                           constraints: BoxConstraints(
+  //                             maxWidth: MediaQuery.of(context).size.width * 0.8,
+  //                           ),
+  //                           child: Obx(
+  //                             () => ChatTextBox(
+  //                               icon: 'animal/bear',
+  //                               user: sender,
+  //                               imageUrl:
+  //                                   chatStore.listMessages[index].imageUrl,
+  //                               voiceUrl:
+  //                                   chatStore.listMessages[index].voiceUrl,
+  //                               message: chatStore.listMessages[index].content,
+  //                               isSender: sender.id == user.id!,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                     itemCount: chatStore.listMessages.length,
+  //                     padding: EdgeInsets.only(
+  //                         bottom: user.role == RoleConstant.Child ? 60 : 20),
+  //                     scrollOffsetController: _scrollOffsetController,
+  //                     scrollOffsetListener: _scrollOffsetListener,
+  //                     itemScrollController: _scrollController,
+  //                     itemPositionsListener: _itemPositionsListener,
+  //                     reverse: true,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //     // floatingActionButton: user.role == RoleConstant.Child
+  //     //     ? Container(
+  //     //         decoration: const ShapeDecoration(
+  //     //             shape: CircleBorder(), color: Colors.white),
+  //     //         child: Hero(
+  //     //           tag: 'voiceChat/mic',
+  //     //           placeholderBuilder: (context, heroSize, child) => Container(
+  //     //             height: 20.0,
+  //     //             width: 20.0,
+  //     //             child: const CircularProgressIndicator(),
+  //     //           ),
+  //     //           child: GestureDetector(
+  //     //             onTap: () {
+  //     //               Navigator.push(
+  //     //                 context,
+  //     //                 HeroDialogRoute(
+  //     //                   builder: (context) => VoiceRecorder(
+  //     //                     onRecorded: onRecorded,
+  //     //                   ),
+  //     //                 ),
+  //     //               );
+  //     //             },
+  //     //             child: Container(
+  //     //               width: 64,
+  //     //               height: 64,
+  //     //               padding: const EdgeInsets.all(18),
+  //     //               decoration: BoxDecoration(
+  //     //                 color: primary.shade500,
+  //     //                 borderRadius: BorderRadius.circular(100),
+  //     //               ),
+  //     //               child: const SvgIcon(
+  //     //                 color: Colors.white,
+  //     //                 icon: "voice_on",
+  //     //                 size: 40,
+  //     //               ),
+  //     //             ),
+  //     //           ),
+  //     //         ),
+  //     //       )
+  //     //     : null,
+  //     floatingActionButtonLocation: user.role == RoleConstant.Child
+  //         ? FloatingActionButtonLocation.centerDocked
+  //         : null,
+  //     bottomSheet: user.role == RoleConstant.Parent
+  //         ? ParentBottomBar(
+  //             onOpenSticker: onOpenSticker,
+  //             onRecorded: onRecorded,
+  //             onSendImage: onSendImage,
+  //             isExpanded: isExpanded,
+  //             messageController: _messageController,
+  //             onChangeBottomSheet: onChangeBottomSheet,
+  //             onSendMessage: onSendMessage,
+  //           )
+  //         : KidBottomBar(context: context),
+  //   );
+  // }
 }

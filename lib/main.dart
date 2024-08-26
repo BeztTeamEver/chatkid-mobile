@@ -42,7 +42,6 @@ void main() async {
   await TtsService().initState();
   // share preferrence setup for one time page
   await LocalStorage.getInstance();
-  firebaseService.handleGetNotification(navigatorKey);
   SocketService();
   CacheManager.logLevel = CacheManagerLogLevel.verbose;
   runApp(
@@ -52,10 +51,24 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({
     super.key,
   });
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FirebaseService.instance.setContent(navigatorKey.currentContext!);
+      FirebaseService.instance.handleGetNotification(navigatorKey);
+    });
+  }
 
   // This widget is the root of your application.
   @override

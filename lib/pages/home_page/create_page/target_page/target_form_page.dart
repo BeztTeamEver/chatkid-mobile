@@ -57,7 +57,7 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
 
       missions.forEach((element) {
         final amount =
-            targetFormStore.formKey.currentState!.value[element] ?? 0;
+            int.parse(targetFormStore.formKey.currentState!.value[element]);
         formMissions
             .add(MissionModel(amount: amount, taskTypeId: element).toMap());
       });

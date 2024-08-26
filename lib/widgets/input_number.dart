@@ -25,7 +25,7 @@ class InputNumber extends StatefulWidget {
     required this.formKey,
     this.height = 34,
     this.width,
-    this.initValue = 1,
+    this.initValue,
     this.errorText,
     this.buttonWidth = 34,
     this.label,
@@ -41,6 +41,7 @@ class _InputNumberState extends State<InputNumber> {
   increase() {
     final form = widget.formKey.currentState as FormBuilderState;
     final field = form.fields[widget.name];
+    Logger().i(field?.value);
     field!.didChange(
       (int.parse(field.value ?? "0") + 1).toString(),
     );
@@ -49,7 +50,7 @@ class _InputNumberState extends State<InputNumber> {
   decrease() {
     final form = widget.formKey.currentState as FormBuilderState;
     final field = form.fields[widget.name];
-
+    Logger().i(field?.value);
     if (field?.value == "0") return;
     field!.didChange(
       (int.parse(field.value ?? "0") - 1).toString(),
@@ -115,6 +116,7 @@ class _InputNumberState extends State<InputNumber> {
                   type: TextInputType.number,
                   maxLines: 1,
                   hint: "0",
+
                   // focusBorderColor: Colors.transparent,
                   // onChanged: (name, value) {
                   //   final form =
@@ -127,7 +129,10 @@ class _InputNumberState extends State<InputNumber> {
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   backgroundColor: Colors.transparent,
-                  defaultValue: widget.initValue?.toString(),
+                  defaultValue:
+                      widget.formKey.currentState?.fields[widget.name]?.value ??
+                          widget.initValue?.toString() ??
+                          "",
                 ),
               ),
               SizedBox(width: 12),

@@ -41,6 +41,7 @@ class _MissionItemState extends State<MissionItem> {
                 targetFormStore.removeListMission(widget.taskType.id);
                 targetFormStore.formKey.currentState?.unregisterField(
                     widget.taskType.id, FormBuilderFieldState());
+                targetFormStore.formKey.currentState?.save();
               },
               backgroundColor: red.shade500,
               foregroundColor: Colors.white,

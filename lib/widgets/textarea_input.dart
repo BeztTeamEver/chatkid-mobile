@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -59,9 +61,11 @@ class TextAreaInput extends StatefulWidget {
 }
 
 class _TextAreaInputState extends State<TextAreaInput> {
+  final TextEditingController _controller = TextEditingController();
   @override
   void initState() {
     super.initState();
+    _controller.text = widget.defaultValue ?? "";
   }
 
   @override
@@ -95,18 +99,26 @@ class _TextAreaInputState extends State<TextAreaInput> {
               name: widget.name,
               validator: widget.validation,
               // valueTransformer: (value) => widget.type == TextInputType.number
-              //     ? int.tryParse(value ?? "") ?? 0
+              //     ? int.parse(value ?? "")
               //     : value,
+              onChanged: (value) {
+                _controller.text = value as String? ?? "";
+              },
+              onSaved: (newValue) =>
+                  _controller.text = (newValue as String?) ?? "",
               builder: (field) {
                 return TextFormField(
+                  controller: _controller,
                   key: widget.key,
                   validator: widget.validation,
                   focusNode: widget.focusNode,
+
                   maxLines: widget.maxLines,
                   minLines: widget.minLines,
                   maxLength: widget.maxLength,
                   textInputAction: widget.textInputAction,
                   keyboardType: widget.type,
+
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   onTapOutside: (e) {
                     FocusScope.of(context).unfocus();
@@ -114,6 +126,7 @@ class _TextAreaInputState extends State<TextAreaInput> {
                   onTap: () {
                     FocusScope.of(context).requestFocus();
                   },
+
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: neutral.shade800,
                         fontWeight: widget.fontWeight ?? FontWeight.w600,
@@ -130,7 +143,6 @@ class _TextAreaInputState extends State<TextAreaInput> {
                   onChanged: (value) {
                     field.didChange(value);
                     widget.onChanged?.call(widget.name, value);
-
                     //TODO: fix the focus
                     if (widget.isNextWhenComplete == true) {
                       if (value?.length == widget.maxLength) {

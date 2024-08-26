@@ -13,6 +13,7 @@ import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/widgets/avatar_png.dart';
+import 'package:chatkid_mobile/widgets/confirmation/confirm_modal.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -283,6 +284,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       const SizedBox(height: 16),
                       GestureDetector(
                         onTap: () async {
+                          final isExisted = await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ConfirmModal(
+                                  content:
+                                      "Bạn có chắc chắn muốn chuyển tài khoản không?",
+                                  title: "Chuyển tài khoản",
+                                  confirmText: "Xác nhận",
+                                  cancelText: "Hủy",
+                                );
+                              });
+                          if (!isExisted) {
+                            return;
+                          }
                           await FirebaseService.instance
                               .signOut()
                               .then((value) {
@@ -319,6 +334,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       const SizedBox(height: 16),
                       GestureDetector(
                         onTap: () async {
+                          final isExisted = await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ConfirmModal(
+                                  content:
+                                      "Bạn có chắc chắn muốn đăng xuất không?",
+                                  title: "Đăng xuất",
+                                  confirmText: "Xác nhận",
+                                  cancelText: "Hủy",
+                                );
+                              });
+                          if (!isExisted) {
+                            return;
+                          }
                           await FirebaseService.instance
                               .signOut()
                               .then((value) {

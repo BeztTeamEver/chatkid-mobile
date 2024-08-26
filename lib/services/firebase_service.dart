@@ -1,8 +1,13 @@
 import 'dart:convert';
 
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/constants/notification.dart';
 import 'package:chatkid_mobile/firebase_options.dart';
+import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
+import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:chatkid_mobile/firebase_options.dart';
@@ -22,12 +27,17 @@ import 'package:logger/logger.dart';
 class FirebaseService {
   String? fcmToken = "";
   String? appId = "";
+  static BuildContext? _context;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static FirebaseService? _instance;
 
   FirebaseService._interal() {
     FirebaseInAppMessaging.instance.setAutomaticDataCollectionEnabled(true);
+  }
+
+  setContent(BuildContext context) {
+    _context = context;
   }
 
   static FirebaseService get instance {
@@ -109,6 +119,25 @@ class FirebaseService {
       Logger()
           .i('Message also contained a notification: ${message.notification}');
     }
+
+    switch (message.data['type']) {
+      case NotificationTypeConstants.CHAT:
+        handleChatNotification(message);
+        break;
+      case NotificationTypeConstants.TARGET:
+        Logger().i("Notification message");
+        break;
+      default:
+        Logger().i("Default message");
+        break;
+    }
+  }
+
+  Future<void> handleChatNotification(RemoteMessage message) async {
+    final data = message.data;
+    final channel = await FamilyService().getFamilyChannel();
+    Navigator.of(_context!)
+        .push(createRoute(() => GroupChatPage(channelId: channel.id)));
   }
 
   void handleGetNotification(GlobalKey<NavigatorState> navigatorKey) {
@@ -136,15 +165,9 @@ class FirebaseService {
       Logger().i("Message app: ${message.messageId}");
       ShowToast.success(msg: "A new FCM message arrived!");
 
-      showDialog(
-          context: navigatorKey.currentContext!,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('A new FCM message arrived!'),
-              content: Text('This is a FCM message background'),
-            );
-          });
       handleMessage(message);
+      Navigator.of(_context!).push(createRoute(
+          () => GroupChatPage(channelId: message.data['channelId'])));
     });
 
     // Handle notification when open app from notification
@@ -154,15 +177,18 @@ class FirebaseService {
       }
       Logger().i("Message opened app: ${message.messageId}");
 
-      showDialog(
-          context: navigatorKey.currentContext!,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('A new FCM message arrived!'),
-              content: Text('This is a FCM message background'),
-            );
-          });
+      // showDialog(
+      //     context: navigatorKey.currentContext!,
+      //     builder: (context) {
+      //       return AlertDialog(
+      //         title: Text('A new FCM message arrived!'),
+      //         content: Text('This is a FCM message background'),
+      //       );
+      //     });
       handleMessage(message);
+      Navigator.of(_context!).push(createRoute(
+          () => GroupChatPage(channelId: message.data['channelId'])));
+      // Logger().i("Route name: ${ModalRoute.of(_context!)?.settings.name}");
     });
   }
 

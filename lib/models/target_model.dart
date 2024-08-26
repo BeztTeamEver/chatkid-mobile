@@ -158,9 +158,8 @@ class TargetRequestModal {
   }
 
   Map<String, dynamic> toMap() {
-    final startTime =
-        '${this.startTime.toIso8601String()}Z'.replaceAll(r'ZZ', 'Z');
-    final endTime = '${this.endTime.toIso8601String()}Z'.replaceAll(r'ZZ', "Z");
+    final startTime = '${this.startTime.toIso8601String()}';
+    final endTime = '${this.endTime.toIso8601String()}';
 
     return {
       'startTime': startTime,

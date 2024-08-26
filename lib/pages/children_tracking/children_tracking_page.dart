@@ -115,7 +115,15 @@ class _ChildrenTrackingPageState extends ConsumerState<ChildrenTrackingPage> {
                             const SizedBox(
                               height: 10,
                             ),
-                            Text("Bé ${user.name}"),
+                            Text("Bé ${user.name}",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                    )),
                             const SizedBox(
                               height: 10,
                             ),
