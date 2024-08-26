@@ -19,8 +19,33 @@ class _StatisticEmotionTabState extends State<StatisticEmotionTab> {
     return FutureBuilder(
       future: widget.statisticEmotion,
       builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.hasData &&
+            snapshot.connectionState == ConnectionState.done) {
           final data = snapshot.data as List<StatisticEmotionModel>;
+
+          if (data.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/payment/bot-head.png",
+                    width: 150,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Thống kê cảm xúc bé hiện đang trống",
+                    style: TextStyle(
+                      color: neutral.shade900,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 130),
+                ],
+              ),
+            );
+          }
 
           return SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 20),
@@ -50,15 +75,17 @@ class _StatisticEmotionTabState extends State<StatisticEmotionTab> {
                               children: [
                                 Image.network(
                                   item.taskTypeImageUrl,
-                                  width: MediaQuery.of(context).size.width / 4.45,
-                                  height: MediaQuery.of(context).size.width / 4.45,
+                                  width:
+                                      MediaQuery.of(context).size.width / 4.45,
+                                  height:
+                                      MediaQuery.of(context).size.width / 4.45,
                                   fit: BoxFit.cover,
                                 ),
                                 Positioned(
                                   bottom: 3,
                                   child: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 4.45,
+                                    width: MediaQuery.of(context).size.width /
+                                        4.45,
                                     child: Text(
                                       'x${item.taskCount}',
                                       textAlign: TextAlign.center,
@@ -100,7 +127,8 @@ class _StatisticEmotionTabState extends State<StatisticEmotionTab> {
                                               Container(
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(12.0),
+                                                      BorderRadius.circular(
+                                                          12.0),
                                                   border: Border.all(
                                                     width: 0.5,
                                                     color: primary.shade200,

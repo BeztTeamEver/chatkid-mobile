@@ -6,6 +6,7 @@ class GiftModel {
   int? numberOfCoin;
   String? imageUrl;
   String? createdAt;
+  String? status;
 
   GiftModel({
     this.id,
@@ -13,6 +14,7 @@ class GiftModel {
     this.numberOfCoin,
     this.imageUrl,
     this.createdAt,
+    this.status,
   });
 
   String toJson() {
@@ -29,15 +31,17 @@ class GiftModel {
     numberOfCoin = json['numberOfCoin'];
     imageUrl = json['imageUrl'];
     createdAt = json['createdAt'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toMap() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['numberOfCoin'] = this.numberOfCoin;
-    data['imageUrl'] = this.imageUrl;
-    data['createdAt'] = this.createdAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['title'] = title;
+    data['numberOfCoin'] = numberOfCoin;
+    data['imageUrl'] = imageUrl;
+    data['createdAt'] = createdAt;
+    data['status'] = status;
     return data;
   }
 }

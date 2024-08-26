@@ -29,9 +29,16 @@ class _StatisticTaskTabState extends State<StatisticTaskTab> {
     return FutureBuilder(
       future: widget.statisticTask,
       builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.hasData &&
+            snapshot.connectionState == ConnectionState.done) {
           final data = snapshot.data as StatisticTaskModel;
-          
+          bool isShowChart = false;
+          data.statistic.forEach((element) {
+            if (element.count > 0) {
+              isShowChart = true;
+            }
+          });
+
           return Column(
             children: [
               Container(
@@ -169,18 +176,34 @@ class _StatisticTaskTabState extends State<StatisticTaskTab> {
                                   sectionsSpace: 0,
                                   centerSpaceRadius:
                                       MediaQuery.of(context).size.width / 9,
-                                  sections:
-                                      List.generate(data.statistic.length, (i) {
-                                    return PieChartSectionData(
-                                      color: themeColorChart[i],
-                                      value: data.statistic[i].count /
-                                          data.totalTasks *
-                                          100,
-                                      radius:
-                                          MediaQuery.of(context).size.width / 7,
-                                      title: '',
-                                    );
-                                  }),
+                                  sections: [
+                                    if (isShowChart)
+                                      ...List.generate(
+                                        data.statistic.length,
+                                        (i) {
+                                          return PieChartSectionData(
+                                            color: themeColorChart[i],
+                                            value: data.statistic[i].count /
+                                                data.totalTasks *
+                                                100,
+                                            radius: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                7,
+                                            title: '',
+                                          );
+                                        },
+                                      )
+                                    else
+                                      PieChartSectionData(
+                                        color: neutral.shade200,
+                                        value: 100,
+                                        radius:
+                                            MediaQuery.of(context).size.width /
+                                                7,
+                                        title: '',
+                                      ),
+                                  ],
                                 ),
                               ),
                             ),
