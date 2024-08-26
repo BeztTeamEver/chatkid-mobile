@@ -40,7 +40,6 @@ class GroupChatPage extends ConsumerStatefulWidget {
 class _GroupChatPageState extends ConsumerState<GroupChatPage>
     with TickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
-  final ItemScrollController _scrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
   final ScrollOffsetController _scrollOffsetController =
@@ -69,7 +68,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     if (message == null && imageUrl == null && voiceUrl == null) {
       return;
     }
-    if (message != null && message.isEmpty) {
+    if (message != null && message.isEmpty && voiceUrl == null) {
       return;
     }
     _chatService.sendMessage(
@@ -89,7 +88,12 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
       userId: user.id!,
       channelId: widget.channelId,
     ));
-    // setState(() {});
+    // final length = chatStore.listMessages.length == 0
+    //     ? 0
+    //     : chatStore.listMessages.length - 1;
+    // chatStore.scrollController
+    //     .scrollTo(index: length, duration: Duration(milliseconds: 400));
+    setState(() {});
     // Logger().i("Send message: ${_listMessages.toSet()}");
   }
 
@@ -159,6 +163,9 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
 
     _itemPositionsListener.itemPositions.addListener(() async {
       final positions = _itemPositionsListener.itemPositions.value;
+      Logger().i(positions.length);
+      Logger().i(positions.last.index);
+
       if (!chatStore.isLoadMore.value) {
         Logger().i("No more data");
         return;
@@ -166,13 +173,23 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
       if (positions.isEmpty) {
         return;
       }
-
-      if (positions.last.index == chatStore.listMessages.length - 1 &&
-          chatStore.listMessages.length >= 10) {
+      if (positions.first.index == 0 && chatStore.listMessages.length >= 10) {
         if (chatStore.isLoading.value) {
           return;
         }
+        // if (chatStore.paging.value.pageNumber <= 0) {
+        //   chatStore.scrollController.scrollTo(
+        //       index: chatStore.listMessages.length - 1,
+        //       duration: Duration(milliseconds: 400));
+        // } else {
+        //   chatStore.scrollController.scrollTo(
+        //       index: positions.first.index + 2,
+        //       duration: Duration(milliseconds: 400));
+        // }
+        // Logger().i('Load more');
         // await fetchMessage();
+        // Logger().i(positions.last.index);
+
         chatStore.loadMore();
       }
     });
@@ -190,10 +207,13 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
     _chatService.leaveChannel(
       ChannelUserModel(channelId: widget.channelId, userId: user.id ?? ""),
     );
+
+    Get.delete<ChatStore>();
+
     super.dispose();
     // _chatService.stopConnection();
     // _messageController.dispose();
-    // _scrollController.dispose();
+    // chatStore.scrollController.dispose();
   }
 
   void expand() => bottomSheetKey.currentState?.expand();
@@ -299,7 +319,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
 
   void onSendImage(String? url) {
     if (url != null) {
-      // _sendMessage(imageUrl: url);
+      _sendMessage(imageUrl: url);
     }
   }
 
@@ -354,6 +374,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
                 ),
           ),
         ),
+        extendBodyBehindAppBar: false,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(
@@ -374,7 +395,12 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
                       child: Obx(
                         () => ScrollablePositionedList.builder(
                           itemBuilder: (context, index) {
-                            if (index == chatStore.listMessages.length) {
+                            // if (index == chatStore.listMessages.length - 1) {
+                            //   return const SizedBox(
+                            //     height: 80,
+                            //   );
+                            // }
+                            if (index == -1) {
                               return const SizedBox(
                                 height: 80,
                               );
@@ -387,10 +413,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
                                       avatarUrl:
                                           "https://i.pravatar.cc/150?img=1",
                                     );
-                            if (index == 0) {
-                              Logger().i(
-                                  "voice url: ${chatStore.listMessages[index].voiceUrl}");
-                            }
+
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 10),
                               child: Container(
@@ -420,9 +443,13 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
                                   user.role == RoleConstant.Child ? 60 : 20),
                           scrollOffsetController: _scrollOffsetController,
                           scrollOffsetListener: _scrollOffsetListener,
-                          itemScrollController: _scrollController,
+                          itemScrollController: chatStore.scrollController,
                           itemPositionsListener: _itemPositionsListener,
-                          reverse: true,
+                          // reverse: true,
+                          // initialScrollIndex:
+                          //     chatStore.listMessages.length - 1 >= 0
+                          //         ? chatStore.listMessages.length - 1
+                          //         : 0,
                         ),
                       ),
                     ),
@@ -553,7 +580,7 @@ class _GroupChatPageState extends ConsumerState<GroupChatPage>
   //                         bottom: user.role == RoleConstant.Child ? 60 : 20),
   //                     scrollOffsetController: _scrollOffsetController,
   //                     scrollOffsetListener: _scrollOffsetListener,
-  //                     itemScrollController: _scrollController,
+  //                     itemScrollController: chatStore.scrollController,
   //                     itemPositionsListener: _itemPositionsListener,
   //                     reverse: true,
   //                   ),

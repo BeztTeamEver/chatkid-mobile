@@ -119,8 +119,14 @@ class ChatTextBoxState extends State<ChatTextBox> {
             : widget.imageUrl != null && widget.imageUrl != ""
                 ? GestureDetector(
                     onTap: () {
-                      // TODO: Open full image
-                      widget.onOpenPreview?.call();
+                      if (widget.onOpenPreview != null) {
+                        widget.onOpenPreview!();
+                        return;
+                      }
+                      Navigator.of(context).push(HeroDialogRoute(
+                        builder: (context) =>
+                            PreviewImageDialog(imageUrl: widget.imageUrl!),
+                      ));
                     },
                     child: Stack(
                       alignment: Alignment.center,
@@ -300,5 +306,85 @@ class TextBox extends StatelessWidget {
             ),
       ),
     );
+  }
+}
+
+class PreviewImageDialog extends StatelessWidget {
+  final String imageUrl;
+  const PreviewImageDialog({super.key, required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      content: Container(
+        width: MediaQuery.of(context).size.width * 0.8,
+        height: MediaQuery.of(context).size.height * 0.8,
+        color: Colors.transparent,
+        child: Hero(
+          tag: imageUrl,
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.contain,
+            loadingBuilder: (context, child, loadingProgress) =>
+                loadingProgress == null
+                    ? child
+                    : Container(
+                        width: 36,
+                        height: 36,
+                        padding: EdgeInsets.all(4),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: primary.shade500,
+                          ),
+                        ),
+                      ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HeroDialogRoute<T> extends PageRoute<T> {
+  HeroDialogRoute({required this.builder}) : super();
+
+  final WidgetBuilder builder;
+
+  @override
+  bool get opaque => false;
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 300);
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Color get barrierColor => Colors.black54;
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return new FadeTransition(
+        opacity: new CurvedAnimation(parent: animation, curve: Curves.easeOut),
+        child: child);
+  }
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    return builder(context);
+  }
+
+  @override
+  // TODO: implement barrierLabel
+  String? get barrierLabel {
+    return "HeroDialogRoute";
   }
 }

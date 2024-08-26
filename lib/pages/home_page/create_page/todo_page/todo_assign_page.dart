@@ -57,6 +57,7 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage>
         // Assign for a member
         final value = TodoCreateModel.fromJson({
           ...formState.value,
+          'numberOfCoin': int.parse(formState.value['numberOfCoin']),
           'frequency': <String?>[],
           "memberIds": _selectedIndex,
         });
@@ -117,8 +118,8 @@ class _TodoAssignPageState extends ConsumerState<TodoAssignPage>
         // // todoFormCreateController.navigatorKey.currentState!.pop();
         // return;
       }
-    } catch (e) {
-      Logger().e(e);
+    } catch (e, s) {
+      Logger().e(e, stackTrace: s);
       ShowToast.error(msg: "Có lỗi xảy ra");
     } finally {
       setState(() {

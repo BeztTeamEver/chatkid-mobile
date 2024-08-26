@@ -25,6 +25,7 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
   @override
   void initState() {
     super.initState();
+
     targetFormStore.stepController.value = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this, value: 0.25)
       ..addListener(() {
@@ -104,9 +105,9 @@ class _TargetCreateRouteState extends State<TargetCreateRoute>
                         centerTitle: true,
                         title: Text(
                           widget.id != null
-                              ? 'Chỉnh sửa công việc'
+                              ? 'Chỉnh sửa mục tiêu'
                               : targetFormStore.step.value != 2
-                                  ? 'Tạo công việc'
+                                  ? 'Tạo mục tiêu'
                                   : 'Thêm quà',
                           style:
                               Theme.of(context).textTheme.bodyMedium!.copyWith(

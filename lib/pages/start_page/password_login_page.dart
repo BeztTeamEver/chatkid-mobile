@@ -54,9 +54,13 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
             .then((value) async {
           await LocalStorage.instance.preferences.setInt('step', 2);
           callback();
-        }).whenComplete(() => setState(() {
-                  _isLoading = false;
-                }));
+        }).whenComplete(() {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        });
       }
     } catch (e) {
       Logger().e(e);

@@ -71,10 +71,10 @@ class _TodoFormPageState extends State<TodoFormPage> {
       // final startMinute = formValue['startTime.minute1']! * 10 +
       //     formValue['startTime.minute2']!;
       final startTime = formValue['startTime'] as DateTime;
-      final durationHour =
-          formValue['duration.hour1']! * 10 + formValue['duration.hour2']!;
-      final durationMinute =
-          formValue['duration.minute1']! * 10 + formValue['duration.minute2']!;
+      final durationHour = int.parse(formValue['duration.hour1']) * 10 +
+          int.parse(formValue['duration.hour2']);
+      final durationMinute = int.parse(formValue['duration.minute1'])! * 10 +
+          int.parse(formValue['duration.minute2']);
 
       if (durationHour >= 24 || durationMinute >= 60) {
         todoFormCreateController.formKey.currentState?.fields['duration']
@@ -129,6 +129,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
       if (todoFormCreateController.initForm['id'] != '') {
         final value = TodoCreateModel.fromJson({
           ...formValue,
+          "numberOfCoin": int.parse(formValue['numberOfCoin']),
           // 'frequency': [],
           "taskTypeId": todoFormCreateController.selectedTaskType.value,
           "id": todoFormCreateController.initForm['id'],
@@ -233,6 +234,12 @@ class _TodoFormPageState extends State<TodoFormPage> {
                 minLines: 4,
                 maxLines: 6,
                 maxLength: 50,
+                validation: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(
+                      errorText: "Vui lòng nhập lời nhắn"),
+                  FormBuilderValidators.maxLength(100,
+                      errorText: "Không nhập quá 100 ký tự"),
+                ]),
               ),
               const SizedBox(height: 14),
               Text(
@@ -257,7 +264,7 @@ class _TodoFormPageState extends State<TodoFormPage> {
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(),
                   (value) {
-                    if (value?.isBefore(DateTime.now()) == true) {
+                    if (value?.compareTo(DateTime.now()) == -1) {
                       return "Thời gian bắt đầu phải sau thời gian hiện tại";
                     }
                     return null;

@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:logger/logger.dart';
 
 class InputField extends StatefulWidget {
   final String label;
@@ -124,8 +123,9 @@ class _InputFieldState extends State<InputField> {
                       widget.controller?.clear();
                     }
                   },
-                  initialValue: ((widget.controller?.text as String?) ??
-                      field.value as String?),
+                  initialValue: widget.controller != null
+                      ? (null as String?)
+                      : (field.value as String?),
                   decoration: InputDecoration(
                     hintText: widget.hint,
                     errorMaxLines: 2,

@@ -295,7 +295,7 @@ class _TaskItemCardState extends State<TaskItemCard> {
           child: CustomCard(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            height: 100,
+            height: 110,
             children: [
               Row(
                 children: [

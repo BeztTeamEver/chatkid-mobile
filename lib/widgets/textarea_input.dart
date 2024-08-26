@@ -107,6 +107,9 @@ class _TextAreaInputState extends State<TextAreaInput> {
               onSaved: (newValue) =>
                   _controller.text = (newValue as String?) ?? "",
               builder: (field) {
+                if (field.value != null) {
+                  _controller.text = field.value as String? ?? "";
+                }
                 return TextFormField(
                   controller: _controller,
                   key: widget.key,

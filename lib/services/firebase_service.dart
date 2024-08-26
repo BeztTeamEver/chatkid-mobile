@@ -166,8 +166,8 @@ class FirebaseService {
       ShowToast.success(msg: "A new FCM message arrived!");
 
       handleMessage(message);
-      Navigator.of(_context!).push(createRoute(
-          () => GroupChatPage(channelId: message.data['channelId'])));
+      // Navigator.of(_context!).push(createRoute(
+      //     () => GroupChatPage(channelId: message.data['channelId'])));
     });
 
     // Handle notification when open app from notification
@@ -186,8 +186,8 @@ class FirebaseService {
       //       );
       //     });
       handleMessage(message);
-      Navigator.of(_context!).push(createRoute(
-          () => GroupChatPage(channelId: message.data['channelId'])));
+      // Navigator.of(_context!).push(createRoute(
+      //     () => GroupChatPage(channelId: message.data['channelId'])));
       // Logger().i("Route name: ${ModalRoute.of(_context!)?.settings.name}");
     });
   }

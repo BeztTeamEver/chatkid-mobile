@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/enum/bot_type.dart';
 import 'package:chatkid_mobile/pages/chats/bot_chat_page.dart';
-import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
+import 'package:chatkid_mobile/pages/chats/group_chat_page_old.dart';
 import 'package:chatkid_mobile/pages/sign_in/sign_in_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';

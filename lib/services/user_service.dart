@@ -82,7 +82,7 @@ class UserService {
           throw Exception(
               'Lỗi không thể xác thực người dùng, vui lòng thử lại!');
         case 403:
-          throw Exception('Mật khẩu không dúng, vui lòng thử lại!');
+          throw Exception('Mật khẩu không đúng, vui lòng thử lại!');
         case 404:
           throw Exception('Không tìm thấy gia đình, vui lòng thử lại!');
         default:
@@ -156,7 +156,6 @@ class MeController extends GetxController {
   void updateProfile(UserModel newProfile) {
     profile.value = newProfile;
   }
-
 
   transferDiamond(TransferDiamondPayloadModel data, Function() callback) async {
     if (data.diamond == 0) {
