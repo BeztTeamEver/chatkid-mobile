@@ -26,10 +26,10 @@ class AuthService {
       final body = jsonDecode(response.body);
       final authTokens = AuthModel.fromJson(body);
       final family = FamilyModel.fromJson(body['family']);
-      Logger().d(family.familyId);
+      Logger().d(family.id);
       _localStorage.preferences
           .setString(LocalStorageKey.MEMBERS, jsonEncode(family.members));
-      _localStorage.setString(LocalStorageKey.FAMILY_ID, family.familyId);
+      _localStorage.setString(LocalStorageKey.FAMILY_ID, family.id);
       _saveToken(authTokens);
       return authTokens;
     }
@@ -143,7 +143,7 @@ class AuthService {
   }
 
   static Future<bool> resendOtp() async {
-    final response = await BaseHttp.instance.get(
+    final response = await BaseHttp.instance.post(
       endpoint: Endpoint.resendOtp,
     );
     if (response.statusCode == 200) {
@@ -191,6 +191,7 @@ class AuthService {
     }
     switch (response.statusCode) {
       default:
+        LocalStorage.instance.clear();
         throw Exception('Đã xảy ra lỗi, không thể đăng xuất');
     }
   }

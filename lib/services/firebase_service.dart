@@ -225,8 +225,13 @@ class FirebaseService {
   }
 
   Future<void> signOut() async {
-    await AuthService.logoutMember(fcmToken ?? "");
-    await FirebaseAuth.instance.signOut();
-    await GoogleSignIn().signOut();
+    try {
+      await AuthService.logoutMember(fcmToken ?? "");
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
+    } catch (e) {
+      Logger().e(e);
+      throw Exception("Lỗi đăng xuất, vui lòng thử lại sau");
+    }
   }
 }

@@ -15,8 +15,8 @@ class FamilyRequestModel {
   factory FamilyRequestModel.fromJson(Map<String, dynamic> json) {
     return FamilyRequestModel(
       name: json['name'],
-      id: json['id'],
-      email: json['email'],
+      // id: json['id'],
+      // email: json['email'],
       avatarUrl: json['avatarUrl'],
     );
   }
@@ -24,44 +24,45 @@ class FamilyRequestModel {
   String toJson() {
     return jsonEncode({
       "name": name,
-      "id": id,
-      "avatarUrl": avatarUrl,
+      // "id": id,
+      // "avatarUrl": avatarUrl,
       "email": email,
     });
   }
 }
 
 class FamilyModel {
-  final String familyId;
-  final String familyName;
-  final String familyEmail;
-  // final int status;
+  final String id;
+  final String name;
+  final String email;
+  final int? status;
   final List<UserModel> members;
 
-  const FamilyModel(
-      {required this.familyId,
-      required this.familyName,
-      required this.familyEmail,
-      // required this.status,
-      required this.members});
+  const FamilyModel({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.status,
+    required this.members,
+  });
 
   factory FamilyModel.fromJson(Map<String, dynamic> json) {
-    json['members'] = json['members'] != null
+    final members = json['members'] != null
         ? (json['members'] as List).map((e) => UserModel.fromJson(e)).toList()
-        : [];
+        : <UserModel>[];
     return FamilyModel(
-      familyId: json['familyId'],
-      familyName: json['familyName'],
-      familyEmail: json['familyEmail'],
-      // status: json['status'],
-      members: json['members'] as List<UserModel>,
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      status: json['status'],
+      members: members,
     );
   }
   Map<String, dynamic> toMap() => {
-        "familyId": familyId,
-        "familyName": familyName,
-        "familyEmail": familyEmail,
-        // "status": status,
+        "id": id,
+        "name": name,
+        "email": email,
+        "status": status,
         "members": members,
       };
 

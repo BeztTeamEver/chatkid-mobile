@@ -155,39 +155,48 @@ class _StartPageState extends ConsumerState<StartPage> {
                           //           ),
                           //   textAlign: TextAlign.center,
                           // ),
+
                           Expanded(
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              itemCount: members.length,
-                              separatorBuilder: (context, index) =>
-                                  const SizedBox(
-                                height: 10,
-                              ),
-                              itemBuilder: (context, index) {
-                                final icon = members[index].avatarUrl != null &&
-                                        members[index].avatarUrl != ""
-                                    ? members[index].avatarUrl
-                                    : iconAnimalList[0];
-                                return SizedBox(
-                                  width: double.infinity,
-                                  child: SelectButton(
-                                    isSelected: _selectedIndex == index,
-                                    borderColor: primary.shade100,
-                                    hasBackground: true,
-                                    icon: icon,
-                                    subLabel: members[index].familyRole ??
-                                        "Phụ huynh",
-                                    label: members[index].name ?? "Phụ huynh ",
-                                    onPressed: () {
-                                      setState(() {
-                                        _role = members[index].role!;
-                                        _selectedIndex = index;
-                                        _selectedAccount = members[index];
-                                      });
-                                    },
-                                  ),
-                                );
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                ref.invalidate(getOwnFamily);
                               },
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: AlwaysScrollableScrollPhysics(),
+                                itemCount: members.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(
+                                  height: 10,
+                                ),
+                                itemBuilder: (context, index) {
+                                  final icon =
+                                      members[index].avatarUrl != null &&
+                                              members[index].avatarUrl != ""
+                                          ? members[index].avatarUrl
+                                          : iconAnimalList[0];
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    child: SelectButton(
+                                      isSelected: _selectedIndex == index,
+                                      borderColor: primary.shade100,
+                                      hasBackground: true,
+                                      icon: icon,
+                                      subLabel: members[index].familyRole ??
+                                          "Phụ huynh",
+                                      label:
+                                          members[index].name ?? "Phụ huynh ",
+                                      onPressed: () {
+                                        setState(() {
+                                          _role = members[index].role!;
+                                          _selectedIndex = index;
+                                          _selectedAccount = members[index];
+                                        });
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ],
