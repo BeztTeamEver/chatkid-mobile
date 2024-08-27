@@ -33,8 +33,12 @@ class TargetFormPage extends ConsumerStatefulWidget {
 
 class _TargetFormPageState extends ConsumerState<TargetFormPage> {
   final TargetFormStore targetFormStore = Get.find();
+  String missionError = "";
 
   void onSubmit() async {
+    setState(() {
+      missionError = "";
+    });
     targetFormStore.formKey.currentState!.save();
     final startTime =
         targetFormStore.formKey.currentState!.fields['startTime']!;
@@ -56,14 +60,31 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
       final formMissions = [];
 
       missions.forEach((element) {
-        final amount =
-            int.parse(targetFormStore.formKey.currentState!.value[element]);
+        final amount = int.tryParse(
+            targetFormStore.formKey.currentState!.value[element] ?? "");
+        if (amount == null || amount <= 0) {
+          setState(() {
+            missionError = "Có công việc chưa được chọn số lượng";
+          });
+          return;
+        }
         formMissions
             .add(MissionModel(amount: amount, taskTypeId: element).toMap());
       });
+      if (missions.isEmpty) {
+        ShowToast.error(msg: "Vui lòng chọn công việc");
+        return;
+      }
+
+      if (missionError.isNotEmpty) {
+        ShowToast.error(msg: missionError);
+        return;
+      }
+
       targetFormStore.formKey.currentState!.fields['missions']!.didChange(
         formMissions,
       );
+
       targetFormStore.formKey.currentState!.save();
       targetFormStore.increaseStep();
       targetFormStore.updateProgress();

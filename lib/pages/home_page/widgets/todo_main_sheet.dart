@@ -98,6 +98,7 @@ class _TodoMainBottomSheetState extends ConsumerState<TodoMainBottomSheet>
           ),
           child: CustomScrollView(
             cacheExtent: 0.5,
+            physics: NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
                 primary: true,
