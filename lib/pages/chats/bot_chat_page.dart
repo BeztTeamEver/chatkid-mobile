@@ -243,7 +243,7 @@ class _BotChatPageState extends ConsumerState<BotChatPage> {
                     height: 80,
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height - 310,
+                    height: MediaQuery.of(context).size.height - 340,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

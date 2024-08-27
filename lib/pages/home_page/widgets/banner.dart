@@ -4,7 +4,7 @@ import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
+import 'package:chatkid_mobile/pages/chats/group_chat_page_old.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/store/store_page.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
@@ -395,10 +395,10 @@ class _TodoBannerState extends ConsumerState<TodoBanner> {
               width: MediaQuery.of(context).size.width,
               child: Obx(
                 () => Indicator(
-                  index: todoStore.currentUserIndex.value,
+                  index: todoStore.currentUserIndex.value + 1,
                   dotSize: 12,
                   height: 12,
-                  lenght: todoStore.members.length,
+                  lenght: todoStore.members.length + 1,
                   selectedColor: Colors.white,
                   unselectedColor: Colors.white60,
                 ),

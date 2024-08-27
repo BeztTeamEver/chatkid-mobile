@@ -1,5 +1,6 @@
 import 'package:chatkid_mobile/constants/date.dart';
 import 'package:chatkid_mobile/constants/task_status.dart';
+import 'package:chatkid_mobile/constants/todo.dart';
 import 'package:chatkid_mobile/models/todo_model.dart';
 import 'package:chatkid_mobile/pages/controller/todo_page/todo_home_store.dart';
 import 'package:chatkid_mobile/pages/home_page/todo_detail/todo_detail.dart';
@@ -18,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class TaskItem extends StatefulWidget {
   final TaskModel task;
@@ -30,6 +32,7 @@ class TaskItem extends StatefulWidget {
 class _TaskItemState extends State<TaskItem> {
   final TodoHomeStore todoHomeStore = Get.find();
   TtsService _ttsService = TtsService().instance;
+  SpeechToText _speech = SpeechToText();
 
   Future<void> _speak(String message) async {
     await _ttsService.speak(message);
@@ -96,7 +99,7 @@ class _TaskItemState extends State<TaskItem> {
                           ),
                         ),
                         Label(
-                            width: 110,
+                            width: 118,
                             type: StatusLabelTypeMap[widget.task.status]!,
                             label: StatusTextMap[widget.task.status]!),
                       ],
@@ -246,29 +249,30 @@ class TaskActionsState extends State<TaskActions>
       height: MediaQuery.of(context).size.height * 0.2,
       child: Column(
         children: [
-          ListTile(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: neutral.shade400, width: 1),
-              borderRadius: BorderRadius.circular(16),
+          if (widget.task.status != TodoStatus.completed)
+            ListTile(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: neutral.shade400, width: 1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              onTap: () {
+                todoHomeStore.setTask(widget.id);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return TodoCreateRoute(id: widget.id);
+                    },
+                  ),
+                );
+              },
+              title: const Text("Chỉnh sửa công việc"),
+              leading: SvgIcon(
+                icon: 'edit',
+                size: 24,
+                color: primary.shade500,
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-            onTap: () {
-              todoHomeStore.setTask(widget.id);
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return TodoCreateRoute(id: widget.id);
-                  },
-                ),
-              );
-            },
-            title: const Text("Chỉnh sửa công việc"),
-            leading: SvgIcon(
-              icon: 'edit',
-              size: 24,
-              color: primary.shade500,
-            ),
-          ),
           const SizedBox(height: 8),
           ListTile(
             shape: RoundedRectangleBorder(

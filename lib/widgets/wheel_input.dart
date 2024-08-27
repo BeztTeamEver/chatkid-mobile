@@ -138,6 +138,7 @@ class _WheelInputState extends State<WheelInput> {
                 ),
                 prefixIcon: widget.prefixIcon,
               ),
+              validator: widget.validator,
               readOnly: true,
             );
           },

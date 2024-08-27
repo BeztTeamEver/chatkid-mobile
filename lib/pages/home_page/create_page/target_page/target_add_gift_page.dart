@@ -56,6 +56,8 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
   void onSubmit() async {
     final form = targetFormStore.formKey.currentState;
 
+    Logger().i(form?.value);
+
     if (form?.saveAndValidate() ?? false) {
       setState(() {
         uploadingImage = true;
@@ -74,6 +76,7 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
           await handleUpdate();
           return;
         }
+
         targetFormStore.increaseStep();
         targetFormStore.updateProgress();
         Navigator.of(context).push(createRoute(() => TargetAssignPage()));
@@ -130,7 +133,7 @@ class _TargetAddGiftPageState extends State<TargetAddGiftPage> {
                 InputField(
                   formKey: targetFormStore.formKey,
                   name: 'reward',
-                  initValue: targetFormStore.initForm['reward'],
+                  // initValue: targetFormStore.initForm['reward'],
                   label: "Tên quà",
                   hint: "Nhập tên quà",
                   validator: FormBuilderValidators.compose([

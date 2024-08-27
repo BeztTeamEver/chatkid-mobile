@@ -1,3 +1,4 @@
 class NotificationTypeConstants {
-  static final String TARGET = "TARGET";
+  static const String TARGET = "TARGET";
+  static const String CHAT = "CHAT";
 }

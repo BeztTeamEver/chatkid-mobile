@@ -71,6 +71,9 @@ class _FormPageState extends ConsumerState<FormPage> {
       if (!_formKey.currentState!.fields['name']!.validate()) {
         return;
       }
+      if (!_formKey.currentState!.fields['yearOfBirth']!.validate()) {
+        return;
+      }
       setState(() {
         _currentPage++;
       });
@@ -84,7 +87,6 @@ class _FormPageState extends ConsumerState<FormPage> {
 
     // Submit form
     final isValid = _formKey.currentState!.saveAndValidate();
-
     if (isValid) {
       final familyId =
           LocalStorage.instance.getString(LocalStorageKey.FAMILY_ID);
@@ -146,7 +148,7 @@ class _FormPageState extends ConsumerState<FormPage> {
           padding: const EdgeInsets.fromLTRB(16, 36, 16, 10),
           child: FormBuilder(
             key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
+            autovalidateMode: AutovalidateMode.disabled,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -167,7 +169,7 @@ class _FormPageState extends ConsumerState<FormPage> {
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  height: _currentPage == 0 ? 0 : 240,
+                  height: _currentPage == 0 ? 0 : 260,
                   width: 300,
                   curve: Curves.easeInOut,
                   child: SvgPicture.asset(
@@ -207,7 +209,14 @@ class _FormPageState extends ConsumerState<FormPage> {
                   curve: Curves.easeInOut,
                 );
               },
-              child: const Text("Quay lại"),
+              child: Text(
+                "Quay lại",
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: primary.shade500,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
               style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
                     elevation: const MaterialStatePropertyAll(2),
                     shape: MaterialStatePropertyAll(
@@ -240,7 +249,14 @@ class _FormPageState extends ConsumerState<FormPage> {
                   () {},
                 );
               },
-              child: const Text("Tiếp tục"),
+              child: Text(
+                "Tiếp tục",
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
             ),
           ),
         ],

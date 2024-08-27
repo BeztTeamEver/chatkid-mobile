@@ -175,9 +175,9 @@ class _StartPageState extends ConsumerState<StartPage> {
                                     borderColor: primary.shade100,
                                     hasBackground: true,
                                     icon: icon,
-                                    subLabel:
-                                        members[index].familyRole ?? "No role",
-                                    label: members[index].name ?? "No name",
+                                    subLabel: members[index].familyRole ??
+                                        "Phụ huynh",
+                                    label: members[index].name ?? "Phụ huynh ",
                                     onPressed: () {
                                       setState(() {
                                         _role = members[index].role!;

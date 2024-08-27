@@ -103,12 +103,16 @@ class _HeadCardState extends State<HeadCard> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               child: Row(
                 children: [
-                  Text(
-                    widget.task.taskType.name,
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  Flexible(
+                    child: Text(
+                      widget.task.note.isNotEmpty
+                          ? widget.task.note
+                          : widget.task.taskType.name,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
                   ),
                   ButtonIcon(
                     onPressed: () {
@@ -142,7 +146,6 @@ class _HeadCardState extends State<HeadCard> {
                     width: 20,
                   ),
                   Label(
-                      width: 112,
                       type: StatusLabelTypeMap[widget.task.status]!,
                       label: StatusTextMap[widget.task.status]!),
                 ],

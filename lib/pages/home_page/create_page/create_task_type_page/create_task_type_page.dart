@@ -30,11 +30,27 @@ class CreateTaskTypePage extends StatefulWidget {
 
 class _CreateTaskTypePageState extends State<CreateTaskTypePage> {
   final TextEditingController _nameController = TextEditingController();
-
+  final TodoFormCreateController _todoFormCreateController = Get.find();
   submit() async {
     try {
       if (_nameController.text.isEmpty) {
         ShowToast.error(msg: "Vui lòng nhập tên công việc");
+        return;
+      }
+      bool isExisted = false;
+      _todoFormCreateController.taskCategories.forEach(
+        (element) {
+          element.taskTypes.forEach(
+            (element) {
+              if (element.name == _nameController.text) {
+                isExisted = true;
+              }
+            },
+          );
+        },
+      );
+      if (isExisted) {
+        ShowToast.error(msg: "Tên công việc đã tồn tại");
         return;
       }
       await TodoService().createTaskType(

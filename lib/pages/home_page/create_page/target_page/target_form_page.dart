@@ -57,7 +57,7 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
 
       missions.forEach((element) {
         final amount =
-            targetFormStore.formKey.currentState!.value[element] ?? 0;
+            int.parse(targetFormStore.formKey.currentState!.value[element]);
         formMissions
             .add(MissionModel(amount: amount, taskTypeId: element).toMap());
       });
@@ -106,7 +106,7 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
                 label: 'Lời nhắn',
                 minLines: 4,
                 maxLines: 4,
-                maxLength: 100,
+                maxLength: 50,
                 hint: "Nhập lời nhắn",
                 validation: FormBuilderValidators.compose([
                   FormBuilderValidators.required(
@@ -174,6 +174,11 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (targetFormStore.categories.isEmpty) {
+                    return const Center(
+                      child: Text('Không có dữ liệu'),
                     );
                   }
                   return Obx(

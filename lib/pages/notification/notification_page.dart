@@ -34,17 +34,18 @@ class _NotificationPageState extends State<NotificationPage> {
     super.initState();
     _itemPositionsListener.itemPositions.addListener(() async {
       final positions = _itemPositionsListener.itemPositions.value;
-      if (!notifications.isLoadMore.value) {
-        Logger().i("No more data");
-        return;
-      }
-      if (positions.isEmpty) {
-        return;
-      }
 
       if (positions.last.index == notifications.data.length - 1 &&
           notifications.data.length >= 10 &&
           notifications.isLoadMore.value) {
+        if (!notifications.isLoadMore.value) {
+          Logger().i("No more data");
+          return;
+        }
+        if (positions.isEmpty) {
+          return;
+        }
+
         notifications.fetchMore();
       }
     });

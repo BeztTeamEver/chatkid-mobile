@@ -180,6 +180,21 @@ class AuthService {
     return accessToken;
   }
 
+  static Future<bool> logoutMember(String deviceToken) async {
+    final response = await BaseHttp.instance.post(
+        endpoint: Endpoint.logoutEndPoint,
+        body: jsonEncode({
+          "deviceToken": deviceToken,
+        }));
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      return true;
+    }
+    switch (response.statusCode) {
+      default:
+        throw Exception('Đã xảy ra lỗi, không thể đăng xuất');
+    }
+  }
+
   static bool isTokenExpired() {
     final token = _localStorage.getToken()?.accessToken;
     if (token == null) {

@@ -60,7 +60,7 @@ class _TargetTemplatePageState extends ConsumerState<TargetTemplatePage> {
             ),
             SizedBox(height: 8),
             Text(
-              'Mẫu mục tiêu đã tạo',
+              'Các mục tiêu đã tạo',
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -83,7 +83,11 @@ class _TargetTemplatePageState extends ConsumerState<TargetTemplatePage> {
 
                   final List<TargetModel> targetModels =
                       snapshot.data as List<TargetModel>;
-
+                  if (targetModels.isEmpty) {
+                    return Center(
+                      child: Text('Không có mục tiêu nào'),
+                    );
+                  }
                   return ListView.builder(
                     itemCount: targetModels.length,
                     itemBuilder: (context, index) {

@@ -6,11 +6,23 @@ import 'package:pinput/pinput.dart';
 class OtpTextField extends StatefulWidget {
   final int length;
   final Function? onCompleted;
+  final bool autoComplete;
+  final bool isObscured;
+  final double width;
+  final double fontSize;
+  final double height;
   final Function? validation;
+  final bool isFocus;
   const OtpTextField({
     super.key,
     this.length = 6,
     this.onCompleted,
+    this.width = 70,
+    this.fontSize = 70,
+    this.height = 70,
+    this.isObscured = false,
+    this.isFocus = true,
+    this.autoComplete = false,
     this.validation,
   });
 
@@ -31,17 +43,17 @@ class _OtpTextFieldState extends State<OtpTextField> {
   @override
   void initState() {
     super.initState();
-    _focusNode.requestFocus();
+    if (widget.isFocus) _focusNode.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
     // theme for the pin
     PinTheme defaultPinTheme = PinTheme(
-      width: 70,
-      height: 70,
+      width: widget.width,
+      height: widget.height,
       textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            fontSize: 70,
+            fontSize: widget.fontSize,
           ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background.withOpacity(0.1),
@@ -81,6 +93,19 @@ class _OtpTextFieldState extends State<OtpTextField> {
       animationDuration: const Duration(milliseconds: 100),
       pinAnimationType: PinAnimationType.scale,
       cursor: cursor,
+      onChanged: (value) {
+        if (!widget.autoComplete) {
+          return;
+        }
+        if (value.length == widget.length) {
+          _focusNode.unfocus();
+          widget.onCompleted!(value);
+        }
+      },
+      errorTextStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+            color: red.shade500,
+          ),
+      obscureText: widget.isObscured,
       defaultPinTheme: defaultPinTheme,
       animationCurve: Curves.easeIn,
       focusedPinTheme: selectedPinTheme,

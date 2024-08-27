@@ -158,7 +158,7 @@ class TodoHomeStore extends GetxController {
     } catch (e, stack) {
       Logger().e(e);
       Logger().e(stack);
-      ShowToast.error(msg: e.toString());
+      ShowToast.error(msg: e.toString().split(":")[1]);
     } finally {
       isTaskLoading.value = false;
       isTargetLoading.value = false;
@@ -431,6 +431,20 @@ class TodoFormCreateController extends GetxController
       initForm['duration.minute2'] = '${minute % 10}';
       initForm['frequency'] = taskDetail.frequency;
 
+      formKey.currentState!.patchValue({
+        "id": taskDetail.id,
+        "startTime": taskDetail.startTime,
+        "endTime": taskDetail.endTime,
+        "frequency": taskDetail.frequency,
+        "numberOfCoin": "${taskDetail.numberOfCoin}",
+        "duration.hour1": '${(hour / 10).floor()}',
+        "duration.hour2": '${hour % 10}',
+        "duration.minute1": '${(minute / 10).floor()}',
+        "duration.minute2": '${minute % 10}',
+        "note": taskDetail.note,
+      });
+      formKey.currentState!.save();
+      Logger().i(formKey.currentState!.value);
       // if (todoHomeStore.currentTask.value != null) {
       //   final task = todoHomeStore.currentTask.value!;
       //   formKey.currentState. = {

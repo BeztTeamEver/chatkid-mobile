@@ -4,6 +4,8 @@ import 'package:chatkid_mobile/pages/start_page/form_page.dart';
 import 'package:chatkid_mobile/providers/user_provider.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/widgets/secondary_button.dart';
+import 'package:chatkid_mobile/widgets/secondary_select_button.dart';
 import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,8 +46,10 @@ class _RolePageState extends ConsumerState<RolePage> {
               const SizedBox(
                 height: 40,
               ),
-              SelectButton(
+              SecondarySelectButton(
                 label: "Phụ huynh",
+                hasBackground: true,
+                backgroundImage: "assets/selectButton/parent.svg",
                 onPressed: () {
                   setState(() {
                     _role = RoleConstant.Parent;
@@ -56,9 +60,10 @@ class _RolePageState extends ConsumerState<RolePage> {
               const SizedBox(
                 height: 10,
               ),
-              SelectButton(
+              SecondarySelectButton(
                 label: "Trẻ em",
                 isSelected: _role == RoleConstant.Child,
+                backgroundImage: "assets/selectButton/children.svg",
                 onPressed: () {
                   setState(() {
                     _role = RoleConstant.Child;
@@ -77,7 +82,6 @@ class _RolePageState extends ConsumerState<RolePage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text("Quay lại"),
                       style:
                           Theme.of(context).elevatedButtonTheme.style!.copyWith(
                                 elevation: const MaterialStatePropertyAll(2),
@@ -95,6 +99,14 @@ class _RolePageState extends ConsumerState<RolePage> {
                                 foregroundColor:
                                     MaterialStatePropertyAll(primary.shade400),
                               ),
+                      child: Text(
+                        "Quay lại",
+                        style: TextStyle(
+                          color: primary.shade500,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -133,7 +145,7 @@ class _RolePageState extends ConsumerState<RolePage> {
                         style: TextStyle(
                           color:
                               _role.isEmpty ? neutral.shade600 : Colors.white,
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

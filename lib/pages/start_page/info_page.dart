@@ -16,6 +16,7 @@ import 'package:chatkid_mobile/widgets/wheel_input.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:logger/logger.dart';
 import 'package:pinput/pinput.dart';
@@ -223,8 +224,9 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                       name: "name",
                       controller: widget.nameController,
                       validator: ValidationBuilder(
-                        requiredMessage: 'Vui lòng nhập tên',
-                      ).build(),
+                              requiredMessage: 'Vui lòng nhập tên')
+                          .maxLength(50, "Tên chỉ được tối đa 50 kí tự")
+                          .build(),
                     ),
                     const SizedBox(
                       height: 20,
@@ -268,6 +270,18 @@ class _InfoPageState extends ConsumerState<InfoPage> {
                           ? InfoForm.YEAR_BIRTHDAY_OPTIONS[0].value
                           : widget.yearBirthDayController.text,
                       listHeight: 400,
+                      validator: FormBuilderValidators.compose([
+                        (value) {
+                          if (widget.isParent) {
+                            return DateTime.now().year -
+                                        int.parse(value ?? "0") <
+                                    18
+                                ? "Phụ huynh phải từ 18 tuổi trở lên"
+                                : null;
+                          }
+                          return null;
+                        }
+                      ]),
                       label: "Năm sinh",
                       description: "Chọn năm sinh của bạn",
                       hintText: "Chọn năm sinh của bạn",

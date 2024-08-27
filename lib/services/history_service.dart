@@ -47,4 +47,60 @@ class HistoryService {
         throw Exception("Unknown error");
     }
   }
+
+  static Future<PagingResponseModel<HistoryBotChatModel>>
+      getBotQuestionHistories(HistoryRequestModel paging) async {
+    final response = await BaseHttp.instance
+        .get(endpoint: Endpoint.botQuestionHistories, param: {
+      "memberId": paging.memberId,
+      ...paging.paging.toMap(),
+    });
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      final data = jsonDecode(response.body);
+      final items = (data['items'] as List<dynamic>)
+          .map((item) => HistoryBotChatModel.fromJson(item))
+          .toList();
+
+      return PagingResponseModel<HistoryBotChatModel>(
+        items: items,
+        // limit: data['limit'],
+        pageSize: data['pageSize'],
+        totalItem: data['totalItem'],
+        pageNumber: data['pageNumber'],
+      );
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy lịch sử, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy lịch sử, vui lòng thử lại!');
+    }
+  }
+
+  static Future<bool> report(HistoryReportModel historyReport) async {
+    final response = await BaseHttp.instance.post(
+      endpoint: Endpoint.ReportEndPoint,
+      body: historyReport.toJson(),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      return true;
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      case 404:
+        throw Exception('Không tìm thấy lịch sử, vui lòng thử lại!');
+      default:
+        throw Exception('Không thể lấy lịch sử, vui lòng thử lại!');
+    }
+  }
 }

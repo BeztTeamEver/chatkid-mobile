@@ -1,15 +1,11 @@
 import 'package:chatkid_mobile/models/history_model.dart';
-import 'package:chatkid_mobile/models/paging_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
-import 'package:chatkid_mobile/providers/history_provider.dart';
+import 'package:chatkid_mobile/pages/children_tracking/history/bot_card.dart';
+import 'package:chatkid_mobile/pages/controller/bot_chat_page/bot_history_store.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
-import 'package:chatkid_mobile/utils/date_time.dart';
-import 'package:chatkid_mobile/widgets/avatar_png.dart';
-import 'package:chatkid_mobile/widgets/custom_card.dart';
-import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logger/logger.dart';
+import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class HistoryPage extends ConsumerStatefulWidget {
@@ -21,6 +17,8 @@ class HistoryPage extends ConsumerStatefulWidget {
 }
 
 class _HistoryPageState extends ConsumerState<HistoryPage> {
+  final BotHistoryStore botHistoryStore = Get.put(BotHistoryStore());
+
   final ItemScrollController _scrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
@@ -29,62 +27,21 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   final ScrollOffsetListener _scrollOffsetListener =
       ScrollOffsetListener.create();
 
-  int _currentPage = 0;
-  List<HistoryModel> _histories = [];
-  bool _isLoading = false;
-  bool _isLoadMore = true;
-
-  void getHistories() async {
-    if (!_isLoadMore) {
-      Logger().i("No more data");
-      return;
-    }
-    setState(() {
-      _isLoading = true;
-    });
-
-    final request = HistoryRequestModal(
-      memberId: widget.user.id!,
-      paging: PagingModel(pageSize: 10, pageNumber: _currentPage),
-    );
-
-    await ref.read(getHistoryProvider(request).future).then((value) {
-      if (value.items.isEmpty) {
-        setState(() {
-          _isLoadMore = false;
-        });
-        return;
-      }
-      setState(() {
-        _currentPage++;
-        _histories.addAll(value.items);
-      });
-    }).whenComplete(() {
-      setState(() {
-        _isLoading = false;
-      });
-    });
-  }
+  void getHistories() async {}
 
   void _init() async {
-    getHistories();
+    botHistoryStore.getHistory(widget.user.id!);
 
-    _itemPositionsListener.itemPositions.addListener(
-      () {
-        final positions = _itemPositionsListener.itemPositions.value;
-        if (!_isLoadMore) {
-          Logger().i("No more data");
-          return;
-        }
-        if (positions.isEmpty) {
-          return;
-        }
-        if (positions.last.index == _histories.length - 1 &&
-            _histories.length >= 10) {
-          getHistories();
-        }
-      },
-    );
+    _itemPositionsListener.itemPositions.addListener(() {
+      final positions = _itemPositionsListener.itemPositions.value;
+      final last = positions.last.index;
+      if (last == botHistoryStore.history.length - 1) {
+        if (!botHistoryStore.isLoadMore.value ||
+            botHistoryStore.isLoading.value) return;
+
+        botHistoryStore.loadMore();
+      }
+    });
   }
 
   @override
@@ -94,92 +51,25 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     _init();
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    Get.delete<BotHistoryStore>();
+    super.dispose();
+  }
+
   Builder _listHistoryBuilder(
-      BuildContext context, int index, List<HistoryModel> histories) {
+      BuildContext context, int index, List<HistoryBotChatModel> histories) {
     final history = histories[index];
     return Builder(
       builder: (context) {
         return Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: CustomCard(
-            height: 120,
-            children: [
-              SizedBox(
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: AvatarPng(
-                        imageUrl: widget.user.avatarUrl!,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${widget.user.name} ${history.title!}',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                  ),
-                        ),
-                        Text.rich(
-                          textAlign: TextAlign.center,
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: DateTimeUtils.getFormatedDate(
-                                    DateTime.parse(history.createdAt!),
-                                    DateTimeUtils.DATE_TIME_ACTIVITY_FORMAT),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(
-                                      color: neutral.shade400,
-                                    ),
-                              ),
-                              history.note != null
-                                  ? const WidgetSpan(
-                                      alignment: PlaceholderAlignment.middle,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: SvgIcon(
-                                          size: 6,
-                                          icon: 'dot',
-                                        ),
-                                      ),
-                                    )
-                                  : const TextSpan(),
-                              history.note != null
-                                  ? TextSpan(
-                                      text: '${history.note}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .copyWith(
-                                            color: neutral.shade400,
-                                          ),
-                                    )
-                                  : const TextSpan(),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: HistoryCard(
+              user: widget.user,
+              history: history,
+            ));
       },
     );
   }
@@ -188,67 +78,72 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(primary.shade100),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+        child: Obx(
+          () => Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(primary.shade100),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
                       ),
+                      icon: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: primary.shade400,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                    icon: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      color: primary.shade400,
+                    const Text(
+                      'Lịch sử hỏi đáp chatbot',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  const Text(
-                    'Lịch sử hoạt động',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                    const SizedBox(
+                      width: 40,
                     ),
-                  ),
-                  const SizedBox(
-                    width: 40,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 6,
-            ),
-            _histories.length != 0
-                ? Expanded(
-                    child: ScrollablePositionedList.builder(
-                      itemBuilder: (context, index) =>
-                          _listHistoryBuilder(context, index, _histories),
-                      itemCount: _histories.length,
-                      padding: const EdgeInsets.only(bottom: 40),
-                      scrollOffsetController: _scrollOffsetController,
-                      scrollOffsetListener: _scrollOffsetListener,
-                      itemScrollController: _scrollController,
-                      itemPositionsListener: _itemPositionsListener,
-                    ),
-                  )
-                : Container(),
-            _isLoading
-                ? const SizedBox(
-                    width: 28,
-                    height: 28,
-                    child: CircularProgressIndicator(),
-                  )
-                : Container(),
-          ],
+              const SizedBox(
+                height: 6,
+              ),
+              botHistoryStore.history.isNotEmpty
+                  ? Expanded(
+                      child: ScrollablePositionedList.builder(
+                        itemBuilder: (context, index) => _listHistoryBuilder(
+                            context, index, botHistoryStore.history),
+                        itemCount: botHistoryStore.history.length,
+                        padding: const EdgeInsets.only(bottom: 40),
+                        scrollOffsetController: _scrollOffsetController,
+                        scrollOffsetListener: _scrollOffsetListener,
+                        itemScrollController: _scrollController,
+                        itemPositionsListener: _itemPositionsListener,
+                      ),
+                    )
+                  : Container(),
+              botHistoryStore.isLoading.value
+                  ? const SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: CircularProgressIndicator(),
+                    )
+                  : Container(),
+            ],
+          ),
         ),
       ),
     );

@@ -8,3 +8,13 @@ class TodoStatus {
   static const String unavailable = 'UNAVAILABLE';
   static const String canceled = 'CANCELLED';
 }
+
+class TargetStatus {
+  static const String NA = 'NA';
+  static const String COMPLETED = 'COMPLETED';
+  static const String EXPIRED = 'EXPIRED';
+  static const String IN_PROGRESS = 'IN_PROGRESS';
+  static const String PENDING = 'PENDING';
+  static const String CANCELLED = 'CANCELLED';
+  static const String AWARDED = 'AWARDED';
+}

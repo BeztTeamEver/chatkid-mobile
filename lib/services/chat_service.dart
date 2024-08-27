@@ -42,6 +42,42 @@ class ChatService {
     }
   }
 
+  Future<PagingResponseModel<ChatModel>> getPagingChannelMessages(
+      {required MessageChannelRequest request}) async {
+    final response = await BaseHttp.instance.get(
+      endpoint: "${Endpoint.channelMessagesEndPoint}/${request.channelId}",
+      param: request.toMap(),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode <= 210) {
+      try {
+        final data = jsonDecode(response.body);
+        final listChat = data['items'].map<ChatModel>((item) {
+          return ChatModel.fromJson(item);
+        }).toList();
+
+        return PagingResponseModel(
+          items: listChat,
+          totalItem: data['totalItem'],
+          pageSize: data['pageSize'],
+          pageNumber: data['pageNumber'],
+        );
+      } catch (e) {
+        Logger().e(e);
+        throw Exception('Lỗi lấy tin nhắn, vui lòng thử lại sau!');
+      }
+    }
+    switch (response.statusCode) {
+      case 401:
+        throw Exception('Lỗi không thể xác thực người dùng, vui lòng thử lại!');
+      case 403:
+        throw Exception(
+            'Bạn không có quyền truy cập vào ứng dụng, vui lòng liên hệ với quản trị viên!');
+      default:
+        throw Exception('Lỗi lấy tin nhắn, vui lòng thử lại sau!');
+    }
+  }
+
   Future<List<ChatModel>> getChannelMessages(
       {required MessageChannelRequest request}) async {
     final response = await BaseHttp.instance.get(

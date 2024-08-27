@@ -16,6 +16,7 @@ class CustomCard extends StatefulWidget {
   final double? width;
   final EdgeInsets? padding;
   final String? backgroundImage;
+  final Color? backgroundColor;
   final Function? onLongPressed;
   final String? heroTag;
   final BoxConstraints? constraints;
@@ -28,6 +29,7 @@ class CustomCard extends StatefulWidget {
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.center,
     this.backgroundImage,
+    this.backgroundColor = Colors.white,
     required this.children,
     this.width,
     this.padding,
@@ -48,6 +50,7 @@ class _CustomCardState extends State<CustomCard> {
     final isFile = File(widget.backgroundImage ?? "").existsSync();
 
     return Card(
+      color: widget.backgroundColor,
       child: InkWell(
         onLongPress: widget.onLongPressed as void Function()?,
         splashColor: widget.onTapColor ?? primary.shade100,

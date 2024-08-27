@@ -1,7 +1,13 @@
 import 'dart:convert';
 
+import 'package:chatkid_mobile/constants/local_storage.dart';
 import 'package:chatkid_mobile/constants/notification.dart';
 import 'package:chatkid_mobile/firebase_options.dart';
+import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
+import 'package:chatkid_mobile/services/family_service.dart';
+import 'package:chatkid_mobile/services/login_service.dart';
+import 'package:chatkid_mobile/utils/local_storage.dart';
+import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/services/count_noti_service.dart';
 import 'package:chatkid_mobile/services/notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,12 +30,17 @@ import 'package:logger/logger.dart';
 class FirebaseService {
   String? fcmToken = "";
   String? appId = "";
+  static BuildContext? _context;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static FirebaseService? _instance;
 
   FirebaseService._interal() {
     FirebaseInAppMessaging.instance.setAutomaticDataCollectionEnabled(true);
+  }
+
+  setContent(BuildContext context) {
+    _context = context;
   }
 
   static FirebaseService get instance {
@@ -39,7 +50,10 @@ class FirebaseService {
 
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
+      RemoteMessage? message) async {
+    if (message == null) {
+      return;
+    }
     Logger().i("Handling a background message: ${message.messageId}");
   }
 
@@ -111,6 +125,25 @@ class FirebaseService {
       Logger()
           .i('Message also contained a notification: ${message.notification}');
     }
+
+    switch (message.data['type']) {
+      case NotificationTypeConstants.CHAT:
+        handleChatNotification(message);
+        break;
+      case NotificationTypeConstants.TARGET:
+        Logger().i("Notification message");
+        break;
+      default:
+        Logger().i("Default message");
+        break;
+    }
+  }
+
+  Future<void> handleChatNotification(RemoteMessage message) async {
+    final data = message.data;
+    final channel = await FamilyService().getFamilyChannel();
+    Navigator.of(_context!)
+        .push(createRoute(() => GroupChatPage(channelId: channel.id)));
   }
 
   void handleGetNotification(GlobalKey<NavigatorState> navigatorKey) {
@@ -138,6 +171,9 @@ class FirebaseService {
       NotificationController notifications = Get.find();
       notifications.fetchData(0);
 
+      handleMessage(message);
+      // Navigator.of(_context!).push(createRoute(
+      //     () => GroupChatPage(channelId: message.data['channelId'])));
       CountNotiController countNotiController = Get.find();
       //TYPE: 'TARGET' | 'WALLET' | 'TASK' | 'ASSET' | 'CHAT' | 'STORE' | 'SYSTEM'
       if (message.data['type'] == 'CHAT') {
@@ -153,6 +189,18 @@ class FirebaseService {
         return;
       }
 
+      // showDialog(
+      //     context: navigatorKey.currentContext!,
+      //     builder: (context) {
+      //       return AlertDialog(
+      //         title: Text('A new FCM message arrived!'),
+      //         content: Text('This is a FCM message background'),
+      //       );
+      //     });
+      handleMessage(message);
+      // Navigator.of(_context!).push(createRoute(
+      //     () => GroupChatPage(channelId: message.data['channelId'])));
+      // Logger().i("Route name: ${ModalRoute.of(_context!)?.settings.name}");
       NotificationController notifications = Get.find();
       notifications.fetchData(0);
     });
@@ -177,6 +225,7 @@ class FirebaseService {
   }
 
   Future<void> signOut() async {
+    await AuthService.logoutMember(fcmToken ?? "");
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
   }
