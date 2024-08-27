@@ -169,9 +169,9 @@ class FamilyServiceNotifier extends StateNotifier<FamilyModel> {
 
   FamilyServiceNotifier()
       : super(FamilyModel(
-          familyId: "",
-          familyName: "",
-          familyEmail: "",
+          id: "",
+          name: "",
+          email: "",
           // status: 0,
           // createdAt: DateTime.now(),
           // updatedAt: DateTime.now(),
@@ -184,9 +184,9 @@ class FamilyServiceNotifier extends StateNotifier<FamilyModel> {
     try {
       final data = await _familyService.getFamilyAccounts(familyRequestModel);
       state = FamilyModel(
-        familyId: familyRequestModel?.id ?? "",
-        familyName: familyRequestModel?.name ?? "",
-        familyEmail: familyRequestModel?.email ?? "",
+        id: familyRequestModel?.id ?? "",
+        name: familyRequestModel?.name ?? "",
+        email: familyRequestModel?.email ?? "",
         // status: 0,
         // createdAt: DateTime.now(),
         // updatedAt: DateTime.now(),

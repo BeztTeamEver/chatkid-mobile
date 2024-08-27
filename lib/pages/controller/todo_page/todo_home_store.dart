@@ -26,7 +26,7 @@ class TodoHomeStore extends GetxController {
   Rx<double> itemWidth = 0.0.obs;
   Rx<int> listContainerWidth = 0.obs;
   RxList<UserModel> members = <UserModel>[].obs;
-  Rx<int> currentUserIndex = 0.obs;
+  Rx<int> currentUserIndex = (-1).obs;
   Rx<bool> isTaskLoading = false.obs;
   Rx<bool> isTargetLoading = false.obs;
   Rx<String> currentTask = "".obs;

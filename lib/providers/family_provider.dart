@@ -13,7 +13,7 @@ final createFamilyProvider =
   try {
     final result =
         await ref.watch(familyServiceProvider).createFamily(name: name);
-    LocalStorage.instance.setString(LocalStorageKey.FAMILY_ID, result.familyId);
+    LocalStorage.instance.setString(LocalStorageKey.FAMILY_ID, result.id);
     return result;
   } catch (e, s) {
     Logger().e(e, stackTrace: s);

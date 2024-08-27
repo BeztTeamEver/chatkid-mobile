@@ -19,7 +19,7 @@ class Endpoint {
   static const googleEndPoint = "/api/auth/login";
   static const regisEndPoint = "/api/auth/register";
   static const verifyOtpEndPoint = "/api/auth/verify-OTP";
-  static const resendOtp = "/api/auth/otp";
+  static const resendOtp = "/api/auth/resend-OTP";
   static const infoEndpoint = "/api/auth/info";
   static const logoutEndPoint = "/api/member/logout";
 
@@ -100,7 +100,8 @@ class Endpoint {
   static const targetEndpoint = "/api/targets";
   static const myTargetEndpoint = "/api/targets/me";
   static const memberTargetEndpoint = "/api/targets/member";
-  static const getHistoryTargetEndpoint = "/api/targets/reward?memberId={memberId}";
+  static const getHistoryTargetEndpoint =
+      "/api/targets/reward?memberId={memberId}";
   static const confirmBoughtTargetEndPoint = "/api/targets/reward/{id}";
 
   //statistic

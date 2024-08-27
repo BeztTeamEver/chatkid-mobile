@@ -227,38 +227,38 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                       ],
                                     ),
                                   ),
-                                  Visibility(
-                                    visible: data.members.length < 5,
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        Navigator.of(context).push(
-                                          createRoute(
-                                            () => RolePage(),
-                                          ),
-                                        );
-                                      },
-                                      child: const Row(
-                                        children: [
-                                          CircleAvatar(
-                                            backgroundColor:
-                                                Color.fromRGBO(255, 155, 6, 1),
-                                            child: Icon(
-                                              Icons.add_circle_outline_rounded,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          SizedBox(width: 12),
-                                          Text(
-                                            'Tạo tài khoản',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 17,
-                                                letterSpacing: 0.5),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+                                  // Visibility(
+                                  //   visible: data.members.length < 5,
+                                  //   child: GestureDetector(
+                                  //     onTap: () async {
+                                  //       Navigator.of(context).push(
+                                  //         createRoute(
+                                  //           () => RolePage(),
+                                  //         ),
+                                  //       );
+                                  //     },
+                                  //     child: const Row(
+                                  //       children: [
+                                  //         CircleAvatar(
+                                  //           backgroundColor:
+                                  //               Color.fromRGBO(255, 155, 6, 1),
+                                  //           child: Icon(
+                                  //             Icons.add_circle_outline_rounded,
+                                  //             color: Colors.white,
+                                  //           ),
+                                  //         ),
+                                  //         SizedBox(width: 12),
+                                  //         Text(
+                                  //           'Tạo tài khoản',
+                                  //           style: TextStyle(
+                                  //               fontWeight: FontWeight.w600,
+                                  //               fontSize: 17,
+                                  //               letterSpacing: 0.5),
+                                  //         ),
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ],
@@ -350,13 +350,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           }
                           await FirebaseService.instance
                               .signOut()
-                              .then((value) {
-                            AuthService.signOut();
-                            Navigator.of(context).pushReplacement(
-                              createRoute(
-                                () => const LoginPage(),
-                              ),
-                            );
+                              .whenComplete(() async {
+                            await AuthService.signOut().whenComplete(() {
+                              Navigator.of(context).pushReplacement(
+                                createRoute(
+                                  () => const LoginPage(),
+                                ),
+                              );
+                            });
                           });
                         },
                         child: const Row(
