@@ -110,6 +110,10 @@ class MessageChannelRequest extends PagingModel {
     data['channelId'] = channelId;
     return data;
   }
+
+  String toJson() {
+    return jsonEncode(toMap());
+  }
 }
 
 class MessageRequest {

@@ -9,6 +9,7 @@ import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/input_field.dart';
+import 'package:chatkid_mobile/widgets/otp_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -53,9 +54,13 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
             .then((value) async {
           await LocalStorage.instance.preferences.setInt('step', 2);
           callback();
-        }).whenComplete(() => setState(() {
-                  _isLoading = false;
-                }));
+        }).whenComplete(() {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        });
       }
     } catch (e) {
       Logger().e(e);
@@ -79,7 +84,7 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
           ),
           child: FormBuilder(
             key: _formkey,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
+            autovalidateMode: AutovalidateMode.disabled,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,35 +113,77 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
                 const SizedBox(
                   height: 20,
                 ),
-                InputField(
-                  label: "Mật khẩu",
-                  hint: "Mật khẩu của bạn",
-                  name: "password",
-                  validator: ValidationBuilder(
-                          requiredMessage: "Vui lòng nhập mật khẩu")
-                      .required()
-                      // .minLength(8, "Mật khẩu phải có ít nhất 8 ký tự")
-                      // .regExp(Regex.password, "Mật khẩu bao gồm ký tự và số")
-                      .build(),
-                  type: TextInputType.visiblePassword,
-                  controller: passwordController,
-                  isObscure: _obscured,
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _obscured = !_obscured;
-                        });
-                      },
-                      child: Icon(
-                        _obscured
-                            ? Icons.visibility_rounded
-                            : Icons.visibility_off_rounded,
-                        size: 24,
+                // InputField(
+                //   label: "Mật khẩu",
+                //   hint: "Mật khẩu của bạn",
+                //   name: "password",
+                //   validator: ValidationBuilder(
+                //           requiredMessage: "Vui lòng nhập mật khẩu")
+                //       .required()
+                //       // .minLength(8, "Mật khẩu phải có ít nhất 8 ký tự")
+                //       // .regExp(Regex.password, "Mật khẩu bao gồm ký tự và số")
+                //       .build(),
+                //   type: TextInputType.visiblePassword,
+                //   controller: passwordController,
+                //   isObscure: _obscured,
+                //   suffixIcon: Padding(
+                //     padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+                //     child: GestureDetector(
+                //       onTap: () {
+                //         setState(() {
+                //           _obscured = !_obscured;
+                //         });
+                //       },
+                //       child: Icon(
+                //         _obscured
+                //             ? Icons.visibility_rounded
+                //             : Icons.visibility_off_rounded,
+                //         size: 24,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                Text(
+                  "Nhập tật khẩu",
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: neutral.shade400,
                       ),
-                    ),
-                  ),
+                ),
+                FormBuilderField(
+                  validator: ValidationBuilder()
+                      .required()
+                      .minLength(4, "Vui lòng nhập đủ 4 ký tự")
+                      .build(),
+                  builder: (field) {
+                    return OtpTextField(
+                      width: 40,
+                      height: 40,
+                      fontSize: 36,
+                      length: 4,
+                      onCompleted: (value) {
+                        field.didChange(value);
+                        _submit(
+                          () => Navigator.pushAndRemoveUntil(
+                            context,
+                            createRoute(
+                              () => MainPage(),
+                            ),
+                            (route) => false,
+                          ),
+                        );
+                      },
+                      autoComplete: true,
+                      isObscured: true,
+                      validation: ValidationBuilder()
+                          .required()
+                          .minLength(4, "Vui lòng nhập đủ 4 ký tự")
+                          .build(),
+                    );
+                  },
+                  name: "password",
+                ),
+                const SizedBox(
+                  height: 70,
                 ),
                 const SizedBox(
                   height: 70,

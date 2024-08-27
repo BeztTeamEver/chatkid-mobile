@@ -1,6 +1,7 @@
 import 'package:chatkid_mobile/pages/splash_pages.dart';
 import 'package:chatkid_mobile/services/count_noti_service.dart';
 import 'package:chatkid_mobile/services/firebase_service.dart';
+import 'package:chatkid_mobile/services/google_speech.dart';
 import 'package:chatkid_mobile/services/notification_service.dart';
 import 'package:chatkid_mobile/services/socket_service.dart';
 import 'package:chatkid_mobile/services/tts_service.dart';
@@ -36,13 +37,13 @@ void main() async {
   final ttsService = TtsService().instance;
   await firebaseService.init();
   await firebaseService.getFCMToken();
+  final googleSpeech = GoogleSpeech.instance;
   await CameraService().init();
 
   // tts service setup
   await TtsService().initState();
   // share preferrence setup for one time page
   await LocalStorage.getInstance();
-  firebaseService.handleGetNotification(navigatorKey);
   SocketService();
   CacheManager.logLevel = CacheManagerLogLevel.verbose;
   runApp(
@@ -52,10 +53,24 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({
     super.key,
   });
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FirebaseService.instance.setContent(navigatorKey.currentContext!);
+      FirebaseService.instance.handleGetNotification(navigatorKey);
+    });
+  }
 
   // This widget is the root of your application.
   @override
@@ -177,9 +192,10 @@ class MyApp extends StatelessWidget {
       builder: (context, widget) {
         ErrorWidget.builder = (errorDetails) {
           errorDetails.printError();
+
           return Center(
             child: Text(
-              'Something went wrong',
+              errorDetails.exceptionAsString(),
               style: textTheme.bodyMedium!.copyWith(
                 color: red.shade800,
               ),

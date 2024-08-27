@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dart_date/dart_date.dart';
 import 'package:path/path.dart';
 
 class TargetModel {
@@ -41,9 +42,9 @@ class TargetModel {
     }).toList();
     return TargetModel(
       id: json['id'],
-      startTime: DateTime.parse(json['startTime']),
-      endTime: DateTime.parse(json['endTime']),
-      message: json['message'],
+      startTime: DateTime.parse(json['startTime']).toLocalTime,
+      endTime: DateTime.parse(json['endTime']).toLocalTime,
+      message: json['message'] ?? "Mục tiêu",
       memberId: json['memberId'],
       status: json['status'],
       reward: json['reward'],
@@ -187,9 +188,8 @@ class TargetRequestModal {
   }
 
   Map<String, dynamic> toMap() {
-    final startTime =
-        '${this.startTime.toIso8601String()}Z'.replaceAll(r'ZZ', 'Z');
-    final endTime = '${this.endTime.toIso8601String()}Z'.replaceAll(r'ZZ', "Z");
+    final startTime = '${this.startTime.toLocal().toIso8601String()}';
+    final endTime = '${this.endTime.toLocal().toIso8601String()}';
 
     return {
       'startTime': startTime,

@@ -28,6 +28,7 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
   void initState() {
     // TODO: implement initState
     super.initState();
+
     todoFormCreateController.stepController.value = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this, value: 0.25)
       ..addListener(() {
@@ -36,9 +37,9 @@ class _TodoCreateRouteState extends State<TodoCreateRoute>
     fetchDetail();
   }
 
-  fetchDetail() {
+  fetchDetail() async {
     if (widget.id != null) {
-      todoFormCreateController.initTask(widget.id!);
+      await todoFormCreateController.initTask(widget.id!);
     }
   }
 

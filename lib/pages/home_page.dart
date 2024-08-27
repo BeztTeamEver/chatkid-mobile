@@ -5,7 +5,7 @@ import 'package:avatar_stack/avatar_stack.dart';
 import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/enum/bot_type.dart';
 import 'package:chatkid_mobile/pages/chats/bot_chat_page.dart';
-import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
+import 'package:chatkid_mobile/pages/chats/group_chat_page_old.dart';
 import 'package:chatkid_mobile/providers/family_provider.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/themes/color_scheme.dart';
@@ -125,7 +125,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    createRoute(() => const BotChatPage(botType: BotType.PUMKIN)),
+                    createRoute(
+                        () => const BotChatPage(botType: BotType.PUMKIN)),
                   );
                 },
                 children: [

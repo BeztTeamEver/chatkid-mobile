@@ -18,7 +18,7 @@ class GptService {
     }
     switch (response.statusCode) {
       case 400:
-        throw Exception('Bad request');
+        throw Exception('Yêu cầu không hợp lệ');
       case 401:
         throw Exception('Lỗi xác thực');
       case 403:

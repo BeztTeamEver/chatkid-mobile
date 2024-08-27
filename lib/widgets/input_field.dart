@@ -1,8 +1,8 @@
 import 'package:chatkid_mobile/themes/color_scheme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:logger/logger.dart';
 
 class InputField extends StatefulWidget {
   final String label;
@@ -17,7 +17,6 @@ class InputField extends StatefulWidget {
   final bool? isObscure;
   final double? height;
   final GlobalKey<FormBuilderState>? formKey;
-  final String? initValue;
   final double? fontSize;
   final EdgeInsetsGeometry? contentPadding;
   final Function()? onChanged;
@@ -33,7 +32,6 @@ class InputField extends StatefulWidget {
     this.type = TextInputType.text,
     this.onChanged,
     this.hint = "",
-    this.initValue,
     this.formKey,
     required this.name,
     this.validator,
@@ -79,54 +77,70 @@ class _InputFieldState extends State<InputField> {
         widget.label.isNotEmpty ? const SizedBox(height: 10) : Container(),
         SizedBox(
           height: widget.height,
-          child: FormBuilderTextField(
-            name: widget.name,
-            controller: widget.controller,
-            keyboardType: widget.type,
-            key: widget.key,
-            autofocus: widget.autoFocus,
-            onChanged: (value) {
-              if (widget.formKey != null) {
-                _resetValidate();
-              }
-              widget.onChange?.call(value);
-            },
-            validator: widget.validator,
-            inputFormatters: widget.inputFormatters,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            obscureText: widget.type == TextInputType.visiblePassword &&
-                    widget.isObscure!
-                ? true
-                : false,
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: neutral.shade500,
-                  fontSize: widget.fontSize,
-                ),
-            onTapOutside: (event) {
-              FocusScope.of(context).unfocus();
-            },
-            onTap: widget.onTap,
-            // onEditingComplete: () {
-            //   Logger().i("Editing complete");
-            //   if (widget.onSubmit != null) {
-            //     widget.onSubmit!();
-            //   }
-            // },
-            decoration: InputDecoration(
-              hintText: widget.hint,
-              errorMaxLines: 2,
-              errorText: widget.errorText,
-              suffixIcon: widget.suffixIcon,
-              contentPadding: widget.contentPadding,
-            ),
-            onSubmitted: (value) {
-              if (widget.onSubmit != null) {
-                widget.onSubmit!(value);
-                widget.controller?.clear();
-              }
-            },
-          ),
+          child: FormBuilderField(
+              name: widget.name,
+              validator: widget.validator,
+              onSaved: widget.onSubmit,
+              builder: (field) {
+                return TextFormField(
+                  // name: widget.name,
+                  controller: widget.controller,
+                  keyboardType: widget.type,
+                  key: widget.key,
+                  autofocus: widget.autoFocus,
+                  onChanged: (value) {
+                    if (widget.formKey != null) {
+                      _resetValidate();
+                    }
+                    field.didChange(value);
+                    widget.onChange?.call(value);
+                  },
+                  validator: widget.validator,
+                  inputFormatters: widget.inputFormatters,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  obscureText: widget.type == TextInputType.visiblePassword &&
+                          widget.isObscure!
+                      ? true
+                      : false,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: neutral.shade500,
+                        fontSize: widget.fontSize,
+                      ),
+                  onTapOutside: (event) {
+                    FocusScope.of(context).unfocus();
+                  },
+                  onTap: widget.onTap,
+                  // onEditingComplete: () {
+                  //   Logger().i("Editing complete");
+                  //   if (widget.onSubmit != null) {
+                  //     widget.onSubmit!();
+                  //   }
+                  // },
+                  onFieldSubmitted: (value) {
+                    if (widget.onSubmit != null) {
+                      widget.onSubmit!(value);
+                      widget.controller?.clear();
+                    }
+                  },
+                  initialValue: widget.controller != null
+                      ? (null as String?)
+                      : (field.value as String?),
+                  decoration: InputDecoration(
+                    hintText: widget.hint,
+                    errorMaxLines: 2,
+                    errorText: widget.errorText,
+                    suffixIcon: widget.suffixIcon,
+                    contentPadding: widget.contentPadding,
+                  ),
+                  // onSubmitted: (value) {
+                  //   if (widget.onSubmit != null) {
+                  //     widget.onSubmit!(value);
+                  //     widget.controller?.clear();
+                  //   }
+                  // },
+                );
+              }),
         ),
       ],
     );

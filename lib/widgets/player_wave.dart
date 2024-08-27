@@ -31,7 +31,7 @@ class PlayerWave extends StatefulWidget {
 class _PlayerWaveState extends State<PlayerWave> {
   final PlayerController _controller = PlayerController();
   int _duration = 0;
-  File? file;
+  File? _currentFile;
   PlayerWaveStyle? playerWaveStyle;
 
   late final StreamSubscription<PlayerState> _playerStateSubscription;
@@ -52,11 +52,64 @@ class _PlayerWaveState extends State<PlayerWave> {
     await _controller.stopPlayer(); // Stop audio player
   }
 
+  _prepareWave() async {
+    File? file;
+    if (widget.path.contains("https")) {
+      Logger().i(widget.path);
+      file = await FileService().saveFileToCache(widget.path).then((value) {
+        return value;
+      }).catchError((e) {
+        Logger().e(e);
+        throw Exception('Lỗi không thể tải dữ liệu, vui lòng thử lại!');
+      });
+    } else {
+      file = File(widget.path);
+    }
+    if (!file!.existsSync()) {
+      return;
+    }
+
+    // prepare the player
+    await _controller.preparePlayer(
+      path: file.path,
+      shouldExtractWaveform: true,
+      noOfSamples: playerWaveStyle!.getSamplesForWidth(200),
+      volume: 1.0,
+    );
+    _controller.updateFrequency =
+        UpdateFrequency.low; // Update reporting rate of current duration.
+
+    // Set state for duration
+    final duration = await _controller.getDuration(DurationType.max);
+
+    _controller.onCurrentDurationChanged.listen((value) {
+      setState(() {
+        _duration = duration - value;
+      });
+    });
+    // _controller.onCompletion.listen((_) {
+    //   setState(() {
+    //     _duration = duration;
+    //   });
+    // });
+    _playerStateSubscription =
+        _controller.onPlayerStateChanged.listen((event) async {
+      switch (event) {
+        case PlayerState.initialized:
+          final duration = await _controller.getDuration(DurationType.max);
+          setState(() {
+            _duration = duration;
+          });
+          break;
+        default:
+          setState(() {});
+      }
+    });
+  }
+
   _init() async {
     try {
-      if (context.mounted == false) {
-        return;
-      }
+      if (!mounted) return;
       setState(() {
         playerWaveStyle = PlayerWaveStyle(
           fixedWaveColor: widget.fixedWaveColor ?? primary.shade200,
@@ -66,60 +119,12 @@ class _PlayerWaveState extends State<PlayerWave> {
         );
       });
 
-      File? file;
-      if (widget.path.contains("https")) {
-        Logger().i(widget.path);
-        file = await FileService().saveFileToCache(widget.path).then((value) {
-          return value;
-        }).catchError((e) {
-          Logger().e(e);
-          throw Exception('Lỗi không thể tải dữ liệu, vui lòng thử lại!');
-        });
-      } else {
-        file = File(widget.path);
-      }
-      if (!file!.existsSync()) {
-        return;
-      }
-      // prepare the player
-      await _controller.preparePlayer(
-        path: file.path,
-        shouldExtractWaveform: true,
-        noOfSamples: playerWaveStyle!.getSamplesForWidth(200),
-        volume: 1.0,
-      );
-
-      _controller.updateFrequency =
-          UpdateFrequency.low; // Update reporting rate of current duration.
-
-      // Set state for duration
-      final duration = await _controller.getDuration(DurationType.max);
-
-      _controller.onCurrentDurationChanged.listen((value) {
-        setState(() {
-          _duration = duration - value;
-        });
-      });
-      // _controller.onCompletion.listen((_) {
+      await _prepareWave();
+      // if (mounted) {
       //   setState(() {
-      //     _duration = duration;
+      //     _currentFile = file;
       //   });
-      // });
-      _playerStateSubscription =
-          _controller.onPlayerStateChanged.listen((event) async {
-        switch (event) {
-          case PlayerState.initialized:
-            final duration = await _controller.getDuration(DurationType.max);
-            setState(() {
-              _duration = duration;
-            });
-            break;
-          case PlayerState.paused:
-            setState(() {});
-            break;
-          default:
-        }
-      });
+      // }
     } catch (e) {
       Logger().e(e);
     }
@@ -129,6 +134,9 @@ class _PlayerWaveState extends State<PlayerWave> {
   void dispose() {
     _playerStateSubscription.cancel();
     _controller.dispose();
+    if (_currentFile != null) {
+      _currentFile!.delete();
+    }
     super.dispose();
   }
 

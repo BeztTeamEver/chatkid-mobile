@@ -21,6 +21,7 @@ class Endpoint {
   static const verifyOtpEndPoint = "/api/auth/verify-OTP";
   static const resendOtp = "/api/auth/otp";
   static const infoEndpoint = "/api/auth/info";
+  static const logoutEndPoint = "/api/member/logout";
 
   static const refreshTokenEndPoint = "/api/auth/refresh-token";
   // User
@@ -43,6 +44,8 @@ class Endpoint {
 
   // GPT chat
   static const gptChatEndPoint = "/api/gpt/chat";
+  static const botQuestionHistories = "/api/bot-questions/member";
+  static const ReportEndPoint = "/api/bot-questions/reports";
 
   //Subcription
   static const packageEndPoint = "/api/packages";
