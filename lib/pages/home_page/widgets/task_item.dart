@@ -137,17 +137,20 @@ class _TaskItemState extends State<TaskItem> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Expanded(
-                                  child: Text(
-                                    widget.task.note,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium!
-                                        .copyWith(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                  child: Flexible(
+                                    child: Text(
+                                      widget.task.note ??
+                                          widget.task.taskType.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
                                   ),
                                 ),
                               ],

@@ -60,7 +60,10 @@ class _EditModalState extends State<EditModal> {
       height: MediaQuery.of(context).size.height * 0.2,
       child: Column(
         children: [
-          if (widget.target.status != TodoStatus.inprogress)
+          if (widget.target.status != TargetStatus.PENDING &&
+              widget.target.status != TargetStatus.IN_PROGRESS &&
+              widget.target.status != TargetStatus.COMPLETED &&
+              widget.target.status != TargetStatus.AWARDED)
             ListTile(
               shape: RoundedRectangleBorder(
                 side: BorderSide(

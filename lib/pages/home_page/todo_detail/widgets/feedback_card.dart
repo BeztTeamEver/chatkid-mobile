@@ -89,12 +89,15 @@ class _FeedBackCardState extends State<FeedBackCard> {
 
   @override
   Widget build(BuildContext context) {
+    final member = todoHomeStore.members.firstWhereOrNull(
+      (element) => element.id == widget.task.memberId,
+    );
     return CustomCard(
       padding: EdgeInsets.all(16),
       children: [
         // ChatTextBox(
         //   isSender: false,
-        //   user: todoHomeStore.currentUser.value,
+        //   user: member.avatarUrl
         //   useVoice: false,
         //   message:
         //       'Công việc ${FeedbackMap[widget.task.feedbackLevel]?.toLowerCase() ?? ""}',
@@ -102,7 +105,7 @@ class _FeedBackCardState extends State<FeedBackCard> {
         // SizedBox(height: 16),
         ChatTextBox(
           isSender: false,
-          user: todoHomeStore.currentUser.value,
+          user: member,
           useVoice: false,
           imageUrl:
               widget.task.feedbackEmoji ?? "https://picsum.photos/200/200",
@@ -127,7 +130,7 @@ class _FeedBackCardState extends State<FeedBackCard> {
                     width: 32,
                     height: 32,
                     child: AvatarPng(
-                      imageUrl: todoHomeStore.currentUser.value.avatarUrl,
+                      imageUrl: member?.avatarUrl,
                     ),
                   ),
                   SizedBox(width: 16),

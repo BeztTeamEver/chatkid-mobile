@@ -131,6 +131,7 @@ class MissionModel {
       name: json['name'],
       imageUrl: json['imageUrl'],
       imageHomeUrl: json['imageHomeUrl'],
+      progress: json['progress'],
       quantity: json['quantity'],
     );
   }
