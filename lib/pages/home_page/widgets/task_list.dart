@@ -88,25 +88,30 @@ class _TodoListState extends State<TodoList> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => SingleChildScrollView(
-        controller: widget.scrollController,
-        padding: const EdgeInsets.only(top: 4, bottom: 26),
-        child: controller.tasks.isNotEmpty
-            ? Obx(
-                () => ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: controller.tasks.length,
-                  itemBuilder: (context, index) {
-                    return Obx(() => TaskItem(
-                          task: controller.tasks[index],
-                        ));
-                  },
+      () => RefreshIndicator(
+        onRefresh: () async {
+          await controller.fetchData();
+        },
+        child: SingleChildScrollView(
+          controller: widget.scrollController,
+          padding: const EdgeInsets.only(top: 4, bottom: 26),
+          child: controller.tasks.isNotEmpty
+              ? Obx(
+                  () => ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: controller.tasks.length,
+                    itemBuilder: (context, index) {
+                      return Obx(() => TaskItem(
+                            task: controller.tasks[index],
+                          ));
+                    },
+                  ),
+                )
+              : const Center(
+                  child: Text("Không có công việc nào"),
                 ),
-              )
-            : const Center(
-                child: Text("Không có công việc nào"),
-              ),
+        ),
       ),
     );
   }
@@ -237,24 +242,29 @@ class _TargetListState extends State<TargetList> {
   TodoHomeStore controller = Get.find();
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: widget.scrollController,
-      padding: const EdgeInsets.only(top: 8, bottom: 26),
-      child: Column(
-        children: [
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: controller.targets.length,
-            itemBuilder: (context, index) {
-              return Obx(
-                () => TargetItem(
-                  target: controller.targets[index],
-                ),
-              );
-            },
-          ),
-        ],
+    return RefreshIndicator(
+      onRefresh: () async {
+        await controller.fetchData();
+      },
+      child: SingleChildScrollView(
+        controller: widget.scrollController,
+        padding: const EdgeInsets.only(top: 8, bottom: 26),
+        child: Column(
+          children: [
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: controller.targets.length,
+              itemBuilder: (context, index) {
+                return Obx(
+                  () => TargetItem(
+                    target: controller.targets[index],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

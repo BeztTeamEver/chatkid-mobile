@@ -64,6 +64,7 @@ class _CreateTaskTypePageState extends State<CreateTaskTypePage> {
       Get.back(result: true);
     } catch (e) {
       Logger().e(e);
+      ShowToast.error(msg: e.toString().split(":")[1]);
     }
   }
 

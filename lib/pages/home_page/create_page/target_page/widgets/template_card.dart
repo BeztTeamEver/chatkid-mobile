@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:chatkid_mobile/models/target_model.dart';
 import 'package:chatkid_mobile/widgets/custom_card.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';

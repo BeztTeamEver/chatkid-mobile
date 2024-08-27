@@ -144,7 +144,7 @@ class _PasswordPageState extends ConsumerState<PasswordLoginPage> {
                 //   ),
                 // ),
                 Text(
-                  "Nhập tật khẩu",
+                  "Nhập mật khẩu",
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: neutral.shade400,
                       ),
