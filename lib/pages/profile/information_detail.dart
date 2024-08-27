@@ -88,9 +88,7 @@ class _InformationDetailState extends ConsumerState<InformationDetail> {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      currentUser.profile.value.role == RoleConstant.Parent
-                          ? 'Phụ huynh'
-                          : 'Bé',
+                      currentUser.profile.value.familyRole ?? 'Phụ huynh',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,

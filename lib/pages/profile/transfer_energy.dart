@@ -1,3 +1,4 @@
+import 'package:chatkid_mobile/constants/account_list.dart';
 import 'package:chatkid_mobile/models/family_model.dart';
 import 'package:chatkid_mobile/models/user_model.dart';
 import 'package:chatkid_mobile/pages/main_page.dart';
@@ -133,7 +134,7 @@ class _TransferEnergyPageState extends State<TransferEnergyPage> {
                           ),
                           ...data.members.fold(<UserModel>[],
                               (previousValue, element) {
-                            if (element.id != userId) {
+                            if (element.id != userId && element.role == RoleConstant.Child) {
                               previousValue.add(element);
                             }
                             return previousValue;
