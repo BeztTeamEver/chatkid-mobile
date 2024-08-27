@@ -129,7 +129,7 @@ class FirebaseService {
 
     switch (message.data['type']) {
       case NotificationTypeConstants.CHAT:
-        handleChatNotification(message);
+        // handleChatNotification(message);
         break;
       case NotificationTypeConstants.TARGET:
         Logger().i("Notification message");
