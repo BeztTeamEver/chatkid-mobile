@@ -93,7 +93,8 @@ class HistoryTargetModel {
   factory HistoryTargetModel.fromJson(Map<String, dynamic> json) {
     return HistoryTargetModel(
       id: json['id'],
-      finishTime: json['finishTime'],
+      finishTime:
+          DateTime.parse(json['finishTime']).toLocal().toIso8601String(),
       reward: json['reward'],
       rewardUrl: json['rewardUrl'],
       name: json['name'],

@@ -12,7 +12,7 @@ class TransferModel {
   TransferModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     diamond = json['diamond'];
-    createdAt = json['createdAt'];
+    createdAt = DateTime.parse(json['createdAt']).toLocal().toIso8601String();
   }
 
   Map<String, dynamic> toJson() {

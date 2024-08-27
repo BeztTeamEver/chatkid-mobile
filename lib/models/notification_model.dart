@@ -6,7 +6,6 @@ class NotificationModel {
   late String? avatarUrl;
   late String senderName;
   late String createdAt;
-  late String updatedAt;
 
   NotificationModel({
     required this.id,
@@ -16,7 +15,6 @@ class NotificationModel {
     required this.avatarUrl,
     required this.senderName,
     required this.createdAt,
-    required this.updatedAt,
   });
 
   NotificationModel.fromJson(Map<String, dynamic> json) {
@@ -26,8 +24,7 @@ class NotificationModel {
     type = json['type'];
     avatarUrl = json['avatarUrl'];
     senderName = json['senderName'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
+    createdAt = DateTime.parse(json['createdAt']).toLocal().toIso8601String();
   }
 
   Map<String, dynamic> toMap() {
@@ -39,7 +36,6 @@ class NotificationModel {
     data['avatarUrl'] = avatarUrl;
     data['senderName'] = senderName;
     data['createdAt'] = createdAt;
-    data['updatedAt'] = updatedAt;
     return data;
   }
 }

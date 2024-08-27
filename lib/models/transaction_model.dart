@@ -21,7 +21,7 @@ class TransactionModel {
     id = json['id'];
     packageId = json['packageId'];
     memberId = json['memberId'];
-    createdAt = json['createdAt'];
+    createdAt = DateTime.parse(json['createdAt']).toLocal().toIso8601String();
     status = json['status'];
     package = PackageModel.fromJson(json['package']);
   }

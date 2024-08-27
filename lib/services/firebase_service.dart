@@ -6,6 +6,7 @@ import 'package:chatkid_mobile/firebase_options.dart';
 import 'package:chatkid_mobile/pages/chats/group_chat_page.dart';
 import 'package:chatkid_mobile/services/family_service.dart';
 import 'package:chatkid_mobile/services/login_service.dart';
+import 'package:chatkid_mobile/services/user_service.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/services/count_noti_service.dart';
@@ -180,6 +181,11 @@ class FirebaseService {
         countNotiController.onCountChat();
       } else {
         countNotiController.onCountNoti();
+      }
+
+      if (message.data['type'] == 'WALLET') {
+        MeController meController = Get.find();
+        meController.refetch();
       }
     });
 

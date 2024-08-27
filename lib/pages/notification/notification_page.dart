@@ -190,7 +190,37 @@ class _NotificationPageState extends State<NotificationPage> {
                               padding: EdgeInsets.only(bottom: 40),
                               child: Loading(),
                             )
-                          : Container(),
+                          : Container(
+                              child: Visibility(
+                                visible: notifications.data.isEmpty,
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.height - 240,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/payment/bot-head.png",
+                                          width: 150,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          "Lịch sử thanh toán hiện đang trống",
+                                          style: TextStyle(
+                                            color: neutral.shade900,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                     ],
                   ),
                 ),

@@ -30,7 +30,7 @@ class GiftModel {
     title = json['title'];
     numberOfCoin = json['numberOfCoin'];
     imageUrl = json['imageUrl'];
-    createdAt = json['createdAt'];
+    createdAt = DateTime.parse(json['createdAt']).toLocal().toIso8601String();
     status = json['status'];
   }
 
