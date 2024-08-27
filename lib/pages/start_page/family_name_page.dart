@@ -57,7 +57,7 @@ class _FamilyNamePageState extends ConsumerState<FamilyNamePage> {
               createFamilyProvider(_controller.text).future,
             )
             .then((value) => {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     createRoute(
                       () => FormPage(

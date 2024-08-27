@@ -8,6 +8,7 @@ import 'package:chatkid_mobile/services/login_service.dart';
 import 'package:chatkid_mobile/utils/error_snackbar.dart';
 import 'package:chatkid_mobile/utils/local_storage.dart';
 import 'package:chatkid_mobile/utils/route.dart';
+import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/svg_icon.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,7 @@ class _GoogleButtonState extends State<GoogleButton> {
           await _signUpFunction(token);
         }
         Logger().d("Login success");
+
         callback();
       }).catchError((err) {
         _prefs.removeToken();
@@ -78,7 +80,7 @@ class _GoogleButtonState extends State<GoogleButton> {
     } catch (err, stack) {
       _prefs.removeToken();
       Logger().d(err.toString(), stackTrace: stack);
-      ErrorSnackbar.showError(err: err, context: context, stack: stack);
+      ShowToast.error(msg: err.toString().split(":")[1]);
     }
   }
 

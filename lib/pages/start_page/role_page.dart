@@ -10,18 +10,24 @@ import 'package:chatkid_mobile/widgets/select_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RolePage extends ConsumerStatefulWidget {
+class RolePage extends StatefulWidget {
   const RolePage({super.key});
 
   @override
-  ConsumerState<RolePage> createState() => _RolePageState();
+  State<RolePage> createState() => _RolePageState();
 }
 
-class _RolePageState extends ConsumerState<RolePage> {
+class _RolePageState extends State<RolePage> {
   String _role = "";
 
   setFormField(value) {
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -32,6 +38,7 @@ class _RolePageState extends ConsumerState<RolePage> {
           padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Text(
                 "Hãy chọn vai trò cho tài khoản",
@@ -74,7 +81,7 @@ class _RolePageState extends ConsumerState<RolePage> {
                 height: MediaQuery.of(context).size.height * 0.1,
               ),
               Row(
-                mainAxisSize: MainAxisSize.max,
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(

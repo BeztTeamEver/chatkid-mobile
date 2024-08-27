@@ -60,9 +60,9 @@ class _FormPageState extends ConsumerState<FormPage> {
       _preferences.setBool(LocalStorageKey.IS_FIRST_REGISTER, true);
       return;
     }
-    if (isFirstRegister == true) {
-      _preferences.setBool(LocalStorageKey.IS_FIRST_REGISTER, false);
-    }
+    // if (_preferences.getBool(LocalStorageKey.IS_FIRST_REGISTER) == true) {
+    //   _preferences.setBool(LocalStorageKey.IS_FIRST_REGISTER, false);
+    // }
   }
 
   void _onSubmitInfo(callback, stopLoading) async {
@@ -134,7 +134,7 @@ class _FormPageState extends ConsumerState<FormPage> {
       ),
       PasswordPage(
         userId: "",
-        name: _formKey.currentState?.fields['name']?.value ?? "",
+        name: _nameController.text ?? "",
         formKey: _formKey,
         passwordController: _passwordController,
         confirmPasswordController: _confirmPasswordController,
@@ -152,6 +152,14 @@ class _FormPageState extends ConsumerState<FormPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text(
+                  "Thiết lập tài khoản cho ${widget.userRole == RoleConstant.Parent ? "phụ huynh" : "trẻ em"}",
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: primary.shade500,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
                 Expanded(
                   child: PageView.builder(
                     itemCount: 2,
@@ -193,46 +201,49 @@ class _FormPageState extends ConsumerState<FormPage> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () {
-                if (_currentPage == 0) {
-                  Navigator.pop(context);
-                  return;
-                }
-                setState(() {
-                  _currentPage--;
-                });
-                _pageController.animateToPage(
-                  _currentPage,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-              child: Text(
-                "Quay lại",
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: primary.shade500,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
-              ),
-              style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                    elevation: const MaterialStatePropertyAll(2),
-                    shape: MaterialStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                        side: BorderSide(
-                          color: primary.shade400,
-                          width: 2,
+          if (_preferences.getBool(LocalStorageKey.IS_FIRST_REGISTER) == false)
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_currentPage == 0) {
+                    Navigator.pop(context);
+                    return;
+                  }
+                  setState(() {
+                    _currentPage--;
+                  });
+                  _pageController.animateToPage(
+                    _currentPage,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                child: Text(
+                  "Quay lại",
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: primary.shade500,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+                      elevation: const MaterialStatePropertyAll(2),
+                      shape: MaterialStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                          side: BorderSide(
+                            color: primary.shade400,
+                            width: 2,
+                          ),
                         ),
                       ),
+                      backgroundColor:
+                          MaterialStatePropertyAll(primary.shade50),
+                      foregroundColor:
+                          MaterialStatePropertyAll(primary.shade400),
                     ),
-                    backgroundColor: MaterialStatePropertyAll(primary.shade50),
-                    foregroundColor: MaterialStatePropertyAll(primary.shade400),
-                  ),
+              ),
             ),
-          ),
           const SizedBox(
             width: 10,
           ),
@@ -240,12 +251,28 @@ class _FormPageState extends ConsumerState<FormPage> {
             child: ElevatedButton(
               onPressed: () {
                 _onSubmitInfo(
-                  () => Navigator.pushReplacement(
-                    context,
-                    createRoute(
-                      () => StartPage(),
-                    ),
-                  ),
+                  () {
+                    if (_preferences
+                                .getBool(LocalStorageKey.IS_FIRST_REGISTER) ==
+                            true &&
+                        widget.userRole == RoleConstant.Parent) {
+                      Navigator.push(
+                        context,
+                        createRoute(
+                          () => FormPage(userRole: RoleConstant.Child),
+                        ),
+                      );
+                      return;
+                    }
+                    _preferences.setBool(
+                        LocalStorageKey.IS_FIRST_REGISTER, false);
+                    Navigator.pushReplacement(
+                      context,
+                      createRoute(
+                        () => StartPage(),
+                      ),
+                    );
+                  },
                   () {},
                 );
               },

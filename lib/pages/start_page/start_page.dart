@@ -292,7 +292,7 @@ class _StartPageState extends ConsumerState<StartPage> {
               FullWidthButton(
                 height: 50,
                 onPressed: () async {
-                  await FirebaseService.instance.signOut().then((value) {
+                  await FirebaseService.instance.signOut().whenComplete(() {
                     AuthService.signOut();
                     Navigator.of(context).pushReplacement(
                       createRoute(
