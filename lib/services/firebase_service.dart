@@ -50,7 +50,10 @@ class FirebaseService {
 
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
+      RemoteMessage? message) async {
+    if (message == null) {
+      return;
+    }
     Logger().i("Handling a background message: ${message.messageId}");
   }
 
