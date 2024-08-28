@@ -14,6 +14,7 @@ import 'package:chatkid_mobile/utils/route.dart';
 import 'package:chatkid_mobile/utils/toast.dart';
 import 'package:chatkid_mobile/widgets/full_width_button.dart';
 import 'package:chatkid_mobile/widgets/textarea_input.dart';
+import 'package:dart_date/dart_date.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -81,6 +82,12 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
         return;
       }
 
+      targetFormStore.formKey.currentState!.fields['startTime']!.didChange(
+        (startTime.value as DateTime).startOfDay,
+      );
+      targetFormStore.formKey.currentState!.fields['endTime']!.didChange(
+        (endTime.value as DateTime).endOfDay,
+      );
       targetFormStore.formKey.currentState!.fields['missions']!.didChange(
         formMissions,
       );
@@ -151,8 +158,8 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
                 height: 40,
                 child: FormBuilderDateTimePicker(
                   name: 'startTime',
-                  inputType: InputType.both,
-                  format: DateFormat(DateConstants.dateTimeFormat),
+                  inputType: InputType.date,
+                  format: DateFormat(DateConstants.dateSlashFormat),
                 ),
               ),
               const SizedBox(height: 16),
@@ -169,8 +176,8 @@ class _TargetFormPageState extends ConsumerState<TargetFormPage> {
                 name: 'endTime',
                 autofocus: false,
                 autocorrect: false,
-                inputType: InputType.both,
-                format: DateFormat(DateConstants.dateTimeFormat),
+                inputType: InputType.date,
+                format: DateFormat(DateConstants.dateSlashFormat),
                 decoration: InputDecoration(
                   errorMaxLines: 2,
                 ),

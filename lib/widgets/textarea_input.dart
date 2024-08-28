@@ -115,7 +115,6 @@ class _TextAreaInputState extends State<TextAreaInput> {
                   key: widget.key,
                   validator: widget.validation,
                   focusNode: widget.focusNode,
-
                   maxLines: widget.maxLines,
                   minLines: widget.minLines,
                   maxLength: widget.maxLength,

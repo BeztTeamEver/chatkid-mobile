@@ -146,6 +146,7 @@ class _HeadCardState extends State<HeadCard> {
                     if (target != null) {
                       if (target[0] == 'delete') {
                         store.removeTarget(widget.target);
+                        Navigator.of(context).pop();
                       } else {
                         store.updateTarget(target[1]);
                         store.setSelectedTarget(target[1]);

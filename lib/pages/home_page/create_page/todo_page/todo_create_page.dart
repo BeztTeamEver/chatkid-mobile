@@ -278,8 +278,8 @@ class _TodoCreatePageState extends ConsumerState<TodoCreatePage>
                           return Obx(
                             () => todoFormCreateController.isDelete.value &&
                                     todoFormCreateController
-                                            .taskCategories[index].name !=
-                                        'Công việc tùy chỉnh'
+                                            .taskCategories[index].id !=
+                                        'c98b20b7-f4d5-4abb-af38-18b72d4f3f14'
                                 ? Container()
                                 : Padding(
                                     padding: const EdgeInsets.symmetric(

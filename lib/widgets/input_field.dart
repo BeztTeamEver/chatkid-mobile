@@ -89,9 +89,9 @@ class _InputFieldState extends State<InputField> {
                   key: widget.key,
                   autofocus: widget.autoFocus,
                   onChanged: (value) {
-                    if (widget.formKey != null) {
-                      _resetValidate();
-                    }
+                    // if (widget.formKey != null) {
+                    //   _resetValidate();
+                    // }
                     field.didChange(value);
                     widget.onChange?.call(value);
                   },
