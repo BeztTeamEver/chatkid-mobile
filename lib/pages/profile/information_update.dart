@@ -55,7 +55,7 @@ class _InformationUpdateState extends ConsumerState<InformationUpdate> {
           yearOfBirth: int.parse(yearBirthDayController.text),
         ))
         .then((value) => {
-              currentUser.updateProfile(value),
+              currentUser.refetch(),
               ShowToast.success(msg: 'Cập nhật thông tin thành công 🎉'),
               Navigator.of(context).pop(),
             })
