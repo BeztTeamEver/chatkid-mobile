@@ -8,7 +8,7 @@ final Map<String, Map<String, dynamic>> statusTheme = {
   "PROCESSING": {
     "bgColor": primary.shade100,
     "color": primary.shade900,
-    "text": "Đang xử lý",
+    "text": "Chưa thanh toán",
   },
   "SUCCESSFUL": {
     "bgColor": green.shade50,
@@ -23,7 +23,7 @@ final Map<String, Map<String, dynamic>> statusTheme = {
 };
 
 class CardTransaction extends StatelessWidget {
-  final TransactionModel transaction;
+  final HistoryTransactionModel transaction;
 
   const CardTransaction({super.key, required this.transaction});
 
@@ -102,7 +102,7 @@ class CardTransaction extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "${NumberFormat.formatAmount(transaction.package.actualPrice.toString() ?? "0")} vnđ",
+                          "${NumberFormat.formatAmount(transaction.actualPrice.toString())} vnđ",
                           style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
@@ -138,7 +138,7 @@ class CardTransaction extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          "Giảm ${NumberFormat.formatSale(transaction.package.price, transaction.package.actualPrice)}",
+                          "Giảm ${NumberFormat.formatSale(transaction.price, transaction.actualPrice)}",
                           style: TextStyle(
                             color: green.shade800,
                             fontWeight: FontWeight.w400,

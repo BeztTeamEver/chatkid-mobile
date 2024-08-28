@@ -16,7 +16,7 @@ class PaymentHistoryPage extends ConsumerStatefulWidget {
 }
 
 class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
-  late Future<List<TransactionModel>> transactions;
+  late Future<List<HistoryTransactionModel>> transactions;
 
   @override
   void initState() {
@@ -84,7 +84,7 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
                         ),
                       );
                     } else if (snapshot.hasData) {
-                      final data = snapshot.data as List<TransactionModel>;
+                      final data = snapshot.data as List<HistoryTransactionModel>;
                       return Wrap(
                         direction: Axis.vertical,
                         spacing: 12,

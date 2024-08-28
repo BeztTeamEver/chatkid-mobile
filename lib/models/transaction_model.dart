@@ -38,6 +38,40 @@ class TransactionModel {
   }
 }
 
+
+class HistoryTransactionModel {
+  late String id;
+  late String packageId;
+  late String memberId;
+  late String status;
+  late String createdAt;
+  late int price;
+  late int actualPrice;
+  late PackageModel package;
+
+  HistoryTransactionModel({
+    required this.id,
+    required this.packageId,
+    required this.memberId,
+    required this.createdAt,
+    required this.status,
+    required this.price,
+    required this.actualPrice,
+    required this.package,
+  });
+
+  HistoryTransactionModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    packageId = json['packageId'];
+    memberId = json['memberId'];
+    createdAt = DateTime.parse(json['createdAt']).toLocal().toIso8601String();
+    status = json['status'];
+    price = json['price'];
+    actualPrice = json['actualPrice'];
+    package = PackageModel.fromJson(json['package']);
+  }
+}
+
 class CreateTransactionModel {
   String? packageId;
   String? paymentMethodId;

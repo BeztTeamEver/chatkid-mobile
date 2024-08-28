@@ -8,13 +8,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 class TransactionService {
-  Future<List<TransactionModel>> getTransaction() async {
+  Future<List<HistoryTransactionModel>> getTransaction() async {
     final response = await BaseHttp.instance.get(
       endpoint: "${Endpoint.getPaymentTransactionEndPoint}?page-size=100",
     );
     if (response.statusCode >= 200 || response.statusCode < 300) {
       final data = jsonDecode(response.body);
-      final listTransaction = (data['items'] as List<dynamic>).map((item) => TransactionModel.fromJson(item)).toList();
+      final listTransaction = (data['items'] as List<dynamic>).map((item) => HistoryTransactionModel.fromJson(item)).toList();
 
       return listTransaction;
     } else {
